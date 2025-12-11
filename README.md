@@ -1,73 +1,38 @@
-# React + TypeScript + Vite
+# CooKeep FE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌협업 규칙
 
-Currently, two official plugins are available:
+1. 셀프 머지 금지 → 팀원 리뷰 후 머지하기
+2. Git-Flow 전략 사용
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+   `git flow version`을 통해 Git-flow 자동화 도구 설치되었는지 확인(미설치 시 설치 진행)
 
-## React Compiler
+   ```kotlin
+   #사용 예시:
+   git flow feature start user-profile
+   #develop에서 feature/user-profile 브랜치를 생성하고 이동
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. PR 템플릿, 이슈 템플릿, 커밋 컨벤션 지키기
 
-## Expanding the ESLint configuration
+   ```kotlin
+   # 커밋 컨벤션
+   feat: 새 기능 추가
+   fix: 버그 수정
+   docs: 문서 수정
+   style: 코드 스타일 변경(들여쓰기 등 포맷, 세미콜론 추가)
+   refactor: 코드 리팩토링
+   test: 테스트 관련 코드 추가 및 수정
+   chore: 설정 변경
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+4. 문제 발생한 경우 기능 별로 디스코드 스레드 파서 소통
+   프론트 내에선 PR 댓글로 소통
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️기술 스택
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- React + TypeScript + Vite
+- 스타일: Tailwind CSS
+- 상태 관리: Zustand
+- 패키지 매니저: pnpm
+- 배포: Vercel
