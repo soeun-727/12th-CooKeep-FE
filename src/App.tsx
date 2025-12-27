@@ -1,12 +1,14 @@
+// App.tsx
 import Initial from "./components/auth/Initial";
 
 export default function App() {
   return (
-    <>
-      <div className="bg-red-500 text-white p-5 text-2xl">
-        <h1>Tailwind Test</h1>
-      </div>
-      <Initial />
-    </>
+    <div className="min-h-screen flex justify-center items-center bg-gray-200">
+      <main className="relative w-[393px] h-[852px] bg-white shadow-2xl overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <Initial />
+        </div>
+      </main>
+    </div>
   );
 }
