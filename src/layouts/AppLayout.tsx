@@ -11,7 +11,7 @@ export default function AppLayout({ children }: Props) {
           max-w-[430px]
           sm:max-w-[600px]
           md:max-w-[768px]
-          lg:max-w-[720px]
+          lg:max-w-[450px]
           bg-white
           min-h-[100dvh]
         "

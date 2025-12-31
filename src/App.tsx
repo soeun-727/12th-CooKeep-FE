@@ -4,8 +4,10 @@ import AppLayout from "./layouts/AppLayout";
 
 export default function App() {
   return (
-    <AppLayout>
-      <Initial />
-    </AppLayout>
+    <>
+      <AppLayout>
+        <Initial />
+      </AppLayout>
+    </>
   );
 }

@@ -1,15 +1,12 @@
 @import "tailwindcss/preflight";
 @import "tailwindcss";
 
-/* 전역 기본 설정 */
+/* =========================
+   Font Family
+========================= */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --font-pretendard: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
 }
 
 html,
@@ -20,5 +17,85 @@ body,
 
 body {
   margin: 0;
-  min-width: 320px;
+  font-family: var(--font-pretendard);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================
+   Typography System
+========================= */
+
+/* h1 */
+.h1 {
+  font-family: var(--font-pretendard);
+  font-weight: 600; /* SemiBold */
+  font-size: 1.5rem; /* 24px */
+  line-height: 2rem; /* 32px */
+  letter-spacing: 0;
+}
+
+/* h2 */
+.h2 {
+  font-family: var(--font-pretendard);
+  font-weight: 600; /* SemiBold */
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.75rem; /* 28px */
+  letter-spacing: 0;
+}
+
+/* h3 */
+.h3 {
+  font-family: var(--font-pretendard);
+  font-weight: 500; /* Medium */
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.625rem; /* 26px */
+  letter-spacing: 0;
+}
+
+/* body1 */
+.body1 {
+  font-family: var(--font-pretendard);
+  font-weight: 500; /* Medium */
+  font-size: 1rem; /* 16px */
+  line-height: 1.5rem; /* 24px */
+  letter-spacing: 0;
+}
+
+/* body2 */
+.body2 {
+  font-family: var(--font-pretendard);
+  font-weight: 500; /* Medium */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+  letter-spacing: 0;
+}
+
+/* caption */
+.caption {
+  font-family: var(--font-pretendard);
+  font-weight: 400; /* Regular */
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem; /* 16px */
+  letter-spacing: 0;
+}
+
+/* button text */
+.button-text {
+  font-family: var(--font-pretendard);
+  font-weight: 700; /* Bold */
+  font-size: 1rem; /* 16px */
+  line-height: 1.5rem; /* 24px */
+  letter-spacing: 0;
+}
+
+/* label */
+.label {
+  font-family: var(--font-pretendard);
+  font-weight: 500; /* Medium */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+  letter-spacing: 0;
 }
