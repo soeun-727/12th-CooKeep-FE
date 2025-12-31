@@ -8,11 +8,8 @@ export default function AppLayout({ children }: Props) {
       <div
         className="
           w-full
-          max-w-[430px]
-          sm:max-w-[600px]
-          md:max-w-[768px]
-          lg:max-w-[450px]
-          bg-white
+          max-w-[450px]
+        bg-white
           min-h-[100dvh]
         "
       >
