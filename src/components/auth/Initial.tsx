@@ -6,13 +6,12 @@ export default function Initial() {
   return (
     <div className="relative min-h-screen bg-[var(--color-green-deep)]">
       {/* 상단 텍스트 영역 */}
+      <img
+        src={icon}
+        alt="Frame 아이콘"
+        className="w-[18.5px] absolute top-[140px] left-[165px]"
+      />
       <div className="absolute top-[155px] left-[32px]">
-        <img
-          src={icon}
-          alt="Frame 아이콘"
-          className="w-[18.5px] absolute top-[-17px] right-[-20px]"
-        />
-
         <h1 className="typo-h1 flex gap-1">
           <span className="text-neutral-800">재료</span>
           <span className="text-white">관리부터,</span>
