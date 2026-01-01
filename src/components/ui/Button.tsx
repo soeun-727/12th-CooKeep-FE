@@ -19,9 +19,9 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   type = "button",
 }) => {
-  const sizeStyles = {
-    S: "h-[38px] px-6 text-sm",
-    L: "h-[56px] px-8 text-base",
+  const sizeStyles: Record<ButtonSize, string> = {
+    S: "h-[38px] text-sm",
+    L: "h-[56px] text-base",
   };
 
   const baseStyle = `
