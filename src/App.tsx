@@ -1,9 +1,14 @@
+import { Routes, Route } from "react-router-dom";
+import AppLayout from "./layouts/AppLayout";
+
+import InitialPage from "./pages/auth/InitialPage";
+
 export default function App() {
   return (
-    <>
-      <div className="bg-red-500 text-white p-5 text-2xl">
-        <h1>Tailwind Test</h1>
-      </div>
-    </>
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<InitialPage />} />
+      </Routes>
+    </AppLayout>
   );
 }
