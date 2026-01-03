@@ -6,6 +6,11 @@ import LoginPage from "./pages/auth/LoginPage";
 
 export default function App() {
   return (
+    // <AppLayout>
+    //   <Routes>
+    //     <Route path="/" element={<InitialPage />} />
+    //   </Routes>
+    // </AppLayout>
     <AppLayout>
       <Routes>
         <Route path="/" element={<LoginPage />} />
