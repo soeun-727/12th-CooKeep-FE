@@ -1,5 +1,5 @@
-import icon from "../../assets/Frame 36.svg";
-import logo from "../../assets/Logo.png";
+import icon from "../../assets/initial/icon.svg";
+import logo from "../../assets/initial/Logo.png";
 import Button from "../ui/Button";
 
 export default function Initial() {
@@ -53,9 +53,7 @@ export default function Initial() {
         "
       >
         <span className="typo-caption text-white/80">이미 계정이 있나요?</span>
-        <button className="typo-caption text-white font-semibold underline underline-offset-4">
-          로그인
-        </button>
+        <button className="typo-caption text-white">로그인</button>
       </div>
     </div>
   );
