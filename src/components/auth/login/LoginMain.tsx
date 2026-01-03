@@ -3,13 +3,18 @@ import phoneIcon from "../../../assets/login/phone.svg";
 import pwIcon from "../../../assets/login/key.svg";
 import pwImage from "../../../assets/login/pw.svg";
 import Button from "../../ui/Button";
-import { useState } from "react";
+import { useAuthStore } from "../../../stores/useAuthStore";
 
 export default function LoginMain() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const isValidPhone = /^01[0-9]{8,9}$/.test(phoneNumber);
-  const isValidPW = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
+  const {
+    phoneNumber,
+    setPhoneNumber,
+    password,
+    setPassword,
+    isValidPhone,
+    isValidPW,
+    canLogin,
+  } = useAuthStore();
   return (
     <>
       <div className="pt-[241px] w-[352px] mx-auto">
