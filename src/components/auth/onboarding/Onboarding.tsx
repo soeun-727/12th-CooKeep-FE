@@ -8,10 +8,12 @@ import SpecificGoal from "./SpecificGoal";
 import AuthHeader from "../AuthHeader";
 import { useNavigate } from "react-router-dom";
 import Last from "./Last";
+import Notification from "./Notification";
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [isFinished, setIsFinished] = useState(false); // 마지막 화면 여부 상태
+  const [showNotification, setShowNotification] = useState(false); // Notification 화면 여부
   const navigate = useNavigate();
   // 각 단계별 응답 저장 상태 (추후 API 연동)
   const [foodTypes, setFoodTypes] = useState<string[]>([]); // 다중 선택 (최대 3개)
@@ -42,11 +44,15 @@ export default function Onboarding() {
     nextStep();
   };
 
-  if (isFinished) {
-    return <Last />;
+  if (showNotification) {
+    return <Notification />;
   }
 
-  // 현재 스텝의 입력값이 유효한지 체크 (Footer의 다음 버튼 활성화용)
+  if (isFinished) {
+    return <Last onStart={() => setShowNotification(true)} />;
+  }
+
+  // 현재 스텝의 입력값이 유효한지 체크
   const getIsValid = () => {
     switch (step) {
       case 0:
@@ -104,6 +110,7 @@ export default function Onboarding() {
           onPrev={prevStep}
           onSkip={skipStep}
           isFirstStep={step === 0}
+          isLastStep={step === 3}
           isValid={getIsValid()}
         />
       </div>

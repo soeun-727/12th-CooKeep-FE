@@ -1,7 +1,12 @@
 //온보딩 완료
 import temp from "../../../assets/temporary-image.png";
 import Button from "../../ui/Button";
-export default function Last() {
+
+interface LastProps {
+  onStart: () => void;
+}
+
+export default function Last({ onStart }: LastProps) {
   return (
     <>
       <div className="flex flex-col items-center">
@@ -13,7 +18,9 @@ export default function Last() {
         <img src={temp} className="w-[184px] mt-[122px]" />
       </div>
       <div className="fixed bottom-0 mb-[34px] left-1/2 -translate-x-1/2">
-        <Button>시작하기</Button>
+        <Button size="L" onClick={onStart}>
+          시작하기
+        </Button>
       </div>
     </>
   );

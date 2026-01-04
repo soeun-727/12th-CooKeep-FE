@@ -5,6 +5,7 @@ interface FooterProps {
   onPrev: () => void;
   onSkip: () => void;
   isFirstStep: boolean;
+  isLastStep: boolean;
   isValid: boolean;
 }
 
@@ -13,10 +14,11 @@ export default function Footer({
   onPrev,
   onSkip,
   isFirstStep,
+  isLastStep,
   isValid,
 }: FooterProps) {
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
       <div className="w-[361px] mx-auto flex flex-col items-center gap-2">
         <Button
           size="S"
@@ -24,7 +26,7 @@ export default function Footer({
           onClick={() => isValid && onNext()}
           disabled={!isValid}
         >
-          다음
+          {isLastStep ? "쿠킵 시작하기" : "다음"}
         </Button>
 
         <Button
