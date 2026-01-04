@@ -16,7 +16,7 @@ export default function Footer({
   isValid,
 }: FooterProps) {
   return (
-    <div className="fixed bottom-0 left-0 w-full pb-[34px]">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2">
       <div className="w-[361px] mx-auto flex flex-col items-center gap-2">
         <Button
           size="S"
