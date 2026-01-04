@@ -7,13 +7,17 @@ const goals = [
   { id: "like", title: "다른 사람들 레시피 구경하고 좋아요 n회 남기기" },
 ];
 
-export default function Goal() {
-  const [activeId, setActiveId] = useState<string>("cook");
+interface GoalProps {
+  selectedGoal: { id: string; title: string }; // 부모로부터 받은 현재 선택된 목표
+  onSelect: (goal: { id: string; title: string }) => void; // 부모의 상태를 변경하는 함수
+}
+
+export default function Goal({ selectedGoal, onSelect }: GoalProps) {
+  // 열림/닫힘 상태는 UI적인 요소이므로 컴포넌트 내부에서 관리해도 무방합니다.
   const [isOpen, setIsOpen] = useState(false);
 
-  // currentGoalTitle 변수를 사용하여 헤더에 표시할 텍스트를 가져옵니다.
-  const currentGoalTitle =
-    goals.find((g) => g.id === activeId)?.title || goals[0].title;
+  // 헤더에 표시할 텍스트 (부모에서 내려준 selectedGoal 사용)
+  const currentGoalTitle = selectedGoal.title;
 
   return (
     <>
@@ -31,7 +35,6 @@ export default function Goal() {
             onClick={() => setIsOpen(!isOpen)}
             className="w-full h-[48px] px-5 flex items-center justify-between text-left"
           >
-            {/* 변수명을 currentGoalTitle로 통일했습니다 */}
             <span className="typo-body2 text-black">{currentGoalTitle}</span>
             <svg
               className={`w-5 h-5 transition-transform duration-300 ${
@@ -50,7 +53,7 @@ export default function Goal() {
             </svg>
           </button>
 
-          {/* 펼쳐지는 리스트 영역 (filter 제거로 모든 항목 표시) */}
+          {/* 펼쳐지는 리스트 영역 */}
           <div
             className={`transition-all duration-300 ease-in-out overflow-hidden ${
               isOpen ? "max-h-[300px]" : "max-h-0"
@@ -58,19 +61,16 @@ export default function Goal() {
           >
             <div className="flex flex-col">
               {goals
-                .filter((goal) => goal.id !== activeId)
+                .filter((goal) => goal.id !== selectedGoal.id)
                 .map((goal) => (
                   <button
                     key={goal.id}
                     onClick={() => {
-                      setActiveId(goal.id);
+                      // 내부 state가 아닌 부모의 onSelect 호출
+                      onSelect({ id: goal.id, title: goal.title });
                       setIsOpen(false);
                     }}
-                    className={`w-full h-[48px] px-5 text-left typo-body2 transition-colors ${
-                      activeId === goal.id
-                        ? "bg-gray-100"
-                        : "bg-white hover:bg-gray-50"
-                    }`}
+                    className="w-full h-[48px] px-5 text-left typo-body2 bg-white hover:bg-gray-50 transition-colors text-gray-500"
                   >
                     {goal.title}
                   </button>

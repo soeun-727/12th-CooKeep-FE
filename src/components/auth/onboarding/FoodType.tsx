@@ -11,32 +11,33 @@ import Healthy from "../../../assets/onboarding/healthy.png";
 import HealthyGray from "../../../assets/onboarding/healthy_gray.png";
 import Instant from "../../../assets/onboarding/instant.png";
 import InstantGray from "../../../assets/onboarding/instant_gray.png";
-import { useState } from "react";
 
-//01
-export default function FoodType() {
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+interface FoodTypeProps {
+  selectedTypes: string[]; // 부모로부터 받은 선택된 목록
+  onToggle: (types: string[] | ((prev: string[]) => string[])) => void; // 부모의 상태 변경 함수
+}
+
+export default function FoodType({ selectedTypes, onToggle }: FoodTypeProps) {
   const handleToggle = (title: string) => {
-    setSelectedTypes((prev) => {
-      // 이미 선택된 상태라면 제거 (해제)
+    // 내부 State가 아닌 부모에서 내려준 onToggle 실행
+    onToggle((prev) => {
       if (prev.includes(title)) {
         return prev.filter((item) => item !== title);
       }
-      // 선택되지 않았는데 3개 미만인 경우만 추가
       if (prev.length < 3) {
         return [...prev, title];
       }
-      // 3개 초과시 아무 동작 안 함 (혹은 알림창)
       return prev;
     });
   };
+
   return (
     <>
       <div className="w-[361px] mt-[46px]">
         <h1 className="typo-h1">어떤 종류의 음식을 선호하시나요?</h1>
         <h3 className="typo-h3 text-gray-500">최대 3개까지 선택해주세요</h3>
       </div>
-      {/* 음식 카테고리 카드 */}
+
       <div className="mt-11 flex flex-col gap-2">
         <div className="flex gap-2">
           <FoodTypeButton
@@ -72,7 +73,7 @@ export default function FoodType() {
           <FoodTypeButton
             image={Healthy}
             grayImage={HealthyGray}
-            title="간깅식"
+            title="건강식"
             isSelected={selectedTypes.includes("건강식")}
             onClick={() => handleToggle("건강식")}
           />
