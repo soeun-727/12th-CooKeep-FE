@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Footer from "./Footer";
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -13,5 +14,9 @@ export default function Onboarding() {
 
   //컴포넌트 배열
   const STEPS = [];
-  return <></>;
+  return (
+    <>
+      <Footer />
+    </>
+  );
 }
