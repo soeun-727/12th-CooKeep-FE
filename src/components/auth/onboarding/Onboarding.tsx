@@ -18,12 +18,14 @@ export default function Onboarding() {
   };
 
   //컴포넌트 배열
-  const STEPS = [];
+  const STEPS = [<FoodType />, <Skill />, <Goal />, <SpecificGoal />];
   return (
-    <div className="flex flex-col min-h-screen items-center">
-      <Progress currentStep={step} />
-      <SpecificGoal />
-      <Footer />
-    </div>
+    <>
+      <div className="flex flex-col min-h-screen items-center">
+        <Progress currentStep={step} />
+        <SpecificGoal />
+        <Footer />
+      </div>
+    </>
   );
 }
