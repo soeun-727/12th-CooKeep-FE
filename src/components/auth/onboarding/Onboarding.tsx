@@ -1,1 +1,17 @@
-//온보딩 컴포넌트
+import { useState } from "react";
+
+export default function Onboarding() {
+  const [step, setStep] = useState(0);
+  //응답 db 저장 로직 필요
+
+  const nextStep = () => {
+    setStep((prev) => prev + 1);
+  };
+  const prevStep = () => {
+    if (step > 0) setStep((prev) => prev - 1);
+  };
+
+  //컴포넌트 배열
+  const STEPS = [];
+  return <></>;
+}
