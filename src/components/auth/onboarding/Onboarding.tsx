@@ -62,10 +62,11 @@ export default function Onboarding() {
   return (
     <>
       <AuthHeader />
-      <div className="flex flex-col min-h-screen items-center relative pb-32">
-        <Progress currentStep={step} />
-        <div className="w-full flex flex-col items-center justify-center">
-          {/* 배열 방식 대신 switch나 조건부 렌더링 사용 */}
+
+      <div className="min-h-screen relative pb-32">
+        <div className="w-[352px] mx-auto flex flex-col items-center">
+          <Progress currentStep={step} />
+
           {step === 0 && (
             <FoodType selectedTypes={foodTypes} onToggle={setFoodTypes} />
           )}
@@ -83,7 +84,6 @@ export default function Onboarding() {
             />
           )}
         </div>
-
         <Footer
           onNext={nextStep}
           onPrev={prevStep}
