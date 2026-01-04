@@ -17,7 +17,7 @@ export default function Footer({
 }: FooterProps) {
   return (
     <div className="fixed bottom-0 left-0 w-full pb-[34px]">
-      <div className="w-[352px] mx-auto flex flex-col items-center gap-2">
+      <div className="w-[361px] mx-auto flex flex-col items-center gap-2">
         <Button
           size="S"
           className="bg-[var(--color-green-deep)]"

@@ -64,7 +64,7 @@ export default function Onboarding() {
       <AuthHeader />
 
       <div className="min-h-screen relative pb-32">
-        <div className="w-[352px] mx-auto flex flex-col items-center">
+        <div className="w-[361px] mx-auto flex flex-col items-center">
           <Progress currentStep={step} />
 
           {step === 0 && (
