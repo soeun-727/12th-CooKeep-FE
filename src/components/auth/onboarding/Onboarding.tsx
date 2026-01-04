@@ -3,6 +3,7 @@ import Footer from "./Footer";
 import Progress from "./Progress";
 import FoodType from "./FoodType";
 import Skill from "./Skill";
+import Goal from "./Goal";
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -20,7 +21,7 @@ export default function Onboarding() {
   return (
     <div className="flex flex-col min-h-screen items-center">
       <Progress currentStep={step} />
-      <FoodType />
+      <Goal />
       <Footer />
     </div>
   );
