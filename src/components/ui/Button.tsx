@@ -20,12 +20,12 @@ const Button: React.FC<ButtonProps> = ({
   type = "button",
 }) => {
   const sizeStyles: Record<ButtonSize, string> = {
-    S: "h-[38px] text-sm",
+    S: "h-[44px] text-sm",
     L: "h-[56px] text-base",
   };
 
   const baseStyle = `
-    w-[244px]
+    w-[361px]
     rounded-[10px]
     flex items-center justify-center
     gap-2
