@@ -18,7 +18,7 @@ const SkillButton: React.FC<SkillButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-[361px] h-[72px] border-1 rounded-md px-2 ${
+      className={`w-[361px] h-[72px] border rounded-md px-2 ${
         isSelected
           ? "border-[var(--color-green-deep)] bg-[#E6FBEB]"
           : "border-[#D1D1D1] bg-white"

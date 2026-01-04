@@ -20,7 +20,7 @@ export default function Onboarding() {
   return (
     <div className="flex flex-col min-h-screen items-center">
       <Progress currentStep={step} />
-      <Skill />
+      <FoodType />
       <Footer />
     </div>
   );
