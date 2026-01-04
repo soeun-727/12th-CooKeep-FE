@@ -1,5 +1,8 @@
 import { useState } from "react";
 import Footer from "./Footer";
+import Progress from "./Progress";
+import FoodType from "./FoodType";
+import Skill from "./Skill";
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -15,8 +18,10 @@ export default function Onboarding() {
   //컴포넌트 배열
   const STEPS = [];
   return (
-    <>
+    <div className="flex flex-col min-h-screen items-center">
+      <Progress currentStep={step} />
+      <Skill />
       <Footer />
-    </>
+    </div>
   );
 }

@@ -6,7 +6,7 @@ const Progress = ({ currentStep }) => {
   const progressWidth = ((currentStep + 1) / totalSteps) * 100;
 
   return (
-    <div className="flex flex-col justify-center items-center mt-[147px]">
+    <div className="mt-[147px]">
       {/* 바 컨테이너 */}
       <div className="w-[361px] h-1 bg-gray-300 rounded-full overflow-hidden">
         {/* 실제 채워지는 게이지 */}
