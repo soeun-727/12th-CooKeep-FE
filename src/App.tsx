@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
-import InitialPage from "./pages/auth/InitialPage";
+// import InitialPage from "./pages/auth/InitialPage";
 import LoginPage from "./pages/auth/LoginPage";
+import SignupPage from "./pages/auth/SignupPage";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
     <AppLayout>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
       </Routes>
     </AppLayout>
   );
