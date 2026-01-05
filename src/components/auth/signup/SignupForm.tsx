@@ -3,7 +3,6 @@ import PhoneSection from "./PhoneSection";
 import AccountSection from "./AccountSection";
 import SuccessSection from "./SuccessSection";
 
-// -------------------- Types --------------------
 interface Agreements {
   terms: boolean;
   privacy: boolean;
@@ -11,9 +10,7 @@ interface Agreements {
   marketing: boolean;
 }
 
-// -------------------- Component --------------------
 export default function SignupForm() {
-  // ---------- 상태 ----------
   const [isFinished, setIsFinished] = useState(false); // 가입 완료 여부
   const [serverError, setServerError] = useState<string | undefined>(undefined);
 
@@ -35,7 +32,6 @@ export default function SignupForm() {
     marketing: false,
   });
 
-  // ---------- Validation ----------
   const isPhoneValid = /^01[0-9]{8,9}$/.test(phone.replace(/-/g, ""));
   const isPasswordValid =
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
@@ -45,7 +41,6 @@ export default function SignupForm() {
   const isSignupEnabled =
     isVerified && isPasswordValid && isPasswordMatch && isRequiredAgreed;
 
-  // ---------- Handlers (UI용) ----------
   const handleSendCode = () => {
     if (!isPhoneValid) {
       setServerError("올바른 전화번호를 입력해주세요.");
@@ -77,7 +72,7 @@ export default function SignupForm() {
     setAgreements({ ...agreements, ...next });
   };
 
-  // ---------- 조건부 렌더링 ----------
+  // 가입성공시
   if (isFinished) return <SuccessSection />;
 
   return (

@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import Button from "../../ui/Button";
+import TextField from "../../ui/TextField";
+import PhoneAuthModal from "./PhoneAuthModal";
+import { useNavigate } from "react-router-dom";
 
 interface PhoneSectionProps {
   phone: string;
@@ -18,37 +22,31 @@ export default function PhoneSection({
   onVerifyCode,
 }: PhoneSectionProps) {
   const [code, setCode] = useState("");
-  const [codeError, setCodeError] = useState<string | undefined>(undefined);
-  const [timeLeft, setTimeLeft] = useState(180); // 3분 타이머
+  const [codeError, setCodeError] = useState<string | undefined>();
+  const [timeLeft, setTimeLeft] = useState(180);
   const [timerActive, setTimerActive] = useState(false);
 
+  type ModalType = "send" | "verify" | "already" | "help";
+  const [modalType, setModalType] = useState<ModalType | null>(null);
+
   const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
-  const isCodeValid = code.length === 6;
 
-  // 타이머 시작: 인증번호 발송 후
-  useEffect(() => {
-    if (!isCodeSent || isVerified) {
-      const t = setTimeout(() => setTimerActive(false), 0); // 비동기 처리
-      return () => clearTimeout(t);
-    }
+  const navigate = useNavigate();
 
-    const t = setTimeout(() => {
-      setTimeLeft(300); // 초기화
-      setTimerActive(true);
-    }, 0);
-
-    return () => clearTimeout(t);
-  }, [isCodeSent, isVerified]);
-
-  // 타이머 카운트다운
+  // 타이머
   useEffect(() => {
     if (!timerActive) return;
-    if (timeLeft <= 0) {
-      const t = setTimeout(() => setTimerActive(false), 0); // 비동기 처리
-      return () => clearTimeout(t);
-    }
 
-    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    const timer = setTimeout(() => {
+      if (timeLeft <= 1) {
+        setTimerActive(false);
+        setTimeLeft(0);
+        setCodeError("인증번호가 만료되었습니다");
+      } else {
+        setTimeLeft(timeLeft - 1);
+      }
+    }, 1000);
+
     return () => clearTimeout(timer);
   }, [timeLeft, timerActive]);
 
@@ -60,101 +58,153 @@ export default function PhoneSection({
     return `${m}:${s}`;
   };
 
-  const handleResend = () => {
-    onSendCode();
+  const handleSendCode = () => {
+    const alreadySignedUp = false;
+
+    if (alreadySignedUp) {
+      setModalType("already");
+      return;
+    }
+
+    // 🔥 기존 인증 완전 무효화
     setCode("");
     setCodeError(undefined);
+
+    // 🔥 타이머 리셋
     setTimeLeft(180);
+    setTimerActive(false);
     setTimerActive(true);
+
+    onSendCode();
+    setModalType("send");
   };
 
+  const handleVerify = () => {
+    if (timeLeft === 0) {
+      setCodeError("인증번호가 만료되었습니다");
+      return;
+    }
+
+    if (code.length !== 6) {
+      setCodeError("인증번호를 다시 입력해 주세요");
+      return;
+    }
+
+    setCodeError(undefined);
+    setModalType("verify");
+  };
+
+  const handleResend = () => handleSendCode();
+
   return (
-    <div className="space-y-3">
-      {/* 휴대폰 입력 + 버튼 */}
+    <div className="pt-[241px] w-[352px] mx-auto">
+      {/* 전화번호 입력 + 발송 버튼 */}
       <div className="relative w-[361px]">
-        <div className="typo-h1">로그인</div>
-        <div className="relative">
-          <input
-            type="tel"
-            placeholder="01012345678"
+        <div className="typo-h1">휴대폰 인증</div>
+        <div className="relative mt-[12px]">
+          <TextField
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full h-[48px] border border-[#D1D1D1] rounded-[6px] pr-[122px] px-3"
+            onChange={setPhone}
+            placeholder="휴대폰 번호(- 없이 숫자만 입력)"
             disabled={isVerified}
-          />
-          <div className="absolute inset-y-0 right-2 flex items-center">
-            <button
-              type="button"
-              onClick={onSendCode}
-              disabled={!isPhoneValid || isCodeSent || isVerified}
-              className={`w-[102px] h-[24px] rounded-full text-xs font-normal text-white
-                ${
-                  isPhoneValid && !isCodeSent && !isVerified
-                    ? "bg-[#202020] border-[#202020]"
-                    : "bg-[#7D7D7D] border-[#7D7D7D]"
-                }
-                disabled:cursor-not-allowed
-              `}
-            >
-              인증번호 발송
-            </button>
-          </div>
-        </div>
-        {!isPhoneValid && phone && (
-          <p className="text-xs text-red-500 mt-1 text-left">
-            올바른 휴대폰 번호를 입력해주세요.
-          </p>
-        )}
-      </div>
-
-      {/* 인증번호 입력 + 인증 확인 + 타이머 + 재발송 */}
-      <div className="space-y-2 w-[361px]">
-        <label className="block text-sm font-medium mb-1">인증번호 입력</label>
-        <input
-          type="text"
-          placeholder="6자리 인증번호"
-          value={code}
-          onChange={(e) => {
-            setCode(e.target.value);
-            if (codeError) setCodeError(undefined);
-          }}
-          className="w-full h-[48px] border border-[#D1D1D1] rounded-[6px] px-3 py-2"
-          disabled={!isCodeSent || isVerified}
-        />
-        {codeError && <p className="text-xs text-red-500">{codeError}</p>}
-
-        <button
-          type="button"
-          onClick={() => {
-            if (!isCodeValid) {
-              setCodeError("6자리 숫자를 입력해주세요.");
-            } else {
-              onVerifyCode(code);
-              setCodeError(undefined);
+            errorMessage={
+              !isPhoneValid && phone
+                ? "휴대폰 번호를 다시 확인해주세요"
+                : undefined
             }
-          }}
-          disabled={!isCodeSent || !isCodeValid || isVerified}
-          className={`w-full h-[40px] rounded-md text-white
-            ${
-              isCodeSent && isCodeValid && !isVerified
-                ? "bg-[#202020]"
-                : "bg-[#7D7D7D]"
-            } disabled:cursor-not-allowed`}
-        >
-          인증 확인 {isCodeSent && !isVerified && `(${formatTime(timeLeft)})`}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleResend}
-          disabled={timeLeft > 0 || !isCodeSent || isVerified}
-          className="w-full h-[32px] text-xs text-blue-500 underline disabled:text-gray-300"
-        >
-          인증번호 재발송
-        </button>
+            rightIcon={
+              !isVerified && (
+                <button
+                  type="button"
+                  onClick={isCodeSent ? handleResend : handleSendCode}
+                  disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
+                  className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
+          ${
+            isPhoneValid && !(isCodeSent && timeLeft > 0)
+              ? "bg-[#202020] border-[#202020]"
+              : "bg-[#C3C3C3] border-[#C3C3C3]"
+          }
+          disabled:cursor-not-allowed
+        `}
+                >
+                  {isCodeSent ? "인증번호 재발송" : "인증번호 발송"}
+                </button>
+              )
+            }
+          />
+        </div>
       </div>
 
-      {isVerified && <p className="text-green-500 font-medium">인증 완료 ✅</p>}
+      {/* 인증번호 입력 + 인증 확인 버튼 */}
+      {!isVerified && (
+        <div className="mt-[22px] w-[361px]">
+          <TextField
+            value={code}
+            onChange={(value) => {
+              const onlyNumber = value.replace(/[^0-9]/g, "");
+              setCode(onlyNumber);
+
+              if (!onlyNumber) {
+                setCodeError(undefined);
+              } else if (onlyNumber.length !== 6) {
+                setCodeError("인증번호를 다시 입력해 주세요");
+              } else {
+                setCodeError(undefined);
+              }
+            }}
+            placeholder="인증번호 입력"
+            disabled={!isCodeSent || isVerified}
+            errorMessage={codeError}
+          />
+
+          <Button
+            size="S"
+            disabled={
+              !isCodeSent || isVerified || timeLeft === 0 || code.length !== 6
+            }
+            onClick={handleVerify}
+            className="mt-[48px]"
+          >
+            <span className="typo-button">
+              인증 확인{" "}
+              {isCodeSent && !isVerified && `(${formatTime(timeLeft)})`}
+            </span>
+          </Button>
+          <button
+            type="button"
+            onClick={() => setModalType("help")}
+            className="
+    mt-3
+    w-[361px]
+    typo-caption
+    text-[#7D7D7D]
+    text-center
+    underline
+    cursor-pointer
+    bg-transparent
+  "
+          >
+            인증 번호가 발송되지 않나요?
+          </button>
+        </div>
+      )}
+
+      {/* 모달 (화면 암전 없이, 발송/인증 확인 분기) */}
+      {modalType && (
+        <PhoneAuthModal
+          type={modalType}
+          phone={phone}
+          onConfirm={() => {
+            if (modalType === "verify") {
+              onVerifyCode(code);
+            }
+            setModalType(null);
+          }}
+          onLogin={() => {
+            navigate("/login");
+          }}
+        />
+      )}
     </div>
   );
 }
