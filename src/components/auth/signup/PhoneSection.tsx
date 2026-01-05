@@ -3,24 +3,12 @@ import Button from "../../ui/Button";
 import TextField from "../../ui/TextField";
 import PhoneAuthModal from "./PhoneAuthModal";
 import { useNavigate } from "react-router-dom";
+import { useSignupStore } from "../../../stores/useSignupStore";
 
-interface PhoneSectionProps {
-  phone: string;
-  setPhone: (value: string) => void;
-  isCodeSent: boolean;
-  isVerified: boolean;
-  onSendCode: () => void;
-  onVerifyCode: (code: string) => void;
-}
+export default function PhoneSection() {
+  const { phone, setPhone, isCodeSent, isVerified, sendCode, verifyCode } =
+    useSignupStore();
 
-export default function PhoneSection({
-  phone,
-  setPhone,
-  isCodeSent,
-  isVerified,
-  onSendCode,
-  onVerifyCode,
-}: PhoneSectionProps) {
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | undefined>();
   const [timeLeft, setTimeLeft] = useState(180);
@@ -66,20 +54,20 @@ export default function PhoneSection({
       return;
     }
 
-    // 🔥 기존 인증 완전 무효화
+    // 기존 인증 완전 무효화
     setCode("");
     setCodeError(undefined);
 
-    // 🔥 타이머 리셋
-    setTimeLeft(180);
+    // 타이머 리셋
+    setTimeLeft(300);
     setTimerActive(false);
     setTimerActive(true);
 
-    onSendCode();
+    sendCode();
     setModalType("send");
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (timeLeft === 0) {
       setCodeError("인증번호가 만료되었습니다");
       return;
@@ -90,8 +78,13 @@ export default function PhoneSection({
       return;
     }
 
-    setCodeError(undefined);
-    setModalType("verify");
+    const success = await verifyCode(code); // 이건 인증 결과만 반환
+    if (success) {
+      setCodeError(undefined);
+      setModalType("verify"); // 모달 띄우기
+    } else {
+      setCodeError("인증번호를 다시 입력해 주세요");
+    }
   };
 
   const handleResend = () => handleSendCode();
@@ -196,7 +189,7 @@ export default function PhoneSection({
           phone={phone}
           onConfirm={() => {
             if (modalType === "verify") {
-              onVerifyCode(code);
+              useSignupStore.getState().setIsVerified(true); // Zustand에서 직접 set
             }
             setModalType(null);
           }}

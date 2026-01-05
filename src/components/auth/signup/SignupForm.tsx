@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PhoneSection from "./PhoneSection";
 import AccountSection from "./AccountSection";
 import SuccessSection from "./SuccessSection";
+import { useSignupStore } from "../../../stores/useSignupStore";
 
 interface Agreements {
   terms: boolean;
@@ -11,13 +12,11 @@ interface Agreements {
 }
 
 export default function SignupForm() {
-  const [isFinished, setIsFinished] = useState(false); // 가입 완료 여부
-  const [serverError, setServerError] = useState<string | undefined>(undefined);
+  const [isFinished, setIsFinished] = useState(false);
+  const [serverError, setServerError] = useState<string | undefined>();
 
-  // 전화 인증
-  const [phone, setPhone] = useState("");
-  const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  // 전화 인증 결과만 구독
+  const isVerified = useSignupStore((s) => s.isVerified);
 
   // 계정 정보
   const [email, setEmail] = useState("");
@@ -32,32 +31,15 @@ export default function SignupForm() {
     marketing: false,
   });
 
-  const isPhoneValid = /^01[0-9]{8,9}$/.test(phone.replace(/-/g, ""));
   const isPasswordValid =
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
+
   const isPasswordMatch = password === passwordConfirm;
   const isRequiredAgreed =
     agreements.terms && agreements.privacy && agreements.age;
+
   const isSignupEnabled =
     isVerified && isPasswordValid && isPasswordMatch && isRequiredAgreed;
-
-  const handleSendCode = () => {
-    if (!isPhoneValid) {
-      setServerError("올바른 전화번호를 입력해주세요.");
-      return;
-    }
-    setIsCodeSent(true);
-    setServerError(undefined);
-  };
-
-  const handleVerifyCode = (code: string) => {
-    if (code.length === 6) {
-      setIsVerified(true);
-      setServerError(undefined);
-    } else {
-      setServerError("인증번호가 올바르지 않습니다.");
-    }
-  };
 
   const handleSubmit = () => {
     if (!isSignupEnabled) {
@@ -65,26 +47,19 @@ export default function SignupForm() {
       return;
     }
     setServerError(undefined);
-    setIsFinished(true); // 가입 완료 화면
+    setIsFinished(true);
   };
 
   const updateAgreements = (next: Partial<Agreements>) => {
     setAgreements({ ...agreements, ...next });
   };
 
-  // 가입성공시
   if (isFinished) return <SuccessSection />;
 
   return (
     <div className="flex flex-col gap-4">
-      <PhoneSection
-        phone={phone}
-        setPhone={setPhone}
-        isCodeSent={isCodeSent}
-        isVerified={isVerified}
-        onSendCode={handleSendCode}
-        onVerifyCode={handleVerifyCode}
-      />
+      {/* ✅ props 없이 */}
+      <PhoneSection />
 
       {isVerified && (
         <>
@@ -101,7 +76,6 @@ export default function SignupForm() {
             isSignupEnabled={isSignupEnabled}
           />
 
-          {/* 서버 에러 메시지 (UI 확인용) */}
           {serverError && (
             <p className="text-red-500 text-sm text-center mt-2">
               {serverError}
