@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
+import { AGREEMENTS } from "../../../constants/agreements";
+import { useSignupStore } from "../../../stores/useSignupStore";
+import phoneIcon from "../../../assets/login/phone.svg";
+import mailIcon from "../../../assets/signup/mail.svg";
+import pwIcon from "../../../assets/login/key.svg";
+import pwImage from "../../../assets/login/pw.svg";
+import openpwImage from "../../../assets/signup/openpw.svg";
+import checkIcon from "../../../assets/signup/check.svg";
+import arrowIcon from "../../../assets/signup/arrowright.svg";
 
-// -------------------- Types --------------------
 interface Agreements {
   terms: boolean;
   privacy: boolean;
-  age: boolean;
   marketing: boolean;
+  policy: boolean;
 }
 
 interface AccountSectionProps {
@@ -29,33 +37,6 @@ interface AgreementItem {
   content: string;
 }
 
-// -------------------- 약관 전문 --------------------
-const AGREEMENTS: AgreementItem[] = [
-  {
-    key: "terms",
-    label: "서비스 이용 약관 (필수)",
-    content: `서비스 이용 약관 전문입니다.
-여기에 약관 내용을 길게 넣어도 됩니다.`,
-  },
-  {
-    key: "privacy",
-    label: "개인정보 수집 및 이용 동의 (필수)",
-    content: `개인정보 처리방침 전문입니다.
-스크롤이 자동으로 적용됩니다.`,
-  },
-  {
-    key: "age",
-    label: "만 14세 이상입니다 (필수)",
-    content: `본인은 만 14세 이상임을 확인합니다.`,
-  },
-  {
-    key: "marketing",
-    label: "마케팅 활용 및 광고 수신 동의 (선택)",
-    content: `마케팅 정보 수신에 대한 내용입니다.`,
-  },
-];
-
-// -------------------- Component --------------------
 export default function AccountSection({
   email,
   setEmail,
@@ -70,124 +51,212 @@ export default function AccountSection({
 }: AccountSectionProps) {
   const [modal, setModal] = useState<AgreementItem | null>(null);
 
+  // Zustand에서 인증 완료된 번호 가져오기
+  const phoneNumber = useSignupStore((state) => state.phone);
+  const isPhoneVerified = useSignupStore((state) => state.isVerified);
+
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isPasswordValid =
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
   const isPasswordMatch = password === passwordConfirm;
-
   const isAllChecked = Object.values(agreements).every(Boolean);
 
+  // 각 입력창별로 비밀번호 표시 여부
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+  // 아이콘 결정 함수
+  const getPasswordIcon = () => {
+    if (password && passwordConfirm && isPasswordMatch) return checkIcon;
+    return showPassword ? openpwImage : pwImage;
+  };
+
+  const getPasswordConfirmIcon = () => {
+    if (password && passwordConfirm && isPasswordMatch) return checkIcon;
+    return showPasswordConfirm ? openpwImage : pwImage;
+  };
+
   return (
-    <div className="space-y-4">
-      {/* 이메일 */}
-      <TextField
-        label="이메일"
-        value={email}
-        onChange={setEmail}
-        errorMessage={
-          email && !isEmailValid ? "올바른 이메일을 입력해주세요." : undefined
-        }
-      />
+    <div className="pt-[99px] mx-auto">
+      {/* 1pt-161px로 해야할지 모르겠다.. */}
 
-      {/* 비밀번호 */}
-      <TextField
-        label="비밀번호"
-        type="password"
-        value={password}
-        onChange={setPassword}
-        placeholder="영문+숫자 8자 이상"
-        errorMessage={
-          password && !isPasswordValid
-            ? "영문과 숫자를 포함한 8자 이상이어야 합니다."
-            : undefined
-        }
-      />
+      {/* 제목 */}
+      <div className="typo-h1">회원가입</div>
+      <div className="mx-auto mt-[12px]">
+        {/* 휴대폰 번호 */}
 
-      {/* 비밀번호 확인 */}
-      <TextField
-        label="비밀번호 확인"
-        type="password"
-        value={passwordConfirm}
-        onChange={setPasswordConfirm}
-        errorMessage={
-          passwordConfirm && !isPasswordMatch
-            ? "비밀번호가 일치하지 않습니다."
-            : undefined
-        }
-      />
-
-      {/* 약관 영역 */}
-      <div className="pt-2 space-y-3">
-        {/* 전체 동의 */}
-        <label className="flex items-center gap-2 font-semibold text-sm border-b pb-2">
-          <input
-            type="checkbox"
-            checked={isAllChecked}
-            onChange={(e) =>
-              updateAgreements({
-                terms: e.target.checked,
-                privacy: e.target.checked,
-                age: e.target.checked,
-                marketing: e.target.checked,
-              })
+        <TextField
+          value={phoneNumber}
+          placeholder="휴대폰 번호(- 없이 숫자만 입력)"
+          onChange={() => {}}
+          disabled
+          leftIcon={<img src={phoneIcon} alt="휴대폰 아이콘" />}
+        />
+        <div className="mt-[22px]">
+          {/* 이메일 */}
+          <TextField
+            value={email}
+            onChange={setEmail}
+            placeholder="이메일 주소 입력"
+            errorMessage={
+              email && !isEmailValid
+                ? "이메일 주소를 다시 확인해 주세요"
+                : undefined
             }
+            successMessage={
+              email && isEmailValid ? "사용 가능한 이메일입니다" : undefined
+            }
+            leftIcon={<img src={mailIcon} alt="메일 아이콘" />}
           />
-          약관 전체동의
-        </label>
 
-        {/* 개별 약관 */}
-        {AGREEMENTS.map((item) => (
-          <div
-            key={item.key}
-            className="flex items-center justify-between text-sm"
-          >
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={agreements[item.key]}
-                onChange={(e) =>
-                  updateAgreements({ [item.key]: e.target.checked })
+          {/* 비밀번호 */}
+          <div className="mt-[22px]">
+            <TextField
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={setPassword}
+              placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
+              errorMessage={
+                password && !isPasswordValid
+                  ? "영문, 숫자 포함 8자 이상의 비밀번호를 사용해 주세요"
+                  : undefined
+              }
+              successMessage={
+                password && isPasswordValid
+                  ? "사용 가능한 비밀번호입니다"
+                  : undefined
+              }
+              leftIcon={<img src={pwIcon} alt="" />}
+              rightIcon={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="flex items-center justify-center h-full"
+                >
+                  <img src={getPasswordIcon()} alt="비밀번호 아이콘" />
+                </button>
+              }
+            />
+
+            {/* 비밀번호 확인 */}
+            <div className="mt-[22px]">
+              <TextField
+                type={showPasswordConfirm ? "text" : "password"}
+                value={passwordConfirm}
+                onChange={setPasswordConfirm}
+                placeholder="비밀번호 확인"
+                errorMessage={
+                  passwordConfirm && !isPasswordMatch
+                    ? "비밀번호가 일치하지 않습니다"
+                    : undefined
+                }
+                successMessage={
+                  passwordConfirm && isPasswordMatch
+                    ? "비밀번호가 일치합니다"
+                    : undefined
+                }
+                leftIcon={<img src={pwIcon} alt="" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                    className="flex items-center justify-center h-full"
+                  >
+                    <img
+                      src={getPasswordConfirmIcon()}
+                      alt="비밀번호 확인 아이콘"
+                    />
+                  </button>
                 }
               />
-              {item.label}
-            </label>
-            <button
-              type="button"
-              className="text-xs text-gray-400 underline"
-              onClick={() => setModal(item)}
-            >
-              자세히
-            </button>
-          </div>
-        ))}
-      </div>
 
-      {/* 회원가입 버튼 */}
-      <Button
-        type="submit"
-        size="L"
-        disabled={!isSignupEnabled}
-        onClick={onSubmit}
-      >
-        회원가입
-      </Button>
+              {/* 약관 영역 */}
+              <div className=" mt-5">
+                {/* 전체 동의 */}
+                <label className="flex items-center gap-2 px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-[#1FC16F]" // 체크 시 색상 적용
+                    checked={isAllChecked}
+                    onChange={(e) =>
+                      updateAgreements({
+                        terms: e.target.checked,
+                        privacy: e.target.checked,
+                        marketing: e.target.checked,
+                        policy: e.target.checked,
+                      })
+                    }
+                  />
+                  <span className="typo-label">약관 전체동의</span>
+                </label>
 
-      {/* 약관 모달 */}
-      {modal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white w-[90%] max-w-md h-[70%] rounded-lg p-4 flex flex-col">
-            <h2 className="font-bold text-base mb-3">{modal.label}</h2>
+                {/* 개별 약관 박스 */}
+                <div className="w-full h-[138px] p-3 flex flex-col gap-3 ">
+                  {AGREEMENTS.map((item) => (
+                    <div
+                      key={item.key}
+                      className="flex items-center justify-between w-[337px] h-[24px] mx-auto"
+                    >
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className={`w-4 h-4 accent-[#7D7D7D]`}
+                          checked={agreements[item.key]}
+                          onChange={(e) =>
+                            updateAgreements({ [item.key]: e.target.checked })
+                          }
+                        />
+                        <span className="typo-label text-[#7D7D7D]">
+                          {item.label}
+                        </span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setModal(item)}
+                        className="w-6 h-3 flex items-center justify-center"
+                      >
+                        <img src={arrowIcon} alt="약관 보기 화살표" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <div className="flex-1 overflow-y-auto text-sm whitespace-pre-wrap mb-4">
-              {modal.content}
+              {/* 회원가입 버튼 */}
+              <div className="mt-[22px]">
+                <Button
+                  type="submit"
+                  size="L"
+                  disabled={!isSignupEnabled || !isPhoneVerified}
+                  onClick={onSubmit}
+                  className=" mt-[8px] "
+                >
+                  회원가입
+                </Button>
+
+                {/* 약관 모달 */}
+                {modal && (
+                  <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white w-[90%] max-w-md h-[70%] rounded-lg p-4 flex flex-col">
+                      <h2 className="font-bold text-base mb-3">
+                        {modal.label}
+                      </h2>
+
+                      <div className="flex-1 overflow-y-auto text-sm whitespace-pre-wrap mb-4">
+                        {modal.content}
+                      </div>
+
+                      <Button size="L" onClick={() => setModal(null)}>
+                        확인
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-
-            <Button size="L" onClick={() => setModal(null)}>
-              확인
-            </Button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

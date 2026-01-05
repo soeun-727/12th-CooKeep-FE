@@ -7,8 +7,8 @@ import { useSignupStore } from "../../../stores/useSignupStore";
 interface Agreements {
   terms: boolean;
   privacy: boolean;
-  age: boolean;
   marketing: boolean;
+  policy: boolean;
 }
 
 export default function SignupForm() {
@@ -27,8 +27,8 @@ export default function SignupForm() {
   const [agreements, setAgreements] = useState<Agreements>({
     terms: false,
     privacy: false,
-    age: false,
     marketing: false,
+    policy: false,
   });
 
   const isPasswordValid =
@@ -36,7 +36,7 @@ export default function SignupForm() {
 
   const isPasswordMatch = password === passwordConfirm;
   const isRequiredAgreed =
-    agreements.terms && agreements.privacy && agreements.age;
+    agreements.terms && agreements.privacy && agreements.policy;
 
   const isSignupEnabled =
     isVerified && isPasswordValid && isPasswordMatch && isRequiredAgreed;
@@ -58,8 +58,7 @@ export default function SignupForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ✅ props 없이 */}
-      <PhoneSection />
+      {!isVerified && <PhoneSection />}
 
       {isVerified && (
         <>
