@@ -1,10 +1,12 @@
 import React from "react";
 
 type ButtonSize = "S" | "L";
+type ButtonVariant = "black" | "green";
 
 interface ButtonProps {
   children: React.ReactNode;
   size?: ButtonSize;
+  variant?: ButtonVariant;
   disabled?: boolean;
   onClick?: () => void;
   className?: string;
@@ -14,26 +16,29 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({
   children,
   size = "S",
+  variant = "black",
   disabled = false,
   onClick,
   className = "",
   type = "button",
 }) => {
   const sizeStyles = {
-    S: "h-[38px] px-6 text-sm",
-    L: "h-[56px] px-8 text-base",
+    S: "w-[361px] h-[44px] px-[101px]",
+    L: "w-[361px] h-[56px] px-[101px]",
   };
 
   const baseStyle = `
-    w-[244px]
+    flex items-center justify-center gap-2
     rounded-[10px]
-    flex items-center justify-center
-    gap-2
     transition
   `;
 
-  const enabledStyle = "bg-[#111111] text-white";
-  const disabledStyle = "bg-[#7D7D7D] text-white cursor-not-allowed";
+  const variantStyles = {
+    black: "bg-[#111111] text-white",
+    green: "bg-[#1FC16F] text-white",
+  };
+
+  const disabledStyle = "bg-[#C3C3C3] text-white cursor-not-allowed";
 
   return (
     <button
@@ -43,7 +48,8 @@ const Button: React.FC<ButtonProps> = ({
       className={`
         ${baseStyle}
         ${sizeStyles[size]}
-        ${disabled ? disabledStyle : enabledStyle}
+        ${disabled ? disabledStyle : variantStyles[variant]}
+        button-text
         ${className}
       `}
     >
