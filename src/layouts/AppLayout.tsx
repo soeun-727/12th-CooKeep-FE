@@ -9,7 +9,7 @@ export default function AppLayout({ children }: Props) {
         className="
           w-full
           max-w-[450px]
-        bg-white
+        bg-[#FAFAFA]
           min-h-[100dvh]
         "
       >
