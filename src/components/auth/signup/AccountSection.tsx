@@ -11,6 +11,7 @@ import openpwImage from "../../../assets/signup/openpw.svg";
 import checkIcon from "../../../assets/signup/check.svg";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
 import AgreementPage from "./AgreementPage";
+import type { AgreementItem } from "../../../constants/agreements";
 
 interface Agreements {
   terms: boolean;
@@ -30,12 +31,7 @@ interface AccountSectionProps {
   updateAgreements: (next: Partial<Agreements>) => void;
   onSubmit: () => void;
   isSignupEnabled: boolean;
-}
-
-interface AgreementItem {
-  key: keyof Agreements;
-  label: string;
-  content: string;
+  setHideHeader: (hide: boolean) => void;
 }
 
 export default function AccountSection({
@@ -49,6 +45,7 @@ export default function AccountSection({
   updateAgreements,
   onSubmit,
   isSignupEnabled,
+  setHideHeader,
 }: AccountSectionProps) {
   const [agreementPage, setAgreementPage] = useState<AgreementItem | null>(
     null
@@ -84,11 +81,16 @@ export default function AccountSection({
         <AgreementPage
           agreement={agreementPage}
           isChecked={agreements[agreementPage.key]}
-          onBack={() => setAgreementPage(null)}
-          onAgreeChange={(key, checked) => updateAgreements({ [key]: checked })}
+          onBack={() => {
+            setAgreementPage(null);
+            setHideHeader(false);
+          }}
+          onConfirm={
+            (key) => updateAgreements({ [key]: true }) // 확인 누르면 체크
+          }
         />
       ) : (
-        <div className="pt-[99px] mx-auto">
+        <div className="pt-[107px] mx-auto">
           {/* 1pt-161px로 해야할지 모르겠다.. */}
 
           {/* 제목 */}
@@ -211,25 +213,39 @@ export default function AccountSection({
                           className="flex items-center justify-between w-[337px] h-[24px] mx-auto"
                         >
                           <label className="flex items-center gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              className={`w-4 h-4 accent-[#7D7D7D]`}
-                              checked={agreements[item.key]}
-                              onChange={(e) =>
-                                updateAgreements({
-                                  [item.key]: e.target.checked,
-                                })
-                              }
-                            />
+                            {/* 체크박스만 조건부 */}
+                            {item.key !== "policy" ? (
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 accent-[#7D7D7D]"
+                                checked={agreements[item.key]}
+                                onChange={(e) =>
+                                  updateAgreements({
+                                    [item.key]: e.target.checked,
+                                  })
+                                }
+                              />
+                            ) : (
+                              // ✔ 자리 차지용 더미 (레이아웃 유지)
+                              <span className="w-4 h-4 inline-block" />
+                            )}
+
+                            {/* 텍스트는 항상 동일 위치 */}
                             <span className="typo-label text-[#7D7D7D]">
                               {item.label}
                             </span>
                           </label>
+
+                          {/* 화살표는 항상 */}
                           <button
                             type="button"
-                            onClick={() => setAgreementPage(item)}
-                            className="w-6 h-3 flex items-center justify-center"
+                            onClick={() => {
+                              setAgreementPage(item);
+                              setHideHeader(true);
+                            }}
                           >
+                            {/* className="w-6 h-3 flex items-center justify-center" */}
+
                             <img src={arrowIcon} alt="약관 보기 화살표" />
                           </button>
                         </div>
