@@ -11,6 +11,7 @@ interface TextFieldProps {
   successMessage?: string;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  autoComplete?: string;
 }
 
 const TextField = ({
@@ -24,6 +25,7 @@ const TextField = ({
   successMessage,
   leftIcon,
   rightIcon,
+  autoComplete,
 }: TextFieldProps) => {
   return (
     <div className="w-[361px]">
@@ -43,6 +45,7 @@ const TextField = ({
           value={value}
           placeholder={placeholder}
           disabled={disabled}
+          autoComplete={autoComplete}
           onChange={(e) => onChange(e.target.value)}
           className={`
     w-full h-[48px]
@@ -69,26 +72,24 @@ const TextField = ({
         )}
       </div>
 
-      {errorMessage && (
-        <p
-          className="
+      <p
+        className={`
     mt-1
     pl-2
     text-[10px]
     leading-[14px]
-    font-normal
-    not-italic
-    text-[#D91F1F]
-  "
-        >
-          {errorMessage}
-        </p>
-      )}
-      {!errorMessage && successMessage && (
-        <p className="mt-1 pl-2 text-[10px] leading-[14px] text-[#1FA43C]">
-          {successMessage}
-        </p>
-      )}
+    min-h-[14px]
+    ${
+      errorMessage
+        ? "text-[#D91F1F]"
+        : successMessage
+        ? "text-[#1FA43C]"
+        : "text-transparent"
+    }
+  `}
+      >
+        {errorMessage || successMessage || "placeholder"}
+      </p>
     </div>
   );
 };
