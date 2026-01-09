@@ -3,7 +3,16 @@ import Logo from "../../assets/Logo_black.svg";
 
 const AuthHeader = () => {
   return (
-    <header className="fixed top-0 left-0 z-50 w-full flex items-start justify-between px-4 py-3">
+    <header
+      className="
+        fixed top-0 z-50
+        left-1/2 -translate-x-1/2
+        w-full max-w-[450px]
+        flex items-start justify-between
+        px-4 py-3
+        bg-[#FAFAFA]
+      "
+    >
       <img src={Logo} alt="CooKeep logo" className="w-[70px] h-[20px]" />
 
       <p className="flex items-center gap-[6px] typo-label">
