@@ -17,7 +17,7 @@ export default function LoginMain() {
   } = useAuthStore();
   return (
     <>
-      <div className="pt-[241px] w-[352px] mx-auto">
+      <div className="pt-[187px] w-[352px] mx-auto">
         <div className="typo-h1">로그인</div>
 
         {/* 입력 영역 */}
@@ -27,14 +27,14 @@ export default function LoginMain() {
             placeholder="휴대폰 번호(- 없이 숫자만 입력)"
             onChange={setPhoneNumber}
             errorMessage={
-              phoneNumber && !isValidPhone
+              phoneNumber.length > 0 && !isValidPhone
                 ? "잘못된 휴대폰 번호입니다"
                 : undefined
             }
             leftIcon={<img src={phoneIcon} alt="" />}
           />
 
-          <div className="mt-[22px]" />
+          <div className="mt-[5px]" />
 
           <TextField
             value={password}
@@ -42,7 +42,9 @@ export default function LoginMain() {
             type="password"
             onChange={setPassword}
             errorMessage={
-              password && !isValidPW ? "잘못된 비밀번호입니다" : undefined
+              password.length > 0 && !isValidPW
+                ? "잘못된 비밀번호입니다"
+                : undefined
             }
             leftIcon={<img src={pwIcon} alt="" />}
             rightIcon={<img src={pwImage} alt="" />}
@@ -52,7 +54,17 @@ export default function LoginMain() {
 
       {/* 버튼 */}
       <div className="mt-[48px] flex justify-center">
-        <Button size="L">로그인</Button>
+        <Button
+          size="L"
+          disabled={!canLogin}
+          onClick={() => {
+            if (canLogin) {
+              //로그인 로직 실행
+            }
+          }}
+        >
+          로그인
+        </Button>
       </div>
     </>
   );
