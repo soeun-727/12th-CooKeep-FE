@@ -3,29 +3,37 @@ import { create } from "zustand";
 interface AuthState {
   phoneNumber: string;
   password: string;
+  isValidPhone: boolean; // 함수가 아닌 boolean 값으로 변경
+  isValidPW: boolean;
+  canLogin: boolean;
   setPhoneNumber: (phone: string) => void;
   setPassword: (pw: string) => void;
-  isValidPhone: () => boolean;
-  isValidPW: () => boolean;
-  canLogin: () => boolean;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   phoneNumber: "",
   password: "",
-  //추후 구체적 로그인 로직 구현 시 수정 필요
-  setPhoneNumber: (phoneNumber) => set({ phoneNumber }),
-  setPassword: (password) => set({ password }),
+  isValidPhone: false,
+  isValidPW: false,
+  canLogin: false,
 
-  isValidPhone: () => {
-    const { phoneNumber } = get();
-    return /^01[0-9]{8,9}$/.test(phoneNumber);
+  setPhoneNumber: (phoneNumber) => {
+    const isValidPhone = /^01[0-9]{8,9}$/.test(phoneNumber);
+    set((state) => ({
+      phoneNumber,
+      isValidPhone,
+      // 폰 번호를 바꿀 때마다 로그인 가능 여부 업데이트
+      canLogin: isValidPhone && state.isValidPW,
+    }));
   },
 
-  isValidPW: () => {
-    const { password } = get();
-    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
+  setPassword: (password) => {
+    const isValidPW = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
+    set((state) => ({
+      password,
+      isValidPW,
+      // 비밀번호를 바꿀 때마다 로그인 가능 여부 업데이트
+      canLogin: state.isValidPhone && isValidPW,
+    }));
   },
-
-  canLogin: () => get().isValidPhone() && get().isValidPW(),
 }));
