@@ -15,8 +15,8 @@ export default function App() {
     <AppLayout>
       <Routes>
         {/* <Route path="/" element={<InitialPage />} /> */}
-        <Route path="/" element={<OnboardingPage />} />
-        {/* <Route path="/" element={<LoginPage />} /> */}
+        {/* <Route path="/" element={<OnboardingPage />} /> */}
+        <Route path="/" element={<LoginPage />} />
       </Routes>
     </AppLayout>
   );

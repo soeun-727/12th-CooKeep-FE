@@ -34,7 +34,7 @@ export default function LoginMain() {
             leftIcon={<img src={phoneIcon} alt="" />}
           />
 
-          <div className="mt-[22px]" />
+          <div className="mt-[5px]" />
 
           <TextField
             value={password}
