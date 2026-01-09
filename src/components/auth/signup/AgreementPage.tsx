@@ -81,8 +81,9 @@ export default function AgreementPage({
           onClick={() => {
             if (agreement.required) {
               onConfirm(agreement.key);
+            } else {
+              onBack();
             }
-            onBack();
           }}
         >
           확인

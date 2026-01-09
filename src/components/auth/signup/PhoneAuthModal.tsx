@@ -26,11 +26,11 @@ const PhoneAuthModal = ({
     <>
       {/* 배경 오버레이 */}
       <div
-        className="fixed inset-0 z-40 bg-[rgba(17,17,17,0.5)]"
+        className="fixed inset-0 z-[100] bg-[rgba(17,17,17,0.5)]"
         // onClick={onConfirm} // 배경 클릭 시 닫히게 하고 싶으면 유지
       />
       <div
-        className="fixed z-50 left-1/2 -translate-x-1/2 bg-white rounded-[10px]"
+        className="fixed z-[110] left-1/2 -translate-x-1/2 bg-white rounded-[10px]"
         style={{
           top: isHelp ? 308 : isSend ? 359 : 343,
           width: isHelp ? 256 : 240,
@@ -80,7 +80,6 @@ const PhoneAuthModal = ({
           size="S"
           onClick={isAlready ? onLogin : onConfirm}
           className={`
-    !h-[38px]
     ${isHelp ? "!w-[200px] !bg-[#202020]" : "!w-[184px] !bg-[#1FC16F]"}
   `}
         >

@@ -74,6 +74,7 @@ export default function AccountSection({
     if (password && passwordConfirm && isPasswordMatch) return checkIcon;
     return showPasswordConfirm ? openpwImage : pwImage;
   };
+  console.log("agreements", agreements);
 
   return (
     <>
@@ -85,14 +86,14 @@ export default function AccountSection({
             setAgreementPage(null);
             setHideHeader(false);
           }}
-          onConfirm={
-            (key) => updateAgreements({ [key]: true }) // 확인 누르면 체크
-          }
+          onConfirm={(key) => {
+            updateAgreements({ [key]: true });
+            setAgreementPage(null);
+            setHideHeader(false);
+          }}
         />
       ) : (
         <div className="pt-[107px] mx-auto">
-          {/* 1pt-161px로 해야할지 모르겠다.. */}
-
           {/* 제목 */}
           <div className="typo-h1">회원가입</div>
           <div className="mx-auto mt-[12px]">
@@ -105,7 +106,7 @@ export default function AccountSection({
               disabled
               leftIcon={<img src={phoneIcon} alt="휴대폰 아이콘" />}
             />
-            <div className="mt-[22px]">
+            <div className="mt-[5px]">
               {/* 이메일 */}
               <TextField
                 value={email}
@@ -123,7 +124,7 @@ export default function AccountSection({
               />
 
               {/* 비밀번호 */}
-              <div className="mt-[22px]">
+              <div className="mt-[5px]">
                 <TextField
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -152,7 +153,7 @@ export default function AccountSection({
                 />
 
                 {/* 비밀번호 확인 */}
-                <div className="mt-[22px]">
+                <div className="mt-[5px]">
                   <TextField
                     type={showPasswordConfirm ? "text" : "password"}
                     value={passwordConfirm}
