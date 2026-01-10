@@ -21,8 +21,7 @@ export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [error, setError] = useState<string | undefined>();
-  const [isSuccess, setIsSuccess] = useState(false); // ✅ 성공 팝업 상태
-
+  const [isSuccess, setIsSuccess] = useState(false);
   const validatePassword = (pw: string) =>
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(pw);
 
@@ -55,101 +54,112 @@ export default function ResetPassword() {
     try {
       await resetPasswordAPI(phone, password);
       setError(undefined);
-      setIsSuccess(true); // ✅ 변경 완료 팝업 표시
-    } catch (e) {
+      setIsSuccess(true);
+    } catch {
       setError("비밀번호 변경 중 오류가 발생했습니다.");
     }
   };
 
   return (
-    <div className="pt-[200px] w-[352px] mx-auto flex flex-col gap-6 relative">
-      <div className="typo-h1 text-center">비밀번호 재설정</div>
+    <div className="pt-[241px] w-[352px] mx-auto">
+      <div className="typo-h1">비밀번호 변경하기</div>
+      <div className="mt-[12px]">
+        <TextField
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={setPassword}
+          placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
+          errorMessage={
+            password && !isPasswordValid
+              ? "영문, 숫자 포함 8자 이상의 비밀번호를 사용해 주세요"
+              : undefined
+          }
+          successMessage={
+            password && isPasswordValid
+              ? "사용 가능한 비밀번호입니다"
+              : undefined
+          }
+          leftIcon={<img src={pwIcon} alt="비밀번호 아이콘" />}
+          rightIcon={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="flex items-center justify-center h-full"
+            >
+              <img src={getPasswordIcon()} alt="비밀번호 토글 아이콘" />
+            </button>
+          }
+        />
+      </div>
 
-      <TextField
-        type={showPassword ? "text" : "password"}
-        value={password}
-        onChange={setPassword}
-        placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
-        errorMessage={
-          password && !isPasswordValid
-            ? "영문, 숫자 포함 8자 이상의 비밀번호를 사용해 주세요"
-            : undefined
-        }
-        successMessage={
-          password && isPasswordValid ? "사용 가능한 비밀번호입니다" : undefined
-        }
-        leftIcon={<img src={pwIcon} alt="비밀번호 아이콘" />}
-        rightIcon={
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="flex items-center justify-center h-full"
-          >
-            <img src={getPasswordIcon()} alt="비밀번호 토글 아이콘" />
-          </button>
-        }
-      />
-
-      <TextField
-        type={showPasswordConfirm ? "text" : "password"}
-        value={confirmPassword}
-        onChange={setConfirmPassword}
-        placeholder="비밀번호 확인"
-        errorMessage={
-          confirmPassword && !isPasswordMatch
-            ? "비밀번호가 일치하지 않습니다"
-            : undefined
-        }
-        successMessage={
-          confirmPassword && isPasswordMatch
-            ? "비밀번호가 일치합니다"
-            : undefined
-        }
-        leftIcon={<img src={pwIcon} alt="비밀번호 확인 아이콘" />}
-        rightIcon={
-          <button
-            type="button"
-            onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-            className="flex items-center justify-center h-full"
-          >
-            <img
-              src={getPasswordConfirmIcon()}
-              alt="비밀번호 확인 토글 아이콘"
-            />
-          </button>
-        }
-      />
+      <div className="mt-[5px]">
+        <TextField
+          type={showPasswordConfirm ? "text" : "password"}
+          value={confirmPassword}
+          onChange={setConfirmPassword}
+          placeholder="비밀번호 확인"
+          errorMessage={
+            confirmPassword && !isPasswordMatch
+              ? "비밀번호가 일치하지 않습니다"
+              : undefined
+          }
+          successMessage={
+            confirmPassword && isPasswordMatch
+              ? "비밀번호가 일치합니다"
+              : undefined
+          }
+          leftIcon={<img src={pwIcon} alt="비밀번호 확인 아이콘" />}
+          rightIcon={
+            <button
+              type="button"
+              onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+              className="flex items-center justify-center h-full"
+            >
+              <img
+                src={getPasswordConfirmIcon()}
+                alt="비밀번호 확인 토글 아이콘"
+              />
+            </button>
+          }
+        />
+      </div>
 
       {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
       <Button
         type="submit"
         size="L"
+        variant="green"
         disabled={!isFormValid}
         onClick={handleSubmit}
-        className={`mt-[8px] w-full ${
-          isFormValid
-            ? "!bg-[#1FC16F] text-white"
-            : "bg-[#C3C3C3] text-[#7D7D7D] cursor-not-allowed"
-        }`}
+        className="mt-[31px]"
       >
-        비밀번호 변경
+        비밀번호 재설정
       </Button>
 
-      {/* 비밀번호 변경 완료 팝업 */}
+      {/* AppLayout 영역 전체를 덮는 팝업 */}
       {isSuccess && (
-        <div className="fixed z-50 left-1/2 top-1/3 -translate-x-1/2 bg-white rounded-[10px] p-6 flex flex-col items-center gap-4 shadow-lg w-[280px]">
-          <p className="text-center text-[16px] font-medium">
-            비밀번호 변경 완료
-          </p>
-          <img src={checkIcon} alt="성공 아이콘" className="w-12 h-12" />
-          <Button
-            size="L"
-            onClick={() => navigate("/login")}
-            className="w-full bg-[#1FC16F] text-white"
-          >
-            로그인하기
-          </Button>
+        <div className="absolute inset-0 z-50 flex justify-center bg-[#FAFAFA]">
+          <div className="w-[361px] flex flex-col items-center">
+            <p className="typo-h1 text-[#202020] text-center font-bold text-[28px] leading-[36px] pt-[241px] pb-[18px]">
+              비밀번호 변경 완료
+            </p>
+            {/*중앙정렬 안하고 피그마 기준으로 pt-[241px] 이걸로 맞춤*/}
+
+            <img
+              src={checkIcon}
+              alt="성공 아이콘"
+              className="w-[40px] h-[40px]"
+            />
+            <Button
+              size="L"
+              variant="black"
+              onClick={() => navigate("/login")}
+              className="mt-[48px]"
+            >
+              로그인하기
+            </Button>
+          </div>
         </div>
       )}
     </div>

@@ -11,6 +11,7 @@ export default function AppLayout({ children }: Props) {
           max-w-[450px]
         bg-[#FAFAFA]
           min-h-[100dvh]
+          relative
         "
       >
         {children}

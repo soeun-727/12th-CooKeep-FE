@@ -7,8 +7,9 @@ import OnboardingPage from "./pages/auth/OnboardingPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import FindPage from "./pages/auth/FindPage";
+import RequireFindAuth from "./components/auth/find/RequireFindAuth";
+import FindLayout from "./components/auth/find/FindLayout";
 //signup 아직 없음
-//findpw도 아직 없음
 
 export default function App() {
   return (
@@ -18,9 +19,18 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/find" element={<FindPage />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        {/* <Route path="/findpw" element={<Find />} */}
+
+        <Route element={<FindLayout />}>
+          <Route path="/find" element={<FindPage />} />
+          <Route
+            path="/reset-password"
+            element={
+              <RequireFindAuth>
+                <ResetPassword />
+              </RequireFindAuth>
+            }
+          />
+        </Route>
       </Routes>
     </AppLayout>
   );

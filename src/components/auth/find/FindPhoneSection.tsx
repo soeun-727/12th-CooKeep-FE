@@ -86,7 +86,7 @@ export default function FindPhoneSection() {
     <div className="pt-[241px] w-[352px] mx-auto">
       {/* 전화번호 입력 */}
       <div className="relative w-[361px]">
-        <div className="typo-h1">비밀번호 찾기</div>
+        <div className="typo-h1">휴대폰 인증</div>
         <div className="relative mt-[12px]">
           <TextField
             value={phone}
@@ -101,10 +101,10 @@ export default function FindPhoneSection() {
               <button
                 type="button"
                 onClick={isCodeSent ? handleResend : handleSendCode}
-                disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
+                disabled={!isPhoneValid}
                 className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
           ${
-            isPhoneValid && !(isCodeSent && timeLeft > 0)
+            isPhoneValid
               ? "bg-[#202020] border-[#202020]"
               : "bg-[#C3C3C3] border-[#C3C3C3]"
           } disabled:cursor-not-allowed`}
@@ -117,7 +117,7 @@ export default function FindPhoneSection() {
       </div>
 
       {/* 인증번호 입력 */}
-      <div className="mt-[22px] w-[361px]">
+      <div className="mt-[5px] w-[361px]">
         <TextField
           value={code}
           onChange={(value) => {
@@ -138,7 +138,7 @@ export default function FindPhoneSection() {
           size="S"
           disabled={!isCodeSent || timeLeft === 0 || code.length !== 6}
           onClick={handleVerify}
-          className="mt-[48px]"
+          className="mt-[31px]"
         >
           <span className="typo-button">
             인증 확인 {isCodeSent && `(${formatTime(timeLeft)})`}

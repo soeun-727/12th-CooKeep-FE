@@ -10,7 +10,7 @@ export default function LoginFooter() {
     <>
       {/* 하단 메뉴 */}
       <div className="flex items-center justify-center gap-[18px] mt-[39px]">
-        <button className="typo-label" onClick={() => navigate("/findpw")}>
+        <button className="typo-label" onClick={() => navigate("/find")}>
           비밀번호 찾기
         </button>
         <img src={line} alt="구분선" />
