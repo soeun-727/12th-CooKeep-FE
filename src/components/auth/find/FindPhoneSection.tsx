@@ -3,11 +3,11 @@ import Button from "../../ui/Button";
 import TextField from "../../ui/TextField";
 import FindPhoneAuthModal from "./FindPhoneAuthModal";
 import { useNavigate } from "react-router-dom";
-import { useSignupStore } from "../../../stores/useSignupStore";
+import { useFindPasswordStore } from "../../../stores/useFindPasswordStore";
 
 export default function FindPhoneSection() {
   const { phone, setPhone, isCodeSent, sendCode, verifyCode } =
-    useSignupStore();
+    useFindPasswordStore();
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | undefined>();

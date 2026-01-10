@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useSignupStore } from "../../../stores/useSignupStore";
+import { useNavigate } from "react-router-dom";
 
 // 아이콘
 import pwIcon from "../../../assets/login/key.svg";
 import pwImage from "../../../assets/login/pw.svg";
 import openpwImage from "../../../assets/signup/openpw.svg";
 import checkIcon from "../../../assets/signup/check.svg";
+import { useFindPasswordStore } from "../../../stores/useFindPasswordStore";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const phone = location.state?.phone || useSignupStore.getState().phone;
+  const { phone, reset } = useFindPasswordStore();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -55,6 +54,7 @@ export default function ResetPassword() {
       await resetPasswordAPI(phone, password);
       setError(undefined);
       setIsSuccess(true);
+      reset(); // 플로우 종료 → store 초기화
     } catch {
       setError("비밀번호 변경 중 오류가 발생했습니다.");
     }
@@ -69,6 +69,7 @@ export default function ResetPassword() {
           value={password}
           onChange={setPassword}
           placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
+          autoComplete="new-password"
           errorMessage={
             password && !isPasswordValid
               ? "영문, 숫자 포함 8자 이상의 비밀번호를 사용해 주세요"
@@ -98,6 +99,7 @@ export default function ResetPassword() {
           value={confirmPassword}
           onChange={setConfirmPassword}
           placeholder="비밀번호 확인"
+          autoComplete="new-password"
           errorMessage={
             confirmPassword && !isPasswordMatch
               ? "비밀번호가 일치하지 않습니다"
