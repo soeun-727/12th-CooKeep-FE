@@ -1,5 +1,5 @@
 import Button from "../../ui/Button";
-
+//지금 하단 고정되어 있어요
 interface FooterProps {
   onNext: () => void;
   onPrev: () => void;

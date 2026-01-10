@@ -33,7 +33,9 @@ export default function Initial() {
       <div className="flex flex-col items-center justify-center gap-4">
         {/* 버튼 영역 */}
         <div className="mt-[385px]">
-          <Button size="L">시작하기</Button>
+          <Button size="L" onClick={() => navigate("/signup")}>
+            시작하기
+          </Button>
         </div>
 
         {/* 로그인 영역 */}
