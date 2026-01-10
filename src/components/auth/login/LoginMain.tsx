@@ -4,8 +4,10 @@ import pwIcon from "../../../assets/login/key.svg";
 import pwImage from "../../../assets/login/pw.svg";
 import Button from "../../ui/Button";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginMain() {
+  const navigate = useNavigate();
   const {
     phoneNumber,
     setPhoneNumber,
@@ -14,7 +16,20 @@ export default function LoginMain() {
     isValidPhone,
     isValidPW,
     canLogin,
+    login,
+    isSubmitting,
   } = useAuthStore();
+  const handleLogin = async () => {
+    const result = await login();
+
+    if (result?.success) {
+      if (result.isFirst) {
+        navigate("/onboarding"); // 최초 로그인 시
+      } else {
+        navigate("/main"); // 기존 사용자 시
+      }
+    }
+  };
   return (
     <>
       <div className="pt-[187px] w-[352px] mx-auto">
@@ -56,12 +71,8 @@ export default function LoginMain() {
       <div className="mt-[48px] flex justify-center">
         <Button
           size="L"
-          disabled={!canLogin}
-          onClick={() => {
-            if (canLogin) {
-              //로그인 로직 실행
-            }
-          }}
+          disabled={!canLogin || isSubmitting}
+          onClick={handleLogin}
         >
           로그인
         </Button>

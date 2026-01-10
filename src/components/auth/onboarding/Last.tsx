@@ -18,7 +18,7 @@ export default function Last({ onStart }: LastProps) {
         </div>
         <img src={temp} className="w-[184px] mt-[86px]" />
 
-        <div className="mt-[201px]">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
           <Button size="L" onClick={onStart}>
             시작하기
           </Button>
