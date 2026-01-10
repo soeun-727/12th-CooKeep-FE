@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   setPassword: (password) => {
-    const isValidPW = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
+    const isValidPW = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
     set((state) => ({
       password,
       isValidPW,
