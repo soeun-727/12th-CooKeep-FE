@@ -8,7 +8,7 @@ export default function Notification() {
   const handleFinish = () => {
     // 알림 권한 요청 로직이 들어갈 자리
     // 이후 메인 대시보드로 이동
-    navigate("/dashboard");
+    navigate("/fridge");
   };
 
   return (
@@ -27,7 +27,8 @@ export default function Notification() {
 
         <div className="flex flex-col items-center justify-center">
           <img src={temp} className="w-[184px] mt-[122px]" />
-          <div className="flex flex-col gap-2 mt-50">
+
+          <div className="flex flex-col gap-2 fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
             <Button
               size="S"
               className="!bg-[var(--color-green-deep)]"
