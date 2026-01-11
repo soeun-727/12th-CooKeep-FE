@@ -19,8 +19,15 @@ export default function Search() {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="[&_input]:border-none [&_input]:outline-none [&_input]:shadow-sm">
+    <div className="w-full max-w-[384px] p-3 flex flex-col items-center mx-auto">
+      <div
+        className="
+      [&_input]:border-none 
+      [&_input]:outline-none 
+      [&_input]:shadow-sm 
+      [&_input]:bg-[#EBEDF1] 
+      [&_input]:placeholder:text-zinc-500"
+      >
         <TextField
           value={keyword}
           type="text"

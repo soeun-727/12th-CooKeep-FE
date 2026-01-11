@@ -17,7 +17,7 @@ export default function Layout() {
   }, [location]);
 
   return (
-    <div className="bg-[#E8ECF6] min-h-screen">
+    <div className="bg-[#FAFAFA] min-h-screen">
       <MainHeader />
       <main className="pt-[102px] pb-[90px] px-5">
         <Outlet />

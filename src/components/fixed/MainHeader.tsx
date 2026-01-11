@@ -8,9 +8,9 @@ const MainHeader = () => {
       className="
         fixed top-0 z-50
         left-1/2 -translate-x-1/2
-        w-full max-w-[450px]
+        w-[400px] max-w-[450px]
         h-[102px] 
-        bg-[#E8ECF6]
+        bg-[#FAFAFA]
         px-4
       "
     >
