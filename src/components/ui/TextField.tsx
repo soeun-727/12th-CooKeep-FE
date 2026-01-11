@@ -52,6 +52,7 @@ const TextField = ({
     border
     rounded-[6px]
     px-3 py-2
+    bg-white
     disabled:bg-[#ECECEC]
     ${leftIcon ? "pl-10" : ""}
         ${rightIcon ? "pr-10" : ""}
