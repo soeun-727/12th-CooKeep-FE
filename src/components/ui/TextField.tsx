@@ -54,8 +54,9 @@ const TextField = ({
     px-3 py-2
     bg-white
     font-['Pretendard'] text-sm leading-5
-    placeholder:text-[14px] 
-    placeholder:font-normal
+    placeholder:text-sm
+    placeholder:font-medium
+    placeholder: text-stone-500
     disabled:bg-[#ECECEC]
     ${leftIcon ? "pl-10" : ""}
         ${rightIcon ? "pr-10" : ""}

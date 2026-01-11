@@ -14,13 +14,15 @@ export default function Search() {
 
   return (
     <div className="flex flex-col items-center">
-      <TextField
-        value={keyword}
-        type="text"
-        rightIcon={<img src={searchIcon} alt="search" />}
-        placeholder="찾으시는 재료가 있나요? (ex. 고구마, 초코우유...)"
-        onChange={handleSearch}
-      />
+      <div className="[&_input]:border-none [&_input]:bg-white [&_input]:shadow-sm">
+        <TextField
+          value={keyword}
+          type="text"
+          rightIcon={<img src={searchIcon} alt="search" />}
+          placeholder="찾으시는 재료가 있나요? (ex. 고구마, 초코우유...)"
+          onChange={handleSearch}
+        />
+      </div>
     </div>
   );
 }
