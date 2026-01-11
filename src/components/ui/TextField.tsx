@@ -53,6 +53,7 @@ const TextField = ({
     rounded-[6px]
     px-3 py-2
     bg-white
+    font-['Pretendard'] text-sm leading-5
     placeholder:text-[14px] 
     placeholder:font-normal
     disabled:bg-[#ECECEC]
