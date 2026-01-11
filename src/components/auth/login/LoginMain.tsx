@@ -2,9 +2,11 @@ import TextField from "../../ui/TextField";
 import phoneIcon from "../../../assets/login/phone.svg";
 import pwIcon from "../../../assets/login/key.svg";
 import pwImage from "../../../assets/login/pw.svg";
+import openpwImage from "../../../assets/login/openpw.svg";
 import Button from "../../ui/Button";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function LoginMain() {
   const navigate = useNavigate();
@@ -19,6 +21,8 @@ export default function LoginMain() {
     login,
     isSubmitting,
   } = useAuthStore();
+
+  const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async () => {
     const result = await login();
 
@@ -26,7 +30,7 @@ export default function LoginMain() {
       if (result.isFirst) {
         navigate("/onboarding"); // 최초 로그인 시
       } else {
-        navigate("/main"); // 기존 사용자 시
+        navigate("/fridge"); // 기존 사용자 시
       }
     }
   };
@@ -52,9 +56,9 @@ export default function LoginMain() {
           <div className="mt-[5px]" />
 
           <TextField
+            type={showPassword ? "text" : "password"}
             value={password}
             placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
-            type="password"
             onChange={setPassword}
             errorMessage={
               password.length > 0 && !isValidPW
@@ -62,7 +66,15 @@ export default function LoginMain() {
                 : undefined
             }
             leftIcon={<img src={pwIcon} alt="" />}
-            rightIcon={<img src={pwImage} alt="" />}
+            rightIcon={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="flex items-center justify-center h-full"
+              >
+                <img src={showPassword ? openpwImage : pwImage} alt="" />
+              </button>
+            }
           />
         </div>
       </div>
