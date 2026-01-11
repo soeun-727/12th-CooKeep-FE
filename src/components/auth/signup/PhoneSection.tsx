@@ -90,7 +90,7 @@ export default function PhoneSection() {
   const handleResend = () => handleSendCode();
 
   return (
-    <div className="pt-[187px] w-[352px] mx-auto">
+    <div className="pt-[241px] w-[352px] mx-auto">
       {/* 전화번호 입력 + 발송 버튼 */}
       <div className="relative w-[361px]">
         <div className="typo-h1">휴대폰 인증</div>

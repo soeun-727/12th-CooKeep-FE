@@ -58,7 +58,8 @@ export default function AccountSection({
   const isPasswordValid =
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
   const isPasswordMatch = password === passwordConfirm;
-  const isAllChecked = Object.values(agreements).every(Boolean);
+  const isAllChecked =
+    agreements.terms && agreements.privacy && agreements.marketing;
 
   // 각 입력창별로 비밀번호 표시 여부
   const [showPassword, setShowPassword] = useState(false);
@@ -76,6 +77,33 @@ export default function AccountSection({
   };
   console.log("agreements", agreements);
 
+  const AGREEMENT_NOTICE: Record<AgreementItem["key"], React.ReactNode> = {
+    terms: (
+      <p className="typo-label text-center">
+        공고일자: 2026년 2월 X일 / 시행일자: 2026년 2월 X일
+      </p>
+    ),
+    privacy: (
+      <p className="typo-label text-center">
+        개인정보처리자: CooKeep 운영진
+        <br />
+        문의처: cookeep2026@gmail.com
+        <br />
+        시행일자: 2026년 2월 X일
+      </p>
+    ),
+    marketing: (
+      <p className="typo-label text-center">시행일자: 2026년 2월 X일</p>
+    ),
+    policy: (
+      <p className="typo-label text-center">
+        공고일자: 2026년 2월 X일
+        <br />
+        시행일자: 2026년 2월 X일
+      </p>
+    ),
+  };
+
   return (
     <>
       {agreementPage ? (
@@ -91,9 +119,11 @@ export default function AccountSection({
             setAgreementPage(null);
             setHideHeader(false);
           }}
-        />
+        >
+          {AGREEMENT_NOTICE[agreementPage.key]}
+        </AgreementPage>
       ) : (
-        <div className="pt-[107px] mx-auto">
+        <div className="pt-[161px] mx-auto">
           {/* 제목 */}
           <div className="typo-h1">회원가입</div>
           <div className="mx-auto mt-[12px]">
