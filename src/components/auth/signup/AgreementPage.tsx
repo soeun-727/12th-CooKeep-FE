@@ -133,13 +133,9 @@ export default function AgreementPage({
       <div className="mt-[11px] mb-[32px] max-w-[361px] mx-auto">
         <Button
           size="L"
-          className="w-full h-[44px] rounded-[10px] bg-[#202020] text-white"
+          variant="black"
           onClick={() => {
-            if (agreement.required) {
-              onConfirm(agreement.key);
-            } else {
-              onBack();
-            }
+            onConfirm(agreement.key); // 항상 호출
           }}
         >
           확인
