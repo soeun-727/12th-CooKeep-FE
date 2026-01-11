@@ -53,10 +53,10 @@ const TextField = ({
     rounded-[6px]
     px-3 py-2
     bg-white
+    text-[#202020] 
     font-['Pretendard'] text-sm leading-5
-    placeholder:text-sm
     placeholder:font-medium
-    placeholder: text-stone-500
+    placeholder:text-stone-300
     disabled:bg-[#ECECEC]
     ${leftIcon ? "pl-10" : ""}
         ${rightIcon ? "pr-10" : ""}
