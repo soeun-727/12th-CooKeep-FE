@@ -23,14 +23,15 @@ const Button: React.FC<ButtonProps> = ({
   type = "button",
 }) => {
   const sizeStyles = {
-    S: "w-[361px] h-[44px] px-[101px]",
-    L: "w-[361px] h-[56px] px-[101px]",
+    S: "w-[361px] h-[44px]",
+    L: "w-[361px] h-[56px]",
   };
 
   const baseStyle = `
-    flex items-center justify-center gap-2
+    inline-flex items-center justify-center gap-2
     rounded-[10px]
     transition
+    whitespace-nowrap
   `;
 
   const variantStyles = {
