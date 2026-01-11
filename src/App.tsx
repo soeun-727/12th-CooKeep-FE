@@ -21,7 +21,7 @@ export default function App() {
         <Route path="/signup" element={<SignupPage />} />
 
         <Route element={<FindLayout />}>
-          <Route path="/find" element={<FindPage />} />
+          <Route path="/findpw" element={<FindPage />} />
           <Route
             path="/reset-password"
             element={
