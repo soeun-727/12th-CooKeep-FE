@@ -189,31 +189,34 @@ export default function AccountSection({
                   {/* 약관 영역 */}
                   <div className=" mt-5">
                     {/* 전체 동의 */}
-                    <label className="flex items-center gap-2 px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
+                    <label className="relative flex items-center px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
                       <input
                         type="checkbox"
-                        className="w-4 h-4 accent-[#1FC16F]" // 체크 시 색상 적용
+                        className="peer w-4 h-4 appearance-none border border-gray-300 rounded-sm checked:bg-[#1FC16F] cursor-pointer"
                         checked={isAllChecked}
                         onChange={(e) =>
                           updateAgreements({
                             terms: e.target.checked,
                             privacy: e.target.checked,
                             marketing: e.target.checked,
-                            policy: e.target.checked,
                           })
                         }
                       />
-                      <span className="typo-label">약관 전체동의</span>
+                      <span className="ml-[16px] typo-label text-[#202020]">
+                        약관 전체동의
+                      </span>
+                      <span className="absolute left-3 w-4 h-4 flex items-center justify-center pointer-events-none text-white text-lg font-bold peer-checked:visible invisible">
+                        ✓
+                      </span>
                     </label>
-
                     {/* 개별 약관 박스 */}
-                    <div className="w-full h-[138px] p-3 flex flex-col gap-3 ">
+                    <div className="w-full h-[138px] p-3 flex flex-col gap-[6px] ">
                       {AGREEMENTS.map((item) => (
                         <div
                           key={item.key}
                           className="flex items-center justify-between w-[337px] h-[24px] mx-auto"
                         >
-                          <label className="flex items-center gap-3 cursor-pointer">
+                          <label className="flex items-center gap-4 cursor-pointer">
                             {/* 체크박스만 조건부 */}
                             {item.key !== "policy" ? (
                               <input

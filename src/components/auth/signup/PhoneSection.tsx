@@ -109,10 +109,10 @@ export default function PhoneSection() {
               <button
                 type="button"
                 onClick={isCodeSent ? handleResend : handleSendCode}
-                disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
+                disabled={!isPhoneValid} // disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
                 className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
           ${
-            isPhoneValid && !(isCodeSent && timeLeft > 0)
+            isPhoneValid // isPhoneValid && !(isCodeSent && timeLeft > 0)
               ? "bg-[#202020] border-[#202020]"
               : "bg-[#C3C3C3] border-[#C3C3C3]"
           }
