@@ -20,7 +20,7 @@ export default function Search() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="[&_input]:border-none [&_input]:bg-white [&_input]:shadow-sm">
+      <div className="[&_input]:border-none [&_input]:outline-none [&_input]:shadow-sm">
         <TextField
           value={keyword}
           type="text"
@@ -29,7 +29,7 @@ export default function Search() {
           rightIcon={
             <button
               onClick={onSearchSubmit}
-              disabled={keyword.trim().length === 0} // 글자가 없으면 클릭 방지
+              disabled={keyword.trim().length === 0}
               className="flex items-center justify-center transition-opacity duration-200"
             >
               <img
