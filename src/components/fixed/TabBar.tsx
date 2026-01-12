@@ -1,11 +1,11 @@
 import Tab from "./Tab";
-import fridgeIcon from "../../assets/fixed/Vector.svg";
+import fridgeIcon from "../../assets/fixed/fridge.svg";
 import fridgeOnIcon from "../../assets/fixed/Vector-1.svg";
-import recipeIcon from "../../assets/fixed/Vector-4.svg";
+import recipeIcon from "../../assets/fixed/recipe.svg";
 import recipeOnIcon from "../../assets/fixed/Vector-5.svg";
-import cookeepsIcon from "../../assets/fixed/Vector-6.svg";
+import cookeepsIcon from "../../assets/fixed/cookeeps.svg";
 import cookeepsOnIcon from "../../assets/fixed/Vector-7.svg";
-import mycookeepIcon from "../../assets/fixed/Vector-2.svg";
+import mycookeepIcon from "../../assets/fixed/mycookeep.svg";
 import mycookeepOnIcon from "../../assets/fixed/Vector-3.svg";
 import { useNavigate } from "react-router-dom";
 
@@ -54,7 +54,7 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
           />
         ))}
       </div>
-      <div className="h-[34px] bg-white"></div>
+      <div className="h-[34px] bg-white" />
     </nav>
   );
 }

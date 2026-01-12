@@ -14,22 +14,23 @@ const MainHeader = () => {
         px-4
       "
     >
-      <div className="relative w-full h-full">
-        <img
-          src={Logo}
-          alt="CooKeep logo"
-          className="
-            absolute left-1/2 -translate-x-1/2
-            top-[62px] 
-            w-[70px] h-6
-          "
-        />
-        <button
-          className="absolute right-0 top-[54px]"
-          onClick={() => console.log("Settings clicked")}
-        >
-          <img src={settings} alt="settings" className="w-9 h-9" />
-        </button>
+      <div className="relative w-full h-full flex items-end pb-4">
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-5">
+          <img
+            src={Logo}
+            alt="CooKeep logo"
+            className="w-[70px] object-contain pb-1"
+          />
+        </div>
+        <div className="w-full flex justify-end items-center h-10">
+          <button
+            className="p-1"
+            onClick={() => console.log("Settings clicked")}
+          >
+            {/* 나중에는 "회원 정보"로 이동하는 로직 추가 */}
+            <img src={settings} alt="settings" className="w-9" />
+          </button>
+        </div>
       </div>
     </header>
   );

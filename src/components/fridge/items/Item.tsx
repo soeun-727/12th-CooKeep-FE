@@ -20,21 +20,32 @@ const Item: React.FC<ItemProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-[114px] h-20 rounded-[6px] border ${
+      className={`w-[114px] h-20 rounded-[6px] border flex flex-col items-start overflow-hidden pl-[11px] ${
         isSelected
           ? "border-[var(--color-green-deep)] bg-[var(--color-green-light)]"
           : "border-[#D1D1D1] bg-white"
       }`}
     >
-      <div className="flex items-end justify-between h-full">
-        <div className="flex flex-col items-start">
-          <span className="pl-[11px] pt-[10px] typo-caption">{name}</span>
-          <span className="pl-[11px] text-stone-300 text-[10px] font-['Pretendard'] font-semibold leading-[16px]">
-            {expiration}
-          </span>
-          <img src={isSelected ? checkOn : check} className="pl-1" />
-        </div>
-        <img className="object-contain pb-1 pr-[3px]" src={image} alt={name} />
+      <div className="flex flex-col items-start">
+        <span className="w-[85px] pt-[10px] text-left truncate typo-caption font-bold block leading-none">
+          {name}
+        </span>
+        <span className="text-stone-300 text-left text-[10px] font-semibold leading-tight whitespace-nowrap mt-0.5">
+          {expiration}
+        </span>
+      </div>
+
+      <div className="flex justify-between items-end w-full flex-1 pb-1.5">
+        <img
+          src={isSelected ? checkOn : check}
+          className="w-9 h-9 object-contain ml-[-6px] flex-shrink-0"
+          alt="check"
+        />
+        <img
+          className="w-10 h-10 object-contain flex-shrink-0 -translate-x-[2px] -translate-y-[2px]"
+          src={image}
+          alt={name}
+        />
       </div>
     </button>
   );
