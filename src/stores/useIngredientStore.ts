@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface Ingredient {
+export interface Ingredient {
   id: number;
   name: string;
   expiration: string;
@@ -9,19 +9,23 @@ interface Ingredient {
 }
 
 interface IngredientState {
-  // 1. 데이터 상태
+  // 데이터 상태
   ingredients: Ingredient[];
   selectedIds: number[];
 
-  // 2. 액션 (수정/삭제/선택)
+  // 액션
+  setIngredients: (ingredients: Ingredient[]) => void; // 데이터 초기화 액션 추가
   toggleSelect: (id: number) => void;
   clearSelection: () => void;
-  deleteSelected: () => void; // '다 먹었어요', '버렸어요' 공용
+  deleteSelected: (type?: "eaten" | "thrown") => Promise<void>;
 }
 
 export const useIngredientStore = create<IngredientState>((set) => ({
-  ingredients: [], // 초기 데이터 (API 호출 등으로 채워짐)
+  ingredients: [],
   selectedIds: [],
+
+  // 데이터를 스토어에 저장하는 함수
+  setIngredients: (ingredients) => set({ ingredients }),
 
   toggleSelect: (id) =>
     set((state) => ({
@@ -32,11 +36,22 @@ export const useIngredientStore = create<IngredientState>((set) => ({
 
   clearSelection: () => set({ selectedIds: [] }),
 
-  deleteSelected: () =>
+  deleteSelected: async (type) => {
+    // 1. 0.15초 대기 (버튼의 active 효과/안쪽 그림자를 보여주기 위함)
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    const { selectedIds, eatenCount } = get();
+
     set((state) => ({
+      // 2. 카운트 로직: '다 먹었어요' 클릭 시에만 누적
+      eatenCount:
+        type === "eaten" ? eatenCount + selectedIds.length : eatenCount,
+      // 3. 실제 데이터 삭제
       ingredients: state.ingredients.filter(
-        (item) => !state.selectedIds.includes(item.id)
+        (item) => !selectedIds.includes(item.id)
       ),
-      selectedIds: [], // 삭제 후 선택 해제
-    })),
+      // 4. 선택 해제
+      selectedIds: [],
+    }));
+  },
 }));

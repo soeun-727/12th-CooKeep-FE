@@ -3,8 +3,8 @@ import plus from "../../../assets/fridge/plus.svg";
 import plusDisabled from "../../../assets/fridge/plusDisabled.svg";
 import Item from "../items/Item";
 import charcter from "../../../assets/fridge/character.svg";
-import type { Ingredient } from "./FridgeTab";
 import { useIngredientStore } from "../../../stores/useIngredientStore";
+import type { Ingredient } from "../../../stores/useIngredientStore";
 interface StorageProps {
   category: string;
   image: string;

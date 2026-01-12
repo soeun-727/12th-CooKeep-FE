@@ -8,6 +8,7 @@ import { useIngredientStore } from "../../../stores/useIngredientStore";
 import ItemOption from "../items/ItemOption";
 import { useEffect } from "react";
 
+// 1. 임시 데이터 (현업에서는 API 응답 데이터가 됨)
 const TEMP_DATA = [
   { id: 1, name: "우유", expiration: "D-3", image: milk, category: "냉장" },
   {
@@ -28,16 +29,17 @@ const TEMP_DATA = [
 
 export default function FridgeTab() {
   const { ingredients, setIngredients } = useIngredientStore();
+
   useEffect(() => {
     if (ingredients.length === 0) {
-      // @ts-ignore (임시 데이터 타입 매칭용)
-      setIngredients(INITIAL_DATA);
+      setIngredients(TEMP_DATA as any);
     }
-  }, []);
+  }, [ingredients.length, setIngredients]);
 
   return (
-    <div className="w-full flex flex-col items-center pb-32">
+    <div className="w-full flex flex-col items-center">
       <Search />
+
       <div className="flex flex-col gap-[10px]">
         <Storage
           category="냉장"
@@ -55,6 +57,7 @@ export default function FridgeTab() {
           ingredients={ingredients.filter((item) => item.category === "상온")}
         />
       </div>
+
       <ItemOption />
     </div>
   );
