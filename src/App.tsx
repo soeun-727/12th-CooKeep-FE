@@ -11,6 +11,7 @@ import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
 import FridgePage from "./pages/fridge/FridgePage";
 import Layout from "./components/Layout";
+import SettingsPage from "./pages/auth/SettingsPage";
 //signup 아직 없음
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </AppLayout>
   );
