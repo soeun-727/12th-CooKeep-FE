@@ -12,9 +12,11 @@ interface IngredientState {
   // 데이터 상태
   ingredients: Ingredient[];
   selectedIds: number[];
+  searchTerm: string;
 
   // 액션
   setIngredients: (ingredients: Ingredient[]) => void; // 데이터 초기화 액션 추가
+  setSearchTerm: (term: string) => void;
   toggleSelect: (id: number) => void;
   clearSelection: () => void;
   deleteSelected: (type?: "eaten" | "thrown") => Promise<void>;
@@ -23,7 +25,8 @@ interface IngredientState {
 export const useIngredientStore = create<IngredientState>((set) => ({
   ingredients: [],
   selectedIds: [],
-
+  searchTerm: "",
+  setSearchTerm: (term) => set({ searchTerm: term }),
   // 데이터를 스토어에 저장하는 함수
   setIngredients: (ingredients) => set({ ingredients }),
 
