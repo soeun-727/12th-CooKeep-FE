@@ -5,11 +5,13 @@ import Item from "../items/Item";
 import charcter from "../../../assets/fridge/character.svg";
 import { useIngredientStore } from "../../../stores/useIngredientStore";
 import type { Ingredient } from "../../../stores/useIngredientStore";
+
 interface StorageProps {
   category: string;
   image: string;
   ingredients: Ingredient[];
 }
+
 export default function Storage({
   category,
   image,
@@ -19,18 +21,18 @@ export default function Storage({
   const isScrollable = ingredients.length >= 3;
 
   return (
-    <div className="relative w-[393px] min-h-[173px] mx-auto z-0">
+    <div className="relative w-full max-w-[393px] min-h-[173px] mx-auto z-0">
       {/* 배경 */}
       <div className="absolute inset-0 -z-10 flex flex-col overflow-hidden">
         <div className="w-full h-[115px] rounded-t-[36px] bg-[#BFC6D740]" />
-        <div className="relative bg-[#C8CFE2] h-12">
-          <div className="absolute inset-0 flex w-full gap-[6px] items-center justify-center pt-[7px]">
+        <div className="relative w-full bg-[#C8CFE2] h-12">
+          <div className="absolute inset-0 flex gap-[6px] items-center justify-center pt-[7px]">
             <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
             <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
             <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
           </div>
         </div>
-        <div className="bg-[#ADB4C7] h-[10px]" />
+        <div className="w-full bg-[#ADB4C7] h-[10px]" />
       </div>
 
       {/* 헤더 */}
@@ -91,7 +93,7 @@ export default function Storage({
         ) : (
           //데이터가 없는 경우
           <div className="flex flex-col items-center gap-3 mt-[-9px]">
-            <img src={charcter} className="w-[45.6px] " />
+            <img src={charcter} className="w-[45.6px]" />
             <span className="typo-caption text-[#7A8093]">
               재료를 등록해주세요
             </span>
