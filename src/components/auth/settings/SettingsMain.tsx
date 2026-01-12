@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import AccountSection from "./AccountSection";
+import ProfileSection from "./ProfileSection";
 import NotificationSection from "./NotificationSection";
 import SupportSection from "./SupportSection";
 import logoutIcon from "../../../assets/logout.svg";
@@ -25,7 +25,7 @@ export default function SettingsMain() {
     <>
       <main className="pt-[157px] px-4">
         <div className="space-y-6">
-          <AccountSection />
+          <ProfileSection />
           <NotificationSection />
           <SupportSection />
         </div>

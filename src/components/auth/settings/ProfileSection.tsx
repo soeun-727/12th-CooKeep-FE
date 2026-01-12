@@ -1,18 +1,18 @@
-// src/pages/settings/sections/AccountSection.tsx
+// src/pages/settings/sections/ProfileSection.tsx
 
 import { useEffect, useState } from "react";
 import SettingsInputItem from "./components/SettingsInputItem";
 
 const MASKED_PASSWORD = "********";
 
-type AccountInfo = {
+type ProfileInfo = {
   nickname: string;
   phone: string;
   email: string;
 };
 
-export default function AccountSection() {
-  const [account, setAccount] = useState<AccountInfo>({
+export default function ProfileSection() {
+  const [account, setAccount] = useState<ProfileInfo>({
     nickname: "",
     phone: "",
     email: "",
