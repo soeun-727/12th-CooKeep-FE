@@ -1,6 +1,6 @@
-// src/pages/settings/Settings.tsx
+// src/components/auth/settings/Settings.tsx
 import { useNavigate } from "react-router-dom";
-import BackHeader from "../../ui/BackHeader";
+import BackHeader from "../ui/BackHeader";
 import SettingsMain from "./SettingsMain";
 
 export default function Settings() {

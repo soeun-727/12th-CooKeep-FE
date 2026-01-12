@@ -1,5 +1,5 @@
-// src/pages/settings/SettingsPage.tsx
-import Settings from "../../components/auth/settings/Settings";
+// src/pages/auth/SettingsPage.tsx
+import Settings from "../../components/settings/Settings";
 
 export default function SettingsPage() {
   return <Settings />;

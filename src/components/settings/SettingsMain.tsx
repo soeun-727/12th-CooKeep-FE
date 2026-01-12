@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import ProfileSection from "./ProfileSection";
-import NotificationSection from "./NotificationSection";
-import SupportSection from "./SupportSection";
-import logoutIcon from "../../../assets/logout.svg";
+import ProfileSection from "./sections/ProfileSection";
+import NotificationSection from "./sections/NotificationSection";
+import SupportSection from "./sections/SupportSection";
+import logoutIcon from "../../assets/logout.svg";
 import ConfirmModal from "./components/ConfirmModal";
 
 export default function SettingsMain() {

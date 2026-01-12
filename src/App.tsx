@@ -10,6 +10,7 @@ import FindPage from "./pages/auth/FindPage";
 import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
 import SettingsPage from "./pages/auth/SettingsPage";
+import EditPhonePage from "./components/settings/pages/EditPhonePage";
 
 //signup 아직 없음
 
@@ -35,6 +36,7 @@ export default function App() {
         </Route>
 
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/settings/phone" element={<EditPhonePage />} />
       </Routes>
     </AppLayout>
   );

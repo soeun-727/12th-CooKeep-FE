@@ -1,7 +1,7 @@
 // src/pages/settings/sections/ProfileSection.tsx
 
 import { useEffect, useState } from "react";
-import SettingsInputItem from "./components/SettingsInputItem";
+import SettingsInputItem from "../components/SettingsInputItem";
 
 const MASKED_PASSWORD = "********";
 
