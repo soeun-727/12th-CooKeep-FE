@@ -3,8 +3,8 @@ import plus from "../../../assets/fridge/plus.svg";
 import plusDisabled from "../../../assets/fridge/plusDisabled.svg";
 import Item from "../items/Item";
 import charcter from "../../../assets/fridge/character.svg";
-import { useState } from "react";
 import type { Ingredient } from "./FridgeTab";
+import { useIngredientStore } from "../../../stores/useIngredientStore";
 interface StorageProps {
   category: string;
   image: string;
@@ -15,15 +15,9 @@ export default function Storage({
   image,
   ingredients,
 }: StorageProps) {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const { selectedIds, toggleSelect } = useIngredientStore();
   const isScrollable = ingredients.length >= 3;
-  const handleItemClick = (id: number) => {
-    setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((selectedId) => selectedId !== id)
-        : [...prev, id]
-    );
-  };
+
   return (
     <div className="relative w-[393px] min-h-[173px] mx-auto z-0">
       {/* 배경 */}
@@ -88,7 +82,7 @@ export default function Storage({
                   expiration={item.expiration}
                   image={item.image}
                   isSelected={selectedIds.includes(item.id)}
-                  onClick={() => handleItemClick(item.id)}
+                  onClick={() => toggleSelect(item.id)}
                 />
               </div>
             ))}

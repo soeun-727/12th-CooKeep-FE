@@ -1,12 +1,10 @@
 import eaten from "../../../assets/fridge/eaten.svg";
 import thrown from "../../../assets/fridge/thrown.svg";
-interface ItemOptionProps {
-  isVisible: boolean;
-}
+import { useIngredientStore } from "../../../stores/useIngredientStore";
 
-export default function ItemOption({ isVisible }: ItemOptionProps) {
-  if (!isVisible) return null;
-
+export default function ItemOption() {
+  const { selectedIds, deleteSelected } = useIngredientStore();
+  if (selectedIds.length === 0) return null;
   return (
     <div
       className="
