@@ -5,6 +5,7 @@ import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
 import milk from "../../../assets/fridge/milk.svg";
 import { useState } from "react";
+import ItemOption from "../items/ItemOption";
 
 export interface Ingredient {
   //임시 데이터 구조
@@ -34,6 +35,7 @@ export default function FridgeTab() {
     { id: 8, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
     { id: 9, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
   ]);
+  const isAnyItemSelected = selectedIds.length > 0;
   return (
     <div className="w-full flex flex-col items-center">
       <Search />
@@ -60,6 +62,7 @@ export default function FridgeTab() {
           )}
         />
       </div>
+      <ItemOption isVisible={isAnyItemSelected} />
     </div>
   );
 }
