@@ -101,7 +101,7 @@ export default function PhoneVerifySection({
         <TextField
           value={phone}
           onChange={setPhone}
-          placeholder="휴대폰 번호(- 없이 숫자만 입력)"
+          placeholder="새 휴대폰 번호(- 없이 숫자만 입력)"
           errorMessage={
             !isPhoneValid && phone
               ? "휴대폰 번호를 다시 확인해주세요"
@@ -156,7 +156,7 @@ export default function PhoneVerifySection({
         disabled={!isCodeSent || code.length !== 6 || timeLeft === 0}
         onClick={handleVerify}
       >
-        인증 확인 {isCodeSent && `(${formatTime(timeLeft)})`}
+        인증하기 {isCodeSent && `(${formatTime(timeLeft)})`}
       </Button>
 
       {/* 도움말 버튼 */}
