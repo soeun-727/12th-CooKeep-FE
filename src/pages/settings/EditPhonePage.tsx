@@ -2,7 +2,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import checkIcon from "../../assets/signup/check.svg";
-import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
 import PhoneVerifySection from "../../components/settings/sections/PhoneVerifySection";
 
@@ -12,8 +11,6 @@ export default function EditPhonePage() {
 
   return (
     <div className="relative min-h-screen bg-[#FAFAFA]">
-      <BackHeader title="휴대폰 번호 변경" onBack={() => navigate(-1)} />
-
       <PhoneVerifySection onSuccess={() => setIsSuccess(true)} />
 
       {/* 성공 오버레이 */}

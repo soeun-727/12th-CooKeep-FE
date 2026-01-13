@@ -12,6 +12,7 @@ interface TextFieldProps {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   autoComplete?: string;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
 }
 
 const TextField = ({
@@ -26,6 +27,7 @@ const TextField = ({
   leftIcon,
   rightIcon,
   autoComplete,
+  onBlur,
 }: TextFieldProps) => {
   return (
     <div className="w-[361px]">
@@ -47,6 +49,7 @@ const TextField = ({
           disabled={disabled}
           autoComplete={autoComplete}
           onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
           className={`
     w-full h-[48px]
     border

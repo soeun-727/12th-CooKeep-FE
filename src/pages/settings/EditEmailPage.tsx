@@ -2,8 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import checkIcon from "../../assets/signup/check.svg";
-import mailIcon from "../../assets/signup/mail.svg"; // 이메일 아이콘
-import BackHeader from "../../components/ui/BackHeader";
+import mailIcon from "../../assets/signup/mail.svg";
 import TextField from "../../components/ui/TextField";
 import Button from "../../components/ui/Button";
 
@@ -28,11 +27,9 @@ export default function EditEmailPage() {
 
   return (
     <div className="relative min-h-screen bg-[#FAFAFA]">
-      <BackHeader title="이메일 변경" onBack={() => navigate(-1)} />
-
       {/* 이메일 입력 영역 */}
-      <div className="pt-[241px] flex justify-center">
-        <div className="w-[361px]">
+      <div className="pt-[241px]">
+        <div className="mx-auto w-[361px]">
           <div className="typo-h1">이메일 주소 변경</div>
 
           <div className="mt-[12px]">
