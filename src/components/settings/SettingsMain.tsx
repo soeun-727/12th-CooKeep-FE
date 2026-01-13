@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import ProfileSection from "./sections/ProfileSection";
 import NotificationSection from "./sections/NotificationSection";
 import SupportSection from "./sections/SupportSection";
-import logoutIcon from "../../assets/logout.svg";
-import ConfirmModal from "./components/ConfirmModal";
+import logoutIcon from "../../assets/settings/logout.svg";
+import ConfirmModal from "../ui/ConfirmModal";
 
 export default function SettingsMain() {
   const navigate = useNavigate();

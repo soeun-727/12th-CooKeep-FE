@@ -9,10 +9,10 @@ import SignupPage from "./pages/auth/SignupPage";
 import FindPage from "./pages/auth/FindPage";
 import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
-import SettingsPage from "./pages/auth/SettingsPage";
-import EditPhonePage from "./components/settings/pages/EditPhonePage";
-
-//signup 아직 없음
+import SettingsPage from "./pages/settings/SettingsPage";
+import EditPhonePage from "./pages/settings/EditPhonePage";
+import SettingsLayout from "./layouts/SettingsLayout";
+import EditEmailPage from "./pages/settings/EditEmailPage";
 
 export default function App() {
   return (
@@ -35,8 +35,11 @@ export default function App() {
           />
         </Route>
 
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/settings/phone" element={<EditPhonePage />} />
+        <Route path="/settings" element={<SettingsLayout />}>
+          <Route index element={<SettingsPage />} />
+          <Route path="phone" element={<EditPhonePage />} />
+          <Route path="email" element={<EditEmailPage />} />
+        </Route>
       </Routes>
     </AppLayout>
   );

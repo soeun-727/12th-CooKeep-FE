@@ -1,10 +1,10 @@
 // src/pages/settings/EditPhonePage.tsx
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import checkIcon from "../../../assets/signup/check.svg";
-import BackHeader from "../../ui/BackHeader";
-import Button from "../../ui/Button";
-import PhoneVerifySection from "./PhoneVerifySection";
+import checkIcon from "../../assets/signup/check.svg";
+import BackHeader from "../../components/ui/BackHeader";
+import Button from "../../components/ui/Button";
+import PhoneVerifySection from "../../components/settings/sections/PhoneVerifySection";
 
 export default function EditPhonePage() {
   const navigate = useNavigate();
@@ -23,11 +23,7 @@ export default function EditPhonePage() {
             <p
               className="
     w-full
-    text-center
-    text-[#202020]
-    font-bold
-    text-[28px]
-    leading-[36px]
+    typo-result-title
     pt-[295px]
     pb-[18px]
   "
