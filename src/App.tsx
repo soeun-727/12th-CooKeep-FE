@@ -1,18 +1,24 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
-import ResetPassword from "./components/auth/find/ResetPassword";
 import InitialPage from "./pages/auth/InitialPage";
 import OnboardingPage from "./pages/auth/OnboardingPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import FindPage from "./pages/auth/FindPage";
 import RequireFindAuth from "./components/auth/find/RequireFindAuth";
+import ResetPassword from "./components/auth/find/ResetPassword";
 import FindLayout from "./components/auth/find/FindLayout";
+
 import SettingsPage from "./pages/settings/SettingsPage";
 import EditPhonePage from "./pages/settings/EditPhonePage";
 import SettingsLayout from "./layouts/SettingsLayout";
 import EditEmailPage from "./pages/settings/EditEmailPage";
+
+import FridgePage from "./pages/fridge/FridgePage";
+import Layout from "./components/Layout";
+
+//signup 아직 없음
 
 export default function App() {
   return (
@@ -39,6 +45,14 @@ export default function App() {
           <Route index element={<SettingsPage />} />
           <Route path="phone" element={<EditPhonePage />} />
           <Route path="email" element={<EditEmailPage />} />
+        </Route>
+
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/fridge" />} />
+          <Route path="/fridge" element={<FridgePage />} />
+          {/* <Route path="/recipe" element={<RecipePage />} />
+          <Route path="/cookeeps" element={<CookeepsPage />} />
+          <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
       </Routes>
     </AppLayout>
