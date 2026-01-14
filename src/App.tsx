@@ -18,6 +18,8 @@ import EditEmailPage from "./pages/settings/EditEmailPage";
 import FridgePage from "./pages/fridge/FridgePage";
 import Layout from "./components/Layout";
 import EditPasswordPage from "./pages/settings/EditPasswordPage";
+import VerifyLayout from "./layouts/VerifyLayout";
+import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
 
 //signup 아직 없음
 
@@ -47,6 +49,12 @@ export default function App() {
           <Route path="phone" element={<EditPhonePage />} />
           <Route path="email" element={<EditEmailPage />} />
           <Route path="password" element={<EditPasswordPage />} />
+          <Route element={<VerifyLayout />}>
+            <Route
+              path="password/verify"
+              element={<EditPasswordPhoneSection />}
+            />
+          </Route>
         </Route>
 
         <Route element={<Layout />}>

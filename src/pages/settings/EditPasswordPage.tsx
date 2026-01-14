@@ -1,6 +1,6 @@
 // src/pages/settings/EditPasswordPage.tsx
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import TextField from "../../components/ui/TextField";
 import Button from "../../components/ui/Button";
 
@@ -12,12 +12,25 @@ import checkIcon from "../../assets/signup/check.svg";
 export default function EditPasswordPage() {
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const verifiedFromPhone = location.state?.verifiedBy === "phone";
+
   // 기존 비밀번호
   const [currentPassword, setCurrentPassword] = useState("");
+
+  // 여기서부터 바뀐 핵심
+  const isPhoneVerified = verifiedFromPhone;
+  // const [isPhoneVerified, setIsPhoneVerified] = useState(verifiedFromPhone);
   const [isCurrentPwValid, setIsCurrentPwValid] = useState<boolean | null>(
-    null
+    verifiedFromPhone ? true : null
   );
 
+  type VerifyMethod = "password" | "phone" | null;
+  const [verifiedBy, setVerifiedBy] = useState<VerifyMethod>(
+    verifiedFromPhone ? "phone" : null
+  );
+
+  // UI 상태
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const MAX_ATTEMPTS = 5;
   const [currentPwFailCount, setCurrentPwFailCount] = useState(0);
@@ -40,7 +53,9 @@ export default function EditPasswordPage() {
     password && confirmPassword ? password === confirmPassword : false;
 
   const isFormValid =
-    isCurrentPwValid === true && isPasswordValid && isPasswordMatch;
+    (isCurrentPwValid === true || isPhoneVerified) &&
+    isPasswordValid &&
+    isPasswordMatch;
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
@@ -52,6 +67,12 @@ export default function EditPasswordPage() {
       setError("비밀번호 변경 중 오류가 발생했습니다.");
     }
   };
+
+  useEffect(() => {
+    if (!location.state?.fromPasswordFail) {
+      navigate("/settings/password", { replace: true });
+    }
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#FAFAFA]">
@@ -89,6 +110,7 @@ export default function EditPasswordPage() {
                 }
               } else {
                 setIsCurrentPwValid(true);
+                setVerifiedBy("password");
                 setCurrentPwFailCount(0);
               }
             }}
@@ -101,7 +123,9 @@ export default function EditPasswordPage() {
             }
             successMessage={
               isCurrentPwValid === true
-                ? "기존 비밀번호가 확인되었습니다"
+                ? verifiedBy === "phone"
+                  ? "본인인증이 완료되었습니다"
+                  : "기존 비밀번호가 확인되었습니다"
                 : undefined
             }
             leftIcon={<img src={pwIcon} alt="" />}
@@ -242,7 +266,9 @@ export default function EditPasswordPage() {
               className="!w-full"
               onClick={() => {
                 setShowAuthModal(false);
-                navigate("/settings/verify");
+                navigate("/settings/password/verify", {
+                  state: { fromPasswordFail: true },
+                });
               }}
             >
               본인인증
