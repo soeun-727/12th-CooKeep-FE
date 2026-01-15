@@ -12,6 +12,7 @@ import FindLayout from "./components/auth/find/FindLayout";
 import FridgePage from "./pages/fridge/FridgePage";
 import Layout from "./components/Layout";
 import SettingsPage from "./pages/auth/SettingsPage";
+import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/simplelogin" element={<SimpleLoginAgreementPage />} />
         <Route element={<FindLayout />}>
           <Route path="/findpw" element={<FindPage />} />
           <Route
