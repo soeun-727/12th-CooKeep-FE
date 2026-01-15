@@ -1,4 +1,4 @@
-import Search from "../search/Search";
+import Search from "../features/Search";
 import Storage from "./Storage";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
@@ -9,6 +9,7 @@ import { useIngredientStore } from "../../../stores/useIngredientStore";
 import ItemOption from "../items/ItemOption";
 import Item from "../items/Item";
 import { useEffect } from "react";
+import Sort from "../features/Sort";
 
 // 1. 임시 데이터 (현업에서는 API 응답 데이터가 됨)
 const TEMP_DATA = [
@@ -22,16 +23,24 @@ const TEMP_DATA = [
   },
   { id: 3, name: "우유", expiration: "D-45", image: milk, category: "냉동" },
   { id: 4, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
-  { id: 5, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
-  { id: 6, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
-  { id: 7, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
-  { id: 8, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
-  { id: 9, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
+  { id: 5, name: "우유", expiration: "D-2", image: milk, category: "냉장" },
+  { id: 6, name: "우유", expiration: "D-3", image: milk, category: "냉장" },
+  { id: 7, name: "우유", expiration: "D-4", image: milk, category: "냉장" },
+  { id: 8, name: "우유", expiration: "D-9", image: milk, category: "냉장" },
+  { id: 9, name: "우유", expiration: "D-7", image: milk, category: "냉장" },
 ];
 
 export default function FridgeTab() {
-  const { ingredients, setIngredients, searchTerm, selectedIds, toggleSelect } =
-    useIngredientStore();
+  const {
+    ingredients,
+    setIngredients,
+    searchTerm,
+    selectedIds,
+    toggleSelect,
+    viewCategory,
+    setViewCategory,
+    sortOrder,
+  } = useIngredientStore();
   useEffect(() => {
     if (ingredients.length === 0) {
       setIngredients(TEMP_DATA as any);
@@ -43,12 +52,40 @@ export default function FridgeTab() {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const isListView = !!viewCategory && !isSearching;
+  const listIngredients = ingredients.filter(
+    (item) => item.category === viewCategory
+  );
+  const categoryIcon =
+    viewCategory === "냉장"
+      ? fridgeIcon
+      : viewCategory === "냉동"
+      ? freezerIcon
+      : pantryIcon;
+
+  const sortedIngredients = [...listIngredients].sort((a, b) => {
+    switch (sortOrder) {
+      case "유통기한 임박 순":
+        const getDay = (exp: string) => {
+          const num = parseInt(exp.replace(/[^0-9]/g, ""));
+          return isNaN(num) ? 999 : num;
+        };
+        return getDay(a.expiration) - getDay(b.expiration);
+
+      case "등록 최신 순":
+      case "등록 오래된 순":
+        return a.id - b.id;
+
+      default:
+        return 0;
+    }
+  });
   return (
     <div className="w-full flex flex-col">
       <Search />
       {isSearching ? (
         /* --- 검색 결과 뷰 --- */
-        <div className="items-center mx-auto w-[353px] grid grid-cols-3 gap-y-6 gap-x-[6px] mt-4">
+        <div className="items-center mx-auto w-[353px] grid grid-cols-3 gap-y-2 gap-x-2 mt-4">
           {filteredIngredients.length > 0 ? (
             filteredIngredients.map((item) => (
               <Item
@@ -70,6 +107,23 @@ export default function FridgeTab() {
             </div>
           )}
         </div>
+      ) : isListView ? (
+        /* --- 전체보기 뷰 --- */
+        <>
+          <Sort categoryIcon={categoryIcon} viewCategory={viewCategory} />
+          <div className="mx-auto w-[353px] grid grid-cols-3 gap-y-2 gap-x-2 mt-4">
+            {sortedIngredients.map((item) => (
+              <Item
+                key={item.id}
+                name={item.name}
+                expiration={item.expiration}
+                image={item.image}
+                isSelected={selectedIds.includes(item.id)}
+                onClick={() => toggleSelect(item.id)}
+              />
+            ))}
+          </div>
+        </>
       ) : (
         /* --- 기본 카테고리 뷰 --- */
         <div className="flex flex-col gap-[10px]">

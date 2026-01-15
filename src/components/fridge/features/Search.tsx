@@ -21,6 +21,7 @@ export default function Search() {
           [&_input]:border-none 
           [&_input]:outline-none 
           [&_input]:shadow-sm 
+          [&_input::placeholder]:text-[#7D7D7D]
           ${hasText ? "[&_input]: bg-white" : "[&_input]:bg-[#EBEDF1] "}
       `}
         >

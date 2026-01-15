@@ -17,7 +17,7 @@ export default function Storage({
   image,
   ingredients,
 }: StorageProps) {
-  const { selectedIds, toggleSelect } = useIngredientStore();
+  const { selectedIds, toggleSelect, setViewCategory } = useIngredientStore();
   const isScrollable = ingredients.length >= 3;
 
   return (
@@ -46,6 +46,7 @@ export default function Storage({
           <div className="flex items-center gap-1 h-10">
             <button
               disabled={!isScrollable}
+              onClick={() => setViewCategory(category)}
               className="flex items-center gap-1 group transition-all"
             >
               <span
