@@ -31,9 +31,9 @@ export default function AgreementPage({
       <div className="h-[129px] shrink-0" />
 
       {/* 카드 + 버튼 영역 */}
-      <div className="flex-1 flex flex-col items-center min-h-0">
+      <div className="flex-1 flex flex-col  min-h-0">
         {/* 약관 카드 */}
-        <div className="w-full max-w-[361px] bg-white border border-[#D1D1D1] rounded-[6px] flex flex-col overflow-hidden max-h-full">
+        <div className="w-full max-w-[361px] mx-auto bg-white border border-[#D1D1D1] rounded-[6px] flex flex-col overflow-hidden max-h-full">
           {/* 카드 상단 */}
           <div className="flex items-center gap-[16px] p-3 h-[48px] shrink-0">
             {!isPolicyOnly ? (
@@ -118,14 +118,27 @@ export default function AgreementPage({
           </div>
         </div>
         {/* 하단 버튼 (safe-area 대응) */}
-        <div className="mt-auto pt-[11px] pb-[calc(32px+env(safe-area-inset-bottom))] w-full max-w-[361px]">
-          <Button
-            size="L"
-            variant="black"
-            onClick={() => onConfirm(agreement.key)}
-          >
-            확인
-          </Button>
+        {/* 하단 버튼 (safe-area 대응) */}
+        <div
+          className="
+    mt-auto
+    pt-[11px]
+    pb-[calc(32px+env(safe-area-inset-bottom))]
+    w-full
+    flex
+    justify-center
+  "
+        >
+          <div className="w-full max-w-[361px]">
+            <Button
+              size="L"
+              variant="black"
+              className="w-full"
+              onClick={() => onConfirm(agreement.key)}
+            >
+              확인
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -41,7 +41,7 @@ export default function SimpleLoginAgreement() {
         />
 
         {/* 버튼 */}
-        <div className="mt-[10px]">
+        <div className="mt-[10px] ">
           <Button
             size="L"
             variant="green"
