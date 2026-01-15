@@ -73,6 +73,7 @@ export default function FridgeTab() {
       ) : (
         /* --- 기본 카테고리 뷰 --- */
         <div className="flex flex-col gap-[10px] w-full">
+          <div className="h-[23px]" />
           <Storage
             category="냉장"
             image={fridgeIcon}
