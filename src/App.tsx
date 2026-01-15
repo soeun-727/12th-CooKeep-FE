@@ -6,22 +6,20 @@ import OnboardingPage from "./pages/auth/OnboardingPage";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import FindPage from "./pages/auth/FindPage";
-import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import ResetPassword from "./components/auth/find/ResetPassword";
+import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
 
 import SettingsPage from "./pages/settings/SettingsPage";
 import EditPhonePage from "./pages/settings/EditPhonePage";
 import SettingsLayout from "./layouts/SettingsLayout";
 import EditEmailPage from "./pages/settings/EditEmailPage";
-
-import FridgePage from "./pages/fridge/FridgePage";
-import Layout from "./components/Layout";
 import EditPasswordPage from "./pages/settings/EditPasswordPage";
 import VerifyLayout from "./layouts/VerifyLayout";
 import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
 
-//signup 아직 없음
+import FridgePage from "./pages/fridge/FridgePage";
+import Layout from "./components/Layout";
 
 export default function App() {
   return (
@@ -31,7 +29,6 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
-
         <Route element={<FindLayout />}>
           <Route path="/findpw" element={<FindPage />} />
           <Route

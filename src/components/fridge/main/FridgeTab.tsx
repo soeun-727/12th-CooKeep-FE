@@ -44,11 +44,11 @@ export default function FridgeTab() {
   );
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col transition-all">
       <Search />
       {isSearching ? (
         /* --- 검색 결과 뷰 --- */
-        <div className="items-center mx-auto w-[353px] grid grid-cols-3 gap-y-6 gap-x-[6px] mt-4">
+        <div className="mx-auto w-[353px] grid grid-cols-3 gap-y-6 gap-x-[6px] mt-4">
           {filteredIngredients.length > 0 ? (
             filteredIngredients.map((item) => (
               <Item
@@ -72,7 +72,8 @@ export default function FridgeTab() {
         </div>
       ) : (
         /* --- 기본 카테고리 뷰 --- */
-        <div className="flex flex-col gap-[10px]">
+        <div className="flex flex-col gap-[10px] w-full">
+          <div className="h-[23px]" />
           <Storage
             category="냉장"
             image={fridgeIcon}
