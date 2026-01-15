@@ -19,7 +19,7 @@ export default function Layout() {
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
       <MainHeader />
-      <main className="pt-[102px] pb-[90px] px-5">
+      <main className="pt-[102px] pb-[90px]">
         <Outlet />
       </main>
       <TabBar selectedTab={activeTab} onSelect={(name) => setActiveTab(name)} />

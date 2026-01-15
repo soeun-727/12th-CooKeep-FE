@@ -11,7 +11,7 @@ export default function Initial() {
       <img
         src={icon}
         alt="Frame 아이콘"
-        className="w-[18.5px] mt-21 ml-[169px]"
+        className="w-[18.5px] mt-[138px] ml-[169px]"
       />
       <div className="ml-8">
         <h1 className="typo-h1 flex gap-1">
@@ -33,19 +33,21 @@ export default function Initial() {
       <div className="flex flex-col items-center justify-center gap-4">
         {/* 버튼 영역 */}
         <div className="mt-[385px]">
-          <Button size="L" onClick={() => navigate("/signup")}>
+          <Button size="L" onClick={() => navigate("/login")}>
             시작하기
           </Button>
         </div>
 
         {/* 로그인 영역 */}
         <div className="flex gap-4">
-          <span className="typo-caption text-white">이미 계정이 있나요?</span>
+          <span className="typo-caption text-white">
+            아직 계정이 없으신가요?
+          </span>
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/signup")}
             className="typo-caption text-white"
           >
-            로그인
+            회원가입
           </button>
         </div>
       </div>
