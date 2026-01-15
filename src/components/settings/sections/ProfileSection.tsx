@@ -1,6 +1,6 @@
 // src/pages/settings/sections/ProfileSection.tsx
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SettingsInputItem from "../components/SettingsInputItem";
 
 const MASKED_PASSWORD = "********";
@@ -18,6 +18,9 @@ export default function ProfileSection() {
     email: "",
   });
 
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const nicknameInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const fetchAccount = async () => {
       // 나중에 API
@@ -32,15 +35,88 @@ export default function ProfileSection() {
     fetchAccount();
   }, []);
 
+  useEffect(() => {
+    if (isEditingNickname) {
+      nicknameInputRef.current?.focus();
+    }
+  }, [isEditingNickname]);
+
+  const handleNicknameSave = () => {
+    if (!account.nickname.trim()) return;
+
+    // TODO: 닉네임 변경 API
+    setIsEditingNickname(false);
+  };
+
   return (
     <section className="px-4">
       <div className="flex flex-col gap-[22px]">
-        <SettingsInputItem
-          label="닉네임"
-          value={account.nickname}
-          buttonText="닉네임 변경"
-          to="/settings/nickname"
-        />
+        {/* ===== 닉네임 (inline edit) ===== */}
+        <div className="flex flex-col gap-2 h-[80px] w-full">
+          <span className="typo-body text-[#202020] px-3">닉네임</span>
+
+          <div className="flex items-center justify-between w-full h-[44px] px-3 border border-[#DDD] rounded-[6px]">
+            {isEditingNickname ? (
+              <>
+                <input
+                  ref={nicknameInputRef}
+                  value={account.nickname}
+                  onChange={(e) =>
+                    setAccount((prev) => ({
+                      ...prev,
+                      nickname: e.target.value,
+                    }))
+                  }
+                  className="
+                    flex-1
+                    h-full
+                    outline-none
+                    typo-body-sm
+                    text-[#202020]
+                  "
+                />
+
+                <button
+                  onClick={handleNicknameSave}
+                  className="
+                    w-[115px]
+                    px-[18px]
+                    py-1
+                    rounded-full
+                    bg-[#202020]
+                    text-white
+                    typo-caption
+                    font-medium
+                  "
+                >
+                  닉네임 변경
+                </button>
+              </>
+            ) : (
+              <>
+                <span className="typo-body-sm text-[#AEAEAE]">
+                  {account.nickname}
+                </span>
+
+                <button
+                  onClick={() => setIsEditingNickname(true)}
+                  className="
+                    w-[115px]
+                    px-[18px]
+                    py-1
+                    rounded-full
+                    bg-[#202020]
+                    text-white
+                    typo-caption
+                    font-medium
+                  "
+                >
+                  닉네임 변경
+                </button>
+              </>
+            )}
+          </div>
+        </div>
 
         <SettingsInputItem
           label="휴대전화"
