@@ -14,7 +14,9 @@ export default function LoginFooter() {
           비밀번호 찾기
         </button>
         <img src={line} alt="구분선" />
-        <button className="typo-label">회원가입</button>
+        <button className="typo-label" onClick={() => navigate("/signup")}>
+          회원가입
+        </button>
       </div>
 
       {/* SNS 로그인 */}

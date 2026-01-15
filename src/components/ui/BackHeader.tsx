@@ -15,7 +15,7 @@ const BackHeader = ({ title, onBack }: BackHeaderProps) => {
     w-full max-w-[450px]
     h-[56px]
     flex items-center
-    px-4
+    px-4 py-2 pt-[54px]
     bg-[#FAFAFA]
   "
     >

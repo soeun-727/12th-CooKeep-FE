@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PhoneSection from "./PhoneSection";
 import AccountSection from "./AccountSection";
 import SuccessSection from "./SuccessSection";
@@ -11,9 +11,17 @@ interface Agreements {
   policy: boolean;
 }
 
-export default function SignupForm() {
+interface SignupFormProps {
+  setHideHeader: (hide: boolean) => void;
+}
+
+export default function SignupForm({ setHideHeader }: SignupFormProps) {
   const [isFinished, setIsFinished] = useState(false);
   const [serverError, setServerError] = useState<string | undefined>();
+
+  useEffect(() => {
+    setHideHeader(isFinished);
+  }, [isFinished, setHideHeader]);
 
   // 전화 인증 결과만 구독
   const isVerified = useSignupStore((s) => s.isVerified);
@@ -35,8 +43,7 @@ export default function SignupForm() {
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
 
   const isPasswordMatch = password === passwordConfirm;
-  const isRequiredAgreed =
-    agreements.terms && agreements.privacy && agreements.policy;
+  const isRequiredAgreed = agreements.terms && agreements.privacy;
 
   const isSignupEnabled =
     isVerified && isPasswordValid && isPasswordMatch && isRequiredAgreed;
@@ -73,6 +80,7 @@ export default function SignupForm() {
             updateAgreements={updateAgreements}
             onSubmit={handleSubmit}
             isSignupEnabled={isSignupEnabled}
+            setHideHeader={setHideHeader}
           />
 
           {serverError && (

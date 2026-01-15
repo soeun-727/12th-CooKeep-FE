@@ -11,6 +11,7 @@ import openpwImage from "../../../assets/signup/openpw.svg";
 import checkIcon from "../../../assets/signup/check.svg";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
 import AgreementPage from "./AgreementPage";
+import type { AgreementItem } from "../../../constants/agreements";
 
 interface Agreements {
   terms: boolean;
@@ -30,12 +31,7 @@ interface AccountSectionProps {
   updateAgreements: (next: Partial<Agreements>) => void;
   onSubmit: () => void;
   isSignupEnabled: boolean;
-}
-
-interface AgreementItem {
-  key: keyof Agreements;
-  label: string;
-  content: string;
+  setHideHeader: (hide: boolean) => void;
 }
 
 export default function AccountSection({
@@ -49,6 +45,7 @@ export default function AccountSection({
   updateAgreements,
   onSubmit,
   isSignupEnabled,
+  setHideHeader,
 }: AccountSectionProps) {
   const [agreementPage, setAgreementPage] = useState<AgreementItem | null>(
     null
@@ -61,7 +58,8 @@ export default function AccountSection({
   const isPasswordValid =
     password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(password);
   const isPasswordMatch = password === passwordConfirm;
-  const isAllChecked = Object.values(agreements).every(Boolean);
+  const isAllChecked =
+    agreements.terms && agreements.privacy && agreements.marketing;
 
   // 각 입력창별로 비밀번호 표시 여부
   const [showPassword, setShowPassword] = useState(false);
@@ -77,6 +75,34 @@ export default function AccountSection({
     if (password && passwordConfirm && isPasswordMatch) return checkIcon;
     return showPasswordConfirm ? openpwImage : pwImage;
   };
+  console.log("agreements", agreements);
+
+  const AGREEMENT_NOTICE: Record<AgreementItem["key"], React.ReactNode> = {
+    terms: (
+      <p className="typo-label text-center">
+        공고일자: 2026년 2월 X일 / 시행일자: 2026년 2월 X일
+      </p>
+    ),
+    privacy: (
+      <p className="typo-label text-center">
+        개인정보처리자: CooKeep 운영진
+        <br />
+        문의처: cookeep2026@gmail.com
+        <br />
+        시행일자: 2026년 2월 X일
+      </p>
+    ),
+    marketing: (
+      <p className="typo-label text-center">시행일자: 2026년 2월 X일</p>
+    ),
+    policy: (
+      <p className="typo-label text-center">
+        공고일자: 2026년 2월 X일
+        <br />
+        시행일자: 2026년 2월 X일
+      </p>
+    ),
+  };
 
   return (
     <>
@@ -84,13 +110,20 @@ export default function AccountSection({
         <AgreementPage
           agreement={agreementPage}
           isChecked={agreements[agreementPage.key]}
-          onBack={() => setAgreementPage(null)}
-          onAgreeChange={(key, checked) => updateAgreements({ [key]: checked })}
-        />
+          onBack={() => {
+            setAgreementPage(null);
+            setHideHeader(false);
+          }}
+          onConfirm={(key) => {
+            updateAgreements({ [key]: true });
+            setAgreementPage(null);
+            setHideHeader(false);
+          }}
+        >
+          {AGREEMENT_NOTICE[agreementPage.key]}
+        </AgreementPage>
       ) : (
-        <div className="pt-[99px] mx-auto">
-          {/* 1pt-161px로 해야할지 모르겠다.. */}
-
+        <div className="pt-[161px] mx-auto">
           {/* 제목 */}
           <div className="typo-h1">회원가입</div>
           <div className="mx-auto mt-[12px]">
@@ -103,7 +136,7 @@ export default function AccountSection({
               disabled
               leftIcon={<img src={phoneIcon} alt="휴대폰 아이콘" />}
             />
-            <div className="mt-[22px]">
+            <div className="mt-[5px]">
               {/* 이메일 */}
               <TextField
                 value={email}
@@ -121,7 +154,7 @@ export default function AccountSection({
               />
 
               {/* 비밀번호 */}
-              <div className="mt-[22px]">
+              <div className="mt-[5px]">
                 <TextField
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -150,7 +183,7 @@ export default function AccountSection({
                 />
 
                 {/* 비밀번호 확인 */}
-                <div className="mt-[22px]">
+                <div className="mt-[5px]">
                   <TextField
                     type={showPasswordConfirm ? "text" : "password"}
                     value={passwordConfirm}
@@ -186,50 +219,67 @@ export default function AccountSection({
                   {/* 약관 영역 */}
                   <div className=" mt-5">
                     {/* 전체 동의 */}
-                    <label className="flex items-center gap-2 px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
+                    <label className="relative flex items-center px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
                       <input
                         type="checkbox"
-                        className="w-4 h-4 accent-[#1FC16F]" // 체크 시 색상 적용
+                        className="peer w-4 h-4 appearance-none border border-gray-300 rounded-sm checked:bg-[#1FC16F] cursor-pointer"
                         checked={isAllChecked}
                         onChange={(e) =>
                           updateAgreements({
                             terms: e.target.checked,
                             privacy: e.target.checked,
                             marketing: e.target.checked,
-                            policy: e.target.checked,
                           })
                         }
                       />
-                      <span className="typo-label">약관 전체동의</span>
+                      <span className="ml-[16px] typo-label text-[#202020]">
+                        약관 전체동의
+                      </span>
+                      <span className="absolute left-3 w-4 h-4 flex items-center justify-center pointer-events-none text-white text-lg font-bold peer-checked:visible invisible">
+                        ✓
+                      </span>
                     </label>
-
                     {/* 개별 약관 박스 */}
-                    <div className="w-full h-[138px] p-3 flex flex-col gap-3 ">
+                    <div className="w-full h-[138px] p-3 flex flex-col gap-[6px] ">
                       {AGREEMENTS.map((item) => (
                         <div
                           key={item.key}
                           className="flex items-center justify-between w-[337px] h-[24px] mx-auto"
                         >
-                          <label className="flex items-center gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              className={`w-4 h-4 accent-[#7D7D7D]`}
-                              checked={agreements[item.key]}
-                              onChange={(e) =>
-                                updateAgreements({
-                                  [item.key]: e.target.checked,
-                                })
-                              }
-                            />
+                          <label className="flex items-center gap-4 cursor-pointer">
+                            {/* 체크박스만 조건부 */}
+                            {item.key !== "policy" ? (
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 accent-[#7D7D7D]"
+                                checked={agreements[item.key]}
+                                onChange={(e) =>
+                                  updateAgreements({
+                                    [item.key]: e.target.checked,
+                                  })
+                                }
+                              />
+                            ) : (
+                              // ✔ 자리 차지용 더미 (레이아웃 유지)
+                              <span className="w-4 h-4 inline-block" />
+                            )}
+
+                            {/* 텍스트는 항상 동일 위치 */}
                             <span className="typo-label text-[#7D7D7D]">
                               {item.label}
                             </span>
                           </label>
+
+                          {/* 화살표는 항상 */}
                           <button
                             type="button"
-                            onClick={() => setAgreementPage(item)}
-                            className="w-6 h-3 flex items-center justify-center"
+                            onClick={() => {
+                              setAgreementPage(item);
+                              setHideHeader(true);
+                            }}
                           >
+                            {/* className="w-6 h-3 flex items-center justify-center" */}
+
                             <img src={arrowIcon} alt="약관 보기 화살표" />
                           </button>
                         </div>

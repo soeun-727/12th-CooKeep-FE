@@ -9,7 +9,7 @@ const AuthHeader = () => {
         left-1/2 -translate-x-1/2
         w-full max-w-[450px]
         flex items-start justify-between
-        px-4 py-3
+        px-4 py-2 pt-[54px]
         bg-[#FAFAFA]
       "
     >
