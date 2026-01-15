@@ -21,6 +21,8 @@ import EditPasswordPhoneSection from "./components/settings/sections/EditPasswor
 import FridgePage from "./pages/fridge/FridgePage";
 import Layout from "./components/Layout";
 
+import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
+
 export default function App() {
   return (
     <AppLayout>
@@ -29,6 +31,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/simplelogin" element={<SimpleLoginAgreementPage />} />
         <Route element={<FindLayout />}>
           <Route path="/findpw" element={<FindPage />} />
           <Route
