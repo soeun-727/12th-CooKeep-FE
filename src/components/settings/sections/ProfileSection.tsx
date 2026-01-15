@@ -12,6 +12,8 @@ type ProfileInfo = {
 };
 
 export default function ProfileSection() {
+  const MAX_NICKNAME_LENGTH = 10;
+
   const [account, setAccount] = useState<ProfileInfo>({
     nickname: "",
     phone: "",
@@ -43,6 +45,7 @@ export default function ProfileSection() {
 
   const handleNicknameSave = () => {
     if (!account.nickname.trim()) return;
+    if (account.nickname.length > MAX_NICKNAME_LENGTH) return;
 
     // TODO: 닉네임 변경 API
     setIsEditingNickname(false);
@@ -61,12 +64,16 @@ export default function ProfileSection() {
                 <input
                   ref={nicknameInputRef}
                   value={account.nickname}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const value = e.target.value;
+
+                    if (value.length > MAX_NICKNAME_LENGTH) return;
+
                     setAccount((prev) => ({
                       ...prev,
-                      nickname: e.target.value,
-                    }))
-                  }
+                      nickname: value,
+                    }));
+                  }}
                   className="
                     flex-1
                     h-full
@@ -75,9 +82,12 @@ export default function ProfileSection() {
                     text-[#202020]
                   "
                 />
-
                 <button
                   onClick={handleNicknameSave}
+                  disabled={
+                    !account.nickname.trim() ||
+                    account.nickname.length > MAX_NICKNAME_LENGTH
+                  }
                   className="
                     w-[115px]
                     px-[18px]
@@ -85,11 +95,13 @@ export default function ProfileSection() {
                     rounded-full
                     bg-[#202020]
                     text-white
+                    disabled:bg-[#DDD]
+    disabled:text-[#999]
                     typo-caption
                     font-medium
                   "
                 >
-                  닉네임 변경
+                  변경 완료
                 </button>
               </>
             ) : (
