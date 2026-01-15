@@ -94,7 +94,7 @@ export default function FridgeTab() {
   const isListView = !!viewCategory && !isSearching;
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col transition-all">
       <Search />
       {/* 1. 검색 모드 */}
       {isSearching &&
