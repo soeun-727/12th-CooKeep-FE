@@ -109,10 +109,10 @@ export default function PhoneSection() {
               <button
                 type="button"
                 onClick={isCodeSent ? handleResend : handleSendCode}
-                disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
+                disabled={!isPhoneValid} // disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
                 className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
           ${
-            isPhoneValid && !(isCodeSent && timeLeft > 0)
+            isPhoneValid // isPhoneValid && !(isCodeSent && timeLeft > 0)
               ? "bg-[#202020] border-[#202020]"
               : "bg-[#C3C3C3] border-[#C3C3C3]"
           }
@@ -127,7 +127,7 @@ export default function PhoneSection() {
       </div>
 
       {/* 인증번호 입력 + 인증 확인 버튼 */}
-      <div className="mt-[22px] w-[361px]">
+      <div className="mt-[5px] w-[361px]">
         <TextField
           value={code}
           onChange={(value) => {
@@ -153,7 +153,7 @@ export default function PhoneSection() {
             !isCodeSent || isVerified || timeLeft === 0 || code.length !== 6
           }
           onClick={handleVerify}
-          className="mt-[48px]"
+          className="mt-[31px]"
         >
           <span className="typo-button">
             인증 확인 {isCodeSent && !isVerified && `(${formatTime(timeLeft)})`}

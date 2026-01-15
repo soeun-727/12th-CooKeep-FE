@@ -8,17 +8,12 @@ export default function SuccessSection() {
   return (
     <div className="flex flex-col items-center justify-start py-10 animate-fade-in">
       {/* 상단 간격 */}
-      <div className="mt-[112px] flex flex-col items-center gap-[10px] w-[361px] text-center">
-        <h1
-          className="font-Pretendard font-bold text-[28px] leading-[36px]"
-          style={{ color: "#202020" }}
-        >
+      <div className="mt-[166px] flex flex-col items-center gap-[10px] w-[361px] text-center">
+        <h1 className="typo-h1 text-[28px] leading-[36px] font-bold text-center">
           반가워요! 오늘부터 지속 가능한 요리 루틴을 만들어볼까요?
         </h1>
-        <p
-          className="font-Pretendard font-bold text-[16px] leading-[24px]"
-          style={{ color: "#1FC16F" }}
-        >
+
+        <p className="typo-button text-[var(--color-green-deep)] text-center">
           쿠킵과 함께 냉장고 속 재료부터 채워봐요
         </p>
       </div>
