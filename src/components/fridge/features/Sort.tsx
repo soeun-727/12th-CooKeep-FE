@@ -20,8 +20,7 @@ export default function Sort({ categoryIcon, viewCategory }: SortProps) {
   ];
   return (
     <>
-      <div className="h-[11px]" />
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center mt-[3px] mb-4">
         <div className="w-[353px] relative items-center justify-center flex">
           <div className="flex items-center justify-center bg-neutral-800 rounded-[6px] h-[22px] w-[59px] px-2 gap-1 text-white text-3">
             <img src={categoryIcon} alt="category" className="w-3" />

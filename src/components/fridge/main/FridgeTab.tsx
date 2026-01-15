@@ -1,149 +1,141 @@
+import { useEffect } from "react";
 import Search from "../features/Search";
+import Sort from "../features/Sort";
 import Storage from "./Storage";
+import IngredientGrid from "../items/IngredientGrid";
+import NoResultView from "../items/NoResultView";
+import ItemOption from "../items/ItemOption";
+
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
 import milk from "../../../assets/fridge/milk.svg";
-import character from "../../../assets/fridge/character.svg";
-import { useIngredientStore } from "../../../stores/useIngredientStore";
-import ItemOption from "../items/ItemOption";
-import Item from "../items/Item";
-import { useEffect } from "react";
-import Sort from "../features/Sort";
 
-// 1. 임시 데이터 (현업에서는 API 응답 데이터가 됨)
+import { useIngredientStore } from "../../../stores/useIngredientStore";
+import { useSortedIngredients } from "../../../hooks/useSortedIngredients"; // 커스텀 훅 임포트
+
 const TEMP_DATA = [
   { id: 1, name: "우유", expiration: "D-3", image: milk, category: "냉장" },
+  { id: 2, name: "냉동우유", expiration: "D-1", image: milk, category: "냉동" },
   {
-    id: 2,
-    name: "이름이정말로긴우유",
-    expiration: "D-1",
+    id: 3,
+    name: "오래된우유",
+    expiration: "D-45",
     image: milk,
     category: "냉동",
   },
-  { id: 3, name: "우유", expiration: "D-45", image: milk, category: "냉동" },
   { id: 4, name: "우유", expiration: "D-1", image: milk, category: "냉장" },
   { id: 5, name: "우유", expiration: "D-2", image: milk, category: "냉장" },
   { id: 6, name: "우유", expiration: "D-3", image: milk, category: "냉장" },
   { id: 7, name: "우유", expiration: "D-4", image: milk, category: "냉장" },
   { id: 8, name: "우유", expiration: "D-9", image: milk, category: "냉장" },
   { id: 9, name: "우유", expiration: "D-7", image: milk, category: "냉장" },
+  {
+    id: 10,
+    name: "이름이정말로긴우유",
+    expiration: "D-7",
+    image: milk,
+    category: "냉동",
+  },
+  {
+    id: 11,
+    name: "딸기우유",
+    expiration: "D-7",
+    image: milk,
+    category: "냉장",
+  },
+  {
+    id: 12,
+    name: "바나나우유",
+    expiration: "D-7",
+    image: milk,
+    category: "냉장",
+  },
+  {
+    id: 13,
+    name: "초코우유",
+    expiration: "D-7",
+    image: milk,
+    category: "냉장",
+  },
+  {
+    id: 14,
+    name: "두바이초코우유",
+    expiration: "D-7",
+    image: milk,
+    category: "냉장",
+  },
 ];
 
 export default function FridgeTab() {
-  const {
-    ingredients,
-    setIngredients,
-    searchTerm,
-    selectedIds,
-    toggleSelect,
-    viewCategory,
-    setViewCategory,
-    sortOrder,
-  } = useIngredientStore();
+  const { ingredients, setIngredients, searchTerm, viewCategory } =
+    useIngredientStore();
+  const { filteredIngredients, sortedIngredients } = useSortedIngredients();
+
   useEffect(() => {
-    if (ingredients.length === 0) {
-      setIngredients(TEMP_DATA as any);
-    }
+    if (ingredients.length === 0) setIngredients(TEMP_DATA as any);
   }, [ingredients.length, setIngredients]);
 
-  const isSearching = searchTerm.trim().length > 0;
-  const filteredIngredients = ingredients.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const isListView = !!viewCategory && !isSearching;
-  const listIngredients = ingredients.filter(
-    (item) => item.category === viewCategory
-  );
-  const categoryIcon =
-    viewCategory === "냉장"
-      ? fridgeIcon
-      : viewCategory === "냉동"
-      ? freezerIcon
-      : pantryIcon;
-
-  const sortedIngredients = [...listIngredients].sort((a, b) => {
-    switch (sortOrder) {
-      case "유통기한 임박 순":
-        const getDay = (exp: string) => {
-          const num = parseInt(exp.replace(/[^0-9]/g, ""));
-          return isNaN(num) ? 999 : num;
-        };
-        return getDay(a.expiration) - getDay(b.expiration);
-
-      case "등록 최신 순":
-      case "등록 오래된 순":
-        return a.id - b.id;
-
+  // 카테고리에 따른 아이콘 반환 함수
+  const getCategoryIcon = (category: string | null) => {
+    switch (category) {
+      case "냉장":
+        return fridgeIcon;
+      case "냉동":
+        return freezerIcon;
+      case "상온":
+        return pantryIcon;
       default:
-        return 0;
+        return fridgeIcon;
     }
-  });
+  };
+
+  const isSearching = searchTerm.trim().length > 0;
+  const isListView = !!viewCategory && !isSearching;
+
   return (
     <div className="w-full flex flex-col">
       <Search />
-      {isSearching ? (
-        /* --- 검색 결과 뷰 --- */
-        <div className="items-center mx-auto w-[353px] grid grid-cols-3 gap-y-2 gap-x-2 mt-4">
-          {filteredIngredients.length > 0 ? (
-            filteredIngredients.map((item) => (
-              <Item
-                key={item.id}
-                name={item.name}
-                expiration={item.expiration}
-                image={item.image}
-                isSelected={selectedIds.includes(item.id)}
-                onClick={() => toggleSelect(item.id)}
-              />
-            ))
-          ) : (
-            /* 검색 결과가 없을 때 */
-            <div className="col-span-3 flex flex-col items-center py-20 text-[#7A8093] typo-caption">
-              <img src={character} className="w-[90px] mt-[184px]" />
-              <span className="typo-caption font-semibold text-[#7A8093]">
-                검색 결과가 없어요
-              </span>
-            </div>
-          )}
-        </div>
-      ) : isListView ? (
-        /* --- 전체보기 뷰 --- */
+      {/* 1. 검색 모드 */}
+      {isSearching &&
+        (filteredIngredients.length > 0 ? (
+          <IngredientGrid items={filteredIngredients} />
+        ) : (
+          <NoResultView />
+        ))}
+
+      {/* 2. 카테고리 리스트 모드 (전체보기) */}
+      {isListView && (
         <>
-          <Sort categoryIcon={categoryIcon} viewCategory={viewCategory} />
-          <div className="mx-auto w-[353px] grid grid-cols-3 gap-y-2 gap-x-2 mt-4">
-            {sortedIngredients.map((item) => (
-              <Item
-                key={item.id}
-                name={item.name}
-                expiration={item.expiration}
-                image={item.image}
-                isSelected={selectedIds.includes(item.id)}
-                onClick={() => toggleSelect(item.id)}
-              />
-            ))}
-          </div>
+          <Sort
+            categoryIcon={getCategoryIcon(viewCategory)}
+            viewCategory={viewCategory!}
+          />
+          <IngredientGrid items={sortedIngredients} />
         </>
-      ) : (
-        /* --- 기본 카테고리 뷰 --- */
+      )}
+
+      {/* 3. 기본 메인 화면 (카테고리별 요약) */}
+      {!isSearching && !viewCategory && (
         <div className="flex flex-col gap-[10px]">
           <Storage
             category="냉장"
             image={fridgeIcon}
-            ingredients={ingredients.filter((item) => item.category === "냉장")}
+            ingredients={ingredients.filter((i) => i.category === "냉장")}
           />
           <Storage
             category="냉동"
             image={freezerIcon}
-            ingredients={ingredients.filter((item) => item.category === "냉동")}
+            ingredients={ingredients.filter((i) => i.category === "냉동")}
           />
           <Storage
             category="상온"
             image={pantryIcon}
-            ingredients={ingredients.filter((item) => item.category === "상온")}
+            ingredients={ingredients.filter((i) => i.category === "상온")}
           />
         </div>
       )}
+
       <ItemOption />
     </div>
   );
