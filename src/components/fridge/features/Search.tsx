@@ -11,16 +11,18 @@ export default function Search() {
   };
   const hasText = searchTerm.trim().length > 0;
   return (
-    <div className="w-full [&_p]:hidden">
+    <div className="w-full pb-[26px]">
       <div className="w-[361px] mx-auto transition-all duration-200">
         <div
           className={`
           relative
           w-full 
+          [&_p]:hidden
           [&_input]:w-full
           [&_input]:border-none 
           [&_input]:outline-none 
           [&_input]:shadow-sm 
+          [&_input::placeholder]:text-[#7D7D7D]
           ${hasText ? "[&_input]: bg-white" : "[&_input]:bg-[#EBEDF1] "}
       `}
         >
