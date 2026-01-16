@@ -1,8 +1,17 @@
 // src/components/auth/AuthHeader.tsx
 import Logo from "../../assets/fixed/Logo.svg";
 import settings from "../../assets/fixed/settings.svg";
+import backIcon from "../../assets/back.svg";
+import { useIngredientStore } from "../../stores/useIngredientStore";
 
 const MainHeader = () => {
+  const { viewCategory, setViewCategory } = useIngredientStore();
+  const isListView = !!viewCategory;
+
+  const handleBack = () => {
+    setViewCategory(null); // 전체보기 종료
+  };
+
   return (
     <header
       className="
@@ -19,9 +28,19 @@ const MainHeader = () => {
           <img
             src={Logo}
             alt="CooKeep logo"
-            className="w-[70px] object-contain pb-1"
+            className="w-20 object-contain pb-1"
           />
         </div>
+        {isListView && (
+          <div className="absolute left-0 bottom-4 flex items-center h-10">
+            <button
+              className="p-1 active:opacity-50 transition-opacity"
+              onClick={handleBack}
+            >
+              <img src={backIcon} alt="back" className="w-9" />
+            </button>
+          </div>
+        )}
         <div className="w-full flex justify-end items-center h-10">
           <button
             className="p-1"
