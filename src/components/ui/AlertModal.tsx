@@ -15,7 +15,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-[#11111180]">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-[#11111180]">
       <div className="absolute inset-0" onClick={onClose}></div>
       <div className="relative w-60 h-[271.5px] bg-white rounded-[10px] flex flex-col items-center text-center gap-4">
         <div className="typo-body2 font-medium text-neutral-900 mt-[35px]">
