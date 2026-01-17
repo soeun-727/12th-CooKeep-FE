@@ -26,6 +26,8 @@ import SupportPage from "./pages/settings/SupportPage";
 import FaqPage from "./pages/settings/FaqPage";
 import NoticePage from "./pages/settings/NoticePage";
 import TermsPage from "./pages/settings/TermsPage";
+import WithdrawPage from "./pages/settings/WithdrawPage";
+import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
 
 export default function App() {
   return (
@@ -64,7 +66,10 @@ export default function App() {
           <Route path="faq" element={<FaqPage />} />
           <Route path="notice" element={<NoticePage />} />
           <Route path="terms" element={<TermsPage />} />
+          <Route path="withdraw" element={<WithdrawPage />} />
         </Route>
+        {/*헤더 없기에 따로 뺌*/}
+        <Route path="/settings/withdraw/done" element={<WithdrawDonePage />} />
 
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />

@@ -49,7 +49,7 @@ export default function SettingsMain() {
 
           {/* 탈퇴하기 */}
           <button
-            onClick={() => navigate("/withdraw")}
+            onClick={() => navigate("/settings/withdraw")}
             className="mt-[42px] text-[12px] font-normal leading-[16px] text-[#7D7D7D] underline"
           >
             탈퇴하기
