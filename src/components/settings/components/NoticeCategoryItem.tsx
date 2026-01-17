@@ -1,15 +1,19 @@
-// src/pages/settings/components/FaqCategoryItem.tsx
+// src/pages/settings/components/NoticeCategoryItem.tsx
 import { useState } from "react";
-import type { FaqItem } from "../../../constants/faqData";
-import FaqItemComponent from "./FaqItem";
+import NoticeItem from "./NoticeItem";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
 
-type Props = {
+export type NoticeItemType = {
+  id: number;
   title: string;
-  items: FaqItem[];
+  content: string;
 };
 
-export default function FaqCategoryItem({ title, items }: Props) {
+type Props = {
+  category: NoticeItemType;
+};
+
+export default function NoticeCategoryItem({ category }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -18,36 +22,31 @@ export default function FaqCategoryItem({ title, items }: Props) {
         open ? "bg-[#ECECEC]" : "bg-white"
       }`}
     >
-      {/* 카테고리 헤더 */}
+      {/* 헤더 */}
       <div
-        className={`flex w-full items-center justify-between px-[12px] cursor-pointer 
-    ${open ? "pt-[12px] pb-[6px]" : "py-[12px]"}`}
+        className={`flex w-full items-center justify-between px-[12px] cursor-pointer ${
+          open ? "pt-[12px] pb-[6px]" : "py-[12px]"
+        }`}
         onClick={() => setOpen((prev) => !prev)}
       >
         <p
           className={`typo-label ${open ? "text-[#1FC16F]" : "text-[#202020]"}`}
         >
-          {title}
+          {category.title}
         </p>
         <img
           src={arrowIcon}
-          alt="약관 보기 화살표"
+          alt="공지사항 열기 화살표"
           className={`w-[24px] h-[24px] transition-transform ${
             open ? "-rotate-90" : "rotate-90"
           }`}
         />
       </div>
 
-      {/* Q/A 리스트 */}
+      {/* 내용 */}
       {open && (
         <div className="flex w-full flex-col gap-[14px] px-[12px] pb-[12px]">
-          {items.map((item) => (
-            <FaqItemComponent
-              key={item.id}
-              question={item.question}
-              answer={item.answer}
-            />
-          ))}
+          <NoticeItem content={category.content} />
         </div>
       )}
     </div>

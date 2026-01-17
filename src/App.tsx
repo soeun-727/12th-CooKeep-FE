@@ -24,6 +24,7 @@ import Layout from "./components/Layout";
 import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 import SupportPage from "./pages/settings/SupportPage";
 import FaqPage from "./pages/settings/FaqPage";
+import NoticePage from "./pages/settings/NoticePage";
 
 export default function App() {
   return (
@@ -60,6 +61,7 @@ export default function App() {
 
           <Route path="support" element={<SupportPage />} />
           <Route path="faq" element={<FaqPage />} />
+          <Route path="notice" element={<NoticePage />} />
         </Route>
 
         <Route element={<Layout />}>
