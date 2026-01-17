@@ -10,6 +10,7 @@ import ResetPassword from "./components/auth/find/ResetPassword";
 import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
 import FridgePage from "./pages/fridge/FridgePage";
+import RecipePage from "./pages/recipe/RecipePage";
 import Layout from "./components/Layout";
 import SettingsPage from "./pages/auth/SettingsPage";
 import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
@@ -37,8 +38,8 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />
           <Route path="/fridge" element={<FridgePage />} />
-          {/* <Route path="/recipe" element={<RecipePage />} />
-          <Route path="/cookeeps" element={<CookeepsPage />} />
+          <Route path="/recipe" element={<RecipePage />} />
+          {/* <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
         <Route path="/settings" element={<SettingsPage />} />
