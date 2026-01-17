@@ -51,7 +51,7 @@ export default function AgreementPage({
 
           <div className="mx-auto w-[332px] border-t-[1.5px] border-[#C3C3C3]" />
 
-          {/* ✅ 약관 전문만 스크롤 */}
+          {/* 약관 전문만 스크롤 */}
           <div className="flex-1 overflow-y-auto p-3 min-h-0">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -117,7 +117,7 @@ export default function AgreementPage({
             {children && <div className="mt-[18px]">{children}</div>}
           </div>
         </div>
-        {/* 하단 버튼 (safe-area 대응) */}
+
         {/* 하단 버튼 (safe-area 대응) */}
         <div
           className="

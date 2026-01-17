@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AGREEMENTS } from "../../../constants/agreements";
+import { AGREEMENTS, AGREEMENT_NOTICE } from "../../../constants/agreements";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
 import type { AgreementItem } from "../../../constants/agreements";
 import AgreementPage from "../signup/AgreementPage";
@@ -22,33 +22,6 @@ export default function AgreementList({
   const isAllChecked =
     agreements.terms && agreements.privacy && agreements.marketing;
 
-  const AGREEMENT_NOTICE: Record<AgreementItem["key"], React.ReactNode> = {
-    terms: (
-      <p className="typo-label text-center">
-        공고일자: 2026년 2월 X일 / 시행일자: 2026년 2월 X일
-      </p>
-    ),
-    privacy: (
-      <p className="typo-label text-center">
-        개인정보처리자: CooKeep 운영진
-        <br />
-        문의처: cookeep2026@gmail.com
-        <br />
-        시행일자: 2026년 2월 X일
-      </p>
-    ),
-    marketing: (
-      <p className="typo-label text-center">시행일자: 2026년 2월 X일</p>
-    ),
-    policy: (
-      <p className="typo-label text-center">
-        공고일자: 2026년 2월 X일
-        <br />
-        시행일자: 2026년 2월 X일
-      </p>
-    ),
-  };
-
   if (agreementPage) {
     return (
       <div className="fixed inset-0 z-50 bg-gray-100 flex justify-center">
@@ -64,7 +37,9 @@ export default function AgreementList({
               setAgreementPage(null);
             }}
           >
-            {AGREEMENT_NOTICE[agreementPage.key]}
+            <p className="typo-label text-center whitespace-pre-line">
+              {AGREEMENT_NOTICE[agreementPage.key]}
+            </p>
           </AgreementPage>
         </div>
       </div>
@@ -77,7 +52,7 @@ export default function AgreementList({
       <label className="relative flex items-center px-4 h-[48px] max-w-[361px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
         <input
           type="checkbox"
-          className="peer w-4 h-4 appearance-none border border-gray-300 rounded-sm checked:bg-[#1FC16F] cursor-pointer"
+          className="peer w-4 h-4 appearance-none border border-[#7D7D7D] rounded-sm checked:bg-[#1FC16F] cursor-pointer"
           checked={isAllChecked}
           onChange={(e) =>
             updateAgreements({
