@@ -19,13 +19,13 @@ import VerifyLayout from "./layouts/VerifyLayout";
 import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
 
 import FridgePage from "./pages/fridge/FridgePage";
-import RecipePage from "./pages/recipe/RecipePage";
 import Layout from "./components/Layout";
 
 import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 import SupportPage from "./pages/settings/SupportPage";
 import FaqPage from "./pages/settings/FaqPage";
 import NoticePage from "./pages/settings/NoticePage";
+import TermsPage from "./pages/settings/TermsPage";
 
 export default function App() {
   return (
@@ -63,13 +63,14 @@ export default function App() {
           <Route path="support" element={<SupportPage />} />
           <Route path="faq" element={<FaqPage />} />
           <Route path="notice" element={<NoticePage />} />
+          <Route path="terms" element={<TermsPage />} />
         </Route>
 
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />
           <Route path="/fridge" element={<FridgePage />} />
-          <Route path="/recipe" element={<RecipePage />} />
-          {/* <Route path="/cookeeps" element={<CookeepsPage />} />
+          {/* <Route path="/recipe" element={<RecipePage />} />
+          <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
       </Routes>
