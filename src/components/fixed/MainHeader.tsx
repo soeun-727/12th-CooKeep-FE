@@ -3,13 +3,18 @@ import Logo from "../../assets/fixed/Logo.svg";
 import settings from "../../assets/fixed/settings.svg";
 import backIcon from "../../assets/back.svg";
 import { useIngredientStore } from "../../stores/useIngredientStore";
+import { useNavigate } from "react-router-dom";
 
 const MainHeader = () => {
+  const navigate = useNavigate();
   const { viewCategory, setViewCategory } = useIngredientStore();
   const isListView = !!viewCategory;
 
   const handleBack = () => {
-    setViewCategory(null); // 전체보기 종료
+    setViewCategory(null);
+  };
+  const handleSettings = () => {
+    navigate("/settings");
   };
 
   return (
@@ -42,11 +47,7 @@ const MainHeader = () => {
           </div>
         )}
         <div className="w-full flex justify-end items-center h-10">
-          <button
-            className="p-1"
-            onClick={() => console.log("Settings clicked")}
-          >
-            {/* 나중에는 "회원 정보"로 이동하는 로직 추가 */}
+          <button className="p-1" onClick={handleSettings}>
             <img src={settings} alt="settings" className="w-9" />
           </button>
         </div>

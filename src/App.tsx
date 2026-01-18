@@ -62,7 +62,6 @@ export default function App() {
             />
           </Route>
 
-          <Route path="support" element={<SupportPage />} />
           <Route path="faq" element={<FaqPage />} />
           <Route path="notice" element={<NoticePage />} />
           <Route path="terms" element={<TermsPage />} />
@@ -70,7 +69,7 @@ export default function App() {
         </Route>
         {/*헤더 없기에 따로 뺌*/}
         <Route path="/settings/withdraw/done" element={<WithdrawDonePage />} />
-
+        <Route path="/support" element={<SupportPage />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />
           <Route path="/fridge" element={<FridgePage />} />
