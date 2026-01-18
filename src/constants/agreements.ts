@@ -275,8 +275,7 @@ export const AGREEMENTS: AgreementItem[] = [
 ];
 
 export const AGREEMENT_NOTICE: Record<AgreementItem["key"], string> = {
-  terms: `공고일자: 2026년 2월 X일
-시행일자: 2026년 2월 X일`,
+  terms: `공고일자: 2026년 2월 X일 / 시행일자: 2026년 2월 X일`,
 
   privacy: `개인정보처리자: CooKeep 운영진
 문의처: cookeep2026@gmail.com

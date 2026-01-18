@@ -1,6 +1,6 @@
 import { useState } from "react";
-import SettingsToggleItem from "./components/SettingsToggleItem";
-import ConfirmModal from "./components/ConfirmModal";
+import SettingsToggleItem from "../components/SettingsToggleItem";
+import ConfirmModal from "../../ui/ConfirmModal";
 
 export default function NotificationSection() {
   const [enabled, setEnabled] = useState(false);

@@ -1,6 +1,6 @@
 // src/pages/settings/sections/SupportSection.tsx
 
-import SettingsLinkItem from "./components/SettingsLinkItem";
+import SettingsLinkItem from "../components/SettingsLinkItem";
 
 export default function SupportSection() {
   return (
@@ -13,10 +13,10 @@ export default function SupportSection() {
           gap-2
         "
       >
-        <SettingsLinkItem label="고객센터" to="/support" />
-        <SettingsLinkItem label="FAQ" to="/faq" />
-        <SettingsLinkItem label="공지사항" to="/notice" />
-        <SettingsLinkItem label="이용약관" to="/terms" />
+        <SettingsLinkItem label="고객센터" to="/settings/support" />
+        <SettingsLinkItem label="FAQ" to="/settings/faq" />
+        <SettingsLinkItem label="공지사항" to="/settings/notice" />
+        <SettingsLinkItem label="이용약관" to="/settings/terms" />
       </div>
     </section>
   );

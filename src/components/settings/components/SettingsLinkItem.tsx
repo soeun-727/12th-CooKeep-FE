@@ -15,7 +15,7 @@ export default function SettingsLinkItem({ label, to }: SettingsLinkItemProps) {
       className="
         flex justify-center items-center
         w-full max-w-[164px]
-        pt-[7px] pb-[13px]
+        pt-[12px] pb-[12px]
         rounded-[10px]
         bg-[var(--color-green-deep)]
         text-white

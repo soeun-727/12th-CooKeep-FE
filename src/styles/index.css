@@ -83,13 +83,22 @@ body,
     font-size: 14px;
     line-height: 20px;
   }
-  @layer utilities {
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+  /* 성공화면 제목 폰트*/
+  .typo-result-title {
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 36px;
+    color: #202020;
+    text-align: center;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

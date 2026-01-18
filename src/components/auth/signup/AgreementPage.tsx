@@ -114,7 +114,9 @@ export default function AgreementPage({
             </ReactMarkdown>
 
             {/* AgreementItem에 없는 추가 영역 */}
-            {children && <div className="mt-[18px]">{children}</div>}
+            {children && (
+              <div className="mt-[18px] typo-label text-center">{children}</div>
+            )}
           </div>
         </div>
 

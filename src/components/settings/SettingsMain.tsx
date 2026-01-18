@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import ProfileSection from "./ProfileSection";
-import NotificationSection from "./NotificationSection";
-import SupportSection from "./SupportSection";
-import logoutIcon from "../../../assets/logout.svg";
-import ConfirmModal from "./components/ConfirmModal";
+import ProfileSection from "./sections/ProfileSection";
+import NotificationSection from "./sections/NotificationSection";
+import SupportSection from "./sections/SupportSection";
+import logoutIcon from "../../assets/settings/logout.svg";
+import ConfirmModal from "../ui/ConfirmModal";
 
 export default function SettingsMain() {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export default function SettingsMain() {
 
           {/* 탈퇴하기 */}
           <button
-            onClick={() => navigate("/withdraw")}
+            onClick={() => navigate("/settings/withdraw")}
             className="mt-[42px] text-[12px] font-normal leading-[16px] text-[#7D7D7D] underline"
           >
             탈퇴하기
