@@ -8,6 +8,8 @@ export default function Layout() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("냉장고");
 
+  const isRecipe = location.pathname.startsWith("/recipe"); //추가
+
   useEffect(() => {
     const path = location.pathname;
     if (path.includes("fridge")) setActiveTab("냉장고");
@@ -18,8 +20,14 @@ export default function Layout() {
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
-      <MainHeader />
-      <main className="pt-[102px] pb-[90px]">
+      {!isRecipe && <MainHeader />}
+      <main
+        className={
+          isRecipe
+            ? "pb-[90px]" // 하단바 공간만
+            : "pt-[102px] pb-[90px]"
+        }
+      >
         <Outlet />
       </main>
       <TabBar selectedTab={activeTab} onSelect={(name) => setActiveTab(name)} />

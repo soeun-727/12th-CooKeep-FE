@@ -10,6 +10,8 @@ import ResetPassword from "./components/auth/find/ResetPassword";
 import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
 
+import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
+
 import SettingsPage from "./pages/settings/SettingsPage";
 import EditPhonePage from "./pages/settings/EditPhonePage";
 import SettingsLayout from "./layouts/SettingsLayout";
@@ -17,17 +19,18 @@ import EditEmailPage from "./pages/settings/EditEmailPage";
 import EditPasswordPage from "./pages/settings/EditPasswordPage";
 import VerifyLayout from "./layouts/VerifyLayout";
 import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
-
-import FridgePage from "./pages/fridge/FridgePage";
-import Layout from "./components/Layout";
-
-import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 import SupportPage from "./pages/settings/SupportPage";
 import FaqPage from "./pages/settings/FaqPage";
 import NoticePage from "./pages/settings/NoticePage";
 import TermsPage from "./pages/settings/TermsPage";
 import WithdrawPage from "./pages/settings/WithdrawPage";
 import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
+
+import FridgePage from "./pages/fridge/FridgePage";
+import Layout from "./components/Layout";
+
+import RecipePage from "./pages/recipe/RecipePage";
+import RecipeIntroPage from "./pages/recipe/RecipeIntroPage";
 
 export default function App() {
   return (
@@ -74,7 +77,15 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />
           <Route path="/fridge" element={<FridgePage />} />
-          {/* <Route path="/recipe" element={<RecipePage />} />
+          <Route path="/recipe" element={<RecipePage />}>
+            <Route index element={<RecipeIntroPage />} />
+            {/* <Route path="select" element={<RecipeSelectPage />} /> */}
+            {/* <Route path="confirm" element={<RecipeConfirmPage />} />
+            <Route path="loading" element={<RecipeLoadingPage />} />
+            <Route path="result" element={<RecipeResultPage />} /> */}
+          </Route>
+
+          {/* 
           <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
