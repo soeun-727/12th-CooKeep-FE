@@ -4,7 +4,7 @@
 // RecipeConfirmPage에서 snapshot 쓰는지 확인
 // 나중에 시간 나면 recipe 선택 store 분리
 import { useNavigate } from "react-router-dom";
-import "../../components/recipe/main/recipe.css";
+// import "../../components/recipe/main/recipe.css";
 import Button from "../../components/ui/Button";
 import BackHeader from "../../components/ui/BackHeader";
 import Search from "../../components/fridge/features/Search";
