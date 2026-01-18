@@ -7,7 +7,8 @@ interface ItemProps {
   name: string;
   expiration: string;
   isSelected?: boolean;
-  onClick?: () => void;
+  onSelect?: () => void;
+  onDetail?: () => void;
 }
 
 const Item: React.FC<ItemProps> = ({
@@ -15,11 +16,12 @@ const Item: React.FC<ItemProps> = ({
   name,
   expiration,
   isSelected = false,
-  onClick,
+  onSelect,
+  onDetail,
 }) => {
   return (
     <button
-      onClick={onClick}
+      onClick={onDetail}
       className={`w-[114px] h-20 rounded-[6px] border flex flex-col items-start overflow-hidden pl-[11px] ${
         isSelected
           ? "border-[var(--color-green-deep)] bg-[var(--color-green-light)]"
@@ -36,11 +38,20 @@ const Item: React.FC<ItemProps> = ({
       </div>
 
       <div className="flex justify-between items-end w-full flex-1 pb-1.5">
-        <img
-          src={isSelected ? checkOn : check}
-          className="w-9 h-9 object-contain ml-[-6px] flex-shrink-0"
-          alt="check"
-        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect?.();
+          }}
+          className="flex-shrink-0 z-10 w-9 h-9"
+        >
+          <img
+            src={isSelected ? checkOn : check}
+            className="w-9 h-9 object-contain ml-[-6px] flex-shrink-0"
+            alt="check"
+          />
+        </button>
+
         <img
           className="w-10 h-10 object-contain flex-shrink-0 -translate-x-[2px] -translate-y-[2px]"
           src={image}
