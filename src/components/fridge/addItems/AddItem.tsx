@@ -15,6 +15,7 @@ import drink from "../../../assets/fridge/items/drink.svg";
 import ferment from "../../../assets/fridge/items/fermented.svg";
 import elseIcon from "../../../assets/fridge/items/else.svg";
 import Category from "./Category";
+import ItemsGrid from "./ItemsGrid";
 
 export default function AddItem() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,6 +59,9 @@ export default function AddItem() {
               </div>
             ))}
           </div>
+        </div>
+        <div>
+          <ItemsGrid />
         </div>
       </div>
     </>
