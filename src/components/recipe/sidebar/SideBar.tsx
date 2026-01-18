@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const filteredRecipes = useMemo(() => {
     return recipes.filter((r) =>
-      r.name.toLowerCase().includes(searchTerm.toLowerCase())
+      r.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [recipes, searchTerm]);
 
@@ -103,9 +103,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="flex-1 overflow-y-auto py-[35px] px-[26px] no-scrollbar">
             <div className="w-[290px]">
               <div
-                className={`[&_>_div]:!w-full [&_input]:border-none [&_input::placeholder]:text-stone-300 ${
-                  searchTerm ? "[&_input]:bg-white" : "[&_input]:bg-[#EBEDF1]"
-                }`}
+                className={`[&_>_div]:!w-full [&_input]:border-none [&_input::placeholder]:text-stone-300
+                  shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)] ${
+                    searchTerm ? "[&_input]:bg-white" : "[&_input]:bg-[#EBEDF1]"
+                  }`}
               >
                 <TextField
                   value={searchTerm}
