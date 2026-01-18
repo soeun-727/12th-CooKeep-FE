@@ -28,6 +28,7 @@ import NoticePage from "./pages/settings/NoticePage";
 import TermsPage from "./pages/settings/TermsPage";
 import WithdrawPage from "./pages/settings/WithdrawPage";
 import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
+import AddItemPage from "./pages/fridge/AddItemPage";
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
         <Route path="/support" element={<SupportPage />} />
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />
+          <Route path="/fridge/add" element={<AddItemPage />} />
           <Route path="/fridge" element={<FridgePage />} />
           {/* <Route path="/recipe" element={<RecipePage />} />
           <Route path="/cookeeps" element={<CookeepsPage />} />

@@ -1,5 +1,11 @@
+import AddButton from "../../components/fridge/addItems/AddButton";
 import FridgeTab from "../../components/fridge/main/FridgeTab";
 
 export default function FridgePage() {
-  return <FridgeTab />;
+  return (
+    <div>
+      <FridgeTab />
+      <AddButton />
+    </div>
+  );
 }
