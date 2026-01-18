@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/ui/Button";
+
 import cookChar from "../../assets/recipe/main/cook_char.svg";
+import Button from "../../components/ui/Button";
 
 export default function RecipeIntroPage() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function RecipeIntroPage() {
           rounded-full
           bg-[rgba(31,193,111,0.15)]
           blur-[125px]
+           pointer-events-none
         "
       />
 
@@ -41,7 +43,7 @@ export default function RecipeIntroPage() {
             <Button
               size="S"
               variant="black"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/recipe/select")}
               className="w-full h-full !text-[#32E389]"
             >
               요리할 재료를 선택할까요?
