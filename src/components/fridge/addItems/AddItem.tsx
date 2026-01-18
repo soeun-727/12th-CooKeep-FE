@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextField from "../../ui/TextField";
 import searchIcon from "../../../assets/fridge/search_on.svg";
 import veg from "../../../assets/fridge/items/vegatable.svg";
@@ -16,10 +16,44 @@ import ferment from "../../../assets/fridge/items/fermented.svg";
 import elseIcon from "../../../assets/fridge/items/else.svg";
 import Category from "./Category";
 import ItemsGrid from "./ItemsGrid";
+import AddItemFooter from "./AddItemFooter";
+import { useNavigate } from "react-router-dom";
 
 export default function AddItem() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [historyItems, setHistoryItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    // 임시 데이터: 실제 서비스에서는 최근 사용한 재료 API를 호출하면 좋습니다.
+    const mockHistory = [
+      { id: 101, name: "당근", image: veg },
+      { id: 102, name: "사과", image: fruit },
+      { id: 103, name: "삼겹살", image: meat },
+    ];
+    setHistoryItems(mockHistory);
+  }, []);
+  const handleSelect = (item: any) => {
+    setSelectedItems((prev) => {
+      if (prev.find((i) => i.id === item.id)) {
+        return prev.filter((i) => i.id !== item.id);
+      }
+      return [...prev, item];
+    });
+  };
+  const handleReset = () => {
+    if (selectedItems.length === 0) return;
+    setSelectedItems([]);
+  };
+  const handleSubmit = async () => {
+    if (selectedItems.length === 0) return;
+    console.log("등록 완료:", selectedItems);
+    navigate("/fridge", {
+      state: { message: "재료 등록이 완료되었습니다!" },
+    });
+  };
   const TEMP_CATEGORY = [
     { id: 1, name: "채소", image: veg },
     { id: 2, name: "과일", image: fruit },
@@ -61,8 +95,15 @@ export default function AddItem() {
           </div>
         </div>
         <div>
-          <ItemsGrid />
+          <ItemsGrid selectedItems={selectedItems} onSelect={handleSelect} />
         </div>
+        <AddItemFooter
+          selectedItems={selectedItems}
+          historyItems={historyItems}
+          onReset={handleReset}
+          onSubmit={handleSubmit}
+          onSelect={handleSelect} // RecentlyAdded에서 클릭 시 호출될 함수
+        />
       </div>
     </>
   );
