@@ -1,14 +1,15 @@
 import { create } from "zustand";
 
+import type { Ingredient } from "../stores/useIngredientStore";
+
 export type Difficulty = "easy" | "normal" | "hard";
 
 type RecipeFlowState = {
-  selectedIngredients: number[];
-  setSelectedIngredients: (ids: number[]) => void;
+  selectedIngredients: Ingredient[];
   difficulty: Difficulty | null;
   retryCount: number;
 
-  toggleIngredient: (id: number) => void;
+  setSelectedIngredients: (items: Ingredient[]) => void;
   setDifficulty: (d: Difficulty) => void;
   increaseRetry: () => void;
   reset: () => void;
@@ -16,16 +17,10 @@ type RecipeFlowState = {
 
 export const useRecipeFlowStore = create<RecipeFlowState>((set) => ({
   selectedIngredients: [],
-  setSelectedIngredients: (ids) => set({ selectedIngredients: ids }),
   difficulty: null,
   retryCount: 0,
 
-  toggleIngredient: (id) =>
-    set((state) => ({
-      selectedIngredients: state.selectedIngredients.includes(id)
-        ? state.selectedIngredients.filter((i) => i !== id)
-        : [...state.selectedIngredients, id],
-    })),
+  setSelectedIngredients: (items) => set({ selectedIngredients: items }),
 
   setDifficulty: (difficulty) => set({ difficulty }),
 

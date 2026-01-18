@@ -36,6 +36,12 @@ export default function RecipeSelectPage() {
 
   const { sortedIngredients } = useSortedIngredients();
 
+  const { searchTerm } = useIngredientStore();
+
+  const filteredIngredients = searchTerm
+    ? sortedIngredients.filter((item) => item.name.includes(searchTerm))
+    : sortedIngredients;
+
   // 선택 상태는 RecipeSelect 전용
   // const { selectedIds, toggle, reset } = useRecipeSelectStore();
 
@@ -43,8 +49,12 @@ export default function RecipeSelectPage() {
   const { setSelectedIngredients } = useRecipeFlowStore();
 
   const handleConfirm = () => {
-    setSelectedIngredients(selectedIds); // recipe 전용 선택만 저장
-    clearSelection(); // 선택만 취소 (중요!)
+    const selectedIngredients = ingredients.filter((item) =>
+      selectedIds.includes(item.id),
+    );
+
+    setSelectedIngredients(selectedIngredients); // Ingredient[]
+    clearSelection(); // fridge 선택 상태만 초기화
     navigate("/recipe/confirm");
   };
 
@@ -69,7 +79,7 @@ export default function RecipeSelectPage() {
     <div className="flex flex-col w-full pb-32">
       <BackHeader title="재료 선택" onBack={handleBack} />
 
-      <FloatingNotice text="요리할 재료를 선택해주세요" />
+      {!viewCategory && <FloatingNotice text="요리할 재료를 선택해주세요" />}
 
       <div className="mt-[102px]">
         <Search />
@@ -81,7 +91,7 @@ export default function RecipeSelectPage() {
               viewCategory={viewCategory}
             />
             <IngredientGrid
-              items={sortedIngredients}
+              items={filteredIngredients}
               // selectedIds={selectedIds}
               // onToggle={toggle}
             />
