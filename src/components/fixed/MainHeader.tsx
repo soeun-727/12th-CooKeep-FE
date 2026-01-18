@@ -20,8 +20,7 @@ const MainHeader = () => {
   return (
     <header
       className="
-        fixed top-0 z-50
-        left-1/2 -translate-x-1/2
+        absolute top-0 z-50
         w-[400px] max-w-[450px]
         h-[102px] 
         bg-[#FAFAFA]
