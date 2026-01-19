@@ -40,6 +40,12 @@ const Custom: React.FC<CustomProps> = ({
       onClose();
     }
   };
+  const finishEditing = () => {
+    if (searchTerm.trim() === "") {
+      setSearchTerm("이름 없음");
+    }
+    setIsEditing(false);
+  };
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-[#11111180]">
@@ -53,13 +59,10 @@ const Custom: React.FC<CustomProps> = ({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onBlur={() => {
-                if (searchTerm.trim() === "") {
-                  setSearchTerm("이름 없음");
-                }
-                setIsEditing(false);
+              onBlur={finishEditing} // 포커스 잃으면 실행
+              onKeyDown={(e) => {
+                if (e.key === "Enter") finishEditing(); // 엔터 치면 실행
               }}
-              onKeyDown={(e) => e.key === "Enter" && setIsEditing(false)} // 엔터 치면 수정 완료
               className="typo-body1 w-[180px] text-center font-bold text-neutral-900 border-b border-zinc-300 outline-none"
             />
           ) : (
