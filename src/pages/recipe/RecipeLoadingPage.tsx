@@ -5,6 +5,7 @@ import LoadingIcon from "../../assets/recipe/main/LoadingIcon.svg";
 import CheckIcon from "../../assets/signup/check.svg";
 import StepMessage from "../../components/recipe/main/loading/StepMessage";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
+// import RecipeLoadingSpinner from "../../components/recipe/main/loading/RecipeLoadingSpinner";
 
 export default function RecipeLoadingPage() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function RecipeLoadingPage() {
         className="w-20 h-20 animate-spin mb-10"
         alt="loading"
       />
+      {/* <RecipeLoadingSpinner /> */}
 
       {/* 타이틀 / 서브타이틀 */}
       <div className="flex flex-col items-center w-[361px] gap-2 mb-[49px]">
