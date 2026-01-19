@@ -1,4 +1,3 @@
-import React from "react";
 import CautionIcon from "../../../assets/signup/icon_caution.svg";
 import Button from "../../ui/Button";
 
