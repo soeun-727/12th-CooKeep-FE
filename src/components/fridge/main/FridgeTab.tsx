@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Search from "../features/Search";
 import Sort from "../features/Sort";
 import Storage from "./Storage";
@@ -13,6 +13,7 @@ import milk from "../../../assets/fridge/milk.svg";
 
 import { useIngredientStore } from "../../../stores/useIngredientStore";
 import { useSortedIngredients } from "../../../hooks/useSortedIngredients"; // 커스텀 훅 임포트
+import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 
 const TEMP_DATA = [
   { id: 1, name: "우유", expiration: "D-3", image: milk, category: "냉장" },
@@ -76,6 +77,43 @@ export default function FridgeTab() {
     if (ingredients.length === 0) setIngredients(TEMP_DATA as any);
   }, [ingredients.length, setIngredients]);
 
+  // parsing func--------------------------
+  // const parseDDay = (exp: string) => {
+  //   if (!exp.startsWith("D-")) return Infinity;
+  //   const num = Number(exp.replace("D-", ""));
+  //   return isNaN(num) ? Infinity : num;
+  // };
+
+  // const expiringIngredients = useMemo(
+  //   () =>
+  //     ingredients.filter((i) => {
+  //       const daysLeft = parseDDay(i.expiration);
+  //       return daysLeft <= 3 && daysLeft >= 0;
+  //     }),
+  //   [ingredients],
+  // );
+
+  // 재료 여러개 가능일때 & 오늘
+  // const todayIngredients = useMemo(
+  //   () => ingredients.filter((i) => i.expiration === "D-0"),
+  //   [ingredients],
+  // );
+  const todayIngredients = useMemo(() => {
+    const list = ingredients.filter((i) => i.expiration === "D-0");
+    return list.length > 0 ? [list[0]] : [];
+  }, [ingredients]);
+
+  const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(() => {
+    const source = ingredients.length > 0 ? ingredients : TEMP_DATA;
+    return source.some((i) => {
+      if (!i.expiration.startsWith("D-")) return false;
+      const d = Number(i.expiration.replace("D-", ""));
+      return d <= 3 && d >= 0;
+    });
+  });
+
+  //---------------------------------------
+
   // 카테고리에 따른 아이콘 반환 함수
   const getCategoryIcon = (category: string | null) => {
     switch (category) {
@@ -96,6 +134,14 @@ export default function FridgeTab() {
   return (
     <div className="w-full flex flex-col transition-all">
       <Search />
+
+      {/* 모달 */}
+      <ExpiryAlertModal
+        isOpen={isExpiryModalOpen}
+        onClose={() => setIsExpiryModalOpen(false)}
+        items={todayIngredients}
+      />
+
       {/* 1. 검색 모드 */}
       {isSearching &&
         (filteredIngredients.length > 0 ? (
