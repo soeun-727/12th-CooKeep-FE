@@ -1,8 +1,7 @@
-interface SelectedProps {
-  selectedItems: any[];
-}
+import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 
-export default function Selected({ selectedItems }: SelectedProps) {
+export default function Selected() {
+  const { selectedItems } = useAddIngredientStore();
   const selectedDisplay = [...selectedItems].reverse().slice(0, 5);
   const emptySlots = Array(5 - selectedDisplay.length).fill(null);
   const allSlots = [...selectedDisplay, ...emptySlots];

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import TextField from "../../ui/TextField";
 import searchIcon from "../../../assets/fridge/search_on.svg";
 import veg from "../../../assets/fridge/items/vegatable.svg";
@@ -14,61 +14,35 @@ import candy from "../../../assets/fridge/items/candy.svg";
 import drink from "../../../assets/fridge/items/drink.svg";
 import ferment from "../../../assets/fridge/items/fermented.svg";
 import elseIcon from "../../../assets/fridge/items/else.svg";
+import milk from "../../../assets/fridge/milk.svg";
 import Category from "./Category";
 import ItemsGrid from "./ItemsGrid";
 import AddItemFooter from "./AddItemFooter";
-import { useNavigate } from "react-router-dom";
+import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 
 export default function AddItem() {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
-  const [historyItems, setHistoryItems] = useState<any[]>([]);
+  const {
+    searchTerm,
+    setSearchTerm,
+    selectedCategoryId,
+    setCategoryId,
+    setHistoryItems,
+  } = useAddIngredientStore();
 
   useEffect(() => {
-    // 임시 데이터: 실제 서비스에서는 최근 사용한 재료 API를 호출하면 좋습니다.
     const mockHistory = [
-      { id: 101, name: "당근", image: veg },
-      { id: 102, name: "사과", image: fruit },
-      { id: 103, name: "삼겹살", image: meat },
+      { id: 101, name: "당근", image: veg, categoryId: 1 },
+      { id: 102, name: "사과", image: fruit, categoryId: 2 },
+      { id: 103, name: "삼겹살", image: meat, categoryId: 3 },
     ];
     setHistoryItems(mockHistory);
-  }, []);
-  const handleSelect = (item: any) => {
-    setSelectedItems((prev) => {
-      if (prev.find((i) => i.id === item.id)) {
-        return prev.filter((i) => i.id !== item.id);
-      }
-      return [...prev, item];
-    });
-  };
-  const handleReset = () => {
-    if (selectedItems.length === 0) return;
-    setSelectedItems([]);
-  };
-  const handleSubmit = async () => {
-    if (selectedItems.length === 0) return;
-    console.log("등록 완료:", selectedItems);
-    navigate("/fridge", {
-      state: { message: "재료 등록이 완료되었습니다!" },
-    });
-  };
-  const TEMP_CATEGORY = [
-    { id: 1, name: "채소", image: veg },
-    { id: 2, name: "과일", image: fruit },
-    { id: 3, name: "육류", image: meat },
-    { id: 4, name: "해산물", image: fish },
-    { id: 5, name: "유제품 · 계란", image: egg },
-    { id: 6, name: "곡물 · 쌀 · 면", image: rice },
-    { id: 7, name: "베이커리", image: bread },
-    { id: 8, name: "양념 · 소스 · 조미료", image: salt },
-    { id: 9, name: "즉석 · 간편식", image: simple },
-    { id: 10, name: "과자 · 디저트", image: candy },
-    { id: 11, name: "음료", image: drink },
-    { id: 12, name: "절임 · 발효", image: ferment },
-    { id: 13, name: "기타", image: elseIcon },
-  ];
+  }, [setHistoryItems]);
+
+  const filteredItems = ALL_ITEMS.filter((item) => {
+    const matchesCategory = item.categoryId === selectedCategoryId;
+    const matchesSearch = item.name.includes(searchTerm);
+    return matchesCategory && matchesSearch;
+  });
   return (
     <>
       <div className="flex flex-col items-center mt-[102px]">
@@ -87,24 +61,78 @@ export default function AddItem() {
                 <Category
                   name={category.name}
                   image={category.image}
-                  isSelected={selectedId === category.id}
-                  onSelect={() => setSelectedId(category.id)}
+                  isSelected={selectedCategoryId === category.id}
+                  onSelect={() => setCategoryId(category.id)}
                 />
               </div>
             ))}
           </div>
         </div>
         <div>
-          <ItemsGrid selectedItems={selectedItems} onSelect={handleSelect} />
+          <ItemsGrid items={filteredItems} />
         </div>
-        <AddItemFooter
-          selectedItems={selectedItems}
-          historyItems={historyItems}
-          onReset={handleReset}
-          onSubmit={handleSubmit}
-          onSelect={handleSelect} // RecentlyAdded에서 클릭 시 호출될 함수
-        />
+        <AddItemFooter />
       </div>
     </>
   );
 }
+
+const TEMP_CATEGORY = [
+  { id: 1, name: "채소", image: veg },
+  { id: 2, name: "과일", image: fruit },
+  { id: 3, name: "육류", image: meat },
+  { id: 4, name: "해산물", image: fish },
+  { id: 5, name: "유제품 · 계란", image: egg },
+  { id: 6, name: "곡물 · 쌀 · 면", image: rice },
+  { id: 7, name: "베이커리", image: bread },
+  { id: 8, name: "양념 · 소스 · 조미료", image: salt },
+  { id: 9, name: "즉석 · 간편식", image: simple },
+  { id: 10, name: "과자 · 디저트", image: candy },
+  { id: 11, name: "음료", image: drink },
+  { id: 12, name: "절임 · 발효", image: ferment },
+  { id: 13, name: "기타", image: elseIcon },
+];
+const ALL_ITEMS = [
+  { id: 1001, categoryId: 1, name: "당근", image: milk },
+  { id: 1002, categoryId: 1, name: "양파", image: milk },
+  { id: 1003, categoryId: 1, name: "대파", image: milk },
+  { id: 2001, categoryId: 2, name: "사과", image: milk },
+  { id: 2002, categoryId: 2, name: "바나나", image: milk },
+  { id: 3001, categoryId: 3, name: "소고기", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+  { id: 3001, categoryId: 5, name: "우유", image: milk },
+];

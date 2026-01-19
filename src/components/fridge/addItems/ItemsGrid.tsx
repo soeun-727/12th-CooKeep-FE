@@ -1,30 +1,30 @@
 import Item from "./Item";
-import milk from "../../../assets/fridge/milk.svg";
 import character from "../../../assets/temp_simplelogin_icon.svg";
+import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 
-const DUMMY_ITEMS = Array.from({ length: 24 }, (_, i) => ({
-  id: i + 1,
-  name: "우유",
-  image: milk,
-}));
-
+interface InventoryItem {
+  id: string | number;
+  name: string;
+  image: string;
+  categoryId: number;
+}
 interface ItemsGridProps {
-  selectedItems: any[];
-  onSelect: (item: any) => void;
+  items: InventoryItem[];
 }
 
-export default function ItemsGrid({ selectedItems, onSelect }: ItemsGridProps) {
+export default function ItemsGrid({ items }: ItemsGridProps) {
+  const { selectedItems, toggleItem } = useAddIngredientStore();
   return (
     <div className="w-full flex flex-col items-justify-center pt-6">
       <div className="w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
         <div className="grid grid-cols-3 gap-3 justify-items-center">
-          {DUMMY_ITEMS.map((item) => (
+          {items.map((item) => (
             <Item
               key={item.id}
               name={item.name}
               image={item.image}
               isSelected={selectedItems.some((i) => i.id === item.id)}
-              onSelect={() => onSelect(item)}
+              onSelect={() => toggleItem(item)}
             />
           ))}
         </div>

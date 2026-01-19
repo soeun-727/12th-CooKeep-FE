@@ -1,21 +1,9 @@
 import { useState } from "react";
+import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 
-interface Item {
-  id: string | number;
-  name: string;
-  image: string;
-}
-
-interface RecentlyAddedProps {
-  historyItems: Item[];
-  onAdd: (item: Item) => void;
-}
-
-export default function RecentlyAdded({
-  historyItems,
-  onAdd,
-}: RecentlyAddedProps) {
+export default function RecentlyAdded() {
   const [isOpen, setIsOpen] = useState(false);
+  const { historyItems, toggleItem } = useAddIngredientStore();
   const displayHistory = historyItems.slice(0, 6);
   const emptyCount = Math.max(0, 6 - displayHistory.length);
   const emptySlots = Array(emptyCount).fill(null);
@@ -25,8 +13,13 @@ export default function RecentlyAdded({
     <div className="flex flex-col w-full">
       <div className="pl-[15px]">
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-[139px] h-6 bg-white rounded-t-[15px] flex items-center justify-center gap-2 relative z-30 transition-colors"
+          className={`w-[139px] h-6 flex items-center justify-center gap-2 relative z-30 transition-all duration-300 rounded-t-[15px] ${
+            isOpen
+              ? "bg-white shadow-[0_-10px_20px_-5px_rgba(17,17,17,0.1)]" // 메뉴바와 연결되는 느낌의 그림자
+              : "bg-white"
+          }`}
         >
           <span
             className={`typo-caption transition-colors duration-300 ${
@@ -38,8 +31,8 @@ export default function RecentlyAdded({
           <div
             className={`w-2 h-2 border-b-2 border-r-2 transition-all duration-300 ${
               isOpen
-                ? "rotate-[225deg] translate-y-[2px] border-[var(--color-green-deep)]" // 열렸을 때 초록색
-                : "rotate-45 -translate-y-[1px] border-zinc-500" // 닫혔을 때 회색
+                ? "rotate-[225deg] translate-y-[2px] border-[var(--color-green-deep)]"
+                : "rotate-45 -translate-y-[1px] border-zinc-500"
             }`}
           />
         </button>
@@ -49,7 +42,7 @@ export default function RecentlyAdded({
       <div
         className={`w-[361px] bg-white rounded-t-[10px] shadow-[0_-1px_100px_-4px_rgba(17,17,17,0.15)] overflow-hidden transition-all duration-300 ease-in-out relative z-20 ${
           isOpen
-            ? "max-h-[100px] opacity-100 mt-0"
+            ? "max-h-[100px] opacity-100 mt-[-1px]" // 버튼과 겹치게 하여 경계선 제거
             : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
@@ -57,11 +50,11 @@ export default function RecentlyAdded({
           {allSlots.map((item, idx) => (
             <div
               key={item?.id || `history-empty-${idx}`}
-              className="flex flex-col items-center w-[56px]" // 간격 확보를 위해 너비 고정
+              className="flex flex-col items-center w-[56px]"
             >
               {item ? (
                 <button
-                  onClick={() => onAdd(item)}
+                  onClick={() => toggleItem(item)}
                   className="flex flex-col items-center group active:scale-90 transition-transform"
                 >
                   <div className="w-10 h-10 flex items-center justify-center">
@@ -71,7 +64,7 @@ export default function RecentlyAdded({
                       className="w-7 h-7 object-contain"
                     />
                   </div>
-                  <span className="text-[10px] truncate w-11 text-center">
+                  <span className="text-[10px] truncate w-11 text-center text-zinc-600">
                     {item.name}
                   </span>
                 </button>
