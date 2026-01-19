@@ -1,8 +1,8 @@
 import SkillButton from "./SkillButton";
-import one from "../../../assets/onboarding/beginner.png";
-import two from "../../../assets/onboarding/intermediate.png";
-import three from "../../../assets/onboarding/advanced.png";
-import four from "../../../assets/onboarding/pro.png";
+import one from "../../../assets/onboarding/beginner.svg";
+import two from "../../../assets/onboarding/intermediate.svg";
+import three from "../../../assets/onboarding/advanced.svg";
+import four from "../../../assets/onboarding/pro.svg";
 
 interface SkillProps {
   selectedSkill: string; // 부모로부터 받은 선택된 숙련도 값

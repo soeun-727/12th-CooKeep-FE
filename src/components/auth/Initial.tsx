@@ -45,7 +45,7 @@ export default function Initial() {
           </span>
           <button
             onClick={() => navigate("/signup")}
-            className="typo-caption text-white"
+            className="typo-caption text-white mb-[34px]"
           >
             회원가입
           </button>
