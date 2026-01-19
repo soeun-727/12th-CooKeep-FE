@@ -15,10 +15,12 @@ import drink from "../../../assets/fridge/items/drink.svg";
 import ferment from "../../../assets/fridge/items/fermented.svg";
 import elseIcon from "../../../assets/fridge/items/else.svg";
 import milk from "../../../assets/fridge/milk.svg";
+
 import Category from "./components/Category";
 import ItemsGrid from "./components/ItemsGrid";
 import AddItemFooter from "./AddItemFooter";
 import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
+import Custom from "./components/Custom";
 
 export default function AddItem() {
   const {
@@ -27,6 +29,9 @@ export default function AddItem() {
     selectedCategoryId,
     setCategoryId,
     setHistoryItems,
+    isModalOpen,
+    setModalOpen,
+    toggleItem,
   } = useAddIngredientStore();
 
   useEffect(() => {
@@ -73,6 +78,22 @@ export default function AddItem() {
         </div>
         <AddItemFooter />
       </div>
+      {isModalOpen && (
+        <Custom
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          categories={TEMP_CATEGORY}
+          onConfirm={(categoryId) => {
+            toggleItem({
+              id: `custom-${Date.now()}`,
+              name: searchTerm,
+              image: elseIcon,
+              categoryId: categoryId,
+            });
+            setModalOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }

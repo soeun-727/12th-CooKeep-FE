@@ -13,7 +13,7 @@ interface ItemsGridProps {
 }
 
 export default function ItemsGrid({ items }: ItemsGridProps) {
-  const { selectedItems, toggleItem } = useAddIngredientStore();
+  const { selectedItems, toggleItem, setModalOpen } = useAddIngredientStore();
   return (
     <div className="w-full flex flex-col items-justify-center pt-6">
       <div className="w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
@@ -30,7 +30,7 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
         </div>
         <div className="flex flex-col items-center gap-[10px] mt-4 mb-50">
           <img src={character} className="w-[50px]" />
-          <button>
+          <button type="button" onClick={() => setModalOpen(true)}>
             <div className="flex flex-col items-justify-center rounded-full bg-black w-[125px] h-6">
               <span className="typo-caption text-white text-center py-1">
                 찾는 재료가 없어요
