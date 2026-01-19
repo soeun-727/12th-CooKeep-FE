@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
-import RecentlyAdded from "./RecentlyAdded";
-import Selected from "./Selected";
+import RecentlyAdded from "./components/RecentlyAdded";
+import Selected from "./components/Selected";
 import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 
 export default function AddItemFooter() {

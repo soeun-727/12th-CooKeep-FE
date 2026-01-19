@@ -15,8 +15,8 @@ import drink from "../../../assets/fridge/items/drink.svg";
 import ferment from "../../../assets/fridge/items/fermented.svg";
 import elseIcon from "../../../assets/fridge/items/else.svg";
 import milk from "../../../assets/fridge/milk.svg";
-import Category from "./Category";
-import ItemsGrid from "./ItemsGrid";
+import Category from "./components/Category";
+import ItemsGrid from "./components/ItemsGrid";
 import AddItemFooter from "./AddItemFooter";
 import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 
