@@ -1,5 +1,5 @@
 // src/pages/settings/components/PhoneVerifySection.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
 import PhoneAuthModal from "../../auth/signup/PhoneAuthModal";
