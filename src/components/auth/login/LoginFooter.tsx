@@ -39,7 +39,7 @@ export default function LoginFooter() {
           {/* 현재 페이지 미구현 */}
           <button className="typo-caption underline">고객센터</button>
         </div>
-        <button className="mt-5 typo-body1 font-bold text-[var(--color-green-deep)]">
+        <button className="mt-5 typo-body1 font-bold text-[var(--color-green-deep)] mb-[34px]">
           일단 둘러보기
           {/* 현재 페이지 미구현 */}
         </button>
