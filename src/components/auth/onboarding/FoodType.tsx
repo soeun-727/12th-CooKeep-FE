@@ -1,16 +1,16 @@
 import FoodTypeButton from "./FoodTypeButton";
-import Korean from "../../../assets/onboarding/korean.png";
-import KoreanGray from "../../../assets/onboarding/korean_gray.png";
-import Chinese from "../../../assets/onboarding/chinese.png";
-import ChineseGray from "../../../assets/onboarding/chinese_gray.png";
-import Japanese from "../../../assets/onboarding/japanese.png";
-import JapaneseGray from "../../../assets/onboarding/japanese_gray.png";
-import Western from "../../../assets/onboarding/western.png";
-import WesternGray from "../../../assets/onboarding/western_gray.png";
-import Healthy from "../../../assets/onboarding/healthy.png";
-import HealthyGray from "../../../assets/onboarding/healthy_gray.png";
-import Instant from "../../../assets/onboarding/instant.png";
-import InstantGray from "../../../assets/onboarding/instant_gray.png";
+import Korean from "../../../assets/onboarding/korean.svg";
+import KoreanGray from "../../../assets/onboarding/korean_gray.svg";
+import Chinese from "../../../assets/onboarding/chinese.svg";
+import ChineseGray from "../../../assets/onboarding/chinese_gray.svg";
+import Japanese from "../../../assets/onboarding/japanese.svg";
+import JapaneseGray from "../../../assets/onboarding/japanese_gray.svg";
+import Western from "../../../assets/onboarding/western.svg";
+import WesternGray from "../../../assets/onboarding/western_gray.svg";
+import Healthy from "../../../assets/onboarding/healthy.svg";
+import HealthyGray from "../../../assets/onboarding/healthy_gray.svg";
+import Instant from "../../../assets/onboarding/instant.svg";
+import InstantGray from "../../../assets/onboarding/instant_gray.svg";
 
 interface FoodTypeProps {
   selectedTypes: string[]; // 부모로부터 받은 선택된 목록
