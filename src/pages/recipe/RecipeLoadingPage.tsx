@@ -9,10 +9,10 @@ import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
 
 export default function RecipeLoadingPage() {
   const navigate = useNavigate();
-  const _selectedIngredients = useRecipeFlowStore(
-    (state) => state.selectedIngredients,
-  );
-  const _difficulty = useRecipeFlowStore((state) => state.difficulty);
+  // const _selectedIngredients = useRecipeFlowStore(
+  //   (state) => state.selectedIngredients,
+  // );
+  // const _difficulty = useRecipeFlowStore((state) => state.difficulty);
 
   const [step, setStep] = useState(0);
 
@@ -31,6 +31,12 @@ export default function RecipeLoadingPage() {
       return () => clearTimeout(timer);
     }
   }, [step, navigate, messages.length]);
+
+  useEffect(() => {
+    if (step === messages.length) {
+      useRecipeFlowStore.getState().generateRecipe();
+    }
+  }, [step]);
 
   return (
     <div className="flex flex-col items-center h-screen pt-[193px] text-center">
@@ -53,7 +59,7 @@ export default function RecipeLoadingPage() {
       {/* 메시지 카드 */}
       <div className="flex flex-col w-[321px] gap-3">
         {messages.slice(0, step).map((msg, idx) => (
-          <StepMessage key={idx} message={msg} index={idx} icon={CheckIcon} />
+          <StepMessage key={idx} message={msg} icon={CheckIcon} />
         ))}
       </div>
     </div>

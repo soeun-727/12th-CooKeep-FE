@@ -34,6 +34,7 @@ import RecipeIntroPage from "./pages/recipe/RecipeIntroPage";
 import RecipeSelectPage from "./pages/recipe/RecipeSelectPage";
 import RecipeConfirmPage from "./pages/recipe/RecipeConfirmPage";
 import RecipeLoadingPage from "./pages/recipe/RecipeLoadingPage";
+import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 
 export default function App() {
   return (
@@ -85,7 +86,7 @@ export default function App() {
             <Route path="select" element={<RecipeSelectPage />} />
             <Route path="confirm" element={<RecipeConfirmPage />} />
             <Route path="loading" element={<RecipeLoadingPage />} />
-            {/* <Route path="result" element={<RecipeResultPage />} /> */}
+            <Route path="result" element={<RecipeResultPage />} />
           </Route>
 
           {/* 

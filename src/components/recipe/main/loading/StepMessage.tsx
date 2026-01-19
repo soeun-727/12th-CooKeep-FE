@@ -1,20 +1,13 @@
 interface StepMessageProps {
   message: string;
-  index: number;
   icon: string;
 }
 
-export default function StepMessage({
-  message,
-  index,
-  icon,
-}: StepMessageProps) {
+export default function StepMessage({ message, icon }: StepMessageProps) {
   return (
     <div
-      className="flex items-center gap-3 p-3 border border-[#32E389] rounded-md bg-white"
+      className="step-message flex items-center gap-3 p-3 border border-[#32E389] rounded-md bg-white"
       style={{
-        animation: `fadeIn 0.5s forwards`,
-        animationDelay: `${index * 0.5}s`,
         boxShadow: "0 4px 16px -10px rgba(0,0,0,0.25)",
       }}
     >
