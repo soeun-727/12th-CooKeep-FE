@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
 import { AGREEMENTS, AGREEMENT_NOTICE } from "../../../constants/agreements";
@@ -48,7 +48,7 @@ export default function AccountSection({
   setHideHeader,
 }: AccountSectionProps) {
   const [agreementPage, setAgreementPage] = useState<AgreementItem | null>(
-    null
+    null,
   );
   // Zustand에서 인증 완료된 번호 가져오기
   const phoneNumber = useSignupStore((state) => state.phone);

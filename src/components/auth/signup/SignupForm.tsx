@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PhoneSection from "./PhoneSection";
 import AccountSection from "./AccountSection";
 import SuccessSection from "./SuccessSection";
