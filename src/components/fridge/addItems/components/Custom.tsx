@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAddIngredientStore } from "../../../../stores/useAddIngredientStore";
-
+import editIcon from "../../../../assets/recipe/rename.svg";
 interface CustomProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,17 +17,26 @@ const Custom: React.FC<CustomProps> = ({
   categories,
   confirmText = "추가",
 }) => {
-  const { searchTerm } = useAddIngredientStore();
+  const { searchTerm, setSearchTerm } = useAddIngredientStore();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
   );
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
 
   if (!isOpen) return null;
 
   const handleConfirm = () => {
     if (selectedCategoryId !== null) {
       onConfirm(selectedCategoryId);
-      setSelectedCategoryId(null); // 초기화
+      setSelectedCategoryId(null);
+      setIsEditing(false);
       onClose();
     }
   };
@@ -37,9 +46,40 @@ const Custom: React.FC<CustomProps> = ({
       <div className="absolute inset-0" onClick={onClose}></div>
 
       <div className="relative w-[280px] h-[316px] bg-white rounded-[10px] shadow-xl flex flex-col items-center px-7 py-[35px]">
-        <h2 className="typo-body1 w-full mb-4 text-center font-bold text-neutral-900 mt-4 break-all truncate">
-          "{searchTerm}"의 카테고리를 선택해주세요
-        </h2>
+        <div className="w-full flex items-center justify-center gap-1 mb-4">
+          {isEditing ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onBlur={() => {
+                if (searchTerm.trim() === "") {
+                  setSearchTerm("이름 없음");
+                }
+                setIsEditing(false);
+              }}
+              onKeyDown={(e) => e.key === "Enter" && setIsEditing(false)} // 엔터 치면 수정 완료
+              className="typo-body1 w-[180px] text-center font-bold text-neutral-900 border-b border-zinc-300 outline-none"
+            />
+          ) : (
+            <div className="flex items-center justify-center gap-1 group">
+              <h2 className="typo-body1 max-w-[180px] text-center font-bold text-neutral-900 break-all truncate">
+                '{searchTerm}'
+              </h2>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <img src={editIcon} alt="edit" className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <p className="text-[12px] text-zinc-500 mb-4 leading-none">
+          '{searchTerm}'의 카테고리를 선택해주세요
+        </p>
 
         {/* 그리드 영역 */}
         <div className="w-40 h-40 flex-1 overflow-y-auto no-scrollbar grid grid-cols-3 gap-2 mb-4">
