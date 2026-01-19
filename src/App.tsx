@@ -19,7 +19,7 @@ import VerifyLayout from "./layouts/VerifyLayout";
 import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
 
 import FridgePage from "./pages/fridge/FridgePage";
-import Layout from "./components/Layout";
+import Layout from "./layouts/Layout";
 
 import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 import SupportPage from "./pages/settings/SupportPage";
@@ -28,6 +28,8 @@ import NoticePage from "./pages/settings/NoticePage";
 import TermsPage from "./pages/settings/TermsPage";
 import WithdrawPage from "./pages/settings/WithdrawPage";
 import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
+import AddItemPage from "./pages/fridge/AddItemPage";
+import AddItemLayout from "./layouts/AddItemLayout";
 
 export default function App() {
   return (
@@ -38,6 +40,7 @@ export default function App() {
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/simplelogin" element={<SimpleLoginAgreementPage />} />
+
         <Route element={<FindLayout />}>
           <Route path="/findpw" element={<FindPage />} />
           <Route
@@ -62,14 +65,15 @@ export default function App() {
             />
           </Route>
 
-          <Route path="support" element={<SupportPage />} />
           <Route path="faq" element={<FaqPage />} />
           <Route path="notice" element={<NoticePage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="withdraw" element={<WithdrawPage />} />
         </Route>
+
         {/*헤더 없기에 따로 뺌*/}
         <Route path="/settings/withdraw/done" element={<WithdrawDonePage />} />
+        <Route path="/support" element={<SupportPage />} />
 
         <Route element={<Layout />}>
           <Route path="/" element={<Navigate to="/fridge" />} />
@@ -77,6 +81,10 @@ export default function App() {
           {/* <Route path="/recipe" element={<RecipePage />} />
           <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
+        </Route>
+
+        <Route element={<AddItemLayout />}>
+          <Route path="/fridge/add" element={<AddItemPage />} />
         </Route>
       </Routes>
     </AppLayout>

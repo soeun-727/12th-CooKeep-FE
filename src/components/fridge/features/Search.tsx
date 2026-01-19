@@ -17,11 +17,11 @@ export default function Search() {
           className={`
           relative
           w-full 
+          shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]
           [&_p]:hidden
           [&_input]:w-full
           [&_input]:border-none 
           [&_input]:outline-none 
-          [&_input]:shadow-sm 
           [&_input::placeholder]:text-[#7D7D7D]
           ${hasText ? "[&_input]: bg-white" : "[&_input]:bg-[#EBEDF1] "}
       `}
