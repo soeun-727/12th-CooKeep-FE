@@ -1,12 +1,12 @@
 import Button from "../../ui/Button";
 import type { Ingredient } from "../../../stores/useIngredientStore";
 import characterImg from "../../../assets/character/surprised_char_faded.svg";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   items: Ingredient[];
-  onCook?: () => void;
   onEditExpiry?: () => void;
 }
 
@@ -14,9 +14,10 @@ export default function ExpiryAlertModal({
   isOpen,
   onClose,
   items,
-  onCook,
   onEditExpiry,
 }: Props) {
+  const navigate = useNavigate();
+
   if (!isOpen || items.length === 0) return null;
 
   const mainNames = items
@@ -56,7 +57,10 @@ export default function ExpiryAlertModal({
         <div className="w-full flex flex-col gap-2 mt-2">
           <Button
             variant="green"
-            onClick={onCook}
+            onClick={() => {
+              onClose(); // 모달 닫고
+              navigate("/recipe"); // 레시피 페이지로 이동
+            }}
             className="!w-[224px] bg-[#32E389]"
           >
             레시피 받고 요리하기
