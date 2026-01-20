@@ -13,7 +13,7 @@ export default function SupportSection() {
           gap-2
         "
       >
-        <SettingsLinkItem label="고객센터" to="/settings/support" />
+        <SettingsLinkItem label="고객센터" to="/support" />
         <SettingsLinkItem label="FAQ" to="/settings/faq" />
         <SettingsLinkItem label="공지사항" to="/settings/notice" />
         <SettingsLinkItem label="이용약관" to="/settings/terms" />

@@ -37,7 +37,12 @@ export default function LoginFooter() {
         <div className="flex justify-center gap-4">
           <span className="typo-caption">전화번호를 변경했어요</span>
           {/* 현재 페이지 미구현 */}
-          <button className="typo-caption underline">고객센터</button>
+          <button
+            onClick={() => navigate("/support")}
+            className="typo-caption underline"
+          >
+            고객센터
+          </button>
         </div>
         <button className="mt-5 typo-body1 font-bold text-[var(--color-green-deep)] mb-[34px]">
           일단 둘러보기

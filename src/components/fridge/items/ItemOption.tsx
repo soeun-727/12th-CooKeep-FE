@@ -39,7 +39,7 @@ export default function ItemOption() {
 
   return (
     <>
-      <div className="flex flex-col fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-[393px]">
+      <div className="flex flex-col fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-full">
         <div className="flex bg-white border-[0.5px] border-[#D1D1D1] h-11">
           <button
             onClick={() => handleOpenModal("eaten")}
@@ -70,7 +70,7 @@ export default function ItemOption() {
           </button>
         </div>
 
-        <div className="w-[393px] h-[5px] bg-gradient-to-b from-[#737373]/80 to-[#D9D9D9]/80" />
+        <div className="w-full h-[5px] bg-gradient-to-b from-[#737373]/80 to-[#D9D9D9]/80" />
       </div>
 
       <DoublecheckModal

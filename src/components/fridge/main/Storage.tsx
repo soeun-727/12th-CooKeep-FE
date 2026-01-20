@@ -88,7 +88,8 @@ export default function Storage({
                   expiration={item.expiration}
                   image={item.image}
                   isSelected={selectedIds.includes(item.id)}
-                  onClick={() => toggleSelect(item.id)}
+                  onSelect={() => toggleSelect(item.id)}
+                  onDetail={() => console.log(`${item.name} 상세 정보 오픈`)}
                 />
               </div>
             ))}

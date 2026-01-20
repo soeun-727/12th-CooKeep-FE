@@ -1,7 +1,7 @@
 // src/components/layout/Layout.tsx
 import { Outlet, useLocation } from "react-router-dom";
-import MainHeader from "./fixed/MainHeader";
-import TabBar from "./fixed/TabBar";
+import MainHeader from "../components/fixed/MainHeader";
+import TabBar from "../components/fixed/TabBar";
 import { useState, useEffect } from "react";
 
 export default function Layout() {

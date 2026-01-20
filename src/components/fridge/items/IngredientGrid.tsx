@@ -14,7 +14,7 @@ export default function IngredientGrid({ items }: { items: Ingredient[] }) {
           key={item.id}
           {...item}
           isSelected={selectedIds.includes(item.id)}
-          onClick={() => toggleSelect(item.id)}
+          onSelect={() => toggleSelect(item.id)}
         />
       ))}
     </div>
