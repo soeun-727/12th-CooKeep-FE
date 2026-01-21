@@ -5,6 +5,11 @@ export interface MasterItem {
   name: string;
   image: string;
   categoryId: number;
+  memo?: string;
+  storageType?: "냉장" | "냉동" | "상온";
+  expiration?: string;
+  quantity?: number;
+  unit?: string;
 }
 
 interface AddIngredientState {
@@ -19,6 +24,7 @@ interface AddIngredientState {
   toggleItem: (item: MasterItem) => void;
   resetSelected: () => void;
   setHistoryItems: (items: MasterItem[]) => void;
+  updateItemDetail: (id: string | number, details: Partial<MasterItem>) => void;
 }
 
 export const useAddIngredientStore = create<AddIngredientState>((set) => ({
@@ -45,4 +51,10 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   resetSelected: () => set({ selectedItems: [] }),
 
   setHistoryItems: (items) => set({ historyItems: items }),
+  updateItemDetail: (id, details) =>
+    set((state) => ({
+      selectedItems: state.selectedItems.map((item) =>
+        item.id === id ? { ...item, ...details } : item,
+      ),
+    })),
 }));

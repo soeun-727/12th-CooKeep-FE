@@ -10,11 +10,7 @@ export default function AddItemFooter() {
 
   const handleSubmit = () => {
     if (selectedItems.length === 0) return;
-    console.log("등록 완료:", selectedItems);
-
-    navigate("/fridge", {
-      state: { message: "재료 등록이 완료되었습니다!" },
-    });
+    navigate("/fridge/add-detail");
   };
   return (
     <div className="fixed bottom-[103px] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">

@@ -59,7 +59,7 @@ export const useIngredientStore = create<IngredientState>((set, get) => ({
       eatenCount:
         type === "eaten" ? eatenCount + selectedIds.length : eatenCount,
       ingredients: state.ingredients.filter(
-        (item) => !selectedIds.includes(item.id)
+        (item) => !selectedIds.includes(item.id),
       ),
       selectedIds: [],
     }));
