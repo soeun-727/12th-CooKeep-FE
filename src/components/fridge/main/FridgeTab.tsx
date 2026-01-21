@@ -14,9 +14,17 @@ import milk from "../../../assets/fridge/milk.svg";
 import { useIngredientStore } from "../../../stores/useIngredientStore";
 import { useSortedIngredients } from "../../../hooks/useSortedIngredients"; // 커스텀 훅 임포트
 import ExpiryAlertModal from "../modals/ExpiryAlertModal";
+import IngredientDetailModal from "../modals/IngredientDetailModal";
 
 const TEMP_DATA = [
-  { id: 1, name: "우유", expiration: "D-3", image: milk, category: "냉장" },
+  {
+    id: 1,
+    name: "우유",
+    expiration: "D-3",
+    image: milk,
+    category: "냉장",
+    tip: "우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!",
+  }, // 임시tip추가
   { id: 2, name: "냉동우유", expiration: "D-1", image: milk, category: "냉동" },
   {
     id: 3,
@@ -113,6 +121,9 @@ export default function FridgeTab() {
   });
 
   //---------------------------------------
+  // 상세정보 부분 추가
+  const { selectedIngredient, closeDetail } = useIngredientStore();
+  //---------------------------
 
   // 카테고리에 따른 아이콘 반환 함수
   const getCategoryIcon = (category: string | null) => {
@@ -183,6 +194,13 @@ export default function FridgeTab() {
       )}
 
       <ItemOption />
+
+      {selectedIngredient && (
+        <IngredientDetailModal
+          ingredient={selectedIngredient}
+          onClose={closeDetail}
+        />
+      )}
     </div>
   );
 }

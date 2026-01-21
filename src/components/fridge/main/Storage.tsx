@@ -17,7 +17,7 @@ export default function Storage({
   ingredients,
 }: StorageProps) {
   const { selectedIds, toggleSelect, setViewCategory } = useIngredientStore();
-
+  const { openDetail } = useIngredientStore(); // 상세정보부분 추가
   // 3개 이상일 때만 전체보기가 활성화되도록 설정된 로직 유지
   const isScrollable = ingredients.length >= 3;
 
@@ -89,7 +89,7 @@ export default function Storage({
                   image={item.image}
                   isSelected={selectedIds.includes(item.id)}
                   onSelect={() => toggleSelect(item.id)}
-                  onDetail={() => console.log(`${item.name} 상세 정보 오픈`)}
+                  onDetail={() => openDetail(item)}
                 />
               </div>
             ))}
