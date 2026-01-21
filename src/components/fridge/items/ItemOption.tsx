@@ -43,7 +43,7 @@ export default function ItemOption() {
 
   return (
     <>
-      <div className="flex flex-col fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-full">
+      <div className="flex flex-col absolute bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-full">
         <div className="flex bg-white border-[0.5px] border-[#D1D1D1] h-11">
           <button
             onClick={() => handleOpenModal("eaten")}
