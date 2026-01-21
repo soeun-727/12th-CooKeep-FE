@@ -6,6 +6,7 @@ import memoIcon from "../../../assets/fridge/memo.svg";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
+import { calcDDay } from "../../../utils/calcDDay";
 
 interface Props {
   ingredient: Ingredient;
@@ -24,17 +25,23 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
   }, []);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [memo, setMemo] = useState(ingredient.memo ?? "");
+  const [quantity, setQuantity] = useState(String(ingredient.quantity));
+  const [unit, setUnit] = useState<Ingredient["unit"]>(ingredient.unit);
+  const [expiryDate, setExpiryDate] = useState(ingredient.expiryDate);
   const [location, setLocation] = useState(ingredient.category);
-  const [memo, setMemo] = useState("");
-  const [quantity, setQuantity] = useState("1");
-  const [unit, setUnit] = useState("개");
-  const [expiryDate, setExpiryDate] = useState("2026-12-25");
 
-  const getExpiryStatus = (exp: string) => {
-    const d = Number(exp.replace("D-", ""));
-    if (d <= 3)
-      return { text: "유통기한이 얼마 남지 않았어요", color: "text-red-500" };
-    return { text: "유통기한이 넉넉해요", color: "text-green-500" };
+  const getExpiryStatus = (dDay: number) => {
+    if (dDay <= 3) {
+      return {
+        text: "유통기한이 얼마 남지 않았어요",
+        color: "text-red-500",
+      };
+    }
+    return {
+      text: "유통기한이 넉넉해요",
+      color: "text-green-500",
+    };
   };
 
   const storageIconMap = {
@@ -43,7 +50,7 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
     상온: pantryIcon,
   };
 
-  const status = getExpiryStatus(ingredient.expiration);
+  const status = getExpiryStatus(ingredient.dDay);
   const tip = ingredient.tip; // API 연결 전 임시
 
   return (
@@ -84,7 +91,7 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
 
               <div className="flex items-center gap-2">
                 <span className="text-[12px] text-[#C3C3C3]">
-                  {ingredient.expiration}
+                  {ingredient.expiryDate}
                 </span>
 
                 <span
@@ -106,7 +113,7 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
               {/* 메모 */}
               <div className="flex w-full items-center rounded-md bg-white px-3 py-3 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]">
                 <span className="flex-1 truncate text-[14px] font-medium text-[#C3C3C3]">
-                  {memo || "메모를 입력해주세요"}
+                  {ingredient.memo ?? "메모를 입력해주세요"}
                 </span>
 
                 <button onClick={() => setIsEditing(true)}>
@@ -131,7 +138,7 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
                   <span className="text-[12px] font-semibold text-[#202020]">
                     유통기한
                   </span>
-                  <span className="text-[12px]">2026.12.25</span>
+                  <span className="text-[12px]">{ingredient.expiryDate}</span>
                 </div>
 
                 <div className="flex flex-1 flex-col items-center justify-center gap-1 rounded-r-md bg-[#EBEBEB] py-2">
@@ -139,8 +146,8 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
                     수량
                   </span>
                   <span className="text-[12px]">
-                    {quantity}
-                    {unit}
+                    {ingredient.quantity}
+                    {ingredient.unit}
                   </span>
                 </div>
               </div>
@@ -175,12 +182,16 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
                 />
                 <select
                   value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
-                  className="rounded-lg border p-2"
+                  onChange={(e) =>
+                    setUnit(e.target.value as Ingredient["unit"])
+                  }
                 >
-                  <option>개</option>
-                  <option>ml</option>
-                  <option>g</option>
+                  <option value="개">개</option>
+                  <option value="묶음">묶음</option>
+                  <option value="봉지">봉지</option>
+                  <option value="팩">팩</option>
+                  <option value="캔">캔</option>
+                  <option value="병">병</option>
                 </select>
               </div>
 
@@ -233,20 +244,6 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
                     <p className="text-[10px] font-medium leading-[13px] text-[#202020]">
                       {tip}
                     </p>
-
-                    {/* 레시피 탭 이동 버튼 */}
-                    <button
-                      className="
-        flex h-[28px] w-[101px]
-        items-center justify-center gap-[6px]
-        rounded-full
-        bg-[#32E389]
-      "
-                    >
-                      <span className="text-[9px] font-semibold leading-[22.4px] text-white">
-                        나만의 레시피 만들기
-                      </span>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -270,7 +267,13 @@ export default function IngredientDetailModal({ ingredient, onClose }: Props) {
                 updateIngredient({
                   ...ingredient,
                   category: location,
+                  memo,
+                  quantity: Number(quantity),
+                  unit,
+                  expiryDate,
+                  dDay: calcDDay(expiryDate), // 이게 핵심
                 });
+
                 onClose();
               }}
             >

@@ -11,6 +11,10 @@ export default function ItemOption() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
 
+  // 일단 추가 전체보기 화면에서는 선택 옵션 안뜨는 것 같아서 넣었는데 뜨는거면 지우면 될것같습니다.
+  const { viewCategory } = useIngredientStore();
+  if (viewCategory !== null) return null;
+  //----------------------------------------------------
   if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) return null; // 선택된 이름들 계산
   const firstItemName =
     ingredients.find((item) => item.id === selectedIds[0])?.name || "재료";

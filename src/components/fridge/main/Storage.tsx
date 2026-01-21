@@ -85,7 +85,7 @@ export default function Storage({
               <div key={item.id} className="flex-shrink-0">
                 <Item
                   name={item.name}
-                  expiration={item.expiration}
+                  leftDays={item.dDay}
                   image={item.image}
                   isSelected={selectedIds.includes(item.id)}
                   onSelect={() => toggleSelect(item.id)}

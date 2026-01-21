@@ -7,29 +7,18 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   items: Ingredient[];
-  onEditExpiry?: () => void;
 }
 
-export default function ExpiryAlertModal({
-  isOpen,
-  onClose,
-  items,
-  onEditExpiry,
-}: Props) {
+export default function ExpiryAlertModal({ isOpen, onClose, items }: Props) {
   const navigate = useNavigate();
 
   if (!isOpen || items.length === 0) return null;
 
-  const mainNames = items
-    .slice(0, 2)
-    .map((i) => i.name)
-    .join(", ");
-  const extraCount = items.length - 2;
+  const isSingle = items.length === 1;
 
-  const titleText =
-    items.length <= 2
-      ? `${mainNames}가 오늘까지예요`
-      : `${mainNames} 외 ${extraCount}개가\n오늘까지예요`;
+  const titleText = isSingle
+    ? "유통기한이 오늘까지인 재료가 있어요!"
+    : "유통기한이 오늘까지인 재료들이 있어요!";
 
   return (
     <div className="absolute inset-0 z-60 flex items-center justify-center">
@@ -57,11 +46,11 @@ export default function ExpiryAlertModal({
         <div className="w-full flex flex-col gap-2 mt-2">
           <Button
             variant="green"
-            onClick={() => {
-              onClose(); // 모달 닫고
-              navigate("/recipe"); // 레시피 페이지로 이동
-            }}
             className="!w-[224px] bg-[#32E389]"
+            onClick={() => {
+              onClose();
+              navigate("/recipe/select");
+            }}
           >
             레시피 받고 요리하기
           </Button>
@@ -69,9 +58,9 @@ export default function ExpiryAlertModal({
           <Button
             variant="black"
             className="!w-[224px] bg-[#C3C3C3]"
-            onClick={onEditExpiry}
+            onClick={onClose}
           >
-            유통기한 수정하기
+            나중에 요리할게요
           </Button>
         </div>
       </div>
