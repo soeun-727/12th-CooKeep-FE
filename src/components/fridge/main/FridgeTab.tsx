@@ -11,7 +11,10 @@ import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
 import { TEMP_DATA } from "../../../constants/tempIngredients";
 
-import { useIngredientStore } from "../../../stores/useIngredientStore";
+import {
+  useIngredientStore,
+  type Ingredient,
+} from "../../../stores/useIngredientStore";
 import { useSortedIngredients } from "../../../hooks/useSortedIngredients"; // 커스텀 훅 임포트
 import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
@@ -132,10 +135,20 @@ export default function FridgeTab() {
 
       <ItemOption />
 
+      {/* 상세정보땜에 일단 수정해보기 */}
       {selectedIngredient && (
         <IngredientDetailModal
           ingredient={selectedIngredient}
           onClose={closeDetail}
+          onUpdate={(updated: Partial<Ingredient>) => {
+            if (!selectedIngredient) return;
+
+            const newIngredients = ingredients.map((i) =>
+              i.id === selectedIngredient.id ? { ...i, ...updated } : i,
+            );
+
+            setIngredients(newIngredients); // 직접 배열 전달
+          }}
         />
       )}
     </div>
