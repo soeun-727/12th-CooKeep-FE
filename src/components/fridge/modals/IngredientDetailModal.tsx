@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Ingredient } from "../../../stores/useIngredientStore";
 import character from "../../../assets/character/tip_char.svg";
-import memoIcon from "../../../assets/fridge/memo.svg";
+import memoIcon from "../../../assets/fridge/edit_memo.svg";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
