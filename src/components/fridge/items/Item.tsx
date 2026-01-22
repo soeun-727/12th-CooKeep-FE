@@ -5,21 +5,26 @@ import checkOn from "../../../assets/fridge/check_selected.svg";
 interface ItemProps {
   image: string;
   name: string;
-  expiration: string;
+  leftDays: number;
+
   isSelected?: boolean;
-  onClick?: () => void;
+  onSelect?: () => void;
+  onDetail?: () => void;
 }
 
 const Item: React.FC<ItemProps> = ({
   image,
   name,
-  expiration,
+  leftDays,
   isSelected = false,
-  onClick,
+  onSelect,
+  onDetail,
 }) => {
   return (
-    <button
-      onClick={onClick}
+    <div
+      onClick={onDetail}
+      role="button"
+      tabIndex={0}
       className={`w-[114px] h-20 rounded-[6px] border flex flex-col items-start overflow-hidden pl-[11px] ${
         isSelected
           ? "border-[var(--color-green-deep)] bg-[var(--color-green-light)]"
@@ -31,23 +36,32 @@ const Item: React.FC<ItemProps> = ({
           {name}
         </span>
         <span className="text-stone-300 text-left text-[10px] font-semibold leading-tight whitespace-nowrap mt-0.5">
-          {expiration}
+          {leftDays >= 0 ? `D-${leftDays}` : `D+${Math.abs(leftDays)}`}
         </span>
       </div>
 
       <div className="flex justify-between items-end w-full flex-1 pb-1.5">
-        <img
-          src={isSelected ? checkOn : check}
-          className="w-9 h-9 object-contain ml-[-6px] flex-shrink-0"
-          alt="check"
-        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect?.();
+          }}
+          className="flex-shrink-0 z-10 w-9 h-9"
+        >
+          <img
+            src={isSelected ? checkOn : check}
+            className="w-9 h-9 object-contain ml-[-6px] flex-shrink-0"
+            alt="check"
+          />
+        </button>
+
         <img
           className="w-10 h-10 object-contain flex-shrink-0 -translate-x-[2px] -translate-y-[2px]"
           src={image}
           alt={name}
         />
       </div>
-    </button>
+    </div>
   );
 };
 

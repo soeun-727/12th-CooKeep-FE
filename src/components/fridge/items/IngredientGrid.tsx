@@ -5,16 +5,19 @@ import {
 import Item from "./Item";
 
 export default function IngredientGrid({ items }: { items: Ingredient[] }) {
-  const { selectedIds, toggleSelect } = useIngredientStore();
+  const { selectedIds, toggleSelect, openDetail } = useIngredientStore();
 
   return (
     <div className="mx-auto w-[353px] grid grid-cols-3 gap-y-2 gap-x-2">
       {items.map((item) => (
         <Item
           key={item.id}
-          {...item}
+          name={item.name}
+          image={item.image}
+          leftDays={item.dDay}
           isSelected={selectedIds.includes(item.id)}
-          onClick={() => toggleSelect(item.id)}
+          onSelect={() => toggleSelect(item.id)}
+          onDetail={() => openDetail(item)}
         />
       ))}
     </div>

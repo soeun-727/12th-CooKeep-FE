@@ -57,7 +57,7 @@ export default function SupportPage() {
         </p>
 
         {/* 하단 이미지 */}
-        <div className=" fixed bottom-[47.61px] right-[18.15%] z-10 ">
+        <div className="absolute bottom-[47.61px] right-[18.15%] z-10 ">
           <img
             src={tempImage}
             alt="임시 이미지"

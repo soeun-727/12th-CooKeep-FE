@@ -11,6 +11,10 @@ export default function ItemOption() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
 
+  // 일단 추가 전체보기 화면에서는 선택 옵션 안뜨는 것 같아서 넣었는데 뜨는거면 지우면 될것같습니다.
+  const { viewCategory } = useIngredientStore();
+  if (viewCategory !== null) return null;
+  //----------------------------------------------------
   if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) return null; // 선택된 이름들 계산
   const firstItemName =
     ingredients.find((item) => item.id === selectedIds[0])?.name || "재료";
@@ -39,7 +43,7 @@ export default function ItemOption() {
 
   return (
     <>
-      <div className="flex flex-col fixed bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-[393px]">
+      <div className="flex flex-col absolute bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-full">
         <div className="flex bg-white border-[0.5px] border-[#D1D1D1] h-11">
           <button
             onClick={() => handleOpenModal("eaten")}
@@ -70,7 +74,7 @@ export default function ItemOption() {
           </button>
         </div>
 
-        <div className="w-[393px] h-[5px] bg-gradient-to-b from-[#737373]/80 to-[#D9D9D9]/80" />
+        <div className="w-full h-[5px] bg-gradient-to-b from-[#737373]/80 to-[#D9D9D9]/80" />
       </div>
 
       <DoublecheckModal

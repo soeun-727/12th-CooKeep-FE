@@ -35,8 +35,7 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
   return (
     <nav
       className="
-        fixed bottom-0 z-50
-        left-1/2 -translate-x-1/2
+        absolute bottom-0 z-50
         w-full max-w-[450px]
         flex flex-col
         bg-white 

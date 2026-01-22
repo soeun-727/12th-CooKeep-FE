@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../ui/Button";
 import TextField from "../../ui/TextField";
 import PhoneAuthModal from "./PhoneAuthModal";

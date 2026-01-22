@@ -80,7 +80,7 @@ export default function LoginMain() {
       </div>
 
       {/* 버튼 */}
-      <div className="mt-[48px] flex justify-center">
+      <div className="mt-12 flex justify-center">
         <Button
           size="L"
           disabled={!canLogin || isSubmitting}

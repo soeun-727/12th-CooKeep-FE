@@ -6,7 +6,6 @@ import Skill from "./Skill";
 import Goal from "./Goal";
 import SpecificGoal from "./SpecificGoal";
 import AuthHeader from "../AuthHeader";
-import { useNavigate } from "react-router-dom";
 import Last from "./Last";
 import Notification from "./Notification";
 
@@ -14,8 +13,6 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [isFinished, setIsFinished] = useState(false); // 마지막 화면 여부 상태
   const [showNotification, setShowNotification] = useState(false); // Notification 화면 여부
-  const navigate = useNavigate();
-  // 각 단계별 응답 저장 상태 (추후 API 연동)
   const [foodTypes, setFoodTypes] = useState<string[]>([]); // 다중 선택 (최대 3개)
   const [skillLevel, setSkillLevel] = useState<string>(""); // 단일 선택
   const [selectedGoal, setSelectedGoal] = useState({

@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 import InitialPage from "./pages/auth/InitialPage";
@@ -10,8 +10,6 @@ import ResetPassword from "./components/auth/find/ResetPassword";
 import RequireFindAuth from "./components/auth/find/RequireFindAuth";
 import FindLayout from "./components/auth/find/FindLayout";
 
-import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
-
 import SettingsPage from "./pages/settings/SettingsPage";
 import EditPhonePage from "./pages/settings/EditPhonePage";
 import SettingsLayout from "./layouts/SettingsLayout";
@@ -19,6 +17,8 @@ import EditEmailPage from "./pages/settings/EditEmailPage";
 import EditPasswordPage from "./pages/settings/EditPasswordPage";
 import VerifyLayout from "./layouts/VerifyLayout";
 import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
+
+import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 import SupportPage from "./pages/settings/SupportPage";
 import FaqPage from "./pages/settings/FaqPage";
 import NoticePage from "./pages/settings/NoticePage";
@@ -26,8 +26,11 @@ import TermsPage from "./pages/settings/TermsPage";
 import WithdrawPage from "./pages/settings/WithdrawPage";
 import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
 
+import Layout from "./layouts/Layout";
 import FridgePage from "./pages/fridge/FridgePage";
-import Layout from "./components/Layout";
+import AddItemPage from "./pages/fridge/AddItemPage";
+import AddItemLayout from "./layouts/AddItemLayout";
+import Details from "./components/fridge/addItems/Details";
 
 import RecipePage from "./pages/recipe/RecipePage";
 import RecipeIntroPage from "./pages/recipe/RecipeIntroPage";
@@ -45,6 +48,7 @@ export default function App() {
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/simplelogin" element={<SimpleLoginAgreementPage />} />
+
         <Route element={<FindLayout />}>
           <Route path="/findpw" element={<FindPage />} />
           <Route
@@ -69,17 +73,17 @@ export default function App() {
             />
           </Route>
 
-          <Route path="support" element={<SupportPage />} />
           <Route path="faq" element={<FaqPage />} />
           <Route path="notice" element={<NoticePage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="withdraw" element={<WithdrawPage />} />
         </Route>
+
         {/*헤더 없기에 따로 뺌*/}
         <Route path="/settings/withdraw/done" element={<WithdrawDonePage />} />
+        <Route path="/support" element={<SupportPage />} />
 
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/fridge" />} />
           <Route path="/fridge" element={<FridgePage />} />
           <Route path="/recipe" element={<RecipePage />}>
             <Route index element={<RecipeIntroPage />} />
@@ -92,6 +96,11 @@ export default function App() {
           {/* 
           <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
+        </Route>
+
+        <Route element={<AddItemLayout />}>
+          <Route path="/fridge/add" element={<AddItemPage />} />
+          <Route path="/fridge/add-detail" element={<Details />} />
         </Route>
       </Routes>
     </AppLayout>

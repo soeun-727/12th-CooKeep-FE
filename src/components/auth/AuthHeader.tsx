@@ -5,8 +5,7 @@ const AuthHeader = () => {
   return (
     <header
       className="
-        fixed top-0 z-50
-        left-1/2 -translate-x-1/2
+        absolute top-0 z-50
         w-full max-w-[450px]
         flex items-start justify-between
         px-4 py-2 pt-[54px]

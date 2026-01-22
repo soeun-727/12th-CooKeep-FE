@@ -35,6 +35,14 @@
 4. 문제 발생한 경우 기능 별로 디스코드 스레드 파서 소통
    프론트 내에선 PR 댓글로 소통
 
+5. main <- develop 머지는 PR 없이 바로 (단, 그 전 develop 브랜치 확인 필수!)
+   ```kotlin
+   git checkout main
+   git pull
+   git merge develop
+   git push origin main
+   ```
+
 ## 🛠️기술 스택
 
 - React + TypeScript + Vite
