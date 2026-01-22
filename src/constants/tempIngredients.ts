@@ -85,6 +85,7 @@ export const TEMP_DATA: Ingredient[] = [
     createdAt: Date.now(),
     dDay: 4,
     memo: "",
+    tip: "우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!",
   },
 
   // 여유 (D-7)
@@ -99,6 +100,7 @@ export const TEMP_DATA: Ingredient[] = [
     createdAt: Date.now(),
     dDay: 7,
     memo: "",
+    tip: "우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!우유는 냉장고 안쪽 깊숙이 보관하는 것이 가장 좋아요!",
   },
 
   // 여유 (D-9)
