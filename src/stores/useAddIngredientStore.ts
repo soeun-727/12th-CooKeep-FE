@@ -12,6 +12,8 @@ export interface MasterItem {
   unit?: string;
 }
 
+type EditorType = "storage" | "expiry" | "quantity" | "unit" | "memo";
+
 interface AddIngredientState {
   searchTerm: string;
   selectedCategoryId: number;
@@ -24,7 +26,7 @@ interface AddIngredientState {
   toggleItem: (item: MasterItem) => void;
   resetSelected: () => void;
   setHistoryItems: (items: MasterItem[]) => void;
-  updateItemDetail: (id: string | number, details: Partial<MasterItem>) => void;
+  updateItemDetail: (id: string | number, type: EditorType, value: any) => void;
 }
 
 export const useAddIngredientStore = create<AddIngredientState>((set) => ({
@@ -35,7 +37,6 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   isModalOpen: false,
   setModalOpen: (open) => set({ isModalOpen: open }),
   setSearchTerm: (term) => set({ searchTerm: term }),
-
   setCategoryId: (id) => set({ selectedCategoryId: id, searchTerm: "" }),
 
   toggleItem: (item) =>
@@ -49,12 +50,24 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
     }),
 
   resetSelected: () => set({ selectedItems: [] }),
-
   setHistoryItems: (items) => set({ historyItems: items }),
-  updateItemDetail: (id, details) =>
-    set((state) => ({
-      selectedItems: state.selectedItems.map((item) =>
-        item.id === id ? { ...item, ...details } : item,
-      ),
-    })),
+
+  updateItemDetail: (id, type, value) =>
+    set((state) => {
+      const fieldMap: Record<EditorType, keyof MasterItem> = {
+        storage: "storageType",
+        expiry: "expiration",
+        quantity: "quantity",
+        unit: "unit",
+        memo: "memo",
+      };
+
+      const fieldName = fieldMap[type];
+
+      return {
+        selectedItems: state.selectedItems.map((item) =>
+          item.id === id ? { ...item, [fieldName]: value } : item,
+        ),
+      };
+    }),
 }));
