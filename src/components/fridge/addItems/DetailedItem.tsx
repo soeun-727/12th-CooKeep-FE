@@ -33,7 +33,7 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
   };
   return (
     <div className="relative w-[345px] h-[198px] rounded-[6px] bg-[#FFFFFF] shadow-[0px_1px_8.2px_-2px_rgba(17,17,17,0.25)]">
-      <div className="flex p-6 gap-4">
+      <div className="flex p-6 gap-6">
         <div className="flex flex-col items-start w-[99px] h-34">
           <div className="w-20 h-20 rounded-[6px] items-justify-center border border-[#D1D1D1]  p-[14px]">
             <img src={item.image} className="w-13" />
@@ -41,35 +41,11 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
           <span className="typo-caption w-[95px] pt-[10px] text-left truncate font-bold px-[2px]">
             {item.name}
           </span>
-          <div className="w-full mt-2 min-h-[20px] flex items-center justify-center pl-[2px]">
-            {isMemoEditing ? (
-              <input
-                ref={memoInputRef}
-                type="text"
-                value={item.memo || ""}
-                onChange={(e) => handleChange({ memo: e.target.value })}
-                onBlur={() => setIsMemoEditing(false)}
-                onKeyDown={(e) => e.key === "Enter" && setIsMemoEditing(false)}
-                placeholder="메모를 남겨주세요"
-                className="w-full text-[10px] text-zinc-600 border-b border-green-500 outline-none pb-0.5 text-center"
-              />
-            ) : (
-              <div
-                onClick={() => setIsMemoEditing(true)}
-                className="flex cursor-pointer group w-full items-center"
-              >
-                <span
-                  className={`text-[10px] flex-1 w-full ${item.memo ? "text-stone-300" : "text-zinc-400"}`}
-                >
-                  {item.memo || "메모를 남겨주세요"}
-                </span>
-                <img
-                  src={memoIcon}
-                  alt="edit memo"
-                  className="w-6 flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity"
-                />
-              </div>
-            )}
+          <div className="w-full h-6 flex items-center justify-center pl-[2px]">
+            <span className="w-18 text-[10px] text-center text-stone-300">
+              메모를 남겨주세요
+            </span>
+            <img src={memoIcon} alt="edit memo" className="w-6 flex-shrink-0" />
           </div>
         </div>
 
