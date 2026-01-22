@@ -5,14 +5,9 @@ import LoadingIcon from "../../assets/recipe/main/LoadingIcon.svg";
 import CheckIcon from "../../assets/signup/check.svg";
 import StepMessage from "../../components/recipe/main/loading/StepMessage";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
-// import RecipeLoadingSpinner from "../../components/recipe/main/loading/RecipeLoadingSpinner";
 
 export default function RecipeLoadingPage() {
   const navigate = useNavigate();
-  // const _selectedIngredients = useRecipeFlowStore(
-  //   (state) => state.selectedIngredients,
-  // );
-  // const _difficulty = useRecipeFlowStore((state) => state.difficulty);
 
   const [step, setStep] = useState(0);
 
@@ -22,21 +17,28 @@ export default function RecipeLoadingPage() {
     "맞춤형 레시피가 완성됐어요!",
   ];
 
+  const { selectedIngredients, difficulty, generateRecipe } =
+    useRecipeFlowStore();
+
   useEffect(() => {
     if (step < messages.length) {
       const timer = setTimeout(() => setStep(step + 1), 2000);
       return () => clearTimeout(timer);
-    } else {
+    }
+
+    if (step === messages.length) {
+      generateRecipe();
+
       const timer = setTimeout(() => navigate("/recipe/result"), 1000);
       return () => clearTimeout(timer);
     }
-  }, [step, navigate, messages.length]);
+  }, [step]);
 
   useEffect(() => {
-    if (step === messages.length) {
-      useRecipeFlowStore.getState().generateRecipe();
+    if (selectedIngredients.length === 0 || !difficulty) {
+      navigate("/recipe/select", { replace: true });
     }
-  }, [step]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center h-screen pt-[139px] text-center">

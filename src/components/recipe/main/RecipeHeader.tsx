@@ -21,7 +21,6 @@ export default function RecipeHeader({ title }: RecipeHeaderProps) {
           absolute top-0 z-50
           w-full max-w-[450px] // w-[400px] 보다는 전체를 채우는게 유연합니다
           h-[102px]
-          bg-transparent // 배경을 투명하게 해서 어디든 어울리게 조절 (필요시 수정)
           px-4
         "
       >

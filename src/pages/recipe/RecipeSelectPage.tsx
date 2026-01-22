@@ -1,8 +1,5 @@
 // src/pages/recipe/RecipeSelectPage.tsx
-// 이거 무조건 수정하긴해야함
-// useIngredientStore에 persist 붙이기
 // RecipeConfirmPage에서 snapshot 쓰는지 확인
-// 나중에 시간 나면 recipe 선택 store 분리
 import { useNavigate } from "react-router-dom";
 // import "../../components/recipe/main/recipe.css";
 import Button from "../../components/ui/Button";
@@ -14,7 +11,7 @@ import IngredientGrid from "../../components/fridge/items/IngredientGrid";
 
 import { useIngredientStore } from "../../stores/useIngredientStore";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
-// import { useRecipeSelectStore } from "../../stores/useRecipeSelectStore";
+import { useIngredientSelectStore } from "../../stores/useIngredientSelectStore";
 import { useSortedIngredients } from "../../hooks/useSortedIngredients";
 
 import fridgeIcon from "../../assets/fridge/fridge.svg";
@@ -26,13 +23,9 @@ export default function RecipeSelectPage() {
   const navigate = useNavigate();
 
   // 데이터/검색/정렬은 fridge store
-  const {
-    ingredients,
-    selectedIds,
-    viewCategory,
-    clearSelection,
-    setViewCategory,
-  } = useIngredientStore();
+  const { ingredients, viewCategory, setViewCategory } = useIngredientStore();
+  // 선택 상태는 RecipeSelect 전용
+  const { selectedIds } = useIngredientSelectStore();
 
   const { sortedIngredients } = useSortedIngredients();
 
@@ -42,19 +35,16 @@ export default function RecipeSelectPage() {
     ? sortedIngredients.filter((item) => item.name.includes(searchTerm))
     : sortedIngredients;
 
-  // 선택 상태는 RecipeSelect 전용
-  // const { selectedIds, toggle, reset } = useRecipeSelectStore();
-
   // snapshot 저장용
   const { setSelectedIngredients } = useRecipeFlowStore();
 
+  // RecipeSelectPage에서는 clearSelection 하지 말기
   const handleConfirm = () => {
     const selectedIngredients = ingredients.filter((item) =>
       selectedIds.includes(item.id),
     );
 
-    setSelectedIngredients(selectedIngredients); // Ingredient[]
-    clearSelection(); // fridge 선택 상태만 초기화
+    setSelectedIngredients(selectedIngredients);
     navigate("/recipe/confirm");
   };
 
@@ -64,7 +54,6 @@ export default function RecipeSelectPage() {
       setViewCategory(null);
     } else {
       // 진짜 이전 페이지
-      clearSelection(); // 선택만 취소 (중요!)
       navigate(-1);
     }
   };

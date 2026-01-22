@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { TEMP_DATA } from "../constants/tempIngredients";
 
 export interface Ingredient {
   id: number; // ingredientId
@@ -44,54 +46,65 @@ interface IngredientState {
   updateIngredient: (updated: Ingredient) => void;
 }
 
-export const useIngredientStore = create<IngredientState>((set, get) => ({
-  ingredients: [],
-  selectedIds: [],
-  searchTerm: "",
-  viewCategory: null,
-  sortOrder: "유통기한 임박 순",
-  eatenCount: 0,
-  setSearchTerm: (term) => set({ searchTerm: term }),
-  // 데이터를 스토어에 저장하는 함수
-  setIngredients: (ingredients) => set({ ingredients }),
-  setViewCategory: (category) => set({ viewCategory: category }),
-  setSortOrder: (order) => set({ sortOrder: order }),
-  toggleSelect: (id) =>
-    set((state) => ({
-      selectedIds: state.selectedIds.includes(id)
-        ? state.selectedIds.filter((sid) => sid !== id)
-        : [...state.selectedIds, id],
-    })),
-
-  clearSelection: () => set({ selectedIds: [] }),
-
-  deleteSelected: async (type) => {
-    await new Promise((resolve) => setTimeout(resolve, 150));
-
-    const { selectedIds, eatenCount } = get();
-
-    set((state) => ({
-      eatenCount:
-        type === "eaten" ? eatenCount + selectedIds.length : eatenCount,
-      ingredients: state.ingredients.filter(
-        (item) => !selectedIds.includes(item.id),
-      ),
+export const useIngredientStore = create<IngredientState>()(
+  persist(
+    (set, get) => ({
+      ingredients: TEMP_DATA,
       selectedIds: [],
-    }));
-  },
+      searchTerm: "",
+      viewCategory: null,
+      sortOrder: "유통기한 임박 순",
+      eatenCount: 0,
+      setSearchTerm: (term) => set({ searchTerm: term }),
+      // 데이터를 스토어에 저장하는 함수
+      setIngredients: (ingredients) => set({ ingredients }),
+      setViewCategory: (category) => set({ viewCategory: category }),
+      setSortOrder: (order) => set({ sortOrder: order }),
+      toggleSelect: (id) =>
+        set((state) => ({
+          selectedIds: state.selectedIds.includes(id)
+            ? state.selectedIds.filter((sid) => sid !== id)
+            : [...state.selectedIds, id],
+        })),
 
-  // 상세정보부분 추가
-  selectedIngredient: null,
+      clearSelection: () => set({ selectedIds: [] }),
 
-  openDetail: (ingredient) => set({ selectedIngredient: ingredient }),
+      deleteSelected: async (type) => {
+        await new Promise((resolve) => setTimeout(resolve, 150));
 
-  closeDetail: () => set({ selectedIngredient: null }),
+        const { selectedIds, eatenCount } = get();
 
-  updateIngredient: (updated) =>
-    set((state) => ({
-      ingredients: state.ingredients.map((i) =>
-        i.id === updated.id ? updated : i,
-      ),
-      selectedIngredient: updated, // 모달 열려 있으면 즉시 반영
-    })),
-}));
+        set((state) => ({
+          eatenCount:
+            type === "eaten" ? eatenCount + selectedIds.length : eatenCount,
+          ingredients: state.ingredients.filter(
+            (item) => !selectedIds.includes(item.id),
+          ),
+          selectedIds: [],
+        }));
+      },
+
+      // 상세정보부분 추가
+      selectedIngredient: null,
+
+      openDetail: (ingredient) => set({ selectedIngredient: ingredient }),
+
+      closeDetail: () => set({ selectedIngredient: null }),
+
+      updateIngredient: (updated) =>
+        set((state) => ({
+          ingredients: state.ingredients.map((i) =>
+            i.id === updated.id ? updated : i,
+          ),
+          selectedIngredient: updated, // 모달 열려 있으면 즉시 반영
+        })),
+    }),
+    {
+      name: "ingredient-store",
+      partialize: (state) => ({
+        ingredients: state.ingredients,
+        eatenCount: state.eatenCount,
+      }),
+    },
+  ),
+);

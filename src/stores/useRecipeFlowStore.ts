@@ -34,9 +34,16 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
     if (!difficulty) return;
 
-    const recipe = generateRecipe(selectedIngredients, retryCount);
+    const recipe = generateRecipe(
+      selectedIngredients.map((i) => ({
+        id: i.id,
+        name: i.name,
+        quantity: i.quantity,
+        unit: i.unit,
+      })),
+      retryCount,
+    );
 
-    // 핵심: 히스토리에 추가
     set({
       recipeHistory: [...recipeHistory, recipe],
     });

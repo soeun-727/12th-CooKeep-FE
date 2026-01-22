@@ -4,11 +4,10 @@ import type { Recipe } from "../types/recipe";
 import { MOCK_RECIPES } from "../constants/mockRecipes";
 
 export function generateRecipe(
-  selectedIngredients: Ingredient[],
-  //   difficulty: Difficulty,
+  ingredients: Pick<Ingredient, "id" | "name" | "quantity" | "unit">[],
   retryCount: number,
 ): Recipe {
-  const ingredientNames = selectedIngredients.map((i) => i.name);
+  const ingredientNames = ingredients.map((i) => i.name);
 
   // 재료 매칭 점수
   const scored = MOCK_RECIPES.map((recipe) => {

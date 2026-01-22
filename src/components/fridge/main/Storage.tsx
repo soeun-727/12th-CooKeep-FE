@@ -1,9 +1,10 @@
 import plus from "../../../assets/fridge/plus.svg";
 import plusDisabled from "../../../assets/fridge/plusDisabled.svg";
 import Item from "../items/Item";
-import character from "../../../assets/fridge/character.svg"; // 오타 수정: charcter -> character
+import character from "../../../assets/fridge/character.svg";
 import { useIngredientStore } from "../../../stores/useIngredientStore";
 import type { Ingredient } from "../../../stores/useIngredientStore";
+import { useIngredientSelectStore } from "../../../stores/useIngredientSelectStore";
 
 interface StorageProps {
   category: string;
@@ -16,8 +17,8 @@ export default function Storage({
   image,
   ingredients,
 }: StorageProps) {
-  const { selectedIds, toggleSelect, setViewCategory } = useIngredientStore();
-  const { openDetail } = useIngredientStore(); // 상세정보부분 추가
+  const { setViewCategory, openDetail } = useIngredientStore();
+  const { selectedIds, toggleSelect } = useIngredientSelectStore();
   // 3개 이상일 때만 전체보기가 활성화되도록 설정된 로직 유지
   const isScrollable = ingredients.length >= 3;
 

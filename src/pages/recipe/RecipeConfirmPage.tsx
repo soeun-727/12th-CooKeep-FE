@@ -1,5 +1,6 @@
 // src/pages/recipe/confirm/RecipeConfirmPage.tsx
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import BackHeader from "../../components/ui/BackHeader";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
 import SelectedIngredientList from "../../components/recipe/main/confirm/SelectedIngredientList";
@@ -14,6 +15,12 @@ export default function RecipeConfirmPage() {
     if (!difficulty) return;
     navigate("/recipe/loading");
   };
+
+  useEffect(() => {
+    if (selectedIngredients.length === 0) {
+      navigate("/recipe/select", { replace: true });
+    }
+  }, [selectedIngredients]);
 
   return (
     <div className="flex flex-col w-full pb-32">

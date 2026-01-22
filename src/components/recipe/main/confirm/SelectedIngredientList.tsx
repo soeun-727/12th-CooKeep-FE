@@ -4,35 +4,12 @@ interface Props {
   ingredients: Ingredient[];
 }
 
-const getExpirationDays = (expiration: string) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  let expDate: Date;
-
-  // D-숫자 형식 처리
-  if (expiration.startsWith("D-")) {
-    const n = parseInt(expiration.replace("D-", ""), 10);
-    expDate = new Date(today.getTime() + n * 24 * 60 * 60 * 1000);
-  } else {
-    expDate = new Date(expiration);
-  }
-
-  expDate.setHours(0, 0, 0, 0);
-
-  const diff = (expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-
-  return Math.ceil(diff);
-};
-
 export default function SelectedIngredientList({ ingredients }: Props) {
   const MAX_PER_ROW = 5;
   const remainder = ingredients.length % MAX_PER_ROW;
   const emptyCount = remainder === 0 ? 0 : MAX_PER_ROW - remainder;
 
-  const sortedIngredients = [...ingredients].sort(
-    (a, b) => getExpirationDays(a.expiration) - getExpirationDays(b.expiration),
-  );
+  const sortedIngredients = [...ingredients].sort((a, b) => a.dDay - b.dDay);
 
   return (
     <section className="flex flex-col items-center gap-4 w-full max-w-[361px] mx-auto px-4">
@@ -60,9 +37,8 @@ export default function SelectedIngredientList({ ingredients }: Props) {
   "
       >
         {sortedIngredients.map((item) => {
-          const daysLeft = getExpirationDays(item.expiration);
-          console.log(item.name, item.expiration, daysLeft);
-          const isUrgent = daysLeft <= 3;
+          const isUrgent = item.dDay <= 3;
+          console.log(item.name, item.expiryDate, item.dDay);
 
           return (
             <div key={item.id} className="relative">
@@ -81,7 +57,7 @@ export default function SelectedIngredientList({ ingredients }: Props) {
           }
         `}
               >
-                {item.expiration}
+                {item.dDay >= 0 ? `D-${item.dDay}` : `D+${Math.abs(item.dDay)}`}
               </span>
 
               {/* 이미지 + 이름 */}
