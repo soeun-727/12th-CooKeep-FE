@@ -5,34 +5,12 @@ import memoIcon from "../../../assets/fridge/edit_memo.svg";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
-
-// DetailModal 내부 혹은 파일 상단에 추가
-function PlaceholderModal({
-  title,
-  onClose,
-}: {
-  title: string;
-  onClose: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white p-6 rounded-md w-[280px] flex flex-col items-center gap-4">
-        <p className="text-center">{title} 모달이 아직 구현되지 않았습니다.</p>
-        <button
-          onClick={onClose}
-          className="mt-2 bg-black text-white px-4 py-2 rounded"
-        >
-          닫기
-        </button>
-      </div>
-    </div>
-  );
-}
+import bubbleTail from "../../../assets/fridge/bubble_tail_left.svg";
 
 interface Props {
   ingredient: Ingredient;
   onClose: () => void;
-  onUpdate: (updated: Partial<Ingredient>) => void; // 추가
+  onUpdate: (updated: Partial<Ingredient>) => void;
 }
 
 export default function IngredientDetailModal({
@@ -40,7 +18,6 @@ export default function IngredientDetailModal({
   onClose,
   onUpdate,
 }: Props) {
-  // 스크롤 잠금
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -49,27 +26,11 @@ export default function IngredientDetailModal({
   }, []);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [isMemoOpen, setIsMemoOpen] = useState(false);
   const [memo, setMemo] = useState(ingredient.memo ?? "");
 
   const handleSave = () => {
     setIsEditing(false);
-    onUpdate({ memo }); // 상위 콜백으로 저장
-  };
-
-  const [isLocationOpen, setIsLocationOpen] = useState(false);
-  const [isExpiryOpen, setIsExpiryOpen] = useState(false);
-  const [isQuantityOpen, setIsQuantityOpen] = useState(false);
-
-  const getExpiryStatus = (dDay: number) => {
-    if (dDay <= 3) {
-      return {
-        text: "유통기한이 얼마 남지 않았어요",
-      };
-    }
-    return {
-      text: "유통기한이 넉넉해요",
-    };
+    onUpdate({ memo });
   };
 
   const storageIconMap = {
@@ -78,229 +39,209 @@ export default function IngredientDetailModal({
     상온: pantryIcon,
   };
 
-  const status = getExpiryStatus(ingredient.dDay);
-  const tip = ingredient.tip; // API 연결 전 임시
+  const tip = ingredient.tip;
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center">
+    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
       {/* backdrop */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* modal box */}
       <div
         className="
-    relative z-10
-    w-full max-w-[330px]
-    max-h-[80vh] overflow-y-auto
-    rounded-md
-    px-5 py-6
-    bg-gradient-to-b from-[#F5F5F5] to-white
-    shadow-[0_1px_8.2px_-2px_rgba(17,17,17,0.25)]
-    animate-fadeIn
-  "
+          relative z-10
+          w-full max-w-[330px]
+          max-h-[90vh] overflow-y-auto no-scrollbar
+          rounded-[6px]
+          px-5 py-6
+          bg-gradient-to-b from-[#F5F5F5] to-white
+          shadow-[0_1px_8.2px_-2px_rgba(17,17,17,0.25)]
+          animate-fadeIn
+        "
       >
         <div className="flex w-full max-w-[290px] flex-col items-center gap-5 mx-auto">
           {/* 헤더 */}
-          <div className="flex flex-col items-center gap-2 w-full">
-            <span className="text-[16px] font-semibold leading-6 text-[#202020]">
+          <div className="flex flex-col items-center gap-2 self-stretch">
+            <span className="text-[16px] font-semibold leading-6 text-[#202020] text-center">
               상세정보
             </span>
-
             <div className="w-full h-[0.5px] bg-[#C3C3C3]" />
           </div>
 
-          <div className="flex w-full items-center gap-4">
-            {/* 이미지 영역 */}
-            <div className="flex h-[86px] w-[86px] items-center justify-center rounded-[10px] bg-[#E6FBEB]">
-              <img
-                src={ingredient.image}
-                alt={ingredient.name}
-                className="h-[60px] w-[60px] rounded-md object-cover"
-              />
-            </div>
+          {/* 내용 섹션 */}
+          <div className="flex flex-col items-center gap-4 self-stretch">
+            <div className="flex w-full items-center gap-[14px]">
+              {/* 이미지 영역 (100px 원형 배경) */}
+              <div className="flex h-[86px] w-[86px] items-center justify-center rounded-[10px] bg-[#E6FBEB] flex-shrink-0">
+                <img
+                  src={ingredient.image}
+                  alt={ingredient.name}
+                  className="h-[60px] w-[60px] rounded-[6px] object-cover aspect-square"
+                />
+              </div>
 
-            {/* 텍스트 영역 */}
-            <div className="flex flex-1 flex-col items-start gap-1">
-              <span className="truncate text-[16px] font-semibold leading-5 text-[#202020]">
-                {ingredient.name}
-              </span>
-
-              <div className="flex items-center gap-2">
-                <span className="text-[12px] text-[#C3C3C3]">
-                  D-{ingredient.dDay}
+              {/* 텍스트 영역 */}
+              <div className="flex flex-1 flex-col items-start gap-1">
+                <span className="w-full truncate text-[16px] font-semibold leading-5 text-[#202020]">
+                  {ingredient.name}
                 </span>
 
-                <span
-                  className={`text-[12px] font-semibold ${
-                    status.text === "유통기한이 넉넉해요"
-                      ? "text-[#1FA43C]"
-                      : "text-[#D91F1F]"
-                  }`}
-                >
-                  {status.text}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[12px] text-[#C3C3C3] leading-4">
+                    D-{ingredient.dDay}
+                  </span>
+                  <span
+                    className={`text-[12px] font-semibold leading-4 ${
+                      ingredient.dDay > 3 ? "text-[#1FA43C]" : "text-[#D91F1F]"
+                    }`}
+                  >
+                    {ingredient.dDay > 3
+                      ? "유통기한이 넉넉해요"
+                      : "유통기한이 얼마 남지 않았어요"}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* 정보 / 수정 */}
-          {/* 메모 */}
-          <div className="flex w-full items-center rounded-md bg-white px-3 py-3 shadow">
-            {isEditing ? (
-              <input
-                type="text"
-                value={memo}
-                autoFocus
-                onChange={(e) => setMemo(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSave();
-                  }
-                }}
-                className="flex-1 text-[14px] font-medium text-[#202020] border-b border-[#C3C3C3] focus:outline-none"
-              />
-            ) : (
-              <span
-                className={`flex-1 truncate text-[14px] font-medium ${
-                  memo ? "text-[#202020]" : "text-[#C3C3C3]"
-                }`}
-              >
-                {memo || "메모를 입력해주세요"}
-              </span>
-            )}
-
-            <button
-              onClick={() => {
-                if (isEditing) {
-                  handleSave(); // 저장
-                } else {
-                  setIsEditing(true); // 편집 시작
-                }
-              }}
-            >
-              <img src={memoIcon} alt="메모 수정" className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* 보관장소, 유통기한, 수량+단위 */}
-          <div className="flex w-full gap-[3px] mt-3">
-            <button
-              className="flex-1 flex flex-col items-center bg-[#EBEBEB] py-2 rounded-l-md"
-              onClick={() => setIsLocationOpen(true)}
-            >
-              <span className="text-[12px] font-semibold text-[#202020]">
-                보관장소
-              </span>
-              <img
-                src={storageIconMap[ingredient.category]}
-                className="w-5 h-5 brightness-0"
-              />
-            </button>
-
-            <button
-              className="flex-1 flex flex-col items-center bg-[#EBEBEB] py-2"
-              onClick={() => setIsExpiryOpen(true)}
-            >
-              <span className="text-[12px] font-semibold text-[#202020]">
-                유통기한
-              </span>
-              <span className="text-[12px]">{ingredient.expiryDate}</span>
-            </button>
-
-            <button
-              className="flex-1 flex flex-col items-center bg-[#EBEBEB] py-2 rounded-r-md"
-              onClick={() => setIsQuantityOpen(true)}
-            >
-              <span className="text-[12px] font-semibold text-[#202020]">
-                수량/단위
-              </span>
-              <span className="text-[12px]">
-                {ingredient.quantity}
-                {ingredient.unit}
-              </span>
-            </button>
-          </div>
-
-          {/* 등록일 */}
-          <div className="flex w-full flex-col items-end gap-1">
-            <span className="text-[10px] font-semibold text-[#C3C3C3]">
-              등록일자 {new Date(ingredient.createdAt).toLocaleDateString()}
-            </span>
-          </div>
-
-          {/* TIP */}
-          {tip && (
-            <div className="flex w-full flex-col items-center gap-4">
-              {/* 캐릭터 + 말풍선 */}
-              <div className="flex items-end justify-center gap-1">
-                {/* 캐릭터 */}
-                <img
-                  src={character}
-                  alt="tip character"
-                  className="w-[64px] h-[56px]"
-                />
-
-                {/* 말풍선 */}
-                <div className="flex w-[178px] h-[96px] items-center justify-center">
-                  <div
-                    className="
-            flex w-[162px]
-            flex-col items-start gap-[6px]
-            rounded-[4.8px]
-            border border-[#D1D1D1]
-            bg-white
-            px-[17.6px] py-[9.4px]
-          "
+            {/* 정보 수정 및 보관 데이터 */}
+            <div className="flex flex-col items-start gap-[14px] self-stretch">
+              {/* 메모 입력창 */}
+              <div className="flex w-full items-center rounded-[6px] bg-white px-3 py-3 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)] gap-2">
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={memo}
+                    autoFocus
+                    onChange={(e) => setMemo(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={(e) => e.key === "Enter" && handleSave()}
+                    className="flex-1 text-[14px] font-medium text-[#202020] border-b border-[#C3C3C3] focus:outline-none"
+                  />
+                ) : (
+                  <span
+                    className={`flex-1 truncate text-[14px] font-medium leading-5 ${
+                      memo ? "text-[#202020]" : "text-[#C3C3C3]"
+                    }`}
                   >
-                    <span className="text-[8px] font-semibold leading-[12px] text-[#32E389]">
-                      TIP
-                    </span>
+                    {memo || "메모를 입력해주세요"}
+                  </span>
+                )}
+                <button onClick={() => setIsEditing(true)}>
+                  <img
+                    src={memoIcon}
+                    alt="수정"
+                    className="w-6 h-6 aspect-square"
+                  />
+                </button>
+              </div>
 
-                    <p className="text-[10px] font-medium leading-[13px] text-[#202020]">
-                      {tip}
-                    </p>
+              {/* 3단 정보 (보관장소, 유통기한, 수량) */}
+              <div className="flex flex-col items-start gap-[6px] self-stretch">
+                <div className="flex h-14 w-full gap-[3px] items-center">
+                  <div className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] rounded-l-[6px]">
+                    <span className="text-[12px] font-semibold text-[#202020] leading-4 truncate self-stretch text-center">
+                      보관장소
+                    </span>
+                    <img
+                      src={
+                        storageIconMap[
+                          ingredient.category as keyof typeof storageIconMap
+                        ]
+                      }
+                      className="w-5 h-5 brightness-0"
+                    />
+                  </div>
+
+                  <div className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px]">
+                    <span className="text-[12px] font-semibold text-[#202020] leading-4 truncate self-stretch text-center">
+                      유통기한
+                    </span>
+                    <span className="text-[12px] leading-4 text-[#202020]">
+                      {ingredient.expiryDate}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] rounded-r-[6px]">
+                    <span className="text-[12px] font-semibold text-[#202020] leading-4 truncate self-stretch text-center">
+                      수량/단위
+                    </span>
+                    <span className="text-[12px] leading-4 text-[#202020]">
+                      {ingredient.quantity}
+                      {ingredient.unit}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 등록일자 및 구분선 */}
+                <div className="flex flex-col items-end gap-1 self-stretch">
+                  <div className="flex justify-end items-end gap-1">
+                    <span className="text-[10px] font-semibold text-[#C3C3C3] leading-4">
+                      등록일자{" "}
+                      {new Date(ingredient.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               </div>
-
-              {/* 안내 문구 */}
-              <div className="flex flex-col items-center gap-1">
-                <p className="text-center text-[10px] leading-[14px] text-[#C3C3C3]">
-                  AI가 제공하는 정보에는 실수가 있을 수 있습니다
-                  <br />
-                  관련 정보를 확인 후 활용해주세요
-                </p>
-              </div>
             </div>
-          )}
 
-          {isMemoOpen && (
-            <PlaceholderModal
-              title="메모"
-              onClose={() => setIsMemoOpen(false)}
-            />
-          )}
+            {/* TIP 캐릭터 및 말풍선 */}
+            {tip && (
+              <div className="flex flex-col items-center gap-5 self-stretch mt-1">
+                {/* 컨테이너: items-end를 유지하여 캐릭터와 말풍선 바닥 라인을 맞춤 */}
+                <div className="flex items-end justify-center gap-5 w-full relative">
+                  {/* 캐릭터 */}
+                  <img
+                    src={character}
+                    alt="tip character"
+                    className="w-[64px] h-[56px] flex-shrink-0 relative z-30"
+                  />
 
-          {isLocationOpen && (
-            <PlaceholderModal
-              title="보관장소"
-              onClose={() => setIsLocationOpen(false)}
-            />
-          )}
+                  {/* 말풍선 래퍼: 여기에 relative를 주고 꼬리를 배치 */}
+                  <div className="relative flex-1 max-w-[178px]">
+                    {/* 말풍선 꼬리: 
+            본체가 위로 늘어나도 '바닥'에서의 위치를 고정(bottom-[12px])하면 
+            캐릭터 입 위치와 계속 일치하게 됩니다. */}
+                    <img
+                      src={bubbleTail}
+                      alt=""
+                      className="absolute left-[-14px] bottom-[12px] w-[27.2px] z-20"
+                    />
 
-          {isExpiryOpen && (
-            <PlaceholderModal
-              title="유통기한"
-              onClose={() => setIsExpiryOpen(false)}
-            />
-          )}
+                    {/* 말풍선 본체: h-96 삭제, 텍스트에 따라 유동적 높이 */}
+                    <div
+                      className="
+            relative z-10
+            flex w-full
+            flex-col items-start gap-[3.2px]
+            rounded-[4.8px]
+            border-[0.8px] border-[#D1D1D1]
+            bg-white
+            px-[17.6px] py-[10px]
+            min-h-[56px]
+            shadow-sm
+          "
+                    >
+                      <span className="text-[8px] font-semibold leading-[12px] text-[#32E389] self-stretch">
+                        TIP
+                      </span>
+                      <p className="text-[10px] font-medium leading-[14px] text-[#202020] self-stretch break-words">
+                        {tip}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-          {isQuantityOpen && (
-            <PlaceholderModal
-              title="수량/단위"
-              onClose={() => setIsQuantityOpen(false)}
-            />
-          )}
+                {/* AI 안내 문구 */}
+                <div className="flex flex-col items-center gap-1 self-stretch">
+                  <p className="text-center text-[10px] font-normal leading-[14px] text-[#C3C3C3]">
+                    AI가 제공하는 정보에는 실수가 있을 수 있습니다
+                    <br />
+                    관련 정보를 확인 후 활용해주세요
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
