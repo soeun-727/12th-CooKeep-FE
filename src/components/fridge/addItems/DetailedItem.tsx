@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import memoIcon from "../../../assets/fridge/memo.svg";
 import renameIcon from "../../../assets/recipe/rename.svg";
 import coldIcon from "../../../assets/fridge/fridge.svg";
@@ -7,6 +7,9 @@ import roomIcon from "../../../assets/fridge/pantry.svg";
 import deleteIcon from "../../../assets/fridge/delete.svg";
 import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
 import type { MasterItem } from "../../../stores/useAddIngredientStore";
+import EditModal from "../../ui/EditModal";
+import QuantityEditor from "./components/edit/QuantityEditor";
+import UnitEditor from "./components/edit/UnitEditor";
 
 interface DetailedItemProps extends MasterItem {}
 const STORAGE_ICONS: Record<string, string> = {
@@ -17,19 +20,18 @@ const STORAGE_ICONS: Record<string, string> = {
 
 const DetailedItem: React.FC<DetailedItemProps> = (item) => {
   const { updateItemDetail, toggleItem } = useAddIngredientStore();
-  const [isMemoEditing, setIsMemoEditing] = useState(false);
-  const memoInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isMemoEditing && memoInputRef.current) {
-      memoInputRef.current.focus();
-    }
-  }, [isMemoEditing]);
-
+  const [modalType, setModalType] = useState<
+    "storage" | "expiry" | "quantity" | "unit" | "memo" | null
+  >(null);
   const currentIcon = STORAGE_ICONS[item.storageType || "냉장"] || coldIcon;
 
-  const handleChange = (details: Partial<MasterItem>) => {
-    updateItemDetail(item.id, details);
+  const handleUpdate = (value: any) => {
+    if (modalType) {
+      updateItemDetail(item.id, {
+        [modalType === "expiry" ? "expiration" : modalType]: value,
+      });
+      setModalType(null);
+    }
   };
   return (
     <div className="relative w-[345px] h-[198px] rounded-[6px] bg-[#FFFFFF] shadow-[0px_1px_8.2px_-2px_rgba(17,17,17,0.25)]">
@@ -45,14 +47,22 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
             <span className="w-18 text-[10px] text-center text-stone-300">
               메모를 남겨주세요
             </span>
-            <img src={memoIcon} alt="edit memo" className="w-6 flex-shrink-0" />
+            <img
+              onClick={() => setModalType("memo")}
+              src={memoIcon}
+              alt="edit memo"
+              className="w-6 flex-shrink-0"
+            />
           </div>
         </div>
 
         <div className="flex flex-col items-start w-44 h-38 gap-2 typo-caption">
           <div className="flex gap-3 items-center">
             <span className="w-[42px]">보관장소</span>
-            <div className="flex w-[59px] h-8 px-2 gap-1 bg-black rounded-[6px] items-center">
+            <div
+              onClick={() => setModalType("storage")}
+              className="flex w-[59px] h-8 px-2 gap-1 bg-black rounded-[6px] items-center"
+            >
               <img
                 src={currentIcon}
                 alt={item.storageType}
@@ -69,21 +79,33 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
               <span className="w-[58px] h-4">
                 {item.expiration || "2026.01.20"}
               </span>
-              <img src={renameIcon} className="w-3" />
+              <img
+                onClick={() => setModalType("expiry")}
+                src={renameIcon}
+                className="w-3"
+              />
             </div>
           </div>
           <div className="flex gap-3 items-center">
             <span className="w-[42px]">수량</span>
             <div className="flex w-[66px] h-8 border border-[#D1D1D1] rounded-[6px] items-center justify-between px-[10px] py-3">
               <span className="w-[58px] h-4">{item.quantity || 1}</span>
-              <img src={renameIcon} className="w-3" />
+              <img
+                onClick={() => setModalType("quantity")}
+                src={renameIcon}
+                className="w-3"
+              />
             </div>
           </div>
           <div className="flex gap-3 items-center">
             <span className="w-[42px]">단위</span>
             <div className="flex w-[66px] h-8 border border-[#D1D1D1] rounded-[6px] items-center justify-between px-[10px] py-3">
               <span className="w-[58px] h-4">{item.unit || "개"}</span>
-              <img src={renameIcon} className="w-3" />
+              <img
+                onClick={() => setModalType("unit")}
+                src={renameIcon}
+                className="w-3"
+              />
             </div>
           </div>
         </div>
@@ -95,6 +117,35 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
       >
         <img alt="deleteButton" src={deleteIcon} className="w-10" />
       </button>
+      <EditModal
+        isOpen={modalType !== null}
+        onClose={() => setModalType(null)}
+        title={
+          modalType === "storage"
+            ? "보관 장소를 선택해주세요"
+            : modalType === "expiry"
+              ? "유통기한을 선택해주세요"
+              : modalType === "quantity"
+                ? "수량을 선택해주세요"
+                : modalType === "unit"
+                  ? "보관 단위를 선택해주세요"
+                  : "메모를 자유롭게 남겨보세요"
+        }
+      >
+        {/* 여기에 modalType에 따라 컴포넌트를 넣어주면 됩니다. */}
+        {modalType === "quantity" && (
+          <QuantityEditor
+            value={item.quantity || 1}
+            onSave={(val) => handleUpdate(val)}
+          />
+        )}
+        {modalType === "unit" && (
+          <UnitEditor
+            value={item.unit || "개"}
+            onSave={(val) => handleUpdate(val)}
+          />
+        )}
+      </EditModal>
     </div>
   );
 };
