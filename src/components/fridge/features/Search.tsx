@@ -5,10 +5,16 @@ import { useIngredientStore } from "../../../stores/useIngredientStore";
 
 //재료 검색
 export default function Search() {
-  const { searchTerm, setSearchTerm } = useIngredientStore();
+  const { searchTerm, setSearchTerm, setViewCategory } = useIngredientStore();
   const handleSearch = (value: string) => {
     setSearchTerm(value);
+
+    // 일단 추가: 검색 시작 시 전체보기 해제
+    if (value.trim().length > 0) {
+      setViewCategory(null);
+    }
   };
+
   const hasText = searchTerm.trim().length > 0;
   return (
     <div className="w-full pb-[26px]">
