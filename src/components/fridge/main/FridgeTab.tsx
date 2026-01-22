@@ -20,8 +20,13 @@ import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
 
 export default function FridgeTab() {
-  const { ingredients, setIngredients, searchTerm, viewCategory } =
-    useIngredientStore();
+  const {
+    ingredients,
+    setIngredients,
+    searchTerm,
+    viewCategory,
+    updateIngredient,
+  } = useIngredientStore();
   const { filteredIngredients, sortedIngredients } = useSortedIngredients();
 
   useEffect(() => {
@@ -62,7 +67,12 @@ export default function FridgeTab() {
   }, [todayIngredients]);
 
   // 상세정보 부분 추가
-  const { selectedIngredient, closeDetail } = useIngredientStore();
+  const { selectedIngredientId, closeDetail } = useIngredientStore();
+
+  const selectedIngredient = ingredients.find(
+    (i) => i.id === selectedIngredientId,
+  );
+
   //---------------------------
 
   // 카테고리에 따른 아이콘 반환 함수
@@ -141,13 +151,10 @@ export default function FridgeTab() {
           ingredient={selectedIngredient}
           onClose={closeDetail}
           onUpdate={(updated: Partial<Ingredient>) => {
-            if (!selectedIngredient) return;
-
-            const newIngredients = ingredients.map((i) =>
-              i.id === selectedIngredient.id ? { ...i, ...updated } : i,
-            );
-
-            setIngredients(newIngredients); // 직접 배열 전달
+            updateIngredient({
+              ...selectedIngredient,
+              ...updated,
+            });
           }}
         />
       )}

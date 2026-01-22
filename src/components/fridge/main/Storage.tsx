@@ -89,7 +89,7 @@ export default function Storage({
                   image={item.image}
                   isSelected={selectedIds.includes(item.id)}
                   onSelect={() => toggleSelect(item.id)}
-                  onDetail={() => openDetail(item)}
+                  onDetail={() => openDetail(item.id)}
                 />
               </div>
             ))}

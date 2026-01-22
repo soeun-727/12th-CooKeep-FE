@@ -8,7 +8,7 @@ export interface Ingredient {
   category: "냉장" | "냉동" | "상온";
 
   quantity: number;
-  unit: "개" | "묶음" | "봉지" | "팩" | "캔" | "병";
+  unit: string; // 이거였다가 수정(문제 생기면 바꾸기..) unit: "개" | "묶음" | "봉지" | "팩" | "캔" | "병";
 
   expiryDate: string; // "2025-02-15"
   createdAt: number;
@@ -26,7 +26,7 @@ interface IngredientState {
   searchTerm: string;
   viewCategory: string | null;
   sortOrder: SortOrder;
-  selectedIngredient: Ingredient | null; // 상세정보 추가
+  selectedIngredientId: number | null; // 상세정보 추가
 
   // 액션
   setIngredients: (ingredients: Ingredient[]) => void; // 데이터 초기화 액션 추가
@@ -39,8 +39,9 @@ interface IngredientState {
   eatenCount: number; //추후엔 API 연동할 듯
 
   // 상세정보부분 추가
-  openDetail: (ingredient: Ingredient) => void;
+  openDetail: (id: number) => void;
   closeDetail: () => void;
+
   updateIngredient: (updated: Ingredient) => void;
 }
 
@@ -81,17 +82,16 @@ export const useIngredientStore = create<IngredientState>((set, get) => ({
   },
 
   // 상세정보부분 추가
-  selectedIngredient: null,
+  selectedIngredientId: null,
 
-  openDetail: (ingredient) => set({ selectedIngredient: ingredient }),
+  openDetail: (id) => set({ selectedIngredientId: id }),
 
-  closeDetail: () => set({ selectedIngredient: null }),
+  closeDetail: () => set({ selectedIngredientId: null }),
 
   updateIngredient: (updated) =>
     set((state) => ({
       ingredients: state.ingredients.map((i) =>
         i.id === updated.id ? updated : i,
       ),
-      selectedIngredient: updated, // 모달 열려 있으면 즉시 반영
     })),
 }));
