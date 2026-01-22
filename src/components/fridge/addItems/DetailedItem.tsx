@@ -10,6 +10,9 @@ import type { MasterItem } from "../../../stores/useAddIngredientStore";
 import EditModal from "../../ui/EditModal";
 import QuantityEditor from "./components/edit/QuantityEditor";
 import UnitEditor from "./components/edit/UnitEditor";
+import StorageEditor from "./components/edit/StorageEditor";
+import ExpiryEditor from "./components/edit/ExpiryEditor";
+import MemoEditor from "./components/edit/MemoEditor";
 
 interface DetailedItemProps extends MasterItem {}
 const STORAGE_ICONS: Record<string, string> = {
@@ -33,6 +36,52 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
       setModalType(null);
     }
   };
+  const renderEditor = () => {
+    switch (modalType) {
+      case "storage":
+        return {
+          title: "보관 장소를 선택해주세요",
+          component: (
+            <StorageEditor
+              value={item.storageType || "냉장"}
+              onSave={handleUpdate}
+            />
+          ),
+        };
+      case "expiry":
+        return {
+          title: "유통기한을 선택해주세요",
+          component: (
+            <ExpiryEditor value={item.expiration || ""} onSave={handleUpdate} />
+          ),
+        };
+      case "quantity":
+        return {
+          title: "수량을 선택해주세요",
+          component: (
+            <QuantityEditor value={item.quantity || 1} onSave={handleUpdate} />
+          ),
+        };
+      case "unit":
+        return {
+          title: "보관 단위를 선택해주세요",
+          component: (
+            <UnitEditor value={item.unit || "개"} onSave={handleUpdate} />
+          ),
+        };
+      case "memo":
+        return {
+          title: "메모를 자유롭게 남겨보세요",
+          component: (
+            <MemoEditor value={item.memo || ""} onSave={handleUpdate} />
+          ),
+        };
+      default:
+        return { title: "", component: null };
+    }
+  };
+
+  const { title, component } = renderEditor();
   return (
     <div className="relative w-[345px] h-[198px] rounded-[6px] bg-[#FFFFFF] shadow-[0px_1px_8.2px_-2px_rgba(17,17,17,0.25)]">
       <div className="flex p-6 gap-6">
@@ -43,16 +92,17 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
           <span className="typo-caption w-[95px] pt-[10px] text-left truncate font-bold px-[2px]">
             {item.name}
           </span>
-          <div className="w-full h-6 flex items-center justify-center pl-[2px]">
-            <span className="w-18 text-[10px] text-center text-stone-300">
-              메모를 남겨주세요
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              setModalType("memo");
+            }}
+            className="w-full h-6 flex items-center justify-center pl-[2px] cursor-pointer relative z-[50] group"
+          >
+            <span className="text-[10px] truncate flex-1 text-stone-300">
+              {item.memo || "메모를 남겨주세요"}
             </span>
-            <img
-              onClick={() => setModalType("memo")}
-              src={memoIcon}
-              alt="edit memo"
-              className="w-6 flex-shrink-0"
-            />
+            <img src={memoIcon} alt="edit memo" className="w-6 flex-shrink-0" />
           </div>
         </div>
 
@@ -118,33 +168,12 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
         <img alt="deleteButton" src={deleteIcon} className="w-10" />
       </button>
       <EditModal
+        key={modalType}
         isOpen={modalType !== null}
         onClose={() => setModalType(null)}
-        title={
-          modalType === "storage"
-            ? "보관 장소를 선택해주세요"
-            : modalType === "expiry"
-              ? "유통기한을 선택해주세요"
-              : modalType === "quantity"
-                ? "수량을 선택해주세요"
-                : modalType === "unit"
-                  ? "보관 단위를 선택해주세요"
-                  : "메모를 자유롭게 남겨보세요"
-        }
+        title={title}
       >
-        {/* 여기에 modalType에 따라 컴포넌트를 넣어주면 됩니다. */}
-        {modalType === "quantity" && (
-          <QuantityEditor
-            value={item.quantity || 1}
-            onSave={(val) => handleUpdate(val)}
-          />
-        )}
-        {modalType === "unit" && (
-          <UnitEditor
-            value={item.unit || "개"}
-            onSave={(val) => handleUpdate(val)}
-          />
-        )}
+        {component}
       </EditModal>
     </div>
   );

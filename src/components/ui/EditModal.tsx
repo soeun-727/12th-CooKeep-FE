@@ -17,8 +17,8 @@ export default function EditModal({ isOpen, onClose, title, children }: Props) {
 
       {/* 모달 본체 */}
       <div className="relative w-full max-w-[450px] bg-white rounded-t-[30px] py-[19px] px-4 animate-slide-up gap-[18px]">
-        <div className="flex justify-center items-center h-10 py-2">
-          <h3 className="typo-body  mt-[19px]">{title}</h3>
+        <div className="flex justify-center items-center h-10 p-2 mb-[26px]">
+          <h3 className="typo-body mt-[19px]">{title}</h3>
         </div>
 
         <div>{children}</div>
