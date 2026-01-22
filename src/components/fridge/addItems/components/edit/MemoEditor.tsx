@@ -10,7 +10,7 @@ export default function MemoEditor({ value, onSave }: MemoEditorProps) {
   const [text, setText] = useState(value || "");
 
   return (
-    <div className="flex flex-col items-center mt-[18px] mb-[31px]">
+    <div className="flex flex-col items-center mt-[18px] mb-16">
       <textarea
         autoFocus
         value={text}
