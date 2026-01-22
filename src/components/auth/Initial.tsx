@@ -6,12 +6,12 @@ import { useNavigate } from "react-router-dom";
 export default function Initial() {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--color-green-deep)]">
+    <div className="flex flex-col bg-[var(--color-green-deep)]">
       {/* 상단 텍스트 영역 */}
       <img
         src={icon}
         alt="Frame 아이콘"
-        className="w-[18.5px] mt-[138px] ml-[169px]"
+        className="w-[18.5px] mt-[84px] ml-[169px]"
       />
       <div className="ml-8">
         <h1 className="typo-h1 flex gap-1">

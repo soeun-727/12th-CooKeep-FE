@@ -1,12 +1,21 @@
 import { create } from "zustand";
 
 export interface Ingredient {
-  id: number;
+  id: number; // ingredientId
   name: string;
-  expiration: string;
   image: string;
+
   category: "냉장" | "냉동" | "상온";
+
+  quantity: number;
+  unit: "개" | "묶음" | "봉지" | "팩" | "캔" | "병";
+
+  expiryDate: string; // "2025-02-15"
   createdAt: number;
+  dDay: number; // 10 → D-10 // leftDays
+
+  memo?: string;
+  tip?: string;
 }
 
 export type SortOrder = "유통기한 임박 순" | "등록 최신 순" | "등록 오래된 순";
@@ -17,6 +26,7 @@ interface IngredientState {
   searchTerm: string;
   viewCategory: string | null;
   sortOrder: SortOrder;
+  selectedIngredient: Ingredient | null; // 상세정보 추가
 
   // 액션
   setIngredients: (ingredients: Ingredient[]) => void; // 데이터 초기화 액션 추가
@@ -27,6 +37,11 @@ interface IngredientState {
   clearSelection: () => void;
   deleteSelected: (type?: "eaten" | "thrown") => Promise<void>;
   eatenCount: number; //추후엔 API 연동할 듯
+
+  // 상세정보부분 추가
+  openDetail: (ingredient: Ingredient) => void;
+  closeDetail: () => void;
+  updateIngredient: (updated: Ingredient) => void;
 }
 
 export const useIngredientStore = create<IngredientState>((set, get) => ({
@@ -59,9 +74,24 @@ export const useIngredientStore = create<IngredientState>((set, get) => ({
       eatenCount:
         type === "eaten" ? eatenCount + selectedIds.length : eatenCount,
       ingredients: state.ingredients.filter(
-        (item) => !selectedIds.includes(item.id)
+        (item) => !selectedIds.includes(item.id),
       ),
       selectedIds: [],
     }));
   },
+
+  // 상세정보부분 추가
+  selectedIngredient: null,
+
+  openDetail: (ingredient) => set({ selectedIngredient: ingredient }),
+
+  closeDetail: () => set({ selectedIngredient: null }),
+
+  updateIngredient: (updated) =>
+    set((state) => ({
+      ingredients: state.ingredients.map((i) =>
+        i.id === updated.id ? updated : i,
+      ),
+      selectedIngredient: updated, // 모달 열려 있으면 즉시 반영
+    })),
 }));

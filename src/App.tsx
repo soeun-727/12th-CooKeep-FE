@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 import InitialPage from "./pages/auth/InitialPage";
@@ -30,6 +30,7 @@ import WithdrawPage from "./pages/settings/WithdrawPage";
 import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
 import AddItemPage from "./pages/fridge/AddItemPage";
 import AddItemLayout from "./layouts/AddItemLayout";
+import Details from "./components/fridge/addItems/Details";
 
 export default function App() {
   return (
@@ -76,7 +77,6 @@ export default function App() {
         <Route path="/support" element={<SupportPage />} />
 
         <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/fridge" />} />
           <Route path="/fridge" element={<FridgePage />} />
           {/* <Route path="/recipe" element={<RecipePage />} />
           <Route path="/cookeeps" element={<CookeepsPage />} />
@@ -85,6 +85,7 @@ export default function App() {
 
         <Route element={<AddItemLayout />}>
           <Route path="/fridge/add" element={<AddItemPage />} />
+          <Route path="/fridge/add-detail" element={<Details />} />
         </Route>
       </Routes>
     </AppLayout>
