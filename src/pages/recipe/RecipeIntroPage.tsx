@@ -2,17 +2,21 @@ import { useNavigate } from "react-router-dom";
 
 import cookChar from "../../assets/recipe/main/cook_char.svg";
 import Button from "../../components/ui/Button";
+import RecipeHeader from "../../components/recipe/main/RecipeHeader";
 
 export default function RecipeIntroPage() {
   const navigate = useNavigate();
 
   return (
     <div className="relative h-[calc(100vh-90px)] flex justify-center overflow-hidden">
+      {/* 1. 헤더 추가 (제목 없음) */}
+      <RecipeHeader />
+
       {/* 배경 blur */}
       <div
         className="
           absolute
-          top-[126px]
+          top-[72px]
           left-1/2
           -translate-x-1/2
           w-[434px]
@@ -25,7 +29,7 @@ export default function RecipeIntroPage() {
       />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-col items-center w-[361px] gap-[28px] mt-[257.62px]">
+      <div className="flex flex-col items-center w-[361px] gap-[28px] mt-[203.62px]">
         <img
           src={cookChar}
           alt="요리 캐릭터"

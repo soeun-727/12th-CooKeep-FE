@@ -1,6 +1,6 @@
 import RecipeActionButtons from "../../components/recipe/main/result/RecipeActionButtons";
 import RecipeContentSection from "../../components/recipe/main/result/RecipeContentSection";
-import RecipeHeader from "../../components/recipe/main/result/RecipeHeader";
+import RecipeHeader from "../../components/recipe/main/RecipeHeader";
 import RecipeTitle from "../../components/recipe/main/result/RecipeTitle";
 import RecipeYoutubeCard from "../../components/recipe/main/result/RecipeYoutubeCard";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
@@ -15,12 +15,12 @@ export default function RecipeResultPage() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <RecipeHeader />
+      <RecipeHeader title="오늘의 레시피" />
 
       {/* 스크롤 영역 */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto flex flex-col gap-9 px-4 pt-[129px]"
+        className="flex-1 overflow-y-auto flex flex-col gap-9 px-4 pt-[75px]"
       >
         {recipeHistory.map((recipe, idx) => {
           const requiredIngredients = recipe.ingredients

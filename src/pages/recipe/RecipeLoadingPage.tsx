@@ -39,7 +39,7 @@ export default function RecipeLoadingPage() {
   }, [step]);
 
   return (
-    <div className="flex flex-col items-center h-screen pt-[193px] text-center">
+    <div className="flex flex-col items-center h-screen pt-[139px] text-center">
       {/* 로딩 아이콘 */}
       <img
         src={LoadingIcon}
