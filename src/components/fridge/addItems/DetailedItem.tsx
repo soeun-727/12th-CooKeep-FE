@@ -30,9 +30,7 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
 
   const handleUpdate = (value: any) => {
     if (modalType) {
-      updateItemDetail(item.id, {
-        [modalType === "expiry" ? "expiration" : modalType]: value,
-      });
+      updateItemDetail(item.id, modalType, value);
       setModalType(null);
     }
   };
@@ -43,6 +41,7 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
           title: "보관 장소를 선택해주세요",
           component: (
             <StorageEditor
+              // 스토어 필드명과 일치하는 item.storageType을 넘깁니다.
               value={item.storageType || "냉장"}
               onSave={handleUpdate}
             />

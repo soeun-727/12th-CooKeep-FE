@@ -1,4 +1,6 @@
 import { useState } from "react";
+import nextIcon from "../../../../../assets/fridge/addItem/forward.svg";
+import prevIcon from "../../../../../assets/fridge/addItem/backward.svg";
 
 interface ExpiryEditorProps {
   value: string; // "2026.01.20" 형식
@@ -36,10 +38,10 @@ export default function ExpiryEditor({ value, onSave }: ExpiryEditorProps) {
         </h2>
         <div>
           <button onClick={prevMonth} className="p-2 text-zinc-400">
-            {"<"}
+            <img src={prevIcon} alt="back" />
           </button>
           <button onClick={nextMonth} className="p-2 text-zinc-400">
-            {">"}
+            <img src={nextIcon} alt="next" />
           </button>
         </div>
       </div>
