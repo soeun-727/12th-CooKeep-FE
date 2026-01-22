@@ -68,7 +68,6 @@ export default function ExpiryEditor({ value, onSave }: ExpiryEditorProps) {
         {/* 실제 날짜 버튼 */}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
-          const currentDate = new Date(year, month, day);
           const isSaved =
             savedDate &&
             savedDate.getFullYear() === year &&

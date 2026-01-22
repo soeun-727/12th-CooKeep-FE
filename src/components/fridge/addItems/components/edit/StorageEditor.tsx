@@ -17,22 +17,14 @@ const STORAGE_CONFIG: Record<string, { default: string; selected: string }> = {
 };
 
 export default function StorageEditor({ value, onSave }: StorageEditorProps) {
-  const [isCustomInput, setIsCustomInput] = useState(false);
-  const [customValue, setCustomValue] = useState(String(value));
-  const [selectedStorage, setSelectedStorage] = useState<string | null>(value);
+  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
   const storage = ["냉장", "냉동", "상온"];
 
-  const handleQuickSelect = (storage: string) => {
-    if (storage == value) return;
-    setSelectedStorage(storage);
+  const handleQuickSelect = (storageName: string) => {
+    setSelectedStorage(storageName);
     setTimeout(() => {
-      onSave(storage);
-    }, 200);
-  };
-
-  const handleCustomSubmit = () => {
-    if (!customValue.trim()) return;
-    onSave(customValue);
+      onSave(storageName);
+    }, 250);
   };
 
   return (
