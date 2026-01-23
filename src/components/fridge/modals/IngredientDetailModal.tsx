@@ -6,6 +6,10 @@ import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
 import bubbleTail from "../../../assets/fridge/bubble_tail_left.svg";
+import EditModal from "../../ui/EditModal";
+import StorageEditor from "../addItems/components/edit/StorageEditor";
+import ExpiryEditor from "../addItems/components/edit/ExpiryEditor";
+import QuantityEditor from "../addItems/components/edit/QuantityEditor";
 
 interface Props {
   ingredient: Ingredient;
@@ -40,6 +44,10 @@ export default function IngredientDetailModal({
   };
 
   const tip = ingredient.tip;
+
+  const [openEditor, setOpenEditor] = useState<
+    null | "storage" | "expiry" | "quantity"
+  >(null);
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
@@ -138,7 +146,10 @@ export default function IngredientDetailModal({
               {/* 3단 정보 (보관장소, 유통기한, 수량) */}
               <div className="flex flex-col items-start gap-[6px] self-stretch">
                 <div className="flex h-14 w-full gap-[3px] items-center">
-                  <div className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] rounded-l-[6px]">
+                  <div
+                    className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] rounded-l-[6px] cursor-pointer"
+                    onClick={() => setOpenEditor("storage")}
+                  >
                     <span className="text-[12px] font-semibold text-[#202020] leading-4 truncate self-stretch text-center">
                       보관장소
                     </span>
@@ -152,7 +163,10 @@ export default function IngredientDetailModal({
                     />
                   </div>
 
-                  <div className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px]">
+                  <div
+                    className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] cursor-pointer"
+                    onClick={() => setOpenEditor("expiry")}
+                  >
                     <span className="text-[12px] font-semibold text-[#202020] leading-4 truncate self-stretch text-center">
                       유통기한
                     </span>
@@ -161,7 +175,10 @@ export default function IngredientDetailModal({
                     </span>
                   </div>
 
-                  <div className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] rounded-r-[6px]">
+                  <div
+                    className="flex-1 h-full flex flex-col justify-center items-center bg-[#EBEBEB] py-[5px] rounded-r-[6px] cursor-pointer"
+                    onClick={() => setOpenEditor("quantity")}
+                  >
                     <span className="text-[12px] font-semibold text-[#202020] leading-4 truncate self-stretch text-center">
                       수량/단위
                     </span>
@@ -241,6 +258,58 @@ export default function IngredientDetailModal({
                 </div>
               </div>
             )}
+
+            {/* ===== 보관장소 수정 ===== */}
+            <EditModal
+              isOpen={openEditor === "storage"}
+              onClose={() => setOpenEditor(null)}
+              title="보관장소 수정"
+            >
+              <StorageEditor
+                value={ingredient.category}
+                onSave={(val) => {
+                  onUpdate({ category: val as Ingredient["category"] });
+                  setOpenEditor(null);
+                }}
+              />
+            </EditModal>
+
+            {/* ===== 유통기한 수정 ===== */}
+            <EditModal
+              isOpen={openEditor === "expiry"}
+              onClose={() => setOpenEditor(null)}
+              title="유통기한 수정"
+            >
+              <ExpiryEditor
+                value={ingredient.expiryDate}
+                onSave={(val) => {
+                  onUpdate({
+                    expiryDate: val,
+                    dDay: Math.ceil(
+                      (new Date(val.replace(/\./g, "-")).getTime() -
+                        Date.now()) /
+                        (1000 * 60 * 60 * 24),
+                    ),
+                  });
+                  setOpenEditor(null);
+                }}
+              />
+            </EditModal>
+
+            {/* ===== 수량 수정 ===== */}
+            <EditModal
+              isOpen={openEditor === "quantity"}
+              onClose={() => setOpenEditor(null)}
+              title="수량 수정"
+            >
+              <QuantityEditor
+                value={ingredient.quantity}
+                onSave={(val) => {
+                  onUpdate({ quantity: val });
+                  setOpenEditor(null);
+                }}
+              />
+            </EditModal>
           </div>
         </div>
       </div>

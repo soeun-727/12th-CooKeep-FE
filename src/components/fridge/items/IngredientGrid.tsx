@@ -17,7 +17,7 @@ export default function IngredientGrid({ items }: { items: Ingredient[] }) {
           leftDays={item.dDay}
           isSelected={selectedIds.includes(item.id)}
           onSelect={() => toggleSelect(item.id)}
-          onDetail={() => openDetail(item)}
+          onDetail={() => openDetail(item.id)}
         />
       ))}
     </div>
