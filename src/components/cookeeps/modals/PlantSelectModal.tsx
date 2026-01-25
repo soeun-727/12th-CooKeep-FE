@@ -15,25 +15,6 @@ interface PlantSelectModalProps {
   onConfirm: (categoryId: number) => void;
 }
 
-export const PLANT_DATA = [
-  { id: 1, img: beans, text: "강낭콩", description: "원빈(bean) 이 제 삼촌임" },
-  { id: 2, img: potato, text: "감자", description: "널리 감자를 이롭게 하라" },
-  { id: 3, img: apple, text: "사과", description: "심심한 사과를 드립니다" },
-  { id: 4, img: lettuce, text: "상추", description: "저 상추 주지 마세요" },
-  {
-    id: 5,
-    img: tomato,
-    text: "토마토",
-    description: "토마토는.. 거꾸로 해도 토마토",
-  },
-  {
-    id: 6,
-    img: strawberry,
-    text: "딸기",
-    description: "딸기가 도망가면.. 딸기쨈",
-  },
-];
-
 const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
   isOpen,
   onClose,
@@ -69,7 +50,7 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
             >
               {/* 아이콘 컨테이너 */}
               <div
-                className={`w-[60px] h-[60px] flex flex-col items-center justify-center rounded-[6px] transition-all gap-[2px]
+                className={`relative w-[60px] h-[60px] flex flex-col items-center justify-center rounded-[6px] transition-all gap-[2px] overflow-hidden
                 ${
                   selectedId === plant.id
                     ? "bg-(--color-green-light)"
@@ -80,6 +61,15 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
                 <span className="h-4 text-[10px] font-semibold text-zinc-500">
                   {plant.text}
                 </span>
+                {plant.isHarvested && (
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="flex items-center justify-center w-[43px] h-5 bg-(--color-green-light)/93 border-[0.5px] border-(--color-green-deep) rounded-[3px]">
+                      <span className="text-(--color-green-deep) text-[10px] font-semibold leading-none">
+                        수확완료
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </button>
           ))}
@@ -101,7 +91,52 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
 
 export default PlantSelectModal;
 
-// 나중에 사용할 때...
+export const PLANT_DATA = [
+  {
+    id: 1,
+    img: beans,
+    text: "강낭콩",
+    description: "원빈(bean) 이 제 삼촌임",
+    isHarvested: true,
+  },
+  {
+    id: 2,
+    img: potato,
+    text: "감자",
+    description: "널리 감자를 이롭게 하라",
+    isHarvested: false,
+  },
+  {
+    id: 3,
+    img: apple,
+    text: "사과",
+    description: "심심한 사과를 드립니다",
+    isHarvested: false,
+  },
+  {
+    id: 4,
+    img: lettuce,
+    text: "상추",
+    description: "저 상추 주지 마세요",
+    isHarvested: false,
+  },
+  {
+    id: 5,
+    img: tomato,
+    text: "토마토",
+    description: "토마토는.. 거꾸로 해도 토마토",
+    isHarvested: false,
+  },
+  {
+    id: 6,
+    img: strawberry,
+    text: "딸기",
+    description: "딸기가 도망가면.. 딸기쨈",
+    isHarvested: false,
+  },
+];
+
+// 나중에 사용할 때 CookeepsPage에
 // const [activeModal, setActiveModal] = useState<"select" | "selected" | null>(
 //     "select",
 //   );
@@ -121,8 +156,9 @@ export default PlantSelectModal;
 //   const handleFinalStart = () => {
 //     console.log(`${selectedPlant?.text} 키우기 시작!`);
 //     setActiveModal(null); // 모든 모달 닫기
-// //   };
-// <PlantSelectModal
+//   };
+//   <AppLayout>
+//       <PlantSelectModal
 //         isOpen={activeModal === "select"}
 //         onClose={() => setActiveModal(null)}
 //         onConfirm={handleSelectConfirm}
