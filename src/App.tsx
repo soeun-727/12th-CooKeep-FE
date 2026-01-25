@@ -18,9 +18,6 @@ import EditPasswordPage from "./pages/settings/EditPasswordPage";
 import VerifyLayout from "./layouts/VerifyLayout";
 import EditPasswordPhoneSection from "./components/settings/sections/EditPasswordPhoneSection";
 
-import FridgePage from "./pages/fridge/FridgePage";
-import Layout from "./layouts/Layout";
-
 import SimpleLoginAgreementPage from "./pages/auth/SimpleLoginAgreementPage";
 import SupportPage from "./pages/settings/SupportPage";
 import FaqPage from "./pages/settings/FaqPage";
@@ -28,9 +25,19 @@ import NoticePage from "./pages/settings/NoticePage";
 import TermsPage from "./pages/settings/TermsPage";
 import WithdrawPage from "./pages/settings/WithdrawPage";
 import WithdrawDonePage from "./pages/settings/WithdrawDonePage";
+
+import Layout from "./layouts/Layout";
+import FridgePage from "./pages/fridge/FridgePage";
 import AddItemPage from "./pages/fridge/AddItemPage";
 import AddItemLayout from "./layouts/AddItemLayout";
 import Details from "./components/fridge/addItems/Details";
+
+import RecipePage from "./pages/recipe/RecipePage";
+import RecipeIntroPage from "./pages/recipe/RecipeIntroPage";
+import RecipeSelectPage from "./pages/recipe/RecipeSelectPage";
+import RecipeConfirmPage from "./pages/recipe/RecipeConfirmPage";
+import RecipeLoadingPage from "./pages/recipe/RecipeLoadingPage";
+import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 
 export default function App() {
   return (
@@ -78,7 +85,15 @@ export default function App() {
 
         <Route element={<Layout />}>
           <Route path="/fridge" element={<FridgePage />} />
-          {/* <Route path="/recipe" element={<RecipePage />} />
+          <Route path="/recipe" element={<RecipePage />}>
+            <Route index element={<RecipeIntroPage />} />
+            <Route path="select" element={<RecipeSelectPage />} />
+            <Route path="confirm" element={<RecipeConfirmPage />} />
+            <Route path="loading" element={<RecipeLoadingPage />} />
+            <Route path="result" element={<RecipeResultPage />} />
+          </Route>
+
+          {/* 
           <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
