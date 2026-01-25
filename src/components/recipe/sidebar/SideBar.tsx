@@ -93,8 +93,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* 2. 사이드바 본체 */}
       <div
-        className={`absolute left-0 z-[130] top-[76px]
-          w-[342px] h-[calc(100%-152px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
+        className={`absolute left-0 z-[130] top-[22px]
+          w-[342px] h-[calc(100%-152px+54px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
           transform transition-transform duration-300 ease-in-out
           ${translateClasses}`}
       >

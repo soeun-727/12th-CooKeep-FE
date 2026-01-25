@@ -3,12 +3,21 @@ import { Outlet, useLocation } from "react-router-dom";
 import MainHeader from "../components/fixed/MainHeader";
 import TabBar from "../components/fixed/TabBar";
 import { useState, useEffect } from "react";
+import { useIngredientSelectStore } from "../stores/useIngredientSelectStore";
+import { useRecipeFlowStore } from "../stores/useRecipeFlowStore";
 
 export default function Layout() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("냉장고");
 
   const isRecipe = location.pathname.startsWith("/recipe"); //추가
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/recipe")) {
+      useIngredientSelectStore.getState().reset();
+      useRecipeFlowStore.getState().clearSelection();
+    }
+  }, [location.pathname]);
 
   // 레시피 중 TabBar를 숨길 페이지들
   const hideTabBarInRecipe =
@@ -34,7 +43,7 @@ export default function Layout() {
             ? hideTabBarInRecipe
               ? "" // 탭바 없으면 여백도 없음
               : "pb-[90px]"
-            : "pt-[102px] pb-[90px]"
+            : "pt-[48px] pb-[90px]"
         }
       >
         <Outlet />
