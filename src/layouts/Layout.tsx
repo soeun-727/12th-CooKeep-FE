@@ -34,7 +34,7 @@ export default function Layout() {
             ? hideTabBarInRecipe
               ? "" // 탭바 없으면 여백도 없음
               : "pb-[90px]"
-            : "pt-[102px] pb-[90px]"
+            : "pt-[48px] pb-[90px]"
         }
       >
         <Outlet />

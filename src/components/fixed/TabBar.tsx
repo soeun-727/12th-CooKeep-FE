@@ -33,27 +33,22 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
   ];
 
   return (
-    <nav
-      className="
-        absolute bottom-0 z-50
-        w-full max-w-[450px]
-        flex flex-col
-        bg-white 
-      "
-    >
-      <div className="flex justify-around items-center w-full h-14">
-        {tabs.map((tab) => (
-          <Tab
-            key={tab.title}
-            image={tab.image}
-            selectedImage={tab.selectedImage}
-            title={tab.title}
-            isSelected={selectedTab === tab.title}
-            onClick={() => handleSelect(tab.title)}
-          />
-        ))}
+    <nav className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="mx-auto max-w-[450px] pointer-events-auto">
+        <div className="bg-white h-14 flex justify-around items-center">
+          {tabs.map((tab) => (
+            <Tab
+              key={tab.title}
+              image={tab.image}
+              selectedImage={tab.selectedImage}
+              title={tab.title}
+              isSelected={selectedTab === tab.title}
+              onClick={() => handleSelect(tab.title)}
+            />
+          ))}
+        </div>
+        <div className="h-[34px] bg-white" />
       </div>
-      <div className="h-[34px] bg-white" />
     </nav>
   );
 }
