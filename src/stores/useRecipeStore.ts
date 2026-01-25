@@ -29,14 +29,14 @@ export const useRecipeStore = create<RecipeState>((set) => ({
   toggleLike: (id) =>
     set((state) => ({
       recipes: state.recipes.map((r) =>
-        r.id === id ? { ...r, isLiked: !r.isLiked } : r
+        r.id === id ? { ...r, isLiked: !r.isLiked } : r,
       ),
     })),
 
   renameRecipe: (id, newName) =>
     set((state) => ({
       recipes: state.recipes.map((r) =>
-        r.id === id ? { ...r, name: newName } : r
+        r.id === id ? { ...r, name: newName } : r,
       ),
     })),
 

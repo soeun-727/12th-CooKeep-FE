@@ -67,8 +67,8 @@ const TextField = ({
       errorMessage
         ? "border-[#D91F1F]"
         : successMessage
-        ? "border-[#1FA43C]"
-        : "border-[#DDDDDD]"
+          ? "border-[#1FA43C]"
+          : "border-[#DDDDDD]"
     }
   `}
         />
@@ -91,8 +91,8 @@ const TextField = ({
       errorMessage
         ? "text-[#D91F1F]"
         : successMessage
-        ? "text-[#1FA43C]"
-        : "text-transparent"
+          ? "text-[#1FA43C]"
+          : "text-transparent"
     }
   `}
       >

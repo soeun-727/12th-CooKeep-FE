@@ -50,7 +50,7 @@ const Recipe: React.FC<RecipeProps> = ({
         </span>
       ) : (
         part
-      )
+      ),
     );
   };
 

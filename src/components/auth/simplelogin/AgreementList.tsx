@@ -7,7 +7,7 @@ import AgreementPage from "../signup/AgreementPage";
 interface AgreementListProps {
   agreements: Record<AgreementItem["key"], boolean>;
   updateAgreements: (
-    next: Partial<Record<AgreementItem["key"], boolean>>
+    next: Partial<Record<AgreementItem["key"], boolean>>,
   ) => void;
 }
 
@@ -16,7 +16,7 @@ export default function AgreementList({
   updateAgreements,
 }: AgreementListProps) {
   const [agreementPage, setAgreementPage] = useState<AgreementItem | null>(
-    null
+    null,
   );
 
   const isAllChecked =
