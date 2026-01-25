@@ -42,7 +42,7 @@ export default function EditPasswordPhoneSection() {
   const formatTime = (s: number) =>
     `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(
       2,
-      "0"
+      "0",
     )}`;
 
   /* 인증번호 발송 */

@@ -22,12 +22,12 @@ export default function EditPasswordPage() {
   const isPhoneVerified = verifiedFromPhone;
   // const [isPhoneVerified, setIsPhoneVerified] = useState(verifiedFromPhone);
   const [isCurrentPwValid, setIsCurrentPwValid] = useState<boolean | null>(
-    verifiedFromPhone ? true : null
+    verifiedFromPhone ? true : null,
   );
 
   type VerifyMethod = "password" | "phone" | null;
   const [verifiedBy, setVerifiedBy] = useState<VerifyMethod>(
-    verifiedFromPhone ? "phone" : null
+    verifiedFromPhone ? "phone" : null,
   );
 
   // UI 상태
@@ -139,8 +139,8 @@ export default function EditPasswordPage() {
                     isCurrentPwValid === true
                       ? checkIcon
                       : showCurrentPassword
-                      ? openpwImage
-                      : pwImage
+                        ? openpwImage
+                        : pwImage
                   }
                   alt=""
                 />
@@ -178,8 +178,8 @@ export default function EditPasswordPage() {
                     password && confirmPassword && isPasswordMatch
                       ? checkIcon
                       : showPassword
-                      ? openpwImage
-                      : pwImage
+                        ? openpwImage
+                        : pwImage
                   }
                   alt="비밀번호 토글"
                 />
@@ -217,8 +217,8 @@ export default function EditPasswordPage() {
                     password && confirmPassword && isPasswordMatch
                       ? checkIcon
                       : showPasswordConfirm
-                      ? openpwImage
-                      : pwImage
+                        ? openpwImage
+                        : pwImage
                   }
                   alt="비밀번호 확인 토글"
                 />
@@ -303,7 +303,7 @@ export default function EditPasswordPage() {
 // 🔧 예시 API
 const changePasswordAPI = async (
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ) => {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
