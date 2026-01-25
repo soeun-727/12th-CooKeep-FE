@@ -10,7 +10,7 @@ export default function RecipeIntroPage() {
   return (
     <div className="relative h-[calc(100vh-90px)] flex justify-center overflow-hidden">
       {/* 1. 헤더 추가 (제목 없음) */}
-      <RecipeHeader />
+      <RecipeHeader transparent />
 
       {/* 배경 blur */}
       <div

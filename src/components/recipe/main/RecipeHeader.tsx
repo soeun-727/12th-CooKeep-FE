@@ -5,9 +5,13 @@ import Sidebar from "../sidebar/SideBar";
 
 interface RecipeHeaderProps {
   title?: string; // 제목을 선택 사항으로 변경
+  transparent?: boolean;
 }
 
-export default function RecipeHeader({ title }: RecipeHeaderProps) {
+export default function RecipeHeader({
+  title,
+  transparent = false,
+}: RecipeHeaderProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -17,12 +21,14 @@ export default function RecipeHeader({ title }: RecipeHeaderProps) {
   return (
     <>
       <header
-        className="
+        className={`
           absolute top-0 z-50
-          w-full max-w-[450px] // w-[400px] 보다는 전체를 채우는게 유연합니다
-          h-[102px]
-          px-4
-        "
+          w-full max-w-[450px]
+          h-10
+          flex items-center
+          px-4 py-4
+          ${transparent ? "bg-transparent" : "bg-[#FAFAFA]"}
+        `}
       >
         {/* 사이드바 버튼 */}
         <button
