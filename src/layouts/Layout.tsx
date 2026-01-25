@@ -8,6 +8,14 @@ export default function Layout() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("냉장고");
 
+  const isRecipe = location.pathname.startsWith("/recipe"); //추가
+
+  // 레시피 중 TabBar를 숨길 페이지들
+  const hideTabBarInRecipe =
+    location.pathname.startsWith("/recipe/select") ||
+    location.pathname.startsWith("/recipe/confirm") ||
+    location.pathname.startsWith("/recipe/loading");
+
   useEffect(() => {
     const path = location.pathname;
     if (path.includes("fridge")) setActiveTab("냉장고");
@@ -18,11 +26,25 @@ export default function Layout() {
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
-      <MainHeader />
-      <main className="pt-[102px] pb-[90px]">
+      {!isRecipe && <MainHeader />}
+
+      <main
+        className={
+          isRecipe
+            ? hideTabBarInRecipe
+              ? "" // 탭바 없으면 여백도 없음
+              : "pb-[90px]"
+            : "pt-[102px] pb-[90px]"
+        }
+      >
         <Outlet />
       </main>
-      <TabBar selectedTab={activeTab} onSelect={(name) => setActiveTab(name)} />
+      {!(isRecipe && hideTabBarInRecipe) && (
+        <TabBar
+          selectedTab={activeTab}
+          onSelect={(name) => setActiveTab(name)}
+        />
+      )}
     </div>
   );
 }
