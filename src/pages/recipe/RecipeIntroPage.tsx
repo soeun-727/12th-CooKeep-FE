@@ -3,9 +3,17 @@ import { useNavigate } from "react-router-dom";
 import cookChar from "../../assets/recipe/main/cook_char.svg";
 import Button from "../../components/ui/Button";
 import RecipeHeader from "../../components/recipe/main/RecipeHeader";
+import { useIngredientSelectStore } from "../../stores/useIngredientSelectStore";
+import { useEffect } from "react";
+import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
 
 export default function RecipeIntroPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    useIngredientSelectStore.getState().reset();
+    useRecipeFlowStore.getState().reset();
+  }, []);
 
   return (
     <div className="relative h-[calc(100vh-90px)] flex justify-center overflow-hidden">
