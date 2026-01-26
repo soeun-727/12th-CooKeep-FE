@@ -77,7 +77,6 @@ export default function ViewListPage({ type, description }: Props) {
             <ListItem
               type={type}
               key={item.id}
-              id={item.id}
               img={item.img}
               title={item.title}
               likes={item.likes}
