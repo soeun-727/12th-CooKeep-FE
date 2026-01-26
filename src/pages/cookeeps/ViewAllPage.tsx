@@ -59,17 +59,22 @@ export default function ViewAllPage() {
       <div className="w-[361px] mt-[18px] flex-1 overflow-y-auto no-scrollbar pb-10 flex flex-col items-center">
         {filteredData.length > 0 ? (
           <div className="flex flex-col gap-3">
-            {filteredData.map((item, index) => (
-              <AllItem
-                key={item.id}
-                rank={index + 1}
-                img={item.img}
-                title={item.title}
-                likes={item.likes}
-                isSelected={selectedId === item.id}
-                onSelect={() => setSelectedId(item.id)}
-              />
-            ))}
+            {filteredData.map((item) => {
+              const globalRank =
+                bestData.findIndex((best) => best.id === item.id) + 1;
+
+              return (
+                <AllItem
+                  key={item.id}
+                  rank={globalRank} // index + 1 대신 계산된 globalRank를 전달
+                  img={item.img}
+                  title={item.title}
+                  likes={item.likes}
+                  isSelected={selectedId === item.id}
+                  onSelect={() => setSelectedId(item.id)}
+                />
+              );
+            })}
           </div>
         ) : (
           <p className="mt-10 text-zinc-400 typo-body text-center">
