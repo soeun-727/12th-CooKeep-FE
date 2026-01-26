@@ -3,6 +3,8 @@ import { useState } from "react";
 import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
+import WeeklyTop3Section from "../../components/cookeeps/ranking/WeeklyTop3Section";
+import { top3Users } from "../../constants/mocktop3Users";
 
 export default function CookeepsPage() {
   const [toastVisible, setToastVisible] = useState(false);
@@ -26,9 +28,8 @@ export default function CookeepsPage() {
         {/* PlantGrowthCard 안에서 WaterButton에 onSuccess 연결 */}
         <PlantGrowthCard onWaterSuccess={handleWaterSuccess} />
 
-        <div className="bg-white p-4 rounded-xl shadow">
-          이번 주 식물 돌봄 TOP3
-        </div>
+        <WeeklyTop3Section users={top3Users} />
+
         <div className="bg-white p-4 rounded-xl shadow">
           이번 주 인기 레시피
         </div>
