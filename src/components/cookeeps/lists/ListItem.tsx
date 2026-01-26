@@ -1,24 +1,20 @@
 import { likeGray, bookmarkGray } from "../../../assets";
 
 interface ItemProps {
-  id: number;
   type: string;
   img: string;
   title: string;
   likes?: number;
-  bookmark?: boolean;
   isSelected?: boolean;
   onSelect?: () => void;
   onIconClick?: (e: React.MouseEvent) => void;
 }
 
 const ListItem: React.FC<ItemProps> = ({
-  id,
   type,
   img,
   title,
   likes,
-  bookmark,
   isSelected = false,
   onSelect,
   onIconClick,
