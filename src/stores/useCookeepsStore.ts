@@ -9,18 +9,24 @@ export type PlantType =
   | "potato"
   | "strawberry";
 
+export type PlantStage = 1 | 2 | 3 | 4;
+
 interface CookeepsState {
   selectedPlant: PlantType | null;
-  plantStage: 1 | 2 | 3 | 4;
+  plantStage: PlantStage;
+
+  cookie: number;
 
   selectPlant: (plant: PlantType) => void;
   growPlant: () => void;
-  resetPlant: () => void;
+  waterPlant: () => void;
 }
 
 export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   selectedPlant: null,
   plantStage: 1,
+
+  cookie: 100, // 초기 쿠키 (임시)
 
   selectPlant: (plant) =>
     set({
@@ -30,14 +36,25 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
 
   growPlant: () => {
     const { plantStage } = get();
-    if (plantStage < 4) {
-      set({ plantStage: (plantStage + 1) as 1 | 2 | 3 | 4 });
-    }
+    if (plantStage >= 4) return;
+
+    set({
+      plantStage: (plantStage + 1) as PlantStage,
+    });
   },
 
-  resetPlant: () =>
-    set({
-      selectedPlant: null,
-      plantStage: 1,
-    }),
+  waterPlant: () => {
+    const { cookie, selectedPlant, plantStage, growPlant } = get();
+
+    // 조건들
+    if (!selectedPlant) return;
+    if (cookie < 10) return;
+    if (plantStage >= 4) return;
+
+    // 쿠키 차감
+    set({ cookie: cookie - 10 });
+
+    // 성장
+    growPlant();
+  },
 }));
