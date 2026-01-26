@@ -42,10 +42,37 @@ import CookeepsPage from "./pages/cookeeps/CookeepsPage";
 import MyPlantPage from "./pages/cookeeps/MyPlantPage";
 import RecipeDetailPage from "./pages/cookeeps/RecipeDetailPage";
 
+import ListLayout from "./layouts/ListLayout";
+import ViewListPage from "./pages/cookeeps/ViewListPage";
+import ViewAllPage from "./pages/cookeeps/ViewAllPage";
+
 export default function App() {
   return (
     <AppLayout>
       <Routes>
+        <Route path="/cookeeps" element={<ListLayout />}>
+          <Route index element={<></>} />
+          <Route
+            path="liked"
+            element={
+              <ViewListPage
+                type="좋아요 누른 레시피"
+                description="좋아요가 많은 순서대로 노출됩니다"
+              />
+            }
+          />
+          <Route
+            path="bookmarked"
+            element={
+              <ViewListPage
+                type="북마크한 레시피"
+                description="저장한 레시피를 한 번에 확인할 수 있어요"
+              />
+            }
+          />
+          <Route path="all" element={<ViewAllPage />} />
+        </Route>
+
         <Route path="/" element={<InitialPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
@@ -101,6 +128,8 @@ export default function App() {
           <Route path="/cookeeps/my-plant" element={<MyPlantPage />} />
 
           {/* <Route path="/mypage" element={<MyPage />} /> */}
+          {/* <Route path="/cookeeps" element={<CookeepsPage />} />
+          <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
 
         <Route element={<AddItemLayout />}>
