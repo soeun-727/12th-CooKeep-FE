@@ -3,18 +3,18 @@ import { Outlet, useLocation } from "react-router-dom";
 import MainHeader from "../components/fixed/MainHeader";
 import TabBar from "../components/fixed/TabBar";
 import { useState, useEffect } from "react";
-import { useIngredientSelectStore } from "../stores/useIngredientSelectStore";
+import { useIngredientStore } from "../stores/useIngredientStore";
 import { useRecipeFlowStore } from "../stores/useRecipeFlowStore";
 
 export default function Layout() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("냉장고");
 
-  const isRecipe = location.pathname.startsWith("/recipe"); //추가
+  const isRecipe = location.pathname.startsWith("/recipe");
 
   useEffect(() => {
     if (!location.pathname.startsWith("/recipe")) {
-      useIngredientSelectStore.getState().reset();
+      useIngredientStore.getState().clearSelection();
       useRecipeFlowStore.getState().clearSelection();
     }
   }, [location.pathname]);
@@ -31,7 +31,7 @@ export default function Layout() {
     else if (path.includes("recipe")) setActiveTab("레시피");
     else if (path.includes("cookeeps")) setActiveTab("쿠킵스");
     else if (path.includes("mypage")) setActiveTab("MY쿠킵");
-  }, [location]);
+  }, [location.pathname]);
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
@@ -41,13 +41,14 @@ export default function Layout() {
         className={
           isRecipe
             ? hideTabBarInRecipe
-              ? "" // 탭바 없으면 여백도 없음
+              ? ""
               : "pb-[90px]"
             : "pt-[48px] pb-[90px]"
         }
       >
         <Outlet />
       </main>
+
       {!(isRecipe && hideTabBarInRecipe) && (
         <TabBar
           selectedTab={activeTab}
