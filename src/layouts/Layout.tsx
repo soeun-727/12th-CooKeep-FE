@@ -11,6 +11,16 @@ export default function Layout() {
   const [activeTab, setActiveTab] = useState("냉장고");
 
   const isRecipe = location.pathname.startsWith("/recipe");
+  const isCookeeps = location.pathname.startsWith("/cookeeps");
+
+  // 헤더와 탭바의 노출 여부를 변수로 관리
+  const showHeader = !isRecipe && !isCookeeps;
+  const hideTabBarInRecipe =
+    isRecipe &&
+    (location.pathname.startsWith("/recipe/select") ||
+      location.pathname.startsWith("/recipe/confirm") ||
+      location.pathname.startsWith("/recipe/loading"));
+  const showTabBar = !hideTabBarInRecipe;
 
   useEffect(() => {
     if (!location.pathname.startsWith("/recipe")) {
@@ -18,12 +28,6 @@ export default function Layout() {
       useRecipeFlowStore.getState().clearSelection();
     }
   }, [location.pathname]);
-
-  // 레시피 중 TabBar를 숨길 페이지들
-  const hideTabBarInRecipe =
-    location.pathname.startsWith("/recipe/select") ||
-    location.pathname.startsWith("/recipe/confirm") ||
-    location.pathname.startsWith("/recipe/loading");
 
   useEffect(() => {
     const path = location.pathname;
@@ -35,21 +39,18 @@ export default function Layout() {
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen">
-      {!isRecipe && <MainHeader />}
+      {showHeader && <MainHeader />}
 
       <main
-        className={
-          isRecipe
-            ? hideTabBarInRecipe
-              ? ""
-              : "pb-[90px]"
-            : "pt-[48px] pb-[90px]"
-        }
+        className={`
+          ${showHeader ? "pt-[48px]" : ""} 
+          ${showTabBar ? "pb-[90px]" : ""}
+        `}
       >
         <Outlet />
       </main>
 
-      {!(isRecipe && hideTabBarInRecipe) && (
+      {showTabBar && (
         <TabBar
           selectedTab={activeTab}
           onSelect={(name) => setActiveTab(name)}
