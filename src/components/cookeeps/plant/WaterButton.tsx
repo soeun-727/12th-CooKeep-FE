@@ -1,23 +1,45 @@
-// src/components/cookeeps/plant/WaterButton.tsx
+// WaterButton.tsx
+import { useState } from "react";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
+import WaterModal from "../modals/WaterModal";
 
-export default function WaterButton() {
+interface WaterButtonProps {
+  onSuccess?: () => void; // prop 추가
+}
+
+export default function WaterButton({ onSuccess }: WaterButtonProps) {
   const { waterPlant, cookie, plantStage, selectedPlant } = useCookeepsStore();
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const disabled = !selectedPlant || cookie < 10 || plantStage >= 4;
 
+  const handleConfirm = () => {
+    waterPlant();
+    setModalOpen(false);
+    if (onSuccess) onSuccess(); // 여기서 toast 실행
+  };
+
   return (
-    <button
-      onClick={waterPlant}
-      disabled={disabled}
-      className={`w-full py-3 rounded-xl text-white font-semibold transition
+    <>
+      <button
+        disabled={disabled}
+        onClick={() => setModalOpen(true)}
+        className={`w-full max-w-[280px] min-w-[211px] h-[40px]
+        rounded-full font-bold text-[16px]
         ${
           disabled
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-green-500 active:scale-95"
+            ? "bg-gray-300 text-gray-400"
+            : "bg-[#202020] text-[#32E389] shadow active:scale-95"
         }`}
-    >
-      💧 물 주기 (-10 쿠키)
-    </button>
+      >
+        물 주기 (쿠키 10개 사용)
+      </button>
+
+      <WaterModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onConfirm={handleConfirm}
+      />
+    </>
   );
 }

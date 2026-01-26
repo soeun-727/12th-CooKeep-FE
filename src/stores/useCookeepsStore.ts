@@ -15,6 +15,8 @@ interface CookeepsState {
   selectedPlant: PlantType | null;
   plantStage: PlantStage;
 
+  grownPlants: PlantType[]; // 다 키운 식물 목록
+
   cookie: number;
 
   selectPlant: (plant: PlantType) => void;
@@ -26,7 +28,9 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   selectedPlant: null,
   plantStage: 1,
 
-  cookie: 100, // 초기 쿠키 (임시)
+  grownPlants: [],
+
+  cookie: 100,
 
   selectPlant: (plant) =>
     set({
@@ -35,26 +39,30 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     }),
 
   growPlant: () => {
-    const { plantStage } = get();
-    if (plantStage >= 4) return;
+    const { plantStage, selectedPlant, grownPlants } = get();
+    if (!selectedPlant || plantStage >= 4) return;
 
-    set({
-      plantStage: (plantStage + 1) as PlantStage,
-    });
+    const nextStage = (plantStage + 1) as PlantStage;
+
+    if (nextStage === 4) {
+      set({
+        plantStage: 4,
+        selectedPlant: null,
+        grownPlants: [...grownPlants, selectedPlant], // 저장
+      });
+    } else {
+      set({ plantStage: nextStage });
+    }
   },
 
   waterPlant: () => {
     const { cookie, selectedPlant, plantStage, growPlant } = get();
 
-    // 조건들
     if (!selectedPlant) return;
     if (cookie < 10) return;
     if (plantStage >= 4) return;
 
-    // 쿠키 차감
     set({ cookie: cookie - 10 });
-
-    // 성장
     growPlant();
   },
 }));

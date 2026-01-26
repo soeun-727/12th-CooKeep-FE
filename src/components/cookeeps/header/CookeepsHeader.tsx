@@ -5,9 +5,11 @@ import settings from "../../../assets/cookeeps/main/settings_cookeeps.svg";
 import Logo from "../../../assets/cookeeps/main/logo_cookeeps_black.svg";
 import cookieIcon from "../../../assets/cookeeps/main/cookeeps_cookie.svg";
 import bookIcon from "../../../assets/cookeeps/main/cookeeps_book.svg";
+import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 export default function CookeepsHeader() {
   const navigate = useNavigate();
+  const { cookie } = useCookeepsStore();
 
   const TOOLTIP_KEY = "cookeepsPlantShortcutSeen";
 
@@ -26,10 +28,11 @@ export default function CookeepsHeader() {
     return () => clearTimeout(timer);
   }, [showTooltip]);
 
+  // CookeepsHeader.tsx
   const handleMyPlantClick = () => {
     setShowTooltip(false);
     localStorage.setItem(TOOLTIP_KEY, "true");
-    // navigate("/my-plant") 같은 이동 있으면 여기서 추가
+    navigate("/cookeeps/my-plant");
   };
 
   return (
@@ -48,7 +51,7 @@ export default function CookeepsHeader() {
         {/* 쿠키 */}
         <button className="flex h-[28px] items-center gap-1 rounded-full bg-[#202020] px-3 py-[2px] text-white shadow">
           <img src={cookieIcon} alt="cookie" className="h-4 w-4" />
-          <span className="text-[12px] font-medium leading-4">0 개</span>
+          <span className="text-[12px] font-medium leading-4">{cookie} 개</span>
         </button>
 
         {/* 내 식물 + 툴팁 */}
