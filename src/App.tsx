@@ -40,6 +40,7 @@ import RecipeLoadingPage from "./pages/recipe/RecipeLoadingPage";
 import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 import CookeepsPage from "./pages/cookeeps/CookeepsPage";
 import MyPlantPage from "./pages/cookeeps/MyPlantPage";
+import RecipeDetailPage from "./pages/cookeeps/RecipeDetailPage";
 
 export default function App() {
   return (
@@ -93,6 +94,7 @@ export default function App() {
             <Route path="confirm" element={<RecipeConfirmPage />} />
             <Route path="loading" element={<RecipeLoadingPage />} />
             <Route path="result" element={<RecipeResultPage />} />
+            <Route path=":id" element={<RecipeDetailPage />} />
           </Route>
 
           <Route path="/cookeeps" element={<CookeepsPage />} />
