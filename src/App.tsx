@@ -41,14 +41,25 @@ import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 
 import ListLayout from "./layouts/ListLayout";
 import ViewListPage from "./pages/cookeeps/ViewListPage";
+import ViewAllPage from "./pages/cookeeps/ViewAllPage";
 
 export default function App() {
   return (
     <AppLayout>
       <Routes>
-        <Route element={<ListLayout />}>
+        <Route path="/cookeeps" element={<ListLayout />}>
+          <Route index element={<></>} />
           <Route
-            path="/cookeeps-liked"
+            path="liked"
+            element={
+              <ViewListPage
+                type="좋아요 누른 레시피"
+                description="좋아요가 많은 순서대로 노출됩니다"
+              />
+            }
+          />
+          <Route
+            path="bookmarked"
             element={
               <ViewListPage
                 type="북마크한 레시피"
@@ -56,6 +67,7 @@ export default function App() {
               />
             }
           />
+          <Route path="all" element={<ViewAllPage />} />
         </Route>
 
         <Route path="/" element={<InitialPage />} />

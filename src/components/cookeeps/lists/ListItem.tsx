@@ -33,7 +33,7 @@ const ListItem: React.FC<ItemProps> = ({
       className={`w-[335px] h-12 rounded-[6px] flex items-center justify-between px-2 py-[10px] ${isSelected ? "bg-gray-200" : "bg-[#FAFAFA]"}`}
     >
       <img src={img} alt={title} className="w-[65px] h-[42px] rounded-[6px]" />
-      <span className="w-[190px] typo-body2 text-left">{title}</span>
+      <span className="w-[190px] typo-body2 truncate text-left">{title}</span>
       {type === "좋아요 누른 레시피" ? (
         <button
           onClick={handleIconClick}
