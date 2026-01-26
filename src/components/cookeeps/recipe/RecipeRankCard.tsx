@@ -20,7 +20,7 @@ export default function RecipeRankCard({
 
   return (
     <div
-      onClick={() => navigate(`/recipes/${id}`)}
+      onClick={() => navigate(`/recipe/${id}`)}
       className="flex justify-between items-center w-full h-12 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
     >
       {/* 왼쪽 블록: 순위 + 제목 + 좋아요 */}
