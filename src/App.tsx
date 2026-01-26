@@ -39,10 +39,25 @@ import RecipeConfirmPage from "./pages/recipe/RecipeConfirmPage";
 import RecipeLoadingPage from "./pages/recipe/RecipeLoadingPage";
 import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 
+import ListLayout from "./layouts/ListLayout";
+import ViewListPage from "./pages/cookeeps/ViewListPage";
+
 export default function App() {
   return (
     <AppLayout>
       <Routes>
+        <Route element={<ListLayout />}>
+          <Route
+            path="/cookeeps-liked"
+            element={
+              <ViewListPage
+                type="북마크한 레시피"
+                description="저장한 레시피를 한 번에 확인할 수 있어요"
+              />
+            }
+          />
+        </Route>
+
         <Route path="/" element={<InitialPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
@@ -93,8 +108,7 @@ export default function App() {
             <Route path="result" element={<RecipeResultPage />} />
           </Route>
 
-          {/* 
-          <Route path="/cookeeps" element={<CookeepsPage />} />
+          {/* <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}
         </Route>
 
