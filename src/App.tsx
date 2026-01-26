@@ -41,16 +41,18 @@ import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 import CookeepsPage from "./pages/cookeeps/CookeepsPage";
 import MyPlantPage from "./pages/cookeeps/MyPlantPage";
 import RecipeDetailPage from "./pages/cookeeps/RecipeDetailPage";
-
+{
+  /*
 import ListLayout from "./layouts/ListLayout";
 import ViewListPage from "./pages/cookeeps/ViewListPage";
-import ViewAllPage from "./pages/cookeeps/ViewAllPage";
+import ViewAllPage from "./pages/cookeeps/ViewAllPage"; */
+}
 
 export default function App() {
   return (
     <AppLayout>
       <Routes>
-        <Route path="/cookeeps" element={<ListLayout />}>
+        {/*<Route path="/cookeeps" element={<ListLayout />}>
           <Route index element={<></>} />
           <Route
             path="liked"
@@ -72,7 +74,7 @@ export default function App() {
           />
           <Route path="all" element={<ViewAllPage />} />
         </Route>
-
+*/}
         <Route path="/" element={<InitialPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
@@ -121,12 +123,11 @@ export default function App() {
             <Route path="confirm" element={<RecipeConfirmPage />} />
             <Route path="loading" element={<RecipeLoadingPage />} />
             <Route path="result" element={<RecipeResultPage />} />
-            <Route path=":id" element={<RecipeDetailPage />} />
           </Route>
 
           <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/cookeeps/my-plant" element={<MyPlantPage />} />
-
+          <Route path="/cookeeps/:id" element={<RecipeDetailPage />} />
           {/* <Route path="/mypage" element={<MyPage />} /> */}
           {/* <Route path="/cookeeps" element={<CookeepsPage />} />
           <Route path="/mypage" element={<MyPage />} /> */}

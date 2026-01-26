@@ -45,7 +45,7 @@ export default function RecipeDetailPage() {
           </div>
 
           {/* 메모 */}
-          <div className="flex flex-col items-center gap-2 w-full mt-4">
+          <div className="flex flex-col items-center gap-2 w-full mt-4 pb-5">
             {recipe.memo && (
               <RecipeDetailMemo
                 userName={recipe.user.name}
