@@ -1,23 +1,23 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 import cookChar from "../../assets/recipe/main/cook_char.svg";
 import Button from "../../components/ui/Button";
 import RecipeHeader from "../../components/recipe/main/RecipeHeader";
-import { useIngredientSelectStore } from "../../stores/useIngredientSelectStore";
-import { useEffect } from "react";
+import { useIngredientStore } from "../../stores/useIngredientStore";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
 
 export default function RecipeIntroPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    useIngredientSelectStore.getState().reset();
+    useIngredientStore.getState().clearSelection();
     useRecipeFlowStore.getState().reset();
   }, []);
 
   return (
     <div className="relative h-[calc(100vh-90px)] flex justify-center overflow-hidden">
-      {/* 1. 헤더 추가 (제목 없음) */}
+      {/* 헤더 */}
       <RecipeHeader transparent />
 
       {/* 배경 blur */}
@@ -32,7 +32,7 @@ export default function RecipeIntroPage() {
           rounded-full
           bg-[rgba(31,193,111,0.15)]
           blur-[125px]
-           pointer-events-none
+          pointer-events-none
         "
       />
 

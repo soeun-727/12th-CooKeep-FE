@@ -2,9 +2,10 @@ import plus from "../../../assets/fridge/plus.svg";
 import plusDisabled from "../../../assets/fridge/plusDisabled.svg";
 import Item from "../items/Item";
 import character from "../../../assets/fridge/character.svg";
-import { useIngredientStore } from "../../../stores/useIngredientStore";
-import type { Ingredient } from "../../../stores/useIngredientStore";
-import { useIngredientSelectStore } from "../../../stores/useIngredientSelectStore";
+import {
+  useIngredientStore,
+  type Ingredient,
+} from "../../../stores/useIngredientStore";
 
 interface StorageProps {
   category: string;
@@ -17,9 +18,10 @@ export default function Storage({
   image,
   ingredients,
 }: StorageProps) {
-  const { setViewCategory, openDetail } = useIngredientStore();
-  const { selectedIds, toggleSelect } = useIngredientSelectStore();
-  // 3개 이상일 때만 전체보기가 활성화되도록 설정된 로직 유지
+  const { selectedIds, toggleSelect, setViewCategory, openDetail } =
+    useIngredientStore();
+
+  // 3개 이상일 때만 전체보기 활성화
   const isScrollable = ingredients.length >= 3;
 
   return (
@@ -37,11 +39,11 @@ export default function Storage({
         <div className="w-full bg-[#ADB4C7] h-[10px]" />
       </div>
 
-      {/* 상단 헤더 영역 */}
+      {/* 상단 헤더 */}
       <div className="max-w-[393px] mx-auto">
         <div className="relative z-10 px-[20px] pt-[5px] pb-5">
           <div className="flex justify-between w-full h-10 items-center">
-            {/* 왼쪽 카테고리 태그: Sort.tsx와 동일하게 justify-center 추가 */}
+            {/* 카테고리 태그 */}
             <div className="flex items-center justify-center bg-neutral-800 rounded-[6px] h-[22px] min-w-[59px] px-2 gap-1 text-white">
               <img src={image} alt="category" className="w-3 h-3" />
               <span className="typo-caption leading-none whitespace-nowrap">
@@ -49,7 +51,7 @@ export default function Storage({
               </span>
             </div>
 
-            {/* 오른쪽 전체보기 버튼 */}
+            {/* 전체보기 */}
             <button
               disabled={!isScrollable}
               onClick={() => setViewCategory(category)}
@@ -74,7 +76,7 @@ export default function Storage({
         </div>
       </div>
 
-      {/* 아이템 리스트 영역 */}
+      {/* 아이템 리스트 */}
       <div
         className={`relative w-[353px] z-10 mx-auto ${
           ingredients.length > 0 ? "overflow-hidden" : ""
@@ -94,11 +96,10 @@ export default function Storage({
                 />
               </div>
             ))}
-            {/* 끝부분 여백 확보 */}
             <div className="w-4 flex-shrink-0" />
           </div>
         ) : (
-          /* 데이터가 없는 경우 Empty State */
+          /* Empty State */
           <div className="flex flex-col items-center gap-3 mt-[-5px] animate-fadeIn">
             <img
               src={character}

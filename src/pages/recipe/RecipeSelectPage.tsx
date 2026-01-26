@@ -1,44 +1,43 @@
 // src/pages/recipe/RecipeSelectPage.tsx
-// RecipeConfirmPage에서 snapshot 쓰는지 확인
 import { useNavigate } from "react-router-dom";
-// import "../../components/recipe/main/recipe.css";
+
 import Button from "../../components/ui/Button";
 import BackHeader from "../../components/ui/BackHeader";
 import Search from "../../components/fridge/features/Search";
 import Sort from "../../components/fridge/features/Sort";
 import Storage from "../../components/fridge/main/Storage";
 import IngredientGrid from "../../components/fridge/items/IngredientGrid";
+import FloatingNotice from "../../components/recipe/main/FloatingNotice";
 
 import { useIngredientStore } from "../../stores/useIngredientStore";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
-import { useIngredientSelectStore } from "../../stores/useIngredientSelectStore";
 import { useSortedIngredients } from "../../hooks/useSortedIngredients";
 
 import fridgeIcon from "../../assets/fridge/fridge.svg";
 import freezerIcon from "../../assets/fridge/freezer.svg";
 import pantryIcon from "../../assets/fridge/pantry.svg";
-import FloatingNotice from "../../components/recipe/main/FloatingNotice";
 
 export default function RecipeSelectPage() {
   const navigate = useNavigate();
 
-  // 데이터/검색/정렬은 fridge store
-  const { ingredients, viewCategory, setViewCategory } = useIngredientStore();
-  // 선택 상태는 RecipeSelect 전용
-  const { selectedIds } = useIngredientSelectStore();
+  // fridge store에서 전부 관리
+  const {
+    ingredients,
+    viewCategory,
+    setViewCategory,
+    selectedIds,
+    searchTerm,
+  } = useIngredientStore();
 
   const { sortedIngredients } = useSortedIngredients();
-
-  const { searchTerm } = useIngredientStore();
 
   const filteredIngredients = searchTerm
     ? sortedIngredients.filter((item) => item.name.includes(searchTerm))
     : sortedIngredients;
 
-  // snapshot 저장용
+  // snapshot 저장
   const { setSelectedIngredients } = useRecipeFlowStore();
 
-  // RecipeSelectPage에서는 clearSelection 하지 말기
   const handleConfirm = () => {
     const selectedIngredients = ingredients.filter((item) =>
       selectedIds.includes(item.id),
@@ -50,10 +49,8 @@ export default function RecipeSelectPage() {
 
   const handleBack = () => {
     if (viewCategory) {
-      // 재료 전체보기 → 냉장고 UI
       setViewCategory(null);
     } else {
-      // 진짜 이전 페이지
       navigate(-1);
     }
   };
@@ -79,15 +76,10 @@ export default function RecipeSelectPage() {
               categoryIcon={getIcon(viewCategory)}
               viewCategory={viewCategory}
             />
-            <IngredientGrid
-              items={filteredIngredients}
-              // selectedIds={selectedIds}
-              // onToggle={toggle}
-            />
+            <IngredientGrid items={filteredIngredients} />
           </>
         ) : (
           <>
-            {/* 이 Storage는 아직 fridge 선택 로직 사용 중 */}
             <Storage
               category="냉장"
               image={fridgeIcon}

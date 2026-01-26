@@ -4,14 +4,16 @@ type Props = {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <div className="w-screen min-h-[100dvh] flex justify-center bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex justify-center">
+      {/* 가짜 viewport */}
       <div
         className="
+          relative
           w-full
           max-w-[450px]
-        bg-[#FAFAFA]
-          min-h-[100dvh]
-          relative
+          min-h-screen
+          bg-[#FAFAFA]
+          overflow-x-hidden
         "
       >
         {children}
