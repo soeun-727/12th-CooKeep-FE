@@ -11,3 +11,8 @@ export { default as lettuce } from "./cookeeps/lettus.svg";
 export { default as tomato } from "./cookeeps/tomato.svg";
 export { default as potato } from "./cookeeps/potato.svg";
 export { default as strawberry } from "./cookeeps/strawberry.svg";
+export { default as searchIcon } from "./fridge/search.svg";
+export { default as like } from "./cookeeps/like.svg";
+export { default as likeGray } from "./cookeeps/like_gray.svg";
+export { default as bookmark } from "./cookeeps/bookmark.svg";
+export { default as bookmarkGray } from "./cookeeps/bookmark_gray.svg";
