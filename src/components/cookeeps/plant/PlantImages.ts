@@ -75,5 +75,4 @@ export const PLANT_IMAGES: Record<PlantType, Record<PlantStage, string>> = {
     3: strawberry3,
     4: strawberry4,
   },
-  // lettuce, tomato, potato, strawberry 동일
 };
