@@ -19,7 +19,7 @@ export default function CookeepsPage() {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="h-[100dvh] overflow-y-auto no-scrollbar">
       <div className="relative">
         <PlantBackground
           showToast={toastVisible}

@@ -44,6 +44,7 @@ import RecipeDetailPage from "./pages/cookeeps/RecipeDetailPage";
 import ListLayout from "./layouts/ListLayout";
 import ViewListPage from "./pages/cookeeps/ViewListPage";
 import ViewAllPage from "./pages/cookeeps/ViewAllPage";
+import CookeepsLayout from "./layouts/CookeepsLayout";
 
 export default function App() {
   return (
@@ -104,30 +105,26 @@ export default function App() {
           </Route>
 
           {/* cookeeps */}
-          <Route path="/cookeeps" element={<CookeepsPage />} />
-          <Route path="/cookeeps" element={<ListLayout />}>
-            <Route
-              path="liked"
-              element={
-                <ViewListPage
-                  type="좋아요 누른 레시피"
-                  description="좋아요가 많은 순서대로 노출됩니다"
-                />
-              }
-            />
-            <Route
-              path="bookmarked"
-              element={
-                <ViewListPage
-                  type="북마크한 레시피"
-                  description="저장한 레시피를 한 번에 확인할 수 있어요"
-                />
-              }
-            />
-            <Route path="all" element={<ViewAllPage />} />
+          <Route path="/cookeeps" element={<CookeepsLayout />}>
+            <Route index element={<CookeepsPage />} />
+            <Route path="my-plant" element={<MyPlantPage />} />
+            <Route path=":id" element={<RecipeDetailPage />} />
+
+            {/* 리스트 전용 */}
+            <Route element={<ListLayout />}>
+              <Route
+                path="liked"
+                element={<ViewListPage type="좋아요 누른 레시피" />}
+              />
+              <Route
+                path="bookmarked"
+                element={<ViewListPage type="북마크한 레시피" />}
+              />
+              <Route path="all" element={<ViewAllPage />} />
+            </Route>
           </Route>
-          <Route path="/cookeeps/my-plant" element={<MyPlantPage />} />
-          <Route path="/cookeeps/:id" element={<RecipeDetailPage />} />
+
+          {/* MYCooKeep */}
           {/* <Route path="/mycookeep" element={<MyCooKeepPage />} /> */}
         </Route>
       </Routes>
