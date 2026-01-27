@@ -41,46 +41,20 @@ import RecipeResultPage from "./pages/recipe/RecipeResultPage";
 import CookeepsPage from "./pages/cookeeps/CookeepsPage";
 import MyPlantPage from "./pages/cookeeps/MyPlantPage";
 import RecipeDetailPage from "./pages/cookeeps/RecipeDetailPage";
-{
-  /*
 import ListLayout from "./layouts/ListLayout";
 import ViewListPage from "./pages/cookeeps/ViewListPage";
-import ViewAllPage from "./pages/cookeeps/ViewAllPage"; */
-}
+import ViewAllPage from "./pages/cookeeps/ViewAllPage";
 
 export default function App() {
   return (
     <AppLayout>
       <Routes>
-        {/*<Route path="/cookeeps" element={<ListLayout />}>
-          <Route index element={<></>} />
-          <Route
-            path="liked"
-            element={
-              <ViewListPage
-                type="좋아요 누른 레시피"
-                description="좋아요가 많은 순서대로 노출됩니다"
-              />
-            }
-          />
-          <Route
-            path="bookmarked"
-            element={
-              <ViewListPage
-                type="북마크한 레시피"
-                description="저장한 레시피를 한 번에 확인할 수 있어요"
-              />
-            }
-          />
-          <Route path="all" element={<ViewAllPage />} />
-        </Route>
-*/}
+        {/* auth */}
         <Route path="/" element={<InitialPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/simplelogin" element={<SimpleLoginAgreementPage />} />
-
         <Route element={<FindLayout />}>
           <Route path="/findpw" element={<FindPage />} />
           <Route
@@ -93,6 +67,7 @@ export default function App() {
           />
         </Route>
 
+        {/* settings */}
         <Route path="/settings" element={<SettingsLayout />}>
           <Route index element={<SettingsPage />} />
           <Route path="phone" element={<EditPhonePage />} />
@@ -104,18 +79,17 @@ export default function App() {
               element={<EditPasswordPhoneSection />}
             />
           </Route>
-
           <Route path="faq" element={<FaqPage />} />
           <Route path="notice" element={<NoticePage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="withdraw" element={<WithdrawPage />} />
         </Route>
-
-        {/*헤더 없기에 따로 뺌*/}
         <Route path="/settings/withdraw/done" element={<WithdrawDonePage />} />
         <Route path="/support" element={<SupportPage />} />
 
+        {/* 탭바 있는 모든 페이지는 이 안에 */}
         <Route element={<Layout />}>
+          {/* fridge & recipe */}
           <Route path="/fridge" element={<FridgePage />} />
           <Route path="/recipe" element={<RecipePage />}>
             <Route index element={<RecipeIntroPage />} />
@@ -124,18 +98,37 @@ export default function App() {
             <Route path="loading" element={<RecipeLoadingPage />} />
             <Route path="result" element={<RecipeResultPage />} />
           </Route>
+          <Route element={<AddItemLayout />}>
+            <Route path="/fridge/add" element={<AddItemPage />} />
+            <Route path="/fridge/add-detail" element={<Details />} />
+          </Route>
 
+          {/* cookeeps */}
           <Route path="/cookeeps" element={<CookeepsPage />} />
+          <Route path="/cookeeps" element={<ListLayout />}>
+            <Route
+              path="liked"
+              element={
+                <ViewListPage
+                  type="좋아요 누른 레시피"
+                  description="좋아요가 많은 순서대로 노출됩니다"
+                />
+              }
+            />
+            <Route
+              path="bookmarked"
+              element={
+                <ViewListPage
+                  type="북마크한 레시피"
+                  description="저장한 레시피를 한 번에 확인할 수 있어요"
+                />
+              }
+            />
+            <Route path="all" element={<ViewAllPage />} />
+          </Route>
           <Route path="/cookeeps/my-plant" element={<MyPlantPage />} />
           <Route path="/cookeeps/:id" element={<RecipeDetailPage />} />
-          {/* <Route path="/mypage" element={<MyPage />} /> */}
-          {/* <Route path="/cookeeps" element={<CookeepsPage />} />
-          <Route path="/mypage" element={<MyPage />} /> */}
-        </Route>
-
-        <Route element={<AddItemLayout />}>
-          <Route path="/fridge/add" element={<AddItemPage />} />
-          <Route path="/fridge/add-detail" element={<Details />} />
+          {/* <Route path="/mycookeep" element={<MyCooKeepPage />} /> */}
         </Route>
       </Routes>
     </AppLayout>
