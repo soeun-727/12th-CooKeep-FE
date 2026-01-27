@@ -7,21 +7,25 @@ import AlertModal from "../../ui/AlertModal";
 
 export default function ItemOption() {
   const { selectedIds, ingredients, deleteSelected } = useIngredientStore();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
 
-  // 일단 추가 전체보기 화면에서는 선택 옵션 안뜨는 것 같아서 넣었는데 뜨는거면 지우면 될것같습니다.
-  const { viewCategory } = useIngredientStore();
-  if (viewCategory !== null) return null;
-  //----------------------------------------------------
-  if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) return null; // 선택된 이름들 계산
+  /** 선택 없고, 어떤 모달도 안 열려 있으면 숨김 */
+  if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) {
+    return null;
+  }
+
+  /** 모달 제목 */
   const firstItemName =
-    ingredients.find((item) => item.id === selectedIds[0])?.name || "재료";
+    ingredients.find((item) => item.id === selectedIds[0])?.name ?? "재료";
+
   const modalTitle =
-    selectedIds.length <= 1
+    selectedIds.length === 1
       ? firstItemName
       : `${firstItemName} 외 ${selectedIds.length - 1}개`;
+
   const handleOpenModal = (type: "eaten" | "thrown") => {
     setModalType(type);
     setIsModalOpen(true);
@@ -29,36 +33,35 @@ export default function ItemOption() {
 
   const handleConfirm = async () => {
     const type = modalType;
-    setIsModalOpen(false);
     await deleteSelected(type);
 
+    setIsModalOpen(false);
+
     if (type === "eaten") {
-      setTimeout(() => {
-        setIsAlertOpen(true);
-      }, 100);
+      setTimeout(() => setIsAlertOpen(true), 100);
     }
   };
 
-  const innerShadow = "inset_0_1px_6.7px_0_rgba(17,17,17,0.2)";
-
   return (
     <>
-      <div className="flex flex-col absolute bottom-[90px] left-1/2 -translate-x-1/2 z-40 w-full">
-        <div className="flex bg-white border-[0.5px] border-[#D1D1D1] h-11">
+      {/* 하단 옵션 바 */}
+      <div className="fixed bottom-[90px] left-1/2 z-50 w-full max-w-[450px] -translate-x-1/2">
+        <div className="flex h-11 bg-white border-[0.5px] border-[#D1D1D1]">
           <button
             onClick={() => handleOpenModal("eaten")}
-            className={`flex-1 active:bg-[var(--color-green-light)] active:shadow-[${innerShadow}] transition-all`}
+            className="flex-1 transition-all active:bg-[var(--color-green-light)] active:shadow-[inset_0_1px_6.7px_0_rgba(17,17,17,0.2)]"
           >
-            <div className="flex gap-[3px] items-center justify-center h-11">
+            <div className="flex h-11 items-center justify-center gap-[3px]">
               <span className="typo-body2">다 먹었어요</span>
               <img src={eaten} className="w-4" alt="eaten" />
             </div>
           </button>
+
           <button
             onClick={() => handleOpenModal("thrown")}
-            className={`flex-1 border-x-[0.5px] border-[#D1D1D1] active:bg-[var(--color-green-light)] active:shadow-[${innerShadow}] transition-all`}
+            className="flex-1 border-x-[0.5px] border-[#D1D1D1] transition-all active:bg-[var(--color-green-light)] active:shadow-[inset_0_1px_6.7px_0_rgba(17,17,17,0.2)]"
           >
-            <div className="flex gap-[3px] items-center justify-center h-11">
+            <div className="flex h-11 items-center justify-center gap-[3px]">
               <span className="typo-body2">버렸어요</span>
               <img src={thrown} className="w-4" alt="thrown" />
             </div>
@@ -66,17 +69,18 @@ export default function ItemOption() {
 
           <button
             onClick={() => console.log("레시피 추천 로직")}
-            className={`flex-1 active:bg-[var(--color-green-light)] active:shadow-[${innerShadow}] transition-all`}
+            className="flex-1 transition-all active:bg-[var(--color-green-light)] active:shadow-[inset_0_1px_6.7px_0_rgba(17,17,17,0.2)]"
           >
-            <div className="flex gap-[3px] items-center justify-center h-11 typo-body2">
+            <div className="flex h-11 items-center justify-center typo-body2">
               AI 레시피 추천받기
             </div>
           </button>
         </div>
 
-        <div className="w-full h-[5px] bg-gradient-to-b from-[#737373]/80 to-[#D9D9D9]/80" />
+        <div className="h-[5px] w-full bg-gradient-to-b from-[#737373]/80 to-[#D9D9D9]/80" />
       </div>
 
+      {/* 확인 모달 */}
       <DoublecheckModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -88,6 +92,8 @@ export default function ItemOption() {
             : "재료를 삭제하시겠습니까?"
         }
       />
+
+      {/* 알림 */}
       <AlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
     </>
   );

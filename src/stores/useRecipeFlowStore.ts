@@ -15,6 +15,7 @@ type RecipeFlowState = {
   setDifficulty: (d: Difficulty) => void;
   generateRecipe: () => void;
   increaseRetry: () => void;
+  clearSelection: () => void;
   reset: () => void;
 };
 
@@ -50,6 +51,13 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
   },
 
   increaseRetry: () => set((state) => ({ retryCount: state.retryCount + 1 })),
+
+  clearSelection: () =>
+    set({
+      selectedIngredients: [],
+      difficulty: null,
+      retryCount: 0,
+    }),
 
   reset: () =>
     set({

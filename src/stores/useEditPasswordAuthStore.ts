@@ -41,5 +41,5 @@ export const useEditPasswordAuthStore = create<EditPasswordAuthState>(
         phone: "",
         isCodeSent: false,
       }),
-  })
+  }),
 );

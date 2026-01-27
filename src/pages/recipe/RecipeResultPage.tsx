@@ -14,13 +14,13 @@ export default function RecipeResultPage() {
   if (recipeHistory.length === 0) return null;
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col bg-gray-50">
       <RecipeHeader title="오늘의 레시피" />
 
       {/* 스크롤 영역 */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto flex flex-col gap-9 px-4 pt-[75px]"
+        className="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-9 px-4 pt-[75px]"
       >
         {recipeHistory.map((recipe, idx) => {
           const requiredIngredients = recipe.ingredients

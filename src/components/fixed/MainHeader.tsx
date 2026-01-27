@@ -18,38 +18,32 @@ const MainHeader = () => {
   };
 
   return (
-    <header
-      className="
-        absolute top-0 z-50
-        w-full max-w-[450px]
-        h-[102px] 
-        bg-[#FAFAFA]
-        px-4
-      "
-    >
-      <div className="relative justify-between w-full h-full flex items-end pb-4">
-        <div className="w-10 h-10 flex items-center">
-          {isListView && (
-            <button
-              className="p-1 active:opacity-50 transition-opacity"
-              onClick={handleBack}
-            >
-              <img src={backIcon} alt="back" className="w-9" />
-            </button>
-          )}
-        </div>
-        <div className="flex-1 flex justify-center">
-          <img
-            src={Logo}
-            alt="CooKeep logo"
-            className="w-20 object-contain pb-1"
-          />
-        </div>
+    <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="mx-auto max-w-[450px] pointer-events-auto">
+        <div className="h-[48px] bg-[#FAFAFA] flex items-end px-4 pb-1">
+          <div className="w-10 h-10 flex items-center">
+            {isListView && (
+              <button
+                className="p-1 active:opacity-50 transition-opacity"
+                onClick={handleBack}
+              >
+                <img src={backIcon} alt="back" className="w-9" />
+              </button>
+            )}
+          </div>
+          <div className="flex-1 flex justify-center">
+            <img
+              src={Logo}
+              alt="CooKeep logo"
+              className="w-20 object-contain pb-1"
+            />
+          </div>
 
-        <div className="w-10 h-10 flex items-center justify-end">
-          <button className="p-1" onClick={handleSettings}>
-            <img src={settings} alt="settings" className="w-9" />
-          </button>
+          <div className="w-10 h-10 flex items-center justify-end">
+            <button className="p-1" onClick={handleSettings}>
+              <img src={settings} alt="settings" className="w-9" />
+            </button>
+          </div>
         </div>
       </div>
     </header>
