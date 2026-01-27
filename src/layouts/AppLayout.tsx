@@ -1,11 +1,10 @@
 type Props = {
   children: React.ReactNode;
 };
-
+// AppLayout.tsx
 export default function AppLayout({ children }: Props) {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center">
-      {/* 가짜 viewport */}
       <div
         className="
           relative
@@ -13,7 +12,6 @@ export default function AppLayout({ children }: Props) {
           max-w-[450px]
           min-h-screen
           bg-[#FAFAFA]
-          overflow-x-hidden
         "
       >
         {children}
