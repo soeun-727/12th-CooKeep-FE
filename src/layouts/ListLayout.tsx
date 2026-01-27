@@ -2,7 +2,6 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../components/ui/BackHeader";
-import TabBar from "../components/fixed/TabBar";
 import ViewListHeader from "../components/cookeeps/lists/ViewListHeader";
 import ViewAllHeader from "../components/cookeeps/lists/ViewAllHeader";
 
@@ -11,7 +10,6 @@ export default function ListLayout() {
   const location = useLocation();
   const mainRef = useRef<HTMLDivElement>(null);
 
-  const [activeTab, setActiveTab] = useState("냉장고");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("좋아요 많은 순");
 
@@ -56,7 +54,6 @@ export default function ListLayout() {
         />
       )}
 
-      {/* ✅ 오직 여기만 스크롤 */}
       <main
         ref={mainRef}
         className="flex-1 overflow-y-auto no-scrollbar flex justify-center"
