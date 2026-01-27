@@ -41,7 +41,7 @@ export default function ViewListPage({ type, description }: Props) {
     setSelectedId(null);
   };
   return (
-    <div className="flex flex-col items-center h-screen overflow-hidden">
+    <div className="flex flex-col items-center h-full overflow-hidden">
       <div className="flex flex-col items-center flex-shrink-0">
         <div
           className={`mt-12 [&_p]:hidden !w-[361px] [&_input]:border-none [&_input]:focus:outline-none [&_input::placeholder]:text-zinc-500
