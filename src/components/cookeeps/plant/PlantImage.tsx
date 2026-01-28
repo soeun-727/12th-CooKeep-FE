@@ -2,13 +2,19 @@ import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import { EMPTY_PLANT_IMAGE, PLANT_IMAGES } from "./PlantImages";
 
 export default function PlantImage() {
-  const { selectedPlant, plantStage } = useCookeepsStore();
+  const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
+  const plantStage = useCookeepsStore((s) => s.plantStage);
 
-  const imageSrc = selectedPlant
-    ? PLANT_IMAGES[selectedPlant][plantStage]
-    : EMPTY_PLANT_IMAGE;
+  const imageSrc =
+    selectedPlant && plantStage >= 1
+      ? PLANT_IMAGES[selectedPlant][plantStage]
+      : EMPTY_PLANT_IMAGE;
 
   return (
-    <img src={imageSrc} alt="plant" className="w-full h-full object-contain" />
+    <img
+      src={imageSrc}
+      alt="plant"
+      className="w-full h-full object-contain will-change-transform"
+    />
   );
 }
