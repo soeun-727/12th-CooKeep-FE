@@ -17,6 +17,10 @@ interface CookeepsState {
 
   grownPlants: PlantType[]; // 다 키운 식물 목록
 
+  lastRefreshedAt: Date | null;
+
+  refreshGrowth: () => void;
+
   cookie: number;
 
   selectPlant: (plant: PlantType) => void;
@@ -31,6 +35,13 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   grownPlants: [],
 
   cookie: 100,
+
+  lastRefreshedAt: null,
+
+  refreshGrowth: () =>
+    set({
+      lastRefreshedAt: new Date(),
+    }),
 
   selectPlant: (plant) =>
     set({
