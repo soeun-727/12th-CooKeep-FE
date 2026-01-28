@@ -7,10 +7,12 @@ import { useEffect } from "react";
 
 interface PlantGrowthCardProps {
   onWaterSuccess?: () => void; // 여기에 onSuccess 콜백 추가
+  overridePlantStage?: number; // 추가
 }
 
 export default function PlantGrowthCard({
   onWaterSuccess,
+  overridePlantStage,
 }: PlantGrowthCardProps) {
   const { selectedPlant, grownPlants, lastRefreshedAt, refreshGrowth } =
     useCookeepsStore();
@@ -76,7 +78,7 @@ export default function PlantGrowthCard({
               </button>
             </div>
 
-            <GrowthProgressBar />
+            <GrowthProgressBar overridePlantStage={overridePlantStage} />
           </div>
         </div>
       </div>

@@ -5,9 +5,16 @@ interface Props {
   plant: string;
   isOpen: boolean;
   onClose: () => void;
+  onAbandon: () => void;
+  onRecover: () => void;
 }
-
-export default function WiltedModal({ plant, isOpen, onClose }: Props) {
+export default function WiltedModal({
+  plant,
+  isOpen,
+  onClose,
+  onAbandon,
+  onRecover,
+}: Props) {
   if (!isOpen) return null;
 
   return (
@@ -17,7 +24,6 @@ export default function WiltedModal({ plant, isOpen, onClose }: Props) {
 
       {/* modal */}
       <div className="relative w-[280px] px-[28px] pt-[35px] pb-[25px] rounded-[10px] bg-white flex flex-col items-center gap-7">
-        {/* content */}
         <div className="w-full flex flex-col items-center gap-7">
           <p className="typo-body text-[#202020] text-center whitespace-pre-line">
             <span className="text-(--color-green-deep)">{plant} </span>
@@ -28,12 +34,11 @@ export default function WiltedModal({ plant, isOpen, onClose }: Props) {
           <img src={characterIcon} alt="알림 캐릭터" className="w-[86px]" />
         </div>
 
-        {/* buttons */}
         <div className="w-full flex flex-col gap-2 font-semibold">
           <Button
             variant="green"
             className="!w-[224px] !bg-(--color-green)"
-            onClick={onClose}
+            onClick={onRecover} // 회복
           >
             회복하기 (쿠키 5개 사용)
           </Button>
@@ -41,7 +46,7 @@ export default function WiltedModal({ plant, isOpen, onClose }: Props) {
           <Button
             variant="black"
             className="!w-[224px] !bg-stone-300"
-            onClick={onClose}
+            onClick={onAbandon} // 포기
           >
             포기하기
           </Button>
