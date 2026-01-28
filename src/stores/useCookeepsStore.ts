@@ -47,7 +47,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     if (nextStage === 4) {
       set({
         plantStage: 4,
-        selectedPlant: null,
+        // selectedPlant: null,
         grownPlants: [...grownPlants, selectedPlant], // 저장
       });
     } else {

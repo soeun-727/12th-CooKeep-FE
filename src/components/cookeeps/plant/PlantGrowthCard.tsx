@@ -2,6 +2,7 @@ import WaterButton from "./WaterButton";
 import RefreshIcon from "../../../assets/cookeeps/main/refresh_cookeeps.svg";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import GrowthProgressBar from "./GrowthProgressBar";
+import { PLANT_NAME_KR } from "../../../constants/plantNames";
 
 interface PlantGrowthCardProps {
   onWaterSuccess?: () => void; // 여기에 onSuccess 콜백 추가
@@ -13,7 +14,10 @@ export default function PlantGrowthCard({
   const { selectedPlant, grownPlants } = useCookeepsStore();
   const lastPlantName = grownPlants[grownPlants.length - 1];
 
-  const plantName = selectedPlant ?? lastPlantName ?? "-";
+  const plantKey = selectedPlant ?? lastPlantName ?? null;
+
+  const plantName = plantKey ? PLANT_NAME_KR[plantKey] : "-";
+
   const now = new Date();
   const dateText = `${now.getMonth() + 1}월 ${now.getDate()}일 ${now
     .getHours()

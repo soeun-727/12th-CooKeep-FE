@@ -11,10 +11,12 @@ export default function PlantImage() {
       : EMPTY_PLANT_IMAGE;
 
   return (
-    <img
-      src={imageSrc}
-      alt="plant"
-      className="w-full h-full object-contain will-change-transform"
-    />
+    <div className="relative w-full h-full">
+      <img
+        src={imageSrc}
+        alt="plant"
+        className="w-full h-full object-contain"
+      />
+    </div>
   );
 }
