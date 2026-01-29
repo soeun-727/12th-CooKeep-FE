@@ -1,14 +1,32 @@
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
-import { EMPTY_PLANT_IMAGE, PLANT_IMAGES } from "./PlantImages";
+import {
+  EMPTY_PLANT_IMAGE,
+  PLANT_IMAGES,
+  type PlantStage,
+} from "./PlantImages";
 
-export default function PlantImage() {
-  const { selectedPlant, plantStage } = useCookeepsStore();
+interface PlantImageProps {
+  overridePlantStage?: number;
+}
 
-  const imageSrc = selectedPlant
-    ? PLANT_IMAGES[selectedPlant][plantStage]
-    : EMPTY_PLANT_IMAGE;
+export default function PlantImage({ overridePlantStage }: PlantImageProps) {
+  const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
+  const plantStage = useCookeepsStore((s) => s.plantStage);
+
+  const stageToShow = overridePlantStage ?? plantStage;
+
+  const imageSrc =
+    selectedPlant && stageToShow >= 1 && stageToShow <= 4
+      ? PLANT_IMAGES[selectedPlant][stageToShow as PlantStage]
+      : EMPTY_PLANT_IMAGE;
 
   return (
-    <img src={imageSrc} alt="plant" className="w-full h-full object-contain" />
+    <div className="relative w-full h-full">
+      <img
+        src={imageSrc}
+        alt="plant"
+        className="w-full h-full object-contain"
+      />
+    </div>
   );
 }

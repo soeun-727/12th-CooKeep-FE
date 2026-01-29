@@ -45,10 +45,7 @@ const SelectedModal: React.FC<Props> = ({
         </div>
         <div className="flex gap-2 mt-4">
           <button
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
+            onClick={onConfirm}
             className="typo-label w-27 h-11 text-white bg-(--color-green) rounded-[10px]"
           >
             시작하기

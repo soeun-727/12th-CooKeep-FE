@@ -52,7 +52,7 @@ export default function MyPlantPage() {
   const grownPlants = tempGrownPlants; // 임시 데이터 사용
 
   return (
-    <div className="relative min-h-screen bg-[#FAFAFA] pt-[110px] px-4">
+    <div className="relative min-h-screen bg-[#FAFAFA] pt-[110px]">
       <BackHeader title="내가 키운 식재료" onBack={() => navigate(-1)} />
 
       {grownPlants.length === 0 ? (

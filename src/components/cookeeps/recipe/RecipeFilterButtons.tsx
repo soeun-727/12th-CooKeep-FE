@@ -9,7 +9,7 @@ export default function RecipeFilterButtons() {
     <div className="flex justify-between items-center w-full h-7">
       {/* 전체보기 */}
       <button
-        onClick={() => navigate("/recipes/all")}
+        onClick={() => navigate("/cookeeps/all")}
         className="flex items-center gap-1 text-gray-400 text-[12px] font-semibold"
       >
         전체보기
@@ -18,10 +18,16 @@ export default function RecipeFilterButtons() {
 
       {/* 좋아요 / 북마크 */}
       <div className="flex items-center gap-2">
-        <button className="flex items-center">
+        <button
+          onClick={() => navigate("/cookeeps/liked")}
+          className="flex items-center"
+        >
           <img src={likeIcon} alt="likes" className="w-6 h-6" />
         </button>
-        <button className="flex items-center">
+        <button
+          onClick={() => navigate("/cookeeps/bookmarked")}
+          className="flex items-center"
+        >
           <img src={saveIcon} alt="bookmarks" className="w-6 h-6" />
         </button>
       </div>

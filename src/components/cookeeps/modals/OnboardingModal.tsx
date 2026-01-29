@@ -1,4 +1,4 @@
-import { useState, type TouchEvent } from "react";
+import { useEffect, useState, type TouchEvent } from "react";
 import Button from "../../ui/Button";
 import {
   cookingChar,
@@ -10,7 +10,8 @@ import {
 } from "../../../assets";
 
 interface Props {
-  isOpen?: boolean;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const ONBOARDING_DATA = [
@@ -47,35 +48,41 @@ const ONBOARDING_DATA = [
   },
 ];
 
-export default function OnboardingModal({
-  isOpen: initialOpen = false,
-}: Props) {
-  const [isVisible, setIsVisible] = useState(initialOpen);
+export default function OnboardingModal({ isOpen, onClose }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  if (!isVisible) return null;
+  // 모달 열릴 때마다 인덱스 초기화
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(0);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   const isLastStep = currentIndex === ONBOARDING_DATA.length - 1;
+
   const handleClose = () => {
-    setIsVisible(false);
-    setCurrentIndex(0); // 닫을 때 인덱스 초기화
+    onClose();
   };
+
   const handleTouchStart = (e: TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
   };
 
   const handleTouchEnd = (e: TouchEvent) => {
     if (touchStart === null) return;
+
     const touchEnd = e.changedTouches[0].clientX;
     const diff = touchStart - touchEnd;
 
-    // 50px 이상 밀었을 때 페이지 이동
     if (diff > 50 && currentIndex < ONBOARDING_DATA.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else if (diff < -50 && currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
+
     setTouchStart(null);
   };
 
@@ -85,7 +92,10 @@ export default function OnboardingModal({
       <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
 
       {/* modal */}
-      <div className="relative overflow-hidden w-[258px] h-[260px] rounded-[10px] bg-white flex flex-col items-center justify-center shadow-xl gap-4">
+      <div
+        className="relative overflow-hidden w-[258px] h-[260px] rounded-[10px] bg-white flex flex-col items-center justify-center shadow-xl gap-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* slider content */}
         <div
           className="flex transition-transform duration-300 ease-in-out w-full"
@@ -116,7 +126,7 @@ export default function OnboardingModal({
           ))}
         </div>
 
-        {/* Footer: Dots & Button */}
+        {/* Footer */}
         <div className="flex flex-col items-center gap-4 pb-[25px] w-full">
           {/* Dots */}
           <div className="flex gap-2">
@@ -131,7 +141,7 @@ export default function OnboardingModal({
           </div>
 
           {/* Button */}
-          {isLastStep ? (
+          {isLastStep && (
             <div className="px-[25px]">
               <Button
                 variant="green"
@@ -141,7 +151,7 @@ export default function OnboardingModal({
                 확인
               </Button>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
