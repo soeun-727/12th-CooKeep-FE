@@ -1,5 +1,6 @@
 import Button from "../../ui/Button";
 import characterImg from "../../../assets/character/kijul_char.svg";
+import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 interface Props {
   plant: string;
@@ -32,7 +33,11 @@ export default function WiltingModal({ plant, isOpen, onClose }: Props) {
         <Button
           variant="green"
           className="!w-[224px] !bg-(--color-green) !font-semibold"
-          onClick={onClose}
+          onClick={() => {
+            // 물 주러 가기 클릭
+            useCookeepsStore.setState({ wantsToWater: true });
+            onClose(); // status 변경 X
+          }}
         >
           물 주러 가기
         </Button>
