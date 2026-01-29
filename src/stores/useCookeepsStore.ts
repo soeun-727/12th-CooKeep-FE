@@ -37,6 +37,8 @@ interface CookeepsState {
   wantsToWater: boolean;
   setWantsToWater: (v: boolean) => void;
 
+  freeWaterPlant: () => void; // 무료물주기
+
   // ✅ 테스트용
   // setLastWateredAtDaysAgo: (daysAgo: number) => void;
 }
@@ -102,6 +104,22 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     });
 
     growPlant();
+  },
+
+  // 무료 물주기
+  freeWaterPlant: () => {
+    const { selectedPlant, plantStage, growPlant } = get();
+
+    if (!selectedPlant) return;
+    if (plantStage >= 4) return;
+
+    set({
+      status: "normal",
+      lastWateredAt: new Date(),
+      hasShownWilting: false,
+    });
+
+    growPlant(); // 성장만 시킴 (쿠키 X)
   },
 
   // 포기하기

@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function FreeWaterModal({ isOpen, onClose }: Props) {
-  const waterPlant = useCookeepsStore((s) => s.waterPlant);
+  const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
 
   if (!isOpen) return null;
   return (
@@ -33,7 +33,7 @@ export default function FreeWaterModal({ isOpen, onClose }: Props) {
           variant="green"
           className="!w-[202px] !bg-(--color-green) !font-bold mt-2"
           onClick={() => {
-            waterPlant(); // 실제 물 주기
+            freeWaterPlant(); // 실제 물 주기
             onClose(); // 모달 닫기
           }}
         >
