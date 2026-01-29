@@ -16,6 +16,7 @@ import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { preloadPlantImages } from "../../components/cookeeps/plant/preloadPlantImages";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { PLANT_ID_TO_TYPE } from "../../constants/plantTypeMap";
+import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 
 type ActiveModal =
   | "onboarding"
@@ -23,6 +24,7 @@ type ActiveModal =
   | "selected"
   | "wilting"
   | "wilted"
+  | "free"
   | null;
 
 export default function CookeepsPage() {
@@ -92,7 +94,7 @@ export default function CookeepsPage() {
     if (!selectedPlantData) return;
 
     selectPlantInStore(PLANT_ID_TO_TYPE[selectedPlantData.id]);
-    setActiveModal(null);
+    setActiveModal("free");
   };
 
   /* =========================
@@ -136,6 +138,11 @@ export default function CookeepsPage() {
           onClose={() => setActiveModal("select")}
         />
       )}
+      {/* 무료 물주기 모달 */}
+      <FreeWaterModal
+        isOpen={activeModal === "free"}
+        onClose={() => setActiveModal(null)}
+      />
 
       {/* 4. 시들고 있어요 */}
       <WiltingModal
