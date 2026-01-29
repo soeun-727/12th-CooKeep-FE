@@ -12,14 +12,17 @@ export default function Layout() {
 
   const isRecipe = location.pathname.startsWith("/recipe");
   const isCookeeps = location.pathname.startsWith("/cookeeps");
+  const isMyCookeep = location.pathname.startsWith("/mycookeep");
 
   // 헤더와 탭바의 노출 여부를 변수로 관리
-  const showHeader = !isRecipe && !isCookeeps;
+  const showHeader = !isRecipe && !isCookeeps && !isMyCookeep;
+
   const hideTabBarInRecipe =
     isRecipe &&
     (location.pathname.startsWith("/recipe/select") ||
       location.pathname.startsWith("/recipe/confirm") ||
-      location.pathname.startsWith("/recipe/loading"));
+      location.pathname.startsWith("/recipe/loading") ||
+      isMyCookeep);
   const showTabBar = !hideTabBarInRecipe;
 
   useEffect(() => {
@@ -34,7 +37,7 @@ export default function Layout() {
     if (path.includes("fridge")) setActiveTab("냉장고");
     else if (path.includes("recipe")) setActiveTab("레시피");
     else if (path.includes("cookeeps")) setActiveTab("쿠킵스");
-    else if (path.includes("mypage")) setActiveTab("MY쿠킵");
+    else if (path.includes("mycookeep")) setActiveTab("MY쿠킵");
   }, [location.pathname]);
 
   return (
