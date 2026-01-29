@@ -16,7 +16,10 @@ export default function WiltingModal({ plant, isOpen, onClose }: Props) {
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* modal */}
-      <div className="relative w-70 h-[254px] px-7 pt-[35px] pb-[25px] rounded-[10px] bg-white flex flex-col items-center gap-7">
+      <div
+        className="relative w-70 h-[254px] px-7 pt-[35px] pb-[25px] rounded-[10px] bg-white flex flex-col items-center gap-7"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* content */}
         <div className="w-full flex flex-col items-center gap-7">
           <p className="typo-body text-[#202020] text-center whitespace-pre-line">
