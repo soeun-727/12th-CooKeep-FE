@@ -22,7 +22,7 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
     if (name === "냉장고") navigate("/fridge");
     else if (name === "레시피") navigate("/recipe");
     else if (name === "쿠킵스") navigate("/cookeeps");
-    else if (name === "MY쿠킵") navigate("/mypage");
+    else if (name === "MY쿠킵") navigate("/mycookeep");
   };
 
   const tabs = [
