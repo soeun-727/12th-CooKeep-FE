@@ -23,7 +23,10 @@ export default function WiltedModal({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* modal */}
-      <div className="relative w-[280px] px-[28px] pt-[35px] pb-[25px] rounded-[10px] bg-white flex flex-col items-center gap-7">
+      <div
+        className="relative w-[280px] px-[28px] pt-[35px] pb-[25px] rounded-[10px] bg-white flex flex-col items-center gap-7"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="w-full flex flex-col items-center gap-7">
           <p className="typo-body text-[#202020] text-center whitespace-pre-line">
             <span className="text-(--color-green-deep)">{plant} </span>

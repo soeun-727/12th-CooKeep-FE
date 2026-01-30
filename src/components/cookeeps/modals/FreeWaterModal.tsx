@@ -1,5 +1,6 @@
 import Button from "../../ui/Button";
 import characterImg from "../../../assets/character/plant_char.svg";
+import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 interface Props {
   isOpen: boolean;
@@ -7,6 +8,8 @@ interface Props {
 }
 
 export default function FreeWaterModal({ isOpen, onClose }: Props) {
+  const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
+
   if (!isOpen) return null;
   return (
     <div className="absolute inset-0 z-60 flex items-center justify-center">
@@ -29,7 +32,10 @@ export default function FreeWaterModal({ isOpen, onClose }: Props) {
         <Button
           variant="green"
           className="!w-[202px] !bg-(--color-green) !font-bold mt-2"
-          onClick={onClose}
+          onClick={() => {
+            freeWaterPlant(); // 실제 물 주기
+            onClose(); // 모달 닫기
+          }}
         >
           지금 물 주러 가기
         </Button>

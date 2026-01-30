@@ -48,6 +48,12 @@ export default function CookeepsPage() {
     recoverPlant,
   } = useCookeepsStore();
 
+  const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
+
+  const [hasUsedFreeWater, setHasUsedFreeWater] = useState(() => {
+    return localStorage.getItem("hasUsedFreeWater") === "true";
+  }); // 처음만 무료 물주기
+
   // 모달 순서 자동 계산
   const derivedModal: ActiveModal = (() => {
     if (!hasSeenOnboarding) return "onboarding"; // 먼저 온보딩
@@ -83,6 +89,7 @@ export default function CookeepsPage() {
     const plant = PLANT_DATA.find((p) => p.id === id);
     if (!plant) return;
 
+    setHideWiltingModal(false); // 새 식물 → 알림 리셋
     setSelectedPlantData(plant);
     setActiveModal("selected");
   };
@@ -94,7 +101,12 @@ export default function CookeepsPage() {
     if (!selectedPlantData) return;
 
     selectPlantInStore(PLANT_ID_TO_TYPE[selectedPlantData.id]);
-    setActiveModal("free");
+
+    if (!hasUsedFreeWater) {
+      setActiveModal("free"); // 처음만
+    } else {
+      setActiveModal(null);
+    }
   };
 
   /* =========================
@@ -141,14 +153,18 @@ export default function CookeepsPage() {
       {/* 무료 물주기 모달 */}
       <FreeWaterModal
         isOpen={activeModal === "free"}
-        onClose={() => setActiveModal(null)}
+        onClose={() => {
+          localStorage.setItem("hasUsedFreeWater", "true");
+          setHasUsedFreeWater(true);
+          setActiveModal(null);
+        }}
       />
 
       {/* 4. 시들고 있어요 */}
       <WiltingModal
-        isOpen={status === "wilting"}
+        isOpen={status === "wilting" && !hideWiltingModal}
         plant={selectedPlantData?.text ?? ""}
-        onClose={() => setActiveModal(null)}
+        onClose={() => setHideWiltingModal(true)}
       />
 
       {/* 5. 시들었어요 */}
@@ -158,10 +174,12 @@ export default function CookeepsPage() {
         onClose={() => setActiveModal(null)}
         onAbandon={() => {
           abandonPlant();
+          setHideWiltingModal(false); // 추가
           setActiveModal("select");
         }}
         onRecover={() => {
           recoverPlant();
+          setHideWiltingModal(false); // 추가
           setActiveModal(null);
         }}
       />
