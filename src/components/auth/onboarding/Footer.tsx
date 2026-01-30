@@ -1,5 +1,4 @@
 import Button from "../../ui/Button";
-//지금 하단 고정되어 있어요
 interface FooterProps {
   onNext: () => void;
   onPrev: () => void;
@@ -29,14 +28,11 @@ export default function Footer({
           {isLastStep ? "쿠킵 시작하기" : "다음"}
         </Button>
 
-        <Button
-          size="S"
-          className="bg-gray-300"
-          onClick={() => !isFirstStep && onPrev()}
-          disabled={isFirstStep}
-        >
-          이전
-        </Button>
+        {!isFirstStep && (
+          <Button size="S" className="bg-gray-300" onClick={onPrev}>
+            이전
+          </Button>
+        )}
 
         <button className="typo-caption text-gray-500" onClick={onSkip}>
           질문 건너뛰기
