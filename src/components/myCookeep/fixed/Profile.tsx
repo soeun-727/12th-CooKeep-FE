@@ -1,11 +1,13 @@
 import MyCookeepHeader from "./MyCookeepHeader";
 import { groundImg, refreshIcon, renameIcon } from "../../../assets";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   //나중에 값 가져와야 함
   const goal = "ex. 주 122312434회 요리하기!";
   const nickname = "요리잘하는 쿠쿠";
   const daysCookeep = "365";
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center justify-center">
       {/* 헤더 */}
@@ -35,7 +37,7 @@ export default function Profile() {
           <span className="text-green-300 typo-body2">
             이번주 목표는... {goal}
           </span>
-          <button className="w-6">
+          <button onClick={() => navigate("/mycookeep/goals")} className="w-6">
             <img
               src={renameIcon}
               alt="rename"

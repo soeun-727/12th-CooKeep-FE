@@ -46,6 +46,7 @@ import ViewListPage from "./pages/cookeeps/ViewListPage";
 import ViewAllPage from "./pages/cookeeps/ViewAllPage";
 import CookeepsLayout from "./layouts/CookeepsLayout";
 import MyCookeepPage from "./pages/myCookeep/MyCookeepPage";
+import SetGoalPage from "./pages/myCookeep/SetGoalPage";
 
 export default function App() {
   return (
@@ -126,10 +127,9 @@ export default function App() {
           </Route>
 
           {/* MYCooKeep */}
-          <Route path="/mycookeep" element={<MyCookeepPage />}>
-            {/* 내부 루트 */}
-          </Route>
+          <Route path="/mycookeep" element={<MyCookeepPage />} />
         </Route>
+        <Route path="/mycookeep/goals" element={<SetGoalPage />} />
       </Routes>
     </AppLayout>
   );

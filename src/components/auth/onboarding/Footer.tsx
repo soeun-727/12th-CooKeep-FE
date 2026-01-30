@@ -21,7 +21,7 @@ export default function Footer({
       <div className="w-[361px] mx-auto flex flex-col items-center gap-2">
         <Button
           size="S"
-          className="bg-[var(--color-green-deep)]"
+          variant="green"
           onClick={() => isValid && onNext()}
           disabled={!isValid}
         >
