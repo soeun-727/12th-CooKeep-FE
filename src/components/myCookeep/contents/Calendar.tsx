@@ -1,6 +1,7 @@
 import { useState } from "react";
 import nextIcon from "../../../assets/fridge/addItem/forward.svg";
 import prevIcon from "../../../assets/fridge/addItem/backward.svg";
+import todaySign from "../../../assets/mycookeep/today.svg";
 
 interface Props {
   // 실제 사용 시 서버에서 받아온 기록 데이터 예시: { "2026.01.20": "img_url", ... }
