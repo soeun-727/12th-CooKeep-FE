@@ -29,7 +29,9 @@ export default function SpecificGoal({
   return (
     <>
       <div className="w-[361px] mt-[46px]">
-        <h1 className="typo-h1">이번 주 목표부터 정해볼까요?</h1>
+        <h1 className="typo-h1 !text-[22px]">
+          이번 주 달성하고 싶은 목표를 세워보세요!
+        </h1>
         <h3 className="typo-h3 text-gray-500">
           목표를 이룰 수 있도록 쿠킵이 도와줄게요
         </h3>
