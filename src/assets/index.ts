@@ -27,3 +27,7 @@ export { default as stats } from "./mycookeep/stats.svg";
 export { default as recordOn } from "./mycookeep/record_on.svg";
 export { default as calendarOn } from "./mycookeep/calendar_on.svg";
 export { default as statsOn } from "./mycookeep/stats_on.svg";
+export { default as triButton } from "./mycookeep/triButton.svg";
+export { default as treeIcon } from "./mycookeep/tree.svg";
+export { default as carIcon } from "./mycookeep/car.svg";
+export { default as elecIcon } from "./mycookeep/elec.svg";
