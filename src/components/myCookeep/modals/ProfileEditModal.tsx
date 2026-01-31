@@ -5,18 +5,11 @@ import { currentIcon, groundImg } from "../../../assets";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  initialNickname: string;
-  onSave: (newNickname: string, selectedPlant: string) => void;
+  onSave: (selectedPlant: string) => void;
 }
 
-export default function ProfileEditModal({
-  isOpen,
-  onClose,
-  initialNickname,
-  onSave,
-}: Props) {
+export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
   // 1. 내부 상태 정의
-  const [text, setText] = useState(initialNickname);
   const [selectedPlant, setSelectedPlant] = useState("sprout"); // 초기 선택값
 
   // 2. 임시 식물 데이터
@@ -101,7 +94,7 @@ export default function ProfileEditModal({
           {/* 3. 버튼 */}
           <Button
             onClick={() => {
-              onSave(text, selectedPlant);
+              onSave(selectedPlant);
               onClose();
             }}
             className="w-full"

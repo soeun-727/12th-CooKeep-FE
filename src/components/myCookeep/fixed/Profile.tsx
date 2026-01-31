@@ -70,8 +70,7 @@ export default function Profile() {
       <ProfileEditModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        initialNickname={nickname}
-        onSave={handleSaveProfile}
+        onSave={() => handleSaveProfile}
       />
     </>
   );
