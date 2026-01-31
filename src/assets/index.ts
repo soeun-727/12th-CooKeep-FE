@@ -27,3 +27,4 @@ export { default as stats } from "./mycookeep/stats.svg";
 export { default as recordOn } from "./mycookeep/record_on.svg";
 export { default as calendarOn } from "./mycookeep/calendar_on.svg";
 export { default as statsOn } from "./mycookeep/stats_on.svg";
+export { default as currentIcon } from "./mycookeep/current.svg";
