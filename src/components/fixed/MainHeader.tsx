@@ -1,18 +1,10 @@
 // src/components/auth/AuthHeader.tsx
 import { mainLogo } from "../../assets";
 import settings from "../../assets/fixed/settings.svg";
-import backIcon from "../../assets/back.svg";
-import { useIngredientStore } from "../../stores/useIngredientStore";
 import { useNavigate } from "react-router-dom";
 
 const MainHeader = () => {
   const navigate = useNavigate();
-  const { viewCategory, setViewCategory } = useIngredientStore();
-  const isListView = !!viewCategory;
-
-  const handleBack = () => {
-    setViewCategory(null);
-  };
   const handleSettings = () => {
     navigate("/settings");
   };
