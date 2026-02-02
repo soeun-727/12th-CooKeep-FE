@@ -94,7 +94,7 @@ export default function Storage({
             {pages.map((page, pageIndex) => (
               <div
                 key={pageIndex}
-                className="flex gap-[6px] justify-center flex-shrink-0 scroll-snap-start"
+                className="flex gap-[6px] justify-start flex-shrink-0 scroll-snap-start"
                 style={{ width: "353px" }}
               >
                 {page.map((item) => (
