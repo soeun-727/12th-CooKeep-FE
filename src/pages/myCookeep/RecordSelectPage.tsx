@@ -20,6 +20,8 @@ export default function RecordSelectPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  const { editingRecordId, updateRecordRecipe } = useCookeepRecordStore();
+
   // 검색 필터
   const filteredRecipes = useMemo(() => {
     return recipes.filter((recipe) =>
@@ -146,11 +148,21 @@ export default function RecordSelectPage() {
           <Button
             size="L"
             disabled={!selectedRecipeId}
-            className="transition active:scale-[0.98]"
             onClick={() => {
-              setTimeout(() => {
-                navigate("/mycookeep/record/write");
-              }, 200);
+              const recipe = recipes.find((r) => r.id === selectedRecipeId);
+              if (!recipe) return;
+
+              // ✅ 수정 모드 → 여기서만 레시피 교체
+              if (editingRecordId) {
+                updateRecordRecipe({
+                  recordId: editingRecordId,
+                  recipeId: recipe.id,
+                  recipeTitle: recipe.name,
+                });
+              }
+
+              // ✅ 무조건 write로 이동
+              navigate("/mycookeep/record/write");
             }}
           >
             선택 완료

@@ -39,6 +39,8 @@ interface CookeepsState {
 
   freeWaterPlant: () => void; // 무료물주기
 
+  addCookie: () => void;
+
   // ✅ 테스트용
   // setLastWateredAtDaysAgo: (daysAgo: number) => void;
 }
@@ -163,6 +165,8 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       set({ status: "wilting" });
     }
   },
+
+  addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
 
   /* =========================
      테스트용: lastWateredAt 조작

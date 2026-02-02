@@ -1,102 +1,20 @@
-// import { create } from "zustand";
-// import type { Recipe } from "../types/recipe";
-
-// export interface RecipeSnapshot {
-//   recipeId: number; // ⭐ 어떤 레시피에서 왔는지
-//   recipe: Recipe; // ⭐ 그 당시 레시피 복사본
-// }
-
-// /** 기록 작성 중 Draft */
-// export interface CookeepRecordDraft {
-//   date: string; // yyyy-mm-dd
-//   recipeId: number | null;
-//   recipeSnapshot: RecipeSnapshot | null;
-//   memo: string;
-//   images: File[];
-//   isPublic: boolean;
-// }
-
-// interface CookeepRecordState {
-//   draft: CookeepRecordDraft;
-
-//   /** actions */
-//   setSelectedRecipe: (recipe: RecipeSnapshot) => void;
-//   setMemo: (memo: string) => void;
-//   setImages: (images: File[]) => void;
-//   togglePublic: () => void;
-//   resetDraft: () => void;
-// }
-
-// export const useCookeepRecordStore = create<CookeepRecordState>((set) => ({
-//   draft: {
-//     date: new Date().toISOString().slice(0, 10),
-//     recipeId: null,
-//     recipeSnapshot: null,
-//     memo: "",
-//     images: [],
-//     isPublic: false,
-//   },
-
-//   setSelectedRecipe: (recipe) =>
-//     set({
-//       draft: {
-//         date: new Date().toISOString().slice(0, 10),
-//         recipeId: recipe.recipeId,
-//         recipeSnapshot: recipe,
-//         memo: "",
-//         images: [],
-//         isPublic: false,
-//       },
-//     }),
-
-//   setMemo: (memo) =>
-//     set((state) => ({
-//       draft: {
-//         ...state.draft,
-//         memo,
-//       },
-//     })),
-
-//   setImages: (images) =>
-//     set((state) => ({
-//       draft: {
-//         ...state.draft,
-//         images,
-//       },
-//     })),
-
-//   togglePublic: () =>
-//     set((state) => ({
-//       draft: {
-//         ...state.draft,
-//         isPublic: !state.draft.isPublic,
-//       },
-//     })),
-
-//   resetDraft: () =>
-//     set({
-//       draft: {
-//         date: new Date().toISOString().slice(0, 10),
-//         recipeId: null,
-//         recipeSnapshot: null,
-//         memo: "",
-//         images: [],
-//         isPublic: false,
-//       },
-//     }),
-// }));
-
 import { create } from "zustand";
+import type { CookeepRecord } from "../types/record";
 
 interface RecordState {
   selectedRecipeId: number | null;
 
-  title: string; // 추가
+  // 추가
+  editingRecordId: string | null;
+
+  title: string;
   memo: string;
   isPublic: boolean | null;
-  images: File[]; // 추가
+  images: File[];
 
   setSelectedRecipeId: (id: number) => void;
+  setEditingRecordId: (id: string | null) => void;
+
   setTitle: (title: string) => void;
   setMemo: (memo: string) => void;
   setIsPublic: (value: boolean) => void;
@@ -105,24 +23,46 @@ interface RecordState {
   removeImage: (index: number) => void;
 
   resetRecord: () => void;
+
+  records: CookeepRecord[];
+  addRecord: (record: CookeepRecord) => void;
+  updateRecordRecipe: (args: {
+    recordId: string;
+    recipeId: number;
+    recipeTitle: string;
+  }) => void;
+
+  updateRecordContent: (args: {
+    recordId: string;
+    memo: string;
+    images: File[];
+    isPublic: boolean | null;
+  }) => void;
+
+  updateRecordVisibility: (recordId: string, isPublic: boolean) => void;
 }
 
 export const useCookeepRecordStore = create<RecordState>((set) => ({
   selectedRecipeId: null,
+  editingRecordId: null,
 
   title: "",
   memo: "",
-  isPublic: null, // 초기값
+  isPublic: null,
   images: [],
 
+  records: [],
+
   setSelectedRecipeId: (id) => set({ selectedRecipeId: id }),
+  setEditingRecordId: (id) => set({ editingRecordId: id }),
+
   setTitle: (title) => set({ title }),
   setMemo: (memo) => set({ memo }),
   setIsPublic: (value) => set({ isPublic: value }),
 
   addImages: (files) =>
     set((state) => ({
-      images: [...state.images, ...files],
+      images: [...state.images, ...files].slice(0, 2),
     })),
 
   removeImage: (index) =>
@@ -133,9 +73,39 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
   resetRecord: () =>
     set({
       selectedRecipeId: null,
+      editingRecordId: null,
       title: "",
       memo: "",
-      isPublic: false,
+      isPublic: null,
       images: [],
     }),
+
+  addRecord: (record) =>
+    set((state) => ({
+      records: [record, ...state.records],
+    })),
+
+  // 핵심
+  updateRecordRecipe: ({ recordId, recipeId, recipeTitle }) =>
+    set((state) => ({
+      records: state.records.map((r) =>
+        r.id === recordId ? { ...r, recipeId, recipeTitle } : r,
+      ),
+    })),
+
+  updateRecordContent: ({ recordId, memo, images, isPublic }) =>
+    set((state) => ({
+      records: state.records.map((r) =>
+        r.id === recordId
+          ? { ...r, memo, images, isPublic: isPublic ?? r.isPublic }
+          : r,
+      ),
+    })),
+
+  updateRecordVisibility: (recordId, isPublic) =>
+    set((state) => ({
+      records: state.records.map((r) =>
+        r.id === recordId ? { ...r, isPublic } : r,
+      ),
+    })),
 }));

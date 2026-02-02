@@ -32,6 +32,7 @@ export default function MyCookeepPage() {
       //   return <Record />;
     }
   };
+
   return (
     <>
       <Profile />
