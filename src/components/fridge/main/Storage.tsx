@@ -28,15 +28,15 @@ export default function Storage({
     <div className="relative w-full min-h-[173px] z-0">
       {/* 배경 레이어 */}
       <div className="absolute inset-0 -z-10 flex flex-col overflow-hidden pointer-events-none">
-        <div className="w-full h-[115px] rounded-t-[36px] bg-[#BFC6D740]" />
-        <div className="relative w-full bg-[#C8CFE2] h-12">
+        <div className="w-full h-[115px] rounded-t-[36px] bg-[#E3EBE6]" />
+        <div className="relative w-full bg-[#75D99F] h-12">
           <div className="absolute inset-0 flex gap-[6px] items-center justify-center pt-[7px]">
-            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
-            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
-            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
+            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
+            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
+            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
           </div>
         </div>
-        <div className="w-full bg-[#ADB4C7] h-[10px]" />
+        <div className="w-full bg-[#54BE81] h-[10px]" />
       </div>
 
       {/* 상단 헤더 */}
