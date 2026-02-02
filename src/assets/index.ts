@@ -34,3 +34,4 @@ export { default as carIcon } from "./mycookeep/car.svg";
 export { default as elecIcon } from "./mycookeep/elec.svg";
 
 export { default as currentIcon } from "./mycookeep/current.svg";
+export { default as mainLogo } from "./logos/mainLogo.svg";
