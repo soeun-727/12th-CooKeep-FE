@@ -10,6 +10,7 @@ import RecipeRecordContentSection from "../../components/myCookeep/record/Recipe
 import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
 import UploadCompleteModal from "../../components/myCookeep/record/UploadCompleteModal";
+import { useCookeepsStore } from "../../stores/useCookeepsStore";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -103,6 +104,9 @@ export default function RecordWritePage() {
 
     setShowUploadModal(true);
   };
+
+  // 쿠키추가
+  const addCookie = useCookeepsStore((state) => state.addCookie);
 
   if (!recipe) return null;
   if (selectedRecipeId === null) return null;
@@ -277,6 +281,9 @@ export default function RecordWritePage() {
                 images,
                 isPublic,
               });
+            } else {
+              // 신규 등록일 때만 쿠키 증가
+              addCookie();
             }
 
             navigate("/mycookeep");

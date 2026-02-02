@@ -152,7 +152,7 @@ export default function RecordSelectPage() {
               const recipe = recipes.find((r) => r.id === selectedRecipeId);
               if (!recipe) return;
 
-              // ✅ 수정 모드 → 여기서만 레시피 교체
+              //  수정 모드 → 여기서만 레시피 교체
               if (editingRecordId) {
                 updateRecordRecipe({
                   recordId: editingRecordId,
@@ -161,7 +161,7 @@ export default function RecordSelectPage() {
                 });
               }
 
-              // ✅ 무조건 write로 이동
+              // 무조건 write로 이동
               navigate("/mycookeep/record/write");
             }}
           >
