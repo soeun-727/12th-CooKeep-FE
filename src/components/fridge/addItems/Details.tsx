@@ -14,8 +14,8 @@ export default function Details() {
 
   return (
     <>
-      <div className="relative flex flex-col items-center w-full h-[calc(100vh-148px)] bg-[#F8F8F8] pt-[70px]">
-        <div className="flex flex-col mt-7 gap-[10px] overflow-y-auto no-scrollbar">
+      <div className="relative flex flex-col items-center w-full h-[calc(100vh-34px)] bg-[#F8F8F8] pt-1">
+        <div className="flex flex-col gap-[10px] overflow-y-auto no-scrollbar">
           {selectedItems.length > 0 ? (
             selectedItems.map((item) => (
               <DetailedItem key={item.id} {...item} />

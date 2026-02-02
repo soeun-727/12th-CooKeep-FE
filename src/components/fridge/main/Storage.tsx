@@ -1,7 +1,7 @@
 import plus from "../../../assets/fridge/plus.svg";
 import plusDisabled from "../../../assets/fridge/plusDisabled.svg";
 import Item from "../items/Item";
-import character from "../../../assets/fridge/character.svg";
+import character from "../../../assets/character/clear_char.svg";
 import {
   useIngredientStore,
   type Ingredient,
@@ -11,6 +11,13 @@ interface StorageProps {
   category: string;
   image: string;
   ingredients: Ingredient[];
+}
+function chunk<T>(arr: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
 }
 
 export default function Storage({
@@ -23,20 +30,21 @@ export default function Storage({
 
   // 3개 이상일 때만 전체보기 활성화
   const isScrollable = ingredients.length >= 3;
+  const pages = chunk(ingredients, 3);
 
   return (
     <div className="relative w-full min-h-[173px] z-0">
       {/* 배경 레이어 */}
       <div className="absolute inset-0 -z-10 flex flex-col overflow-hidden pointer-events-none">
-        <div className="w-full h-[115px] rounded-t-[36px] bg-[#BFC6D740]" />
-        <div className="relative w-full bg-[#C8CFE2] h-12">
+        <div className="w-full h-[115px] rounded-t-[36px] bg-[#E3EBE6]" />
+        <div className="relative w-full bg-[#75D99F] h-12">
           <div className="absolute inset-0 flex gap-[6px] items-center justify-center pt-[7px]">
-            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
-            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
-            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#ADB4C766]" />
+            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
+            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
+            <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
           </div>
         </div>
-        <div className="w-full bg-[#ADB4C7] h-[10px]" />
+        <div className="w-full bg-[#54BE81] h-[10px]" />
       </div>
 
       {/* 상단 헤더 */}
@@ -77,41 +85,41 @@ export default function Storage({
       </div>
 
       {/* 아이템 리스트 */}
-      <div
-        className={`relative w-[353px] z-10 mx-auto ${
-          ingredients.length > 0 ? "overflow-hidden" : ""
-        }`}
-      >
-        {ingredients.length > 0 ? (
-          <div className="flex gap-[6px] overflow-x-auto no-scrollbar pb-2">
-            {ingredients.map((item) => (
-              <div key={item.id} className="flex-shrink-0">
-                <Item
-                  name={item.name}
-                  leftDays={item.dDay}
-                  image={item.image}
-                  isSelected={selectedIds.includes(item.id)}
-                  onSelect={() => toggleSelect(item.id)}
-                  onDetail={() => openDetail(item.id)}
-                />
+      {ingredients.length > 0 ? (
+        <div className="relative w-[353px] mx-auto z-10">
+          <div
+            className="flex gap-[6px] overflow-x-auto no-scrollbar pb-2
+        scroll-snap-x scroll-snap-mandatory"
+          >
+            {pages.map((page, pageIndex) => (
+              <div
+                key={pageIndex}
+                className="flex gap-[6px] justify-start flex-shrink-0 scroll-snap-start"
+                style={{ width: "353px" }}
+              >
+                {page.map((item) => (
+                  <Item
+                    key={item.id}
+                    name={item.name}
+                    leftDays={item.dDay}
+                    image={item.image}
+                    isSelected={selectedIds.includes(item.id)}
+                    onSelect={() => toggleSelect(item.id)}
+                    onDetail={() => openDetail(item.id)}
+                  />
+                ))}
               </div>
             ))}
-            <div className="w-4 flex-shrink-0" />
           </div>
-        ) : (
-          /* Empty State */
-          <div className="flex flex-col items-center gap-3 mt-[-5px] animate-fadeIn">
-            <img
-              src={character}
-              className="w-[45.6px] opacity-80"
-              alt="empty"
-            />
-            <span className="typo-caption text-[#7A8093] font-medium">
-              재료를 등록해주세요
-            </span>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center h-20 -mt-[10px] animate-fadeIn justify-between">
+          <span className="typo-caption text-[#7A8093] font-medium">
+            재료를 등록해주세요
+          </span>
+          <img src={character} className="w-[74px]" alt="empty" />
+        </div>
+      )}
     </div>
   );
 }
