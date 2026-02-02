@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import tempFoodPhoto from "../../../assets/mycookeep/record/temp_food_photo.svg";
 import Button from "../../ui/Button";
 
-export default function MyCookeepRecordEntry() {
+export default function RecordEntry() {
+  const navigate = useNavigate();
+
   const handleRecordClick = () => {
-    console.log("기록하기 클릭");
+    console.log("기록하기 클릭됨");
+    navigate("/mycookeep/record/select");
   };
 
   return (

@@ -4,6 +4,7 @@ import Profile from "../../components/myCookeep/fixed/Profile";
 import Statistics from "../../components/myCookeep/contents/Statistics";
 import Calendar from "../../components/myCookeep/contents/Calendar";
 import tempImage from "../../assets/temporary-image.png";
+import RecordEntry from "../../components/myCookeep/record/RecordEntry";
 
 const recordData = {
   "2026.01.19": tempImage,
@@ -23,8 +24,8 @@ export default function MyCookeepPage() {
             onDateClick={(date) => console.log(date)}
           />
         );
-      // case "record":
-      //   return <Record />;
+      case "record":
+        return <RecordEntry />;
       case "statistics":
         return <Statistics />;
       // default:
