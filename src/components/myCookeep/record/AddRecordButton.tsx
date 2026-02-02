@@ -1,4 +1,4 @@
-// src/components/myCookeep/record/FloatingAddRecordButton.tsx
+// src/components/myCookeep/record/AddRecordButton.tsx
 import { useNavigate } from "react-router-dom";
 // import { useState } from "react";
 import plusIcon from "../../../assets/fridge/items/plus.svg";
