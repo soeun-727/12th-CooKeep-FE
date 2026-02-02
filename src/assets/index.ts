@@ -35,3 +35,6 @@ export { default as elecIcon } from "./mycookeep/elec.svg";
 
 export { default as currentIcon } from "./mycookeep/current.svg";
 export { default as mainLogo } from "./logos/mainLogo.svg";
+export { default as calendarImage } from "./onboarding/Calendar.svg";
+export { default as checkChar } from "./character/check_char.svg";
+export { default as shadow } from "./character/char_shadow.svg";
