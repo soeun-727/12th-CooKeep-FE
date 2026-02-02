@@ -1,5 +1,5 @@
 import Button from "../../ui/Button";
-import tempImage from "../../../assets/temporary-image.png"; // 임시 이미지
+import char from "../../../assets/character/congrats_char.svg";
 import { useNavigate } from "react-router-dom";
 
 export default function SuccessSection() {
