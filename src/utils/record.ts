@@ -1,5 +1,7 @@
 // src/utils/record.ts
-export const getTodayKey = () => new Date().toISOString().slice(0, 10);
+import { getKoreaToday } from "./date";
+
+export const getTodayKey = () => getKoreaToday();
 
 export const hasTodayRecord = () => {
   return localStorage.getItem(`record-${getTodayKey()}`) === "true";

@@ -11,10 +11,6 @@ interface Props {
   record: CookeepRecord;
 }
 
-function formatDate(dateString: string) {
-  return dateString.replaceAll("-", ".");
-}
-
 export default function RecordCard({ record }: Props) {
   const navigate = useNavigate();
   const { updateRecordVisibility, setEditingRecordId, setSelectedRecipeId } =
@@ -23,6 +19,8 @@ export default function RecordCard({ record }: Props) {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
 
   const isPublic = record.isPublic;
+
+  const formatDateDot = (date: string) => date.replaceAll("-", ".");
 
   const imageUrl = useMemo(() => {
     if (!record.images[0]) return tempFoodPhoto;
@@ -87,7 +85,7 @@ export default function RecordCard({ record }: Props) {
 
           {/* 날짜 */}
           <span className="absolute top-1 left-1 px-1 py-1 text-white text-[12px] font-medium">
-            만든 날짜: {formatDate(record.createdAt)}
+            만든 날짜: {formatDateDot(record.createdAt)}
           </span>
 
           {/* 공개 / 비공개 아이콘 컨트롤 */}

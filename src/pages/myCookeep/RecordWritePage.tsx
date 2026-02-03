@@ -11,6 +11,7 @@ import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
 import UploadCompleteModal from "../../components/myCookeep/record/UploadCompleteModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
+import { getKoreaToday } from "../../utils/date";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ export default function RecordWritePage() {
         recipeTitle: title || recipe.recipeName,
         memo,
         images,
-        createdAt: new Date().toISOString().slice(0, 10),
+        createdAt: getKoreaToday(), // 오늘날짜 핵심
         isPublic,
       });
     }
