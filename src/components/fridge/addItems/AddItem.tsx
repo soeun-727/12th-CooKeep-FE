@@ -50,8 +50,8 @@ export default function AddItem() {
   });
   return (
     <>
-      <div className="flex flex-col items-center mt-[102px]">
-        <div className="[&_p]:hidden [&_input]:border-none [&_input::placeholder]:text-stone-300 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]">
+      <div className="flex flex-col items-center mt-1">
+        <div className="[&_p]:hidden [&_input]:border-none [&_input]:outline-none [&_input::placeholder]:text-stone-300 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]">
           <TextField
             value={searchTerm}
             placeholder="재료명을 검색하세요"

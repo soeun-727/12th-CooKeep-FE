@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackHeader from "../../ui/BackHeader";
 import Button from "../../ui/Button";
-import illustration from "../../../assets/temp_simplelogin_icon.svg";
+import illustration from "../../../assets/character/default_char.svg";
+import shadow from "../../../assets/character/char_shadow.svg";
 import AgreementList from "./AgreementList";
 
 export default function SimpleLoginAgreement() {
@@ -22,8 +23,13 @@ export default function SimpleLoginAgreement() {
       {/* 회원가입과 동일한 컨테이너 */}
       <div className="pt-[285px] mx-auto w-full max-w-[375px]">
         {/* 일러스트 */}
-        <div className="flex w-[71.131px] h-[95.495px]">
-          <img src={illustration} alt="약관 동의 일러스트" />
+        <div className="flex flex-col gap-2">
+          <img
+            src={illustration}
+            className="w-[75px]"
+            alt="약관 동의 일러스트"
+          />
+          <img src={shadow} className="w-[75px]" />
         </div>
 
         {/* 타이틀 */}

@@ -102,6 +102,14 @@ body,
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  /* globals.css */
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+  }
+
+  .scroll-snap-start {
+    scroll-snap-align: start;
+  }
 }
 
 @layer utilities {
@@ -126,6 +134,34 @@ body,
 
   .animate-fade-in-out {
     animation: fadeInOut 5s ease forwards;
+  }
+  /* index.css 또는 App.css */
+
+  @keyframes roll {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  /* 아래로 내려가는 애니메이션을 원한다면 이 버전을 쓰세요 */
+  @keyframes roll-down {
+    0% {
+      transform: translateY(-50%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-roll {
+    animation: roll 10s linear infinite;
+  }
+
+  .animate-roll-down {
+    animation: roll-down 20s linear infinite;
   }
 }
 
