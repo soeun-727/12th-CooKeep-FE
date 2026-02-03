@@ -22,7 +22,7 @@ export default function RecordDetailPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col">
-      <BackHeader title="레시피 상세" onBack={() => navigate(-1)} />
+      <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
 
       <div className="flex-1 mx-auto w-full max-w-[450px] px-4 flex flex-col">
         <div className="pt-[51px] flex flex-col gap-[10px]">
@@ -74,7 +74,7 @@ export default function RecordDetailPage() {
         )}
 
         {/* 공개 여부 표시 */}
-        <div className="mt-[32px] flex justify-center gap-[9px]">
+        <div className="mt-[32px] flex justify-center gap-[9px] pb-9">
           <div
             className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1
               ${record.isPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
