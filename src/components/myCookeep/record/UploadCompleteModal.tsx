@@ -1,5 +1,5 @@
 import Button from "../../ui/Button";
-import character from "../../../assets/character/congrats_char.svg";
+import character from "../../../assets/character/congrats_happy_char.svg";
 
 interface Props {
   onConfirm: () => void; // 쿠키받기
