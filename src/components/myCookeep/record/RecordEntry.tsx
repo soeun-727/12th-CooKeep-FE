@@ -4,6 +4,7 @@ import Button from "../../ui/Button";
 import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 import RecordCard from "./RecordCard";
 import AddRecordButton from "./AddRecordButton";
+import { getKoreaToday } from "../../../utils/date";
 
 export default function RecordEntry() {
   const navigate = useNavigate();
@@ -15,8 +16,7 @@ export default function RecordEntry() {
     navigate("/mycookeep/record/select");
   };
 
-  const today = new Date().toISOString().slice(0, 10);
-
+  const today = getKoreaToday();
   const todayRecords = records.filter((r) => r.createdAt === today);
 
   return (

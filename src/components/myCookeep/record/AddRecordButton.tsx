@@ -2,14 +2,19 @@
 import { useNavigate } from "react-router-dom";
 // import { useState } from "react";
 import plusIcon from "../../../assets/fridge/items/plus.svg";
+import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 
 export default function AddRecordButton() {
   const navigate = useNavigate();
   //   const [pressed, setPressed] = useState(false);
+  const resetRecord = useCookeepRecordStore((s) => s.resetRecord);
 
   return (
     <button
-      onClick={() => navigate("/mycookeep/record/select")}
+      onClick={() => {
+        resetRecord();
+        navigate("/mycookeep/record/select");
+      }}
       //   onTouchStart={() => setPressed(true)}
       //   onTouchEnd={() => setPressed(false)}
       className="

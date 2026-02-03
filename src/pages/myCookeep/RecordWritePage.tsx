@@ -12,6 +12,7 @@ import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
 import UploadCompleteModal from "../../components/myCookeep/record/UploadCompleteModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { getKoreaToday } from "../../utils/date";
+import { setTodayRecord } from "../../utils/record";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -101,6 +102,7 @@ export default function RecordWritePage() {
         createdAt: getKoreaToday(), // 오늘날짜 핵심
         isPublic,
       });
+      setTodayRecord();
     }
 
     setShowUploadModal(true);
