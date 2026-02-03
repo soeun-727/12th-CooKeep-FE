@@ -5,9 +5,8 @@ import RecipeRecordContentSection from "../../components/myCookeep/record/Recipe
 import RecipeDetailYoutube from "../../components/cookeeps/recipedetail/RecipeDetailYoutubeCard";
 import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
-import { useEffect, useMemo } from "react";
 import RecordViewImageCard from "../../components/myCookeep/record/RecordViewImageCard";
-import tempFoodPhoto from "../../assets/mycookeep/record/temp_food_photo.svg";
+import { getRecordImageSrc } from "../../utils/recordImage";
 
 export default function RecordDetailPage() {
   const navigate = useNavigate();
@@ -18,20 +17,8 @@ export default function RecordDetailPage() {
 
   const record = records.find((r) => r.id === recordId);
 
-  const imageUrl = useMemo(() => {
-    if (!record?.images[0]) return undefined;
-    return URL.createObjectURL(record.images[0]);
-  }, [record]);
-
-  const imageSrc = imageUrl ?? tempFoodPhoto;
-
-  useEffect(() => {
-    return () => {
-      if (imageUrl) URL.revokeObjectURL(imageUrl);
-    };
-  }, [imageUrl]);
-
   if (!record) return null;
+  const imageSrc = getRecordImageSrc(record.images[0]);
 
   return (
     <div className="min-h-screen w-full flex flex-col">

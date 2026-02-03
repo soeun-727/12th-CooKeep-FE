@@ -1,21 +1,13 @@
 // src/types/record.ts
 import type { RecipeContent } from "./recipe";
 
-export interface RecordPayload {
-  recipeId: number;
-  title: string;
-  memo?: string;
-  isPublic: boolean;
-  images?: File[];
-}
-
 export interface CookeepRecord {
   id: string;
   recipeId: number;
   recipeTitle: string;
   memo: string;
-  images: File[]; // 대표 이미지
-  createdAt: string; // "2026.02.02"
+  images: ImageWithUrl[];
+  createdAt: string; // "2026.02.02" ui에서 이렇게 나와야하는거고 아마도 "2026-02-02"일수도 있음
   isPublic: boolean;
   recipeContent: RecipeContent;
   tags?: string[];
@@ -24,4 +16,8 @@ export interface CookeepRecord {
     thumbnail: string;
     url: string;
   }[];
+}
+
+export interface ImageWithUrl {
+  url: string;
 }

@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import tempFoodPhoto from "../../../assets/mycookeep/record/temp_food_photo.svg";
+import { useState } from "react";
 import privateIcon from "../../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../../assets/mycookeep/record/public_icon.svg";
 import type { CookeepRecord } from "../../../types/record";
 import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 import SelectViewTypeModal from "./SelectViewTypeModal";
+import { getRecordImageSrc } from "../../../utils/recordImage";
 
 interface Props {
   record: CookeepRecord;
@@ -22,16 +22,7 @@ export default function RecordCard({ record }: Props) {
 
   const formatDateDot = (date: string) => date.replaceAll("-", ".");
 
-  const imageUrl = useMemo(() => {
-    if (!record.images[0]) return tempFoodPhoto;
-    return URL.createObjectURL(record.images[0]);
-  }, [record.images]);
-
-  useEffect(() => {
-    return () => {
-      if (record.images[0]) URL.revokeObjectURL(imageUrl);
-    };
-  }, [imageUrl, record.images]);
+  const imageSrc = getRecordImageSrc(record.images[0]);
 
   const toggleOption = () => {
     setIsOptionOpen((prev) => !prev);
@@ -75,7 +66,7 @@ export default function RecordCard({ record }: Props) {
           onClick={() => navigate(`/mycookeep/record/${record.id}`)}
         >
           <img
-            src={imageUrl}
+            src={imageSrc}
             alt="요리 이미지"
             className="w-full h-full object-cover"
           />

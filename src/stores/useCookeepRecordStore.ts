@@ -1,5 +1,14 @@
 import { create } from "zustand";
-import type { CookeepRecord } from "../types/record";
+import type { CookeepRecord, ImageWithUrl } from "../types/record";
+
+export interface RecordImage {
+  file: File;
+  url: string;
+}
+
+export interface RecordImage extends ImageWithUrl {
+  file: File;
+}
 
 interface RecordState {
   selectedRecipeId: number | null;
@@ -10,7 +19,7 @@ interface RecordState {
   title: string;
   memo: string;
   isPublic: boolean | null;
-  images: File[];
+  images: RecordImage[];
 
   setSelectedRecipeId: (id: number) => void;
   setEditingRecordId: (id: string | null) => void;
@@ -35,10 +44,9 @@ interface RecordState {
   updateRecordContent: (args: {
     recordId: string;
     memo: string;
-    images: File[];
+    images: RecordImage[];
     isPublic: boolean | null;
   }) => void;
-
   updateRecordVisibility: (recordId: string, isPublic: boolean) => void;
 }
 
@@ -62,14 +70,40 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
 
   addImages: (files) =>
     set((state) => ({
-      images: [...state.images, ...files].slice(0, 2),
+      images: [
+        ...state.images,
+        ...files.map((file) => ({
+          file,
+          url: URL.createObjectURL(file),
+        })),
+      ].slice(0, 2),
     })),
 
   removeImage: (index) =>
-    set((state) => ({
-      images: state.images.filter((_, i) => i !== index),
-    })),
+    set((state) => {
+      const target = state.images[index];
+      if (target) URL.revokeObjectURL(target.url);
 
+      return {
+        images: state.images.filter((_, i) => i !== index),
+      };
+    }),
+
+  // resetRecord: () =>
+  //   set((state) => {
+  //     state.images.forEach((img) => URL.revokeObjectURL(img.url));
+
+  //     return {
+  //       selectedRecipeId: null,
+  //       editingRecordId: null,
+  //       title: "",
+  //       memo: "",
+  //       isPublic: null,
+  //       images: [],
+  //     };
+  //   }),
+
+  // store 내 수정
   resetRecord: () =>
     set({
       selectedRecipeId: null,
@@ -77,7 +111,7 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
       title: "",
       memo: "",
       isPublic: null,
-      images: [],
+      images: [], // 일단 URL 해제 로직을 주석 처리하고 테스트해보세요.
     }),
 
   addRecord: (record) =>
@@ -97,7 +131,12 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
     set((state) => ({
       records: state.records.map((r) =>
         r.id === recordId
-          ? { ...r, memo, images, isPublic: isPublic ?? r.isPublic }
+          ? {
+              ...r,
+              memo,
+              images,
+              isPublic: isPublic ?? r.isPublic,
+            }
           : r,
       ),
     })),

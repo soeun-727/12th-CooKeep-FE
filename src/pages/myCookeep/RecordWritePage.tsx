@@ -43,16 +43,6 @@ export default function RecordWritePage() {
 
   const [showUploadModal, setShowUploadModal] = useState(false);
 
-  const previewImages = useMemo(() => {
-    return images.map((file) => URL.createObjectURL(file));
-  }, [images]);
-
-  useEffect(() => {
-    return () => {
-      previewImages.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [previewImages]);
-
   /* ---------- 수정 모드 초기화 ---------- */
   useEffect(() => {
     if (!editingRecordId) return;
@@ -131,7 +121,7 @@ export default function RecordWritePage() {
             {/* 이미지 (업로드 모드로 나중에 확장) */}
             <RecordWriteImageCard
               title={title}
-              imageSrc={previewImages[0]}
+              imageSrc={images[0]?.url}
               onClickAddImage={() => fileInputRef.current?.click()}
               onChangeTitle={setTitle}
             />
