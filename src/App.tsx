@@ -51,6 +51,7 @@ import MyCookeepPage from "./pages/myCookeep/MyCookeepPage";
 import SetGoalPage from "./pages/myCookeep/SetGoalPage";
 import RecordSelectPage from "./pages/myCookeep/RecordSelectPage";
 import RecordWritePage from "./pages/myCookeep/RecordWritePage";
+import RecordDetailPage from "./pages/myCookeep/RecordDetailPage";
 
 export default function App() {
   return (
@@ -136,6 +137,10 @@ export default function App() {
         <Route path="/mycookeep/goals" element={<SetGoalPage />} />
         <Route path="/mycookeep/record/select" element={<RecordSelectPage />} />
         <Route path="/mycookeep/record/write" element={<RecordWritePage />} />
+        <Route
+          path="/mycookeep/record/:recordId"
+          element={<RecordDetailPage />}
+        />
       </Routes>
     </AppLayout>
   );

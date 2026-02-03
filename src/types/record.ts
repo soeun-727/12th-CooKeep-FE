@@ -1,3 +1,6 @@
+// src/types/record.ts
+import type { RecipeContent } from "./recipe";
+
 export interface RecordPayload {
   recipeId: number;
   title: string;
@@ -14,4 +17,11 @@ export interface CookeepRecord {
   images: File[]; // 대표 이미지
   createdAt: string; // "2026.02.02"
   isPublic: boolean;
+  recipeContent: RecipeContent;
+  tags?: string[];
+  relatedVideos?: {
+    title: string;
+    thumbnail: string;
+    url: string;
+  }[];
 }

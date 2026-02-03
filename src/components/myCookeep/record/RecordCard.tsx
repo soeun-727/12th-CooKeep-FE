@@ -72,7 +72,7 @@ export default function RecordCard({ record }: Props) {
           rounded-[6px] overflow-hidden
           shadow-[0_1px_8.2px_-2px_rgba(17,17,17,0.25),0_4px_16px_-10px_rgba(0,0,0,0.25)]
         "
-          onClick={() => navigate(`/recipes/${record.recipeId}`)}
+          onClick={() => navigate(`/mycookeep/record/${record.id}`)}
         >
           <img
             src={imageUrl}
@@ -151,7 +151,7 @@ export default function RecordCard({ record }: Props) {
             bg-[#EBEBEB]
             cursor-pointer
           "
-            onClick={() => navigate(`/recipes/${record.recipeId}`)}
+            onClick={() => navigate(`/mycookeep/record/${record.id}`)}
           >
             <span className="text-[#202020] text-[16px] font-bold leading-[24px] text-center line-clamp-2">
               {record.recipeTitle}

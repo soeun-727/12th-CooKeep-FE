@@ -101,6 +101,13 @@ export default function RecordWritePage() {
         images,
         createdAt: getKoreaToday(), // 오늘날짜 핵심
         isPublic,
+        recipeContent: {
+          ingredients: recipe.ingredients,
+          substitutions: recipe.substitutions,
+          steps: recipe.steps,
+        },
+        tags: recipe.tags,
+        relatedVideos: recipe.relatedVideos,
       });
       setTodayRecord();
     }
