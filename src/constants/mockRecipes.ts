@@ -2,6 +2,7 @@ import type { Recipe } from "../types/recipe";
 
 export const MOCK_RECIPES: Recipe[] = [
   {
+    id: 1,
     recipeName: "고추장 마요 달걀밥",
     tags: ["고추장", "달걀밥", "마요네즈"],
 
@@ -51,6 +52,7 @@ export const MOCK_RECIPES: Recipe[] = [
   },
 
   {
+    id: 2,
     recipeName: "우유 계란찜",
     tags: ["우유", "달걀", "부드러운"],
     ingredients: [

@@ -164,3 +164,20 @@ body,
     animation: roll-down 20s linear infinite;
   }
 }
+
+/* 둥둥 애니메이션 */
+@keyframes floatBubble {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-float-bubble {
+  animation: floatBubble 2s ease-in-out infinite;
+}
