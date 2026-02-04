@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { CookeepRecord, ImageWithUrl } from "../types/record";
+import { MOCK_RECORDS } from "../constants/recordMock";
 
 export interface RecordImage {
   file: File;
@@ -58,8 +59,8 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
   memo: "",
   isPublic: null,
   images: [],
-
-  records: [],
+  records: MOCK_RECORDS,
+  // records: [], 우선 임시데이터로
 
   setSelectedRecipeId: (id) => set({ selectedRecipeId: id }),
   setEditingRecordId: (id) => set({ editingRecordId: id }),
