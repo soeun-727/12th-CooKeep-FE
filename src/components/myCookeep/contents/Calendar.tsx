@@ -115,7 +115,7 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
       top-1/2
       -translate-y-1/2
       h-12
-      bg-(--color-green-light)
+      bg-[#96E8BE]
       z-0
       ${hasPrev && hasNext ? "w-[110%] rounded-none" : ""}
       ${hasPrev && !hasNext ? "w-[105%] left-0 rounded-r-full" : ""}
