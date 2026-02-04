@@ -38,6 +38,7 @@ import RecipeSelectPage from "./pages/recipe/RecipeSelectPage";
 import RecipeConfirmPage from "./pages/recipe/RecipeConfirmPage";
 import RecipeLoadingPage from "./pages/recipe/RecipeLoadingPage";
 import RecipeResultPage from "./pages/recipe/RecipeResultPage";
+
 import CookeepsPage from "./pages/cookeeps/CookeepsPage";
 import MyPlantPage from "./pages/cookeeps/MyPlantPage";
 import RecipeDetailPage from "./pages/cookeeps/RecipeDetailPage";
@@ -45,6 +46,12 @@ import ListLayout from "./layouts/ListLayout";
 import ViewListPage from "./pages/cookeeps/ViewListPage";
 import ViewAllPage from "./pages/cookeeps/ViewAllPage";
 import CookeepsLayout from "./layouts/CookeepsLayout";
+
+import MyCookeepPage from "./pages/myCookeep/MyCookeepPage";
+import SetGoalPage from "./pages/myCookeep/SetGoalPage";
+import RecordSelectPage from "./pages/myCookeep/RecordSelectPage";
+import RecordWritePage from "./pages/myCookeep/RecordWritePage";
+import RecordDetailPage from "./pages/myCookeep/RecordDetailPage";
 
 export default function App() {
   return (
@@ -125,8 +132,15 @@ export default function App() {
           </Route>
 
           {/* MYCooKeep */}
-          {/* <Route path="/mycookeep" element={<MyCooKeepPage />} /> */}
+          <Route path="/mycookeep" element={<MyCookeepPage />} />
         </Route>
+        <Route path="/mycookeep/goals" element={<SetGoalPage />} />
+        <Route path="/mycookeep/record/select" element={<RecordSelectPage />} />
+        <Route path="/mycookeep/record/write" element={<RecordWritePage />} />
+        <Route
+          path="/mycookeep/record/:recordId"
+          element={<RecordDetailPage />}
+        />
       </Routes>
     </AppLayout>
   );

@@ -5,25 +5,21 @@ import WaterToast from "./WaterToast";
 interface PlantBackgroundProps {
   showToast: boolean;
   message: string;
+  overridePlantStage?: number; // 1단계로 임시 override
 }
 
 export default function PlantBackground({
   showToast,
   message,
+  overridePlantStage,
 }: PlantBackgroundProps) {
   return (
     <section className="relative w-full flex justify-center">
-      <div
-        className="
-        relative
-          w-full
-          max-w-[450px]
-          aspect-square
-          flex-shrink-0
-        "
-      >
-        <PlantImage />
+      {/* 기준 박스 (식물 + 토스트 공통) */}
+      <div className="relative w-full max-w-[450px] aspect-square">
+        <PlantImage overridePlantStage={overridePlantStage} />
 
+        {/* 토스트는 반드시 여기 */}
         <WaterToast message={message} isVisible={showToast} />
       </div>
     </section>

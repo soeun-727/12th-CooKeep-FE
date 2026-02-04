@@ -13,11 +13,16 @@ export default function WaterButton({ onSuccess }: WaterButtonProps) {
 
   const disabled = !selectedPlant || cookie < 10 || plantStage >= 4;
 
+  const { wantsToWater, setWantsToWater } = useCookeepsStore();
+
   const handleConfirm = () => {
     waterPlant();
+    setWantsToWater(false); // 추가 wilteing
     setModalOpen(false);
     if (onSuccess) onSuccess(); // 여기서 toast 실행
   };
+
+  const isModalOpenControlled = wantsToWater || isModalOpen;
 
   return (
     <>
@@ -36,8 +41,11 @@ export default function WaterButton({ onSuccess }: WaterButtonProps) {
       </button>
 
       <WaterModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        isOpen={isModalOpenControlled}
+        onClose={() => {
+          setModalOpen(false);
+          setWantsToWater(false);
+        }}
         onConfirm={handleConfirm}
       />
     </>

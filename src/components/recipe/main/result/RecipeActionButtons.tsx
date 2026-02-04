@@ -33,7 +33,7 @@ export default function RecipeActionButtons({
   const handleCookClick = () => {
     if (!latestRecipe) return;
 
-    navigate("/mypage", {
+    navigate("/mycookeep", {
       state: {
         selectedIngredients,
         difficulty,

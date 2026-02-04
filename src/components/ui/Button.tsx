@@ -36,7 +36,7 @@ const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     black: "bg-[#111111] text-white",
-    green: "bg-[#1FC16F] text-white",
+    green: "bg-[#32E389] text-white",
   };
 
   const disabledStyle = "bg-[#C3C3C3] text-white cursor-not-allowed";
