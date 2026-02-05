@@ -8,7 +8,7 @@ const AuthHeader = () => {
         absolute top-0 z-50
         w-full max-w-[450px]
         flex items-start justify-between
-        px-4 py-2 pt-[54px]
+        px-4 py-2 
         bg-[#FAFAFA]
       "
     >
