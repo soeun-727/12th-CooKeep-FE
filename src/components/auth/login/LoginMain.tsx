@@ -36,7 +36,7 @@ export default function LoginMain() {
   };
   return (
     <>
-      <div className="pt-[187px] w-[352px] mx-auto">
+      <div className="pt-[133px] w-[352px] mx-auto">
         <div className="typo-h1">로그인</div>
 
         {/* 입력 영역 */}
