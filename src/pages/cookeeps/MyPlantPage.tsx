@@ -72,6 +72,7 @@ export default function MyPlantPage() {
                   <img
                     src={plantImageMap[plant]}
                     alt={plant}
+                    loading="lazy"
                     className="w-[48px] h-[48px] aspect-square"
                   />
                   <span

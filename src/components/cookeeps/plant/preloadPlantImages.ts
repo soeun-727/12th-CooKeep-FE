@@ -1,14 +1,15 @@
 // src/components/cookeeps/plant/preloadPlantImages.ts
-import { EMPTY_PLANT_IMAGE, PLANT_IMAGES } from "./PlantImages";
+import { PLANT_IMAGES, type PlantStage } from "./PlantImages";
+import type { PlantType } from "../../../stores/useCookeepsStore";
 
-export function preloadPlantImages() {
-  const images = [
-    ...Object.values(PLANT_IMAGES).flatMap((stages) => Object.values(stages)),
-    EMPTY_PLANT_IMAGE,
-  ];
+export function preloadNextStage(plant: PlantType, currentStage: number) {
+  const nextStage = (currentStage + 1) as PlantStage;
 
-  images.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
+  if (nextStage > 4) return;
+
+  const src = PLANT_IMAGES[plant]?.[nextStage];
+  if (!src) return;
+
+  const img = new Image();
+  img.src = src;
 }

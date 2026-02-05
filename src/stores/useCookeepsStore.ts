@@ -56,10 +56,18 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
 
   hasShownWilting: false,
 
-  refreshGrowth: () =>
-    set({
-      lastRefreshedAt: new Date(),
-    }),
+  refreshGrowth: () => {
+    const { lastRefreshedAt } = get();
+
+    const now = new Date();
+
+    // 1초 이내면 갱신 안 함 (연속 호출 방지)
+    if (lastRefreshedAt && now.getTime() - lastRefreshedAt.getTime() < 1000) {
+      return;
+    }
+
+    set({ lastRefreshedAt: now });
+  },
 
   wantsToWater: false,
   setWantsToWater: (v) => set({ wantsToWater: v }),
@@ -154,18 +162,25 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     const diffDays =
       (Date.now() - new Date(lastWateredAt).getTime()) / (1000 * 60 * 60 * 24);
 
-    // 완전 시듦
-    if (diffDays >= 14 && status !== "wilted") {
-      set({ status: "wilted" });
+    if (diffDays >= 14) {
+      if (status !== "wilted") {
+        set({ status: "wilted" });
+      }
       return;
     }
 
-    // 시들어가는 중 (7~13일) → 매번 Wilting
     if (diffDays >= 7 && diffDays < 14) {
-      set({ status: "wilting" });
+      if (status !== "wilting") {
+        set({ status: "wilting" });
+      }
+      return;
+    }
+
+    // 정상 상태로 돌아갈 수도 있게
+    if (diffDays < 7 && status !== "normal") {
+      set({ status: "normal" });
     }
   },
-
   addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
 
   /* =========================
