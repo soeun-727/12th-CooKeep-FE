@@ -32,6 +32,7 @@ interface AccountSectionProps {
   onSubmit: () => void;
   isSignupEnabled: boolean;
   setHideHeader: (hide: boolean) => void;
+  loading: boolean;
 }
 
 export default function AccountSection({
@@ -46,6 +47,7 @@ export default function AccountSection({
   onSubmit,
   isSignupEnabled,
   setHideHeader,
+  loading,
 }: AccountSectionProps) {
   const [agreementPage, setAgreementPage] = useState<AgreementItem | null>(
     null,
@@ -267,11 +269,11 @@ export default function AccountSection({
                     <Button
                       type="submit"
                       size="L"
-                      disabled={!isSignupEnabled || !isPhoneVerified}
+                      disabled={!isSignupEnabled || !isPhoneVerified || loading}
                       onClick={onSubmit}
                       className=" mt-[8px] "
                     >
-                      회원가입
+                      {loading ? "가입 중..." : "회원가입"}
                     </Button>
                   </div>
                 </div>
