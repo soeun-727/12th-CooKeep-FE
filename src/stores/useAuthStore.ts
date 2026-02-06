@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { saveTokens } from "../utils/auth";
+import { loginApi } from "../api/auth";
+import axios from "axios";
 
 // 1. 카카오 로그인 시 받는 데이터 구조 정의
 interface KakaoLoginPayload {
@@ -71,16 +73,48 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { phoneNumber, password, canLogin } = get();
     if (!canLogin) return null;
 
-    set({ isSubmitting: true });
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      set({ isSubmitting: true });
 
-    if (phoneNumber === "01012341234" && password === "test1234") {
-      set({ isSubmitting: false, isLoggedIn: true });
-      const isFirstLogin = phoneNumber === "01012341234";
-      return { success: true, isFirst: isFirstLogin };
-    } else {
+      const data = await loginApi({
+        phoneNumber,
+        password,
+      });
+
+      // 토큰 저장
+      saveTokens({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
+
+      set({
+        isLoggedIn: true,
+        userId: data.userId,
+        userStatus: data.userStatus,
+        isSubmitting: false,
+      });
+
+      return {
+        success: true,
+        isFirst: data.userStatus === "CREATED",
+      };
+    } catch (err) {
       set({ isSubmitting: false });
-      alert("휴대폰 번호 또는 비밀번호가 일치하지 않습니다.");
+
+      if (axios.isAxiosError(err)) {
+        const code = err.response?.data?.code;
+
+        if (code === "AUTH-004") {
+          alert("가입되지 않은 전화번호입니다.");
+        } else if (code === "AUTH-003") {
+          alert("비밀번호가 올바르지 않습니다.");
+        } else {
+          alert("로그인 중 오류가 발생했습니다.");
+        }
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+      }
+
       return { success: false, isFirst: false };
     }
   },
