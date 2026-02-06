@@ -16,7 +16,7 @@ export default function MemoEditor({ value, onSave }: MemoEditorProps) {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="메모를 입력해주세요"
-        className="w-[361px] h-[389px] p-3 rounded-[10px] border border-[#D1D1D1] text-center outline-none resize-none typo-body"
+        className="w-[361px] h-49 p-3 rounded-[10px] border border-[#D1D1D1] text-center outline-none resize-none typo-body"
       />
 
       {/* 저장 버튼으로 명시적 저장 */}
