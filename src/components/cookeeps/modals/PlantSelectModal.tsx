@@ -4,13 +4,11 @@ import Button from "../../ui/Button";
 
 interface PlantSelectModalProps {
   isOpen: boolean;
-  onClose: () => void;
   onConfirm: (categoryId: number) => void;
 }
 
 const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
   isOpen,
-  onClose,
   onConfirm,
 }) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
