@@ -4,12 +4,19 @@ import BackHeader from "../../ui/BackHeader";
 import type { AgreementItem } from "../../../constants/agreements";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
+import { blankCheck, grayCheck } from "../../../assets";
+interface Agreements {
+  terms: boolean;
+  privacy: boolean;
+  marketing: boolean;
+  policy: boolean;
+}
 interface AgreementPageProps {
   agreement: AgreementItem;
   isChecked: boolean;
   onBack: () => void;
   onConfirm: (key: AgreementItem["key"]) => void;
+  updateAgreements: (next: Partial<Agreements>) => void;
   children?: React.ReactNode;
 }
 
@@ -18,17 +25,18 @@ export default function AgreementPage({
   isChecked,
   onBack,
   onConfirm,
+  updateAgreements,
   children,
 }: AgreementPageProps) {
   const isPolicyOnly = agreement.key === "policy";
 
   return (
-    <div className="flex flex-col h-[100dvh] w-full px-4 overflow-hidden">
+    <div className="flex flex-col h-[100dvh] w-full px-4 overflow-hidden items-center">
       {/* 헤더 */}
       <BackHeader title="이용 약관" onBack={onBack} />
 
       {/* 헤더 아래 고정 간격 */}
-      <div className="h-[129px] shrink-0" />
+      <div className="h-[75px] shrink-0" />
 
       {/* 카드 + 버튼 영역 */}
       <div className="flex-1 flex flex-col  min-h-0">
@@ -37,12 +45,26 @@ export default function AgreementPage({
           {/* 카드 상단 */}
           <div className="flex items-center gap-[16px] p-3 h-[48px] shrink-0">
             {!isPolicyOnly ? (
-              <input
-                type="checkbox"
-                checked={isChecked}
-                disabled
-                className="w-4 h-4 accent-[#7D7D7D]"
-              />
+              <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) =>
+                    updateAgreements({ [agreement.key]: e.target.checked })
+                  }
+                  className="peer absolute inset-0 w-full h-full appearance-none cursor-default z-10"
+                />
+                <img
+                  src={blankCheck}
+                  alt="unchecked"
+                  className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
+                />
+                <img
+                  src={grayCheck}
+                  alt="checked"
+                  className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
+                />
+              </div>
             ) : (
               <span className="w-4 h-4 inline-block" />
             )}
@@ -52,7 +74,7 @@ export default function AgreementPage({
           <div className="mx-auto w-[332px] border-t-[1.5px] border-[#C3C3C3]" />
 
           {/* 약관 전문만 스크롤 */}
-          <div className="flex-1 overflow-y-auto p-3 min-h-0">
+          <div className="flex-1 overflow-y-auto p-3 min-h-0 no-scrollbar">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
