@@ -89,7 +89,7 @@ export default function OnboardingModal({ isOpen, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center">
       {/* backdrop */}
-      <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
+      <div className="absolute inset-0 bg-black/40" />
 
       {/* modal */}
       <div

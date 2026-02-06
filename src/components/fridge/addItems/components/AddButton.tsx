@@ -18,8 +18,8 @@ export default function AddButton() {
       onTouchStart={() => setIsSelected(true)}
       onTouchEnd={() => setIsSelected(false)}
       className="
-        absolute bottom-29 right-[calc(50%-180px)] z-40
-        w-12 h-12 bg-white
+        fixed bottom-29 right-[calc(50%-160px)] z-40
+        w-12 h-12 bg-black
         rounded-full flex items-center justify-center
         active:scale-95 
         active:bg-stone-300

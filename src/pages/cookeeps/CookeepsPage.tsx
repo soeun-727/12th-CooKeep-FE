@@ -128,7 +128,6 @@ export default function CookeepsPage() {
       {/* 2. 식물 선택 */}
       <PlantSelectModal
         isOpen={derivedModal === "select"}
-        onClose={() => setActiveModal(null)}
         onConfirm={handleSelectConfirm}
       />
 

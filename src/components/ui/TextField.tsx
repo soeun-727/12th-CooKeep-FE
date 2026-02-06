@@ -61,6 +61,7 @@ const TextField = ({
     placeholder:font-medium
     placeholder:text-stone-300
     disabled:bg-[#ECECEC]
+    focus:outline-none
     ${leftIcon ? "pl-10" : ""}
         ${rightIcon ? "pr-10" : ""}
     ${

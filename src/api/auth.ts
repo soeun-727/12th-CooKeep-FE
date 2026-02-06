@@ -1,5 +1,6 @@
-import axios from "./axios"; // 네 axios 인스턴스
+import api from "./axios";
 
+// 로그인 부분
 interface LoginRequest {
   phoneNumber: string;
   password: string;
@@ -17,8 +18,22 @@ interface LoginResponse {
 }
 
 export const loginApi = async (payload: LoginRequest) => {
-  const res = await axios.post<LoginResponse>("/api/auth/login", payload);
+  const res = await api.post<LoginResponse>("/api/auth/login", payload);
 
   // 우리가 필요한 건 data 안의 data
   return res.data.data;
+};
+
+// 회원가입부분
+export interface SignupRequest {
+  phoneNumber: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+  marketingConsent: boolean;
+}
+
+export const signup = async (payload: SignupRequest) => {
+  const res = await api.post("/api/auth/signup", payload);
+  return res.data;
 };
