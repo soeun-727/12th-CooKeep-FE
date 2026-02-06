@@ -1,11 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import tempImage from "../../assets/temporary-image.png";
 import BackHeader from "../../components/ui/BackHeader";
 
 export default function SupportPage() {
   const navigate = useNavigate();
 
-  const email = "cookeep2025@gmail.com";
+  const email = "cookeep2026@gmail.com";
 
   const handleCopyEmail = async () => {
     try {
@@ -21,12 +20,12 @@ export default function SupportPage() {
       {/* 헤더 */}
       <BackHeader title="고객센터" onBack={() => navigate(-1)} />
 
-      <main className="pt-[161px] px-4 flex flex-col min-h-screen relative">
+      <main className="pt-[97px] px-4 flex flex-col relative">
         {/* 상단 텍스트 */}
-        <section className="space-y-3">
-          <h2 className="typo-result-title text-left">무엇을 도와드릴까요?</h2>
+        <section className="">
+          <h2 className="typo-h1 text-left">무엇을 도와드릴까요?</h2>
 
-          <p className="typo-body-sm text-[#7D7D7D] pt-[4px]">
+          <p className="typo-body2 text-[#7D7D7D]">
             아래 이메일로 문의사항을 전송해 주시면
             <br />
             순차적으로 확인 후 안내드릴게요
@@ -55,15 +54,6 @@ export default function SupportPage() {
           <br />
           영업일 기준 2–3일 이내에 답변드려요
         </p>
-
-        {/* 하단 이미지 */}
-        <div className="absolute bottom-[47.61px] right-[18.15%] z-10 ">
-          <img
-            src={tempImage}
-            alt="임시 이미지"
-            className="w-[134px] h-[121.62px]"
-          />
-        </div>
       </main>
     </>
   );

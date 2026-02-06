@@ -26,7 +26,7 @@ export default function NotificationSection() {
   return (
     <section className="px-4 mt-[26px]">
       <SettingsToggleItem
-        label="마케팅 PUSH 수신 동의"
+        label="마케팅 Push 수신 동의"
         checked={enabled}
         onChange={handleToggle}
       />
