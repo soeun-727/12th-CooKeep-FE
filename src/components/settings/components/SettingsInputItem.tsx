@@ -55,10 +55,9 @@ export default function SettingsInputItem({
             rounded-full
             transition-colors
             typo-caption
-            font-medium
             ${
               disabled
-                ? "bg-[#DDD] text-[#999] cursor-not-allowed" // 비활성화 스타일
+                ? "bg-stone-300 text-white cursor-not-allowed" // 비활성화 스타일
                 : "bg-[#202020] text-white cursor-pointer active:bg-[#404040]" // 활성화 스타일
             }
           `}
