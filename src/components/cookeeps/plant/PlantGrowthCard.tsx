@@ -4,6 +4,7 @@ import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import GrowthProgressBar from "./GrowthProgressBar";
 import { PLANT_NAME_KR } from "../../../constants/plantNames";
 import { useEffect } from "react";
+import { preloadNextStage } from "./preloadPlantImages";
 
 interface PlantGrowthCardProps {
   onWaterSuccess?: () => void; // 여기에 onSuccess 콜백 추가
@@ -14,8 +15,11 @@ export default function PlantGrowthCard({
   onWaterSuccess,
   overridePlantStage,
 }: PlantGrowthCardProps) {
-  const { selectedPlant, grownPlants, lastRefreshedAt, refreshGrowth } =
-    useCookeepsStore();
+  const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
+  const grownPlants = useCookeepsStore((s) => s.grownPlants);
+  const plantStage = useCookeepsStore((s) => s.plantStage);
+  const lastRefreshedAt = useCookeepsStore((s) => s.lastRefreshedAt);
+  const refreshGrowth = useCookeepsStore((s) => s.refreshGrowth);
 
   const lastPlantName = grownPlants[grownPlants.length - 1];
 
@@ -26,7 +30,8 @@ export default function PlantGrowthCard({
   // 페이지 진입시 자동 새로고침
   useEffect(() => {
     refreshGrowth();
-  }, [refreshGrowth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   //  분 단위 자동 새로고침 (정책서 충족)
   // useEffect(() => {
@@ -54,6 +59,11 @@ export default function PlantGrowthCard({
           <WaterButton
             onSuccess={() => {
               onWaterSuccess?.(); // 부모용
+
+              if (selectedPlant) {
+                preloadNextStage(selectedPlant, plantStage);
+              }
+
               refreshGrowth(); // 정책용
             }}
           />

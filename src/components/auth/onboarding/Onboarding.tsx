@@ -8,8 +8,11 @@ import SpecificGoal from "./SpecificGoal";
 import AuthHeader from "../AuthHeader";
 import Last from "./Last";
 import Notification from "./Notification";
+import InstallGuide from "./InstallGuide";
+import { useNavigate } from "react-router-dom";
 
 export default function Onboarding() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [isFinished, setIsFinished] = useState(false); // 마지막 화면 여부 상태
   const [showNotification, setShowNotification] = useState(false); // Notification 화면 여부
@@ -20,6 +23,8 @@ export default function Onboarding() {
     title: "주 n회 요리하기",
   }); // 목표 선택
   const [goalCount, setGoalCount] = useState<string>("3"); // 목표 수치 입력
+
+  const [showInstallGuide, setShowInstallGuide] = useState(false); // 웹앱 설치
 
   const nextStep = () => {
     if (step < STEPS.length - 1) setStep((prev) => prev + 1);
@@ -41,8 +46,12 @@ export default function Onboarding() {
     nextStep();
   };
 
+  if (showInstallGuide) {
+    return <InstallGuide onFinish={() => navigate("/fridge")} />;
+  }
+
   if (showNotification) {
-    return <Notification />;
+    return <Notification onNext={() => setShowInstallGuide(true)} />;
   }
 
   if (isFinished) {

@@ -13,7 +13,6 @@ import { PLANT_DATA } from "../../constants/plantData";
 import SelectedModal from "../../components/cookeeps/modals/SelectedModal";
 import WiltingModal from "../../components/cookeeps/modals/WiltingModal";
 import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
-import { preloadPlantImages } from "../../components/cookeeps/plant/preloadPlantImages";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { PLANT_ID_TO_TYPE } from "../../constants/plantTypeMap";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
@@ -40,13 +39,10 @@ export default function CookeepsPage() {
   >(null);
   const selectPlantInStore = useCookeepsStore((s) => s.selectPlant);
 
-  const {
-    selectedPlant: storePlant,
-    status,
-    checkStatusByTime,
-    abandonPlant,
-    recoverPlant,
-  } = useCookeepsStore();
+  const storePlant = useCookeepsStore((s) => s.selectedPlant);
+  const status = useCookeepsStore((s) => s.status);
+  const abandonPlant = useCookeepsStore((s) => s.abandonPlant);
+  const recoverPlant = useCookeepsStore((s) => s.recoverPlant);
 
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
 
@@ -65,14 +61,16 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    checkStatusByTime(); // 최초 1번
+    const { checkStatusByTime } = useCookeepsStore.getState();
+    checkStatusByTime(); // 최초한번
 
     const interval = setInterval(() => {
       checkStatusByTime();
-    }, 60 * 1000); // 1분마다 체크
+    }, 60 * 1000); // 1분마다 인증
 
     return () => clearInterval(interval);
-  }, [checkStatusByTime]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* =========================
      물 주기 성공
@@ -100,7 +98,9 @@ export default function CookeepsPage() {
   const handleFinalStart = () => {
     if (!selectedPlantData) return;
 
-    selectPlantInStore(PLANT_ID_TO_TYPE[selectedPlantData.id]);
+    const plantType = PLANT_ID_TO_TYPE[selectedPlantData.id]; // 추가
+
+    selectPlantInStore(plantType);
 
     if (!hasUsedFreeWater) {
       setActiveModal("free"); // 처음만
@@ -112,13 +112,6 @@ export default function CookeepsPage() {
   /* =========================
      이미지 프리로드
   ========================= */
-  useEffect(() => {
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(() => preloadPlantImages());
-    } else {
-      preloadPlantImages();
-    }
-  }, []);
 
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden relative">

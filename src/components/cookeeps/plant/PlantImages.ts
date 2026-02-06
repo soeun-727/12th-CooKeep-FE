@@ -1,4 +1,5 @@
 // src/components/cookeeps/plant/plantImages.ts
+// 이미지 바꿀때 public사용하는거로 바꿔서 수정시키기 그래도 느리다고 판단이 된다면
 import type { PlantType } from "../../../stores/useCookeepsStore";
 
 import emptyPlant from "../../../assets/cookeeps/plant/plant_before.svg";
