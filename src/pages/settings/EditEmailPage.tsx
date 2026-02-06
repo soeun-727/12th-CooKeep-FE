@@ -79,9 +79,9 @@ export default function EditEmailPage() {
               size="L"
               variant="black"
               className="mt-[48px]"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/settings")}
             >
-              로그인하기
+              완료
             </Button>
           </div>
         </div>

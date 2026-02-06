@@ -3,6 +3,10 @@ import PhoneSection from "./PhoneSection";
 import AccountSection from "./AccountSection";
 import SuccessSection from "./SuccessSection";
 import { useSignupStore } from "../../../stores/useSignupStore";
+import { signup } from "../../../api/auth";
+import { saveTokens } from "../../../utils/auth";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface Agreements {
   terms: boolean;
@@ -48,13 +52,61 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
   const isSignupEnabled =
     isVerified && isPasswordValid && isPasswordMatch && isRequiredAgreed;
 
-  const handleSubmit = () => {
-    if (!isSignupEnabled) {
+  const navigate = useNavigate();
+  const phoneNumber = useSignupStore((s) => s.phone);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    // 중복 클릭 + 조건 체크
+    if (!isSignupEnabled || loading) {
       setServerError("모든 필수 항목을 확인해주세요.");
       return;
     }
+
     setServerError(undefined);
-    setIsFinished(true);
+    setLoading(true); // 로딩 시작
+
+    try {
+      const res = await signup({
+        phoneNumber,
+        email,
+        password,
+        passwordConfirm,
+        marketingConsent: agreements.marketing,
+      });
+
+      // 토큰 저장
+      saveTokens({
+        accessToken: res.data.accessToken,
+        refreshToken: res.data.refreshToken,
+      });
+
+      // 성공 UI
+      setIsFinished(true);
+
+      // 명세: 회원가입 성공 → 무조건 온보딩
+      setTimeout(() => {
+        navigate("/onboarding");
+      }, 500);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const code = err.response?.data?.code;
+
+        if (code === "USER-002") {
+          setServerError("이미 사용 중인 전화번호입니다.");
+        } else if (code === "USER-003") {
+          setServerError("이미 사용 중인 이메일입니다.");
+        } else {
+          setServerError(
+            err.response?.data?.message ?? "회원가입 중 오류가 발생했습니다.",
+          );
+        }
+      } else {
+        setServerError("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setLoading(false); // 성공/실패 상관없이 반드시 실행
+    }
   };
 
   const updateAgreements = (next: Partial<Agreements>) => {
@@ -81,6 +133,7 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
             onSubmit={handleSubmit}
             isSignupEnabled={isSignupEnabled}
             setHideHeader={setHideHeader}
+            loading={loading}
           />
 
           {serverError && (

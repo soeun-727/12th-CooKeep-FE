@@ -32,6 +32,7 @@ export default function AgreementList({
             agreement={agreementPage}
             isChecked={agreements[agreementPage.key]}
             onBack={() => setAgreementPage(null)}
+            updateAgreements={updateAgreements}
             onConfirm={(key) => {
               updateAgreements({ [key]: true });
               setAgreementPage(null);

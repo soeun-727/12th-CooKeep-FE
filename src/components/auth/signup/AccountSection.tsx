@@ -12,6 +12,7 @@ import checkIcon from "../../../assets/signup/check.svg";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
 import AgreementPage from "./AgreementPage";
 import type { AgreementItem } from "../../../constants/agreements";
+import { blankCheck, grayCheck, greenCheck } from "../../../assets";
 
 interface Agreements {
   terms: boolean;
@@ -32,6 +33,7 @@ interface AccountSectionProps {
   onSubmit: () => void;
   isSignupEnabled: boolean;
   setHideHeader: (hide: boolean) => void;
+  loading: boolean;
 }
 
 export default function AccountSection({
@@ -46,6 +48,7 @@ export default function AccountSection({
   onSubmit,
   isSignupEnabled,
   setHideHeader,
+  loading,
 }: AccountSectionProps) {
   const [agreementPage, setAgreementPage] = useState<AgreementItem | null>(
     null,
@@ -83,6 +86,7 @@ export default function AccountSection({
         <AgreementPage
           agreement={agreementPage}
           isChecked={agreements[agreementPage.key]}
+          updateAgreements={updateAgreements}
           onBack={() => {
             setAgreementPage(null);
             setHideHeader(false);
@@ -192,70 +196,92 @@ export default function AccountSection({
                   />
 
                   {/* 약관 영역 */}
-                  <div className=" mt-5">
+                  <div className="mt-5">
                     {/* 전체 동의 */}
                     <label className="relative flex items-center px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="peer w-4 h-4 appearance-none border border-[#7D7D7D] rounded-sm checked:bg-[#1FC16F] cursor-pointer"
-                        checked={isAllChecked}
-                        onChange={(e) =>
-                          updateAgreements({
-                            terms: e.target.checked,
-                            privacy: e.target.checked,
-                            marketing: e.target.checked,
-                          })
-                        }
-                      />
-                      <span className="ml-[16px] typo-label text-[#202020]">
+                      <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          className="peer absolute inset-0 w-full h-full appearance-none cursor-pointer z-10"
+                          checked={isAllChecked}
+                          onChange={(e) =>
+                            updateAgreements({
+                              terms: e.target.checked,
+                              privacy: e.target.checked,
+                              marketing: e.target.checked,
+                            })
+                          }
+                        />
+                        <img
+                          src={blankCheck}
+                          alt="unchecked"
+                          className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
+                        />
+                        <img
+                          src={greenCheck}
+                          alt="checked"
+                          className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
+                        />
+                      </div>
+
+                      <span className="ml-[12px] typo-label text-[#202020]">
                         약관 전체동의
                       </span>
-                      <span className="absolute left-3 w-4 h-4 flex items-center justify-center pointer-events-none text-white text-lg font-bold peer-checked:visible invisible">
-                        ✓
-                      </span>
                     </label>
+
                     {/* 개별 약관 박스 */}
-                    <div className="w-full h-[138px] p-3 flex flex-col gap-[6px] ">
+                    <div className="w-full p-3 flex flex-col gap-[10px]">
                       {AGREEMENTS.map((item) => (
                         <div
                           key={item.key}
-                          className="flex items-center justify-between w-[337px] h-[24px] mx-auto"
+                          className="flex items-center justify-between w-full h-[24px]"
                         >
-                          <label className="flex items-center gap-4 cursor-pointer">
-                            {/* 체크박스만 조건부 */}
+                          <label className="flex items-center gap-3 cursor-pointer overflow-hidden">
                             {item.key !== "policy" ? (
-                              <input
-                                type="checkbox"
-                                className="w-4 h-4 accent-[#7D7D7D]"
-                                checked={agreements[item.key]}
-                                onChange={(e) =>
-                                  updateAgreements({
-                                    [item.key]: e.target.checked,
-                                  })
-                                }
-                              />
+                              <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                                <input
+                                  type="checkbox"
+                                  className="peer absolute inset-0 w-full h-full appearance-none cursor-pointer z-10"
+                                  checked={agreements[item.key]}
+                                  onChange={(e) =>
+                                    updateAgreements({
+                                      [item.key]: e.target.checked,
+                                    })
+                                  }
+                                />
+                                <img
+                                  src={blankCheck}
+                                  alt="unchecked"
+                                  className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
+                                />
+                                <img
+                                  src={grayCheck}
+                                  alt="checked"
+                                  className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
+                                />
+                              </div>
                             ) : (
-                              // ✔ 자리 차지용 더미 (레이아웃 유지)
-                              <span className="w-4 h-4 inline-block" />
+                              <span className="w-5 h-5 flex-shrink-0 inline-block" />
                             )}
 
-                            {/* 텍스트는 항상 동일 위치 */}
-                            <span className="typo-label text-[#7D7D7D]">
+                            <span className="typo-label text-[#7D7D7D] truncate">
                               {item.label}
                             </span>
                           </label>
 
-                          {/* 화살표는 항상 */}
                           <button
                             type="button"
+                            className="flex-shrink-0"
                             onClick={() => {
                               setAgreementPage(item);
                               setHideHeader(true);
                             }}
                           >
-                            {/* className="w-6 h-3 flex items-center justify-center" */}
-
-                            <img src={arrowIcon} alt="약관 보기 화살표" />
+                            <img
+                              src={arrowIcon}
+                              alt="약관 보기"
+                              className="w-6 h-6"
+                            />
                           </button>
                         </div>
                       ))}
@@ -267,11 +293,11 @@ export default function AccountSection({
                     <Button
                       type="submit"
                       size="L"
-                      disabled={!isSignupEnabled || !isPhoneVerified}
+                      disabled={!isSignupEnabled || !isPhoneVerified || loading}
                       onClick={onSubmit}
                       className=" mt-[8px] "
                     >
-                      회원가입
+                      {loading ? "가입 중..." : "회원가입"}
                     </Button>
                   </div>
                 </div>
