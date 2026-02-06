@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import SettingsInputItem from "../components/SettingsInputItem";
+import axios from "axios";
+import { updateNickname } from "../../../api/user";
 
 const MASKED_PASSWORD = "********";
 
@@ -46,10 +48,28 @@ export default function ProfileSection() {
     }
   }, [isEditingNickname]);
 
-  const handleNicknameSave = () => {
+  const handleNicknameSave = async () => {
     if (!account.nickname.trim() || isNicknameError) return;
-    // TODO: 닉네임 변경 API
-    setIsEditingNickname(false);
+
+    try {
+      await updateNickname(account.nickname);
+
+      setIsEditingNickname(false);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const code = err.response?.data?.code;
+
+        if (code === "DUPLICATE_NICKNAME") {
+          alert("이미 사용 중인 닉네임입니다.");
+        } else if (code === "UNAUTHORIZED") {
+          alert("로그인이 필요합니다.");
+        } else {
+          alert("닉네임 변경 중 오류가 발생했습니다.");
+        }
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+      }
+    }
   };
 
   return (
