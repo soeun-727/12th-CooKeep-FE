@@ -1,9 +1,8 @@
 import Button from "../../ui/Button";
-// import { useNavigate } from "react-router-dom";
 import ExampleNotification from "./ExampleNotification";
 import char from "../../../assets/character/noti_char.svg";
-import api from "../../../api/axios";
 import { useState } from "react";
+import { updatePushConsent } from "../../../api/user";
 
 const EXAMPLE_DATA = [
   {
@@ -34,10 +33,11 @@ interface Props {
 export default function Notification({ onNext }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const INFINITE_DATA = [...EXAMPLE_DATA, ...EXAMPLE_DATA];
+
   const handleAgreePush = async () => {
     setIsLoading(true);
     try {
-      await api.patch("/api/users/me/onboarding/push");
+      await updatePushConsent(true);
       console.log("알림 설정 업데이트 성공 (PATCH)");
     } catch (error) {
       console.error("알림 설정 실패:", error);
@@ -46,6 +46,7 @@ export default function Notification({ onNext }: Props) {
       onNext();
     }
   };
+
   const handleSkip = () => {
     onNext();
   };

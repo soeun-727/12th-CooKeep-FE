@@ -5,7 +5,7 @@ import Button from "../../ui/Button";
 import illustration from "../../../assets/character/default_char.svg";
 import shadow from "../../../assets/character/char_shadow.svg";
 import AgreementList from "./AgreementList";
-import api from "../../../api/axios";
+import { updatePushConsent } from "../../../api/user";
 
 export default function SimpleLoginAgreement() {
   const navigate = useNavigate();
@@ -16,13 +16,11 @@ export default function SimpleLoginAgreement() {
     marketing: false,
     policy: true,
   });
+
   const handleStart = async () => {
     setIsLoading(true);
     try {
-      await api.patch("/api/users/me/onboarding/push", {
-        marketingConsent: agreements.marketing,
-      });
-
+      await updatePushConsent(agreements.marketing);
       console.log("약관 동의 저장 성공");
       navigate("/onboarding");
     } catch (error) {
