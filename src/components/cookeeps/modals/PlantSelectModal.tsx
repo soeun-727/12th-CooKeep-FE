@@ -25,8 +25,7 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center">
-      {/* backdrop: 클릭 시 닫히도록 수정 */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40" />
 
       {/* 모달 영역 */}
       <div className="relative gap-4 w-70 h-72 bg-white rounded-[10px] flex flex-col items-center pt-[35px] pb-[25px] px-7">
@@ -38,6 +37,7 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
             <button
               key={plant.id}
               type="button"
+              disabled={plant.isHarvested}
               onClick={() => setSelectedId(plant.id)}
               className="flex flex-col items-center group transition-all"
             >
