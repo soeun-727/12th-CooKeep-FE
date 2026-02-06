@@ -12,6 +12,23 @@ export default function LoginFooter() {
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&prompt=consent`;
     window.location.href = KAKAO_AUTH_URL;
   };
+
+  const handleGoogleLogin = () => {
+    const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+
+    const GOOGLE_AUTH_URL =
+      `https://accounts.google.com/o/oauth2/v2/auth` +
+      `?client_id=${CLIENT_ID}` +
+      `&redirect_uri=${REDIRECT_URI}` +
+      `&response_type=code` +
+      `&scope=openid email profile` +
+      `&access_type=offline` +
+      `&prompt=consent`;
+
+    window.location.href = GOOGLE_AUTH_URL;
+  };
+
   return (
     <>
       {/* 하단 메뉴 */}
@@ -34,7 +51,10 @@ export default function LoginFooter() {
 
       <div className="flex flex-col items-center justify-center gap-3 mt-7">
         {/* 간편 로그인 미구현  */}
-        <img src={Google} alt="구글 로고" className="w-50" />
+        <button onClick={handleGoogleLogin}>
+          <img src={Google} alt="구글 로고" className="w-50" />
+        </button>
+
         <button onClick={handleKakaoLogin}>
           <img src={Kakao} alt="카카오 로고" className="w-50" />
         </button>
