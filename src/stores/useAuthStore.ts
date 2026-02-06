@@ -1,19 +1,40 @@
 import { create } from "zustand";
+import { saveTokens } from "../utils/auth";
+
+// 1. 카카오 로그인 시 받는 데이터 구조 정의
+interface KakaoLoginPayload {
+  userId: number;
+  accessToken: string;
+  refreshToken: string;
+  nextStep: "TERMS" | "ONBOARDING" | "HOME" | string; // 백엔드 값에 따라 유연하게 처리
+  userStatus: string; // "ACTIVE", "BLOCKED" 등 백엔드에서 주는 값
+}
 
 interface LoginResponse {
   success: boolean;
   isFirst: boolean;
 }
+
 interface AuthState {
   phoneNumber: string;
   password: string;
-  isValidPhone: boolean; // 함수가 아닌 boolean 값으로 변경
+  isValidPhone: boolean;
   isValidPW: boolean;
   canLogin: boolean;
   isSubmitting: boolean;
+  isLoggedIn: boolean;
+
+  // 2. 추가된 유저 정보 상태
+  userId: number | null;
+  userStatus: string | null;
+  nextStep: string | null;
+
   setPhoneNumber: (phone: string) => void;
   setPassword: (pw: string) => void;
   login: () => Promise<LoginResponse | null>;
+  // 3. 카카오 로그인 액션 업데이트
+  loginWithKakao: (payload: KakaoLoginPayload) => void;
+  logout: () => void; // 로그아웃 기능도 있으면 좋아요!
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -23,13 +44,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isValidPW: false,
   canLogin: false,
   isSubmitting: false,
+  isLoggedIn: false,
+  userId: null,
+  userStatus: null,
+  nextStep: null,
 
   setPhoneNumber: (phoneNumber) => {
     const isValidPhone = /^01[0-9]{8,9}$/.test(phoneNumber);
     set((state) => ({
       phoneNumber,
       isValidPhone,
-      // 폰 번호를 바꿀 때마다 로그인 가능 여부 업데이트
       canLogin: isValidPhone && state.isValidPW,
     }));
   },
@@ -39,7 +63,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set((state) => ({
       password,
       isValidPW,
-      // 비밀번호를 바꿀 때마다 로그인 가능 여부 업데이트
       canLogin: state.isValidPhone && isValidPW,
     }));
   },
@@ -49,26 +72,41 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!canLogin) return null;
 
     set({ isSubmitting: true });
-    console.log("로그인 요청 중...");
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // 2. 임시 데이터 (Mock) 검증
     if (phoneNumber === "01012341234" && password === "test1234") {
-      set({ isSubmitting: false });
-      console.log("로그인 성공!");
-      // alert("로그인에 성공했습니다!");
-      // 여기에 페이지 이동 로직이나 전역 로그인 상태(isLoggedIn) 변경 추가
-
-      // 임시로 '01012341234'인 경우만 최초 로그인(/onboarding)이라고 가정
-      // 실제로는 서버에서 { isFirst: true } 같은 값을 내려주게 됩니다.
+      set({ isSubmitting: false, isLoggedIn: true });
       const isFirstLogin = phoneNumber === "01012341234";
-
       return { success: true, isFirst: isFirstLogin };
     } else {
       set({ isSubmitting: false });
-      console.error("로그인 실패: 정보 불일치");
       alert("휴대폰 번호 또는 비밀번호가 일치하지 않습니다.");
       return { success: false, isFirst: false };
     }
+  },
+
+  // 4. 카카오 로그인 정보 저장 로직 강화
+  loginWithKakao: (data) => {
+    saveTokens({
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    });
+
+    set({
+      isLoggedIn: true,
+      userId: data.userId,
+      userStatus: data.userStatus, // 상태 저장
+      nextStep: data.nextStep, // 단계 저장
+    });
+  },
+
+  logout: () => {
+    // 로그아웃 시 토큰 및 유저 정보 초기화
+    set({
+      isLoggedIn: false,
+      userId: null,
+      userStatus: null,
+      nextStep: null,
+    });
   },
 }));

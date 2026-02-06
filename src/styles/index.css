@@ -145,8 +145,14 @@ body,
       transform: translateY(-50%);
     }
   }
-
-  /* 아래로 내려가는 애니메이션을 원한다면 이 버전을 쓰세요 */
+  @keyframes roll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
   @keyframes roll-down {
     0% {
       transform: translateY(-50%);
@@ -155,6 +161,15 @@ body,
       transform: translateY(0);
     }
   }
+  @keyframes float-loop {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-25px);
+    } /* 위로 15px 이동 */
+  }
 
   .animate-roll {
     animation: roll 10s linear infinite;
@@ -162,6 +177,17 @@ body,
 
   .animate-roll-down {
     animation: roll-down 20s linear infinite;
+  }
+  .animate-roll-left {
+    display: flex;
+    width: max-content;
+    gap: 0;
+    white-space: nowrap;
+    animation: roll-left 15s linear infinite;
+    will-change: transform;
+  }
+  .animate-float {
+    animation: float-loop 3s ease-in-out infinite;
   }
 }
 

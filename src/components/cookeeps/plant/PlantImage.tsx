@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import {
   EMPTY_PLANT_IMAGE,
@@ -9,7 +10,9 @@ interface PlantImageProps {
   overridePlantStage?: number;
 }
 
-export default function PlantImage({ overridePlantStage }: PlantImageProps) {
+export default memo(function PlantImage({
+  overridePlantStage,
+}: PlantImageProps) {
   const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
   const plantStage = useCookeepsStore((s) => s.plantStage);
 
@@ -25,8 +28,10 @@ export default function PlantImage({ overridePlantStage }: PlantImageProps) {
       <img
         src={imageSrc}
         alt="plant"
+        loading="lazy"
+        decoding="async"
         className="w-full h-full object-contain"
       />
     </div>
   );
-}
+});
