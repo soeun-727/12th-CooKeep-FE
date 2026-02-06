@@ -5,16 +5,33 @@ import Button from "../../ui/Button";
 import illustration from "../../../assets/character/default_char.svg";
 import shadow from "../../../assets/character/char_shadow.svg";
 import AgreementList from "./AgreementList";
+import api from "../../../api/axios";
 
 export default function SimpleLoginAgreement() {
   const navigate = useNavigate();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [agreements, setAgreements] = useState<Record<string, boolean>>({
     terms: false,
     privacy: false,
     marketing: false,
     policy: true,
   });
+  const handleStart = async () => {
+    setIsLoading(true);
+    try {
+      await api.patch("/api/users/me/onboarding/push", {
+        marketingConsent: agreements.marketing,
+      });
+
+      console.log("약관 동의 저장 성공");
+      navigate("/onboarding");
+    } catch (error) {
+      console.error("약관 동의 저장 실패:", error);
+      alert("설정 저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -51,8 +68,8 @@ export default function SimpleLoginAgreement() {
           <Button
             size="L"
             variant="green"
-            disabled={!(agreements.terms && agreements.privacy)}
-            onClick={() => navigate("/onboarding")}
+            disabled={!(agreements.terms && agreements.privacy) || isLoading}
+            onClick={handleStart}
             className="mt-[8px]"
           >
             시작하기
