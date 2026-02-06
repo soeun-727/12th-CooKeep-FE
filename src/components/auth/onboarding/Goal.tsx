@@ -8,15 +8,12 @@ const goals = [
 ];
 
 interface GoalProps {
-  selectedGoal: { id: string; title: string }; // 부모로부터 받은 현재 선택된 목표
-  onSelect: (goal: { id: string; title: string }) => void; // 부모의 상태를 변경하는 함수
+  selectedGoal: { id: string; title: string };
+  onSelect: (goal: { id: string; title: string }) => void;
 }
 
 export default function Goal({ selectedGoal, onSelect }: GoalProps) {
-  // 열림/닫힘 상태는 UI적인 요소이므로 컴포넌트 내부에서 관리해도 무방합니다.
   const [isOpen, setIsOpen] = useState(false);
-
-  // 헤더에 표시할 텍스트 (부모에서 내려준 selectedGoal 사용)
   const currentGoalTitle = selectedGoal.title;
 
   return (
