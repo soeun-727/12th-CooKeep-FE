@@ -4,7 +4,7 @@ import { useAuthStore } from "../../../stores/useAuthStore";
 
 export default function GoogleLoginCallback() {
   const navigate = useNavigate();
-  const loginWithKakao = useAuthStore((state) => state.loginWithKakao);
+  const loginSocial = useAuthStore((state) => state.loginSocial);
   const hasCalledAPI = useRef(false);
 
   useEffect(() => {
@@ -18,16 +18,14 @@ export default function GoogleLoginCallback() {
 
       try {
         const res = await fetch(
-          `/api/auth/login/google?code=${code}&redirect_uri=${encodeURIComponent(
-            REDIRECT_URI,
-          )}`,
+          `https://api.cookeep.store/api/auth/login/google?code=${code}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`,
         );
 
         if (!res.ok) throw new Error();
 
         const { data } = await res.json();
 
-        loginWithKakao({
+        loginSocial({
           userId: data.userId,
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
@@ -50,7 +48,7 @@ export default function GoogleLoginCallback() {
     };
 
     handleLogin();
-  }, [navigate, loginWithKakao]);
+  }, [navigate, loginSocial]);
 
   return (
     <div className="flex h-screen items-center justify-center">
