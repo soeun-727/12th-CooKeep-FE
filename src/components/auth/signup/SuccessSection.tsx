@@ -32,7 +32,7 @@ export default function SuccessSection() {
           size="L"
           className="w-[361px]"
           variant="green"
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/onboarding")}
         >
           시작하기
         </Button>

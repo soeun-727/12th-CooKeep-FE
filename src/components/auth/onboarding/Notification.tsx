@@ -1,5 +1,5 @@
 import Button from "../../ui/Button";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import ExampleNotification from "./ExampleNotification";
 import char from "../../../assets/character/noti_char.svg";
 
@@ -25,14 +25,18 @@ const EXAMPLE_DATA = [
   },
 ];
 
-export default function Notification() {
-  const navigate = useNavigate();
+interface Props {
+  onNext: () => void;
+}
 
-  const handleFinish = () => {
-    // 알림 권한 요청 로직이 들어갈 자리
-    // 이후 메인 대시보드로 이동
-    navigate("/fridge");
-  };
+export default function Notification({ onNext }: Props) {
+  // const navigate = useNavigate();
+
+  // const handleFinish = () => {
+  //   // 알림 권한 요청 로직이 들어갈 자리
+  //   // 이후 메인 대시보드로 이동
+  //   navigate("/fridge");
+  // };
   const INFINITE_DATA = [...EXAMPLE_DATA, ...EXAMPLE_DATA];
 
   return (
@@ -66,10 +70,10 @@ export default function Notification() {
           <div className="flex justify-end">
             <img src={char} className="w-[95px] mt-[35px] mb-[26.5px]" />
           </div>
-          <Button size="S" variant="black" onClick={handleFinish}>
+          <Button size="S" variant="black" onClick={onNext}>
             알림을 켤게요
           </Button>
-          <Button size="S" className="!bg-gray-300" onClick={handleFinish}>
+          <Button size="S" className="!bg-gray-300" onClick={onNext}>
             괜찮아요
           </Button>
         </div>
