@@ -20,6 +20,7 @@ export default function ProfileSection() {
     email: "",
   });
 
+  const isSocialLogin = !account.phone;
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +31,7 @@ export default function ProfileSection() {
       // 나중에 API
       const data = {
         nickname: "밥말아먹는 수육",
-        phone: "010-1234-5678",
+        phone: "",
         email: "abcdef@gmail.com",
       };
       setAccount(data);
@@ -58,7 +59,12 @@ export default function ProfileSection() {
         <div className="flex flex-col h-20 gap-2 w-full relative">
           <span className="typo-body text-[#202020] px-3">닉네임</span>
 
-          <div className="flex items-center justify-between w-full h-[44px] px-3 border border-[#DDD] rounded-[6px]">
+          <div
+            className={`
+            flex items-center justify-between w-full h-[44px] px-3 border rounded-[6px] transition-colors
+            ${isNicknameError ? "border-[#D91F1F]" : "border-[#DDD]"}
+          `}
+          >
             {isEditingNickname ? (
               <>
                 <input
@@ -74,6 +80,7 @@ export default function ProfileSection() {
                   className="
                     flex-1
                     h-full
+                    w-45
                     outline-none
                     typo-body-sm
                     text-[#202020]
@@ -89,8 +96,6 @@ export default function ProfileSection() {
                     rounded-full
                     bg-[#202020]
                     text-white
-                    disabled:bg-[#DDD]
-                    disabled:text-[#999]
                     typo-caption
                     font-medium
                   "
@@ -133,9 +138,10 @@ export default function ProfileSection() {
 
         <SettingsInputItem
           label="휴대전화"
-          value={account.phone}
+          value={isSocialLogin ? " " : account.phone}
           buttonText="휴대폰 번호 변경"
           to="/settings/phone"
+          disabled={isSocialLogin}
         />
 
         <SettingsInputItem
@@ -148,9 +154,10 @@ export default function ProfileSection() {
         {/* 비밀번호는 항상 고정 */}
         <SettingsInputItem
           label="비밀번호"
-          value={MASKED_PASSWORD}
+          value={isSocialLogin ? " " : MASKED_PASSWORD}
           buttonText="비밀번호 변경"
           to="/settings/password"
+          disabled={isSocialLogin}
         />
       </div>
     </section>
