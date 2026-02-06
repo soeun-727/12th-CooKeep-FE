@@ -23,6 +23,8 @@ export default function ProfileSection() {
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
 
+  const isNicknameError = account.nickname.length > MAX_NICKNAME_LENGTH;
+
   useEffect(() => {
     const fetchAccount = async () => {
       // 나중에 API
@@ -44,9 +46,7 @@ export default function ProfileSection() {
   }, [isEditingNickname]);
 
   const handleNicknameSave = () => {
-    if (!account.nickname.trim()) return;
-    if (account.nickname.length > MAX_NICKNAME_LENGTH) return;
-
+    if (!account.nickname.trim() || isNicknameError) return;
     // TODO: 닉네임 변경 API
     setIsEditingNickname(false);
   };
@@ -55,7 +55,7 @@ export default function ProfileSection() {
     <section className="px-4">
       <div className="flex flex-col gap-[22px]">
         {/* ===== 닉네임 (inline edit) ===== */}
-        <div className="flex flex-col gap-2 h-[80px] w-full">
+        <div className="flex flex-col h-20 gap-2 w-full relative">
           <span className="typo-body text-[#202020] px-3">닉네임</span>
 
           <div className="flex items-center justify-between w-full h-[44px] px-3 border border-[#DDD] rounded-[6px]">
@@ -66,9 +66,6 @@ export default function ProfileSection() {
                   value={account.nickname}
                   onChange={(e) => {
                     const value = e.target.value;
-
-                    if (value.length > MAX_NICKNAME_LENGTH) return;
-
                     setAccount((prev) => ({
                       ...prev,
                       nickname: value,
@@ -84,10 +81,7 @@ export default function ProfileSection() {
                 />
                 <button
                   onClick={handleNicknameSave}
-                  disabled={
-                    !account.nickname.trim() ||
-                    account.nickname.length > MAX_NICKNAME_LENGTH
-                  }
+                  disabled={!account.nickname.trim() || isNicknameError}
                   className="
                     w-[115px]
                     px-[18px]
@@ -96,7 +90,7 @@ export default function ProfileSection() {
                     bg-[#202020]
                     text-white
                     disabled:bg-[#DDD]
-    disabled:text-[#999]
+                    disabled:text-[#999]
                     typo-caption
                     font-medium
                   "
@@ -126,6 +120,13 @@ export default function ProfileSection() {
                   닉네임 변경
                 </button>
               </>
+            )}
+          </div>
+          <div className="absolute top-19 px-2">
+            {isEditingNickname && isNicknameError && (
+              <span className="text-[#D91F1F] typo-caption leading-0">
+                닉네임은 10글자 이하로 입력해주세요
+              </span>
             )}
           </div>
         </div>
