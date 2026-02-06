@@ -1,6 +1,5 @@
 // src/components/auth/AuthHeader.tsx
 import { mainLogo } from "../../assets";
-import Logo from "../../assets/Logo_black.svg";
 
 const AuthHeader = () => {
   return (
