@@ -34,7 +34,12 @@ export default function Footer({
           </Button>
         )}
 
-        <button className="typo-caption text-gray-500" onClick={onSkip}>
+        <button
+          className={`typo-caption text-gray-500 transition-opacity ${
+            isLastStep ? "invisible" : "visible"
+          }`}
+          onClick={onSkip}
+        >
           질문 건너뛰기
         </button>
       </div>

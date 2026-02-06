@@ -46,7 +46,13 @@ export default function Onboarding() {
   };
 
   const skipStep = () => {
-    nextStep();
+    if (step === 2) {
+      handleSaveOnboarding();
+    } else if (step === 3) {
+      handleSaveOnboarding();
+    } else {
+      nextStep();
+    }
   };
 
   const handleSaveOnboarding = async () => {
