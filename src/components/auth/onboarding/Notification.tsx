@@ -1,7 +1,8 @@
 import Button from "../../ui/Button";
-// import { useNavigate } from "react-router-dom";
 import ExampleNotification from "./ExampleNotification";
 import char from "../../../assets/character/noti_char.svg";
+import { useState } from "react";
+import { updatePushConsent } from "../../../api/user";
 
 const EXAMPLE_DATA = [
   {
@@ -30,14 +31,25 @@ interface Props {
 }
 
 export default function Notification({ onNext }: Props) {
-  // const navigate = useNavigate();
-
-  // const handleFinish = () => {
-  //   // 알림 권한 요청 로직이 들어갈 자리
-  //   // 이후 메인 대시보드로 이동
-  //   navigate("/fridge");
-  // };
+  const [isLoading, setIsLoading] = useState(false);
   const INFINITE_DATA = [...EXAMPLE_DATA, ...EXAMPLE_DATA];
+
+  const handleAgreePush = async () => {
+    setIsLoading(true);
+    try {
+      await updatePushConsent(true);
+      console.log("알림 설정 업데이트 성공 (PATCH)");
+    } catch (error) {
+      console.error("알림 설정 실패:", error);
+    } finally {
+      setIsLoading(false);
+      onNext();
+    }
+  };
+
+  const handleSkip = () => {
+    onNext();
+  };
 
   return (
     <>
@@ -70,10 +82,20 @@ export default function Notification({ onNext }: Props) {
           <div className="flex justify-end">
             <img src={char} className="w-[95px] mt-[35px] mb-[26.5px]" />
           </div>
-          <Button size="S" variant="black" onClick={onNext}>
+          <Button
+            size="S"
+            variant="black"
+            onClick={handleAgreePush}
+            disabled={isLoading}
+          >
             알림을 켤게요
           </Button>
-          <Button size="S" className="!bg-gray-300" onClick={onNext}>
+          <Button
+            size="S"
+            className="!bg-gray-300"
+            onClick={handleSkip}
+            disabled={isLoading}
+          >
             괜찮아요
           </Button>
         </div>

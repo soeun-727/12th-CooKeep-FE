@@ -12,7 +12,7 @@ const MainHeader = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
       <div className="mx-auto max-w-[450px] pointer-events-auto">
-        <div className="h-[48px] flex items-start justify-between pb-1">
+        <div className="h-[48px] flex items-start justify-between pb-1 bg-[#FAFAFA]">
           <div className="flex-1 flex p-1">
             <img
               src={mainLogo}

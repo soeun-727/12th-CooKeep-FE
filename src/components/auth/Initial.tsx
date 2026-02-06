@@ -1,51 +1,68 @@
-import icon from "../../assets/initial/icon.svg";
-import logo from "../../assets/initial/Logo.png";
+import {
+  mainLogo,
+  congratsChar,
+  cookingChar,
+  servingChar,
+  confetti,
+} from "../../assets";
 import Button from "../ui/Button";
 import { useNavigate } from "react-router-dom";
+
+const CHAR = [servingChar, congratsChar, cookingChar];
+const INFINITE_CHAR = [...CHAR, ...CHAR];
 
 export default function Initial() {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col bg-[var(--color-green-deep)]">
+    <div className="flex flex-col items-center bg-[#FAFAFA] h-full">
+      <div className="absolute top-12 left-0 right-0 flex justify-center pointer-events-none z-0">
+        <img src={confetti} className="w-[326px]" />
+      </div>
       {/* 상단 텍스트 영역 */}
-      <img
-        src={icon}
-        alt="Frame 아이콘"
-        className="w-[18.5px] mt-[84px] ml-[169px]"
-      />
-      <div className="ml-8">
-        <h1 className="typo-h1 flex gap-1">
-          <span className="text-neutral-800">재료</span>
-          <span className="text-white">관리부터,</span>
+      <div className="flex flex-col mt-34 items-center">
+        <h1 className="typo-h2 flex gap-1">
+          <span className="text-neutral-800">재료 관리</span>
+          <span className="text-(--color-green-deep)">부터,</span>
         </h1>
-
-        <h1 className="typo-h1 flex gap-1">
+        <h1 className="typo-h2 flex gap-1">
           <span className="text-neutral-800">레시피 추천</span>
-          <span className="text-white">까지!</span>
+          <span className="text-(--color-green-deep)">까지!</span>
         </h1>
       </div>
 
       {/* 로고 */}
-      <div className="mt-3 ml-8">
-        <img src={logo} alt="로고" className="w-[255px]" />
+      <div className="mt-[42px]">
+        <img src={mainLogo} alt="로고" className="w-41" />
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-4">
+      {/* 애니메이션 */}
+      <div className="relative flex mt-13 w-full overflow-hidden">
+        <div className="flex gap-4 h-50 items-end animate-roll-left">
+          {INFINITE_CHAR.map((char, index) => (
+            <img
+              key={index}
+              src={char}
+              alt={`character-${index}`}
+              className="w-[186px] flex-shrink-0"
+            />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col items-center justify-center gap-3">
         {/* 버튼 영역 */}
-        <div className="mt-[385px]">
-          <Button size="L" onClick={() => navigate("/login")}>
+        <div className="mt-25">
+          <Button variant="green" size="L" onClick={() => navigate("/login")}>
             시작하기
           </Button>
         </div>
-
         {/* 로그인 영역 */}
-        <div className="flex gap-4">
-          <span className="typo-caption text-white">
+        <div className="flex gap-4 mb-[34px]">
+          <span className="typo-caption text-zinc-500">
             아직 계정이 없으신가요?
           </span>
           <button
             onClick={() => navigate("/signup")}
-            className="typo-caption text-white mb-[34px]"
+            className="typo-caption text-zinc-500"
           >
             회원가입
           </button>
