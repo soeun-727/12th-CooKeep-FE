@@ -6,6 +6,7 @@ interface FooterProps {
   isFirstStep: boolean;
   isLastStep: boolean;
   isValid: boolean;
+  isLoading: boolean;
 }
 
 export default function Footer({
@@ -15,6 +16,7 @@ export default function Footer({
   isFirstStep,
   isLastStep,
   isValid,
+  isLoading,
 }: FooterProps) {
   return (
     <div className="fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
@@ -23,13 +25,18 @@ export default function Footer({
           size="S"
           variant="green"
           onClick={() => isValid && onNext()}
-          disabled={!isValid}
+          disabled={!isValid || isLoading}
         >
           {isLastStep ? "쿠킵 시작하기" : "다음"}
         </Button>
 
         {!isFirstStep && (
-          <Button size="S" className="bg-gray-300" onClick={onPrev}>
+          <Button
+            size="S"
+            className="bg-gray-300"
+            disabled={isLoading}
+            onClick={onPrev}
+          >
             이전
           </Button>
         )}

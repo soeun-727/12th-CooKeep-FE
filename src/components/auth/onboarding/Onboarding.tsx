@@ -132,6 +132,7 @@ export default function Onboarding() {
           isFirstStep={step === 0}
           isLastStep={step === 3}
           isValid={getIsValid()}
+          isLoading={isLoading}
         />
       </div>
     </>
