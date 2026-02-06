@@ -56,7 +56,7 @@ export default function Initial() {
           </Button>
         </div>
         {/* 로그인 영역 */}
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-[34px]">
           <span className="typo-caption text-zinc-500">
             아직 계정이 없으신가요?
           </span>
