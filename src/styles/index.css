@@ -183,7 +183,7 @@ body,
     width: max-content;
     gap: 0;
     white-space: nowrap;
-    animation: roll-left 15s linear infinite;
+    animation: roll-left 10s linear infinite;
     will-change: transform;
   }
   .animate-float {

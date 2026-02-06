@@ -41,13 +41,14 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen">
+    <div className="bg-[#FAFAFA]">
       {showHeader && <MainHeader />}
 
       <main
         className={`
           ${showHeader ? "pt-[48px]" : ""} 
           ${showTabBar ? "pb-[90px]" : ""}
+          min-h-[100dvh]
         `}
       >
         <Outlet />
