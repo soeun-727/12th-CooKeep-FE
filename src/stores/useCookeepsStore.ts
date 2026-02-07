@@ -4,6 +4,7 @@ import {
   deleteMyPlant,
   getMyPlants,
   registerMyPlant,
+  reviveMyPlant,
   waterMyPlant,
 } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
@@ -215,16 +216,37 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   },
 
   // 회복하기
-  recoverPlant: () => {
-    const { cookie } = get();
-    if (cookie < 5) return;
+  // recoverPlant: () => {
+  //   const { cookie } = get();
+  //   if (cookie < 5) return;
 
-    set({
-      cookie: cookie - 5,
-      status: "normal",
-      lastWateredAt: new Date(),
-      hasShownWilting: false,
-    });
+  //   set({
+  //     cookie: cookie - 5,
+  //     status: "normal",
+  //     lastWateredAt: new Date(),
+  //     hasShownWilting: false,
+  //   });
+  // },
+
+  recoverPlant: async () => {
+    const { currentPlant } = get();
+    if (!currentPlant) return;
+
+    try {
+      await reviveMyPlant(currentPlant.userPlantId);
+
+      // 핵심: 서버 기준으로 다시 동기화
+      await get().fetchMyPlants();
+
+      // UI 보조 상태 초기화
+      set({
+        status: "normal",
+        lastWateredAt: new Date(),
+        hasShownWilting: false,
+      });
+    } catch (e) {
+      console.error("식물 회복 실패:", e);
+    }
   },
 
   checkStatusByTime: () => {

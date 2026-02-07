@@ -20,3 +20,8 @@ export const deleteMyPlant = async (userPlantId: number) => {
   const res = await axios.delete(`/api/my-plants/${userPlantId}`);
   return res.data;
 };
+
+export const reviveMyPlant = async (userPlantId: number) => {
+  const res = await axios.post(`/api/my-plants/${userPlantId}/revive`);
+  return res.data;
+};
