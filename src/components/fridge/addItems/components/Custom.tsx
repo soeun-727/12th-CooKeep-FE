@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAddIngredientStore } from "../../../../stores/useAddIngredientStore";
 import editIcon from "../../../../assets/recipe/rename.svg";
+import { CATEGORY_ID_MAP } from "../../../../constants/category";
+import {
+  registerCustomIngredient,
+  type CategoryType,
+  type CustomIngredientRequest,
+} from "../../../../api/ingredient";
 interface CustomProps {
   isOpen: boolean;
   onClose: () => void;
-  // 수정: 어떤 카테고리가 선택되었는지 ID를 인자로 넘겨줍니다.
   onConfirm: (categoryId: number) => void;
   categories: { id: number; name: string; image: string }[];
   confirmText?: string;
@@ -23,6 +28,32 @@ const Custom: React.FC<CustomProps> = ({
   );
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    if (selectedCategoryId === null) return;
+
+    setIsLoading(true);
+    try {
+      const requestData: CustomIngredientRequest = {
+        name: searchTerm,
+        expirationDays: 5,
+        storage: "FRIDGE",
+        category: CATEGORY_ID_MAP[selectedCategoryId] as CategoryType,
+      };
+      const response = await registerCustomIngredient(requestData);
+      onConfirm(response.data.customIngredientId);
+
+      setSelectedCategoryId(null);
+      setIsEditing(false);
+      onClose();
+    } catch (error) {
+      console.error("식재료 등록 실패:", error);
+      alert("식재료 등록 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -32,14 +63,6 @@ const Custom: React.FC<CustomProps> = ({
 
   if (!isOpen) return null;
 
-  const handleConfirm = () => {
-    if (selectedCategoryId !== null) {
-      onConfirm(selectedCategoryId);
-      setSelectedCategoryId(null);
-      setIsEditing(false);
-      onClose();
-    }
-  };
   const finishEditing = () => {
     if (searchTerm.trim() === "") {
       setSearchTerm("이름 없음");
@@ -114,7 +137,7 @@ const Custom: React.FC<CustomProps> = ({
 
         <button
           onClick={handleConfirm}
-          disabled={selectedCategoryId === null}
+          disabled={selectedCategoryId === null || isLoading}
           className={`typo-label w-full h-11 text-white rounded-[10px] transition-colors
             ${selectedCategoryId !== null ? "bg-[var(--color-green-deep)]" : "bg-zinc-300 cursor-not-allowed"}`}
         >
