@@ -3,6 +3,7 @@ import { groundImg, refreshIcon, renameIcon } from "../../../assets";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ProfileEditModal from "../modals/ProfileEditModal";
+import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -10,11 +11,19 @@ export default function Profile() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const goal = location.state?.updatedGoal || "주 3회 요리하기!";
   //사용자 정보 (나중에 API 연동 시 상태로 관리)
-  const [nickname, setNickname] = useState("요리잘하는 쿠쿠");
+  const [nickname] = useState("요리잘하는 쿠쿠");
   const daysCookeep = "365";
-  const handleSaveProfile = (newNickname: string, selectedPlant: string) => {
-    console.log("저장될 데이터:", { newNickname, selectedPlant });
-    setNickname(newNickname);
+  // const handleSaveProfile = (newNickname: string, selectedPlant: string) => {
+  //   console.log("저장될 데이터:", { newNickname, selectedPlant });
+  //   setNickname(newNickname);
+  //   setIsEditModalOpen(false);
+  // };
+
+  const setProfilePlant = useCookeepsStore((s) => s.setProfilePlant);
+  const currentPlant = useCookeepsStore((s) => s.currentPlant);
+
+  const handleSaveProfile = async (userPlantId: number) => {
+    await setProfilePlant(userPlantId);
     setIsEditModalOpen(false);
   };
 
@@ -28,13 +37,17 @@ export default function Profile() {
           {/* 식물 사진 및 수정 버튼 */}
           <div className="relative inline-block overflow-visible">
             <img
-              src={groundImg}
+              src={currentPlant?.imageUrl ?? groundImg}
               alt="profileBackground"
               className="w-[155px] p-6 rounded-full object-cover"
             />
+
             <button
               className="absolute bottom-6 right-6 transition-transform active:scale-90"
-              onClick={() => setIsEditModalOpen(true)}
+              onClick={() => {
+                console.log("프로필 수정 버튼 클릭됨");
+                setIsEditModalOpen(true);
+              }}
             >
               <img src={refreshIcon} alt="refresh" className="w-[22px]" />
             </button>
@@ -68,9 +81,10 @@ export default function Profile() {
 
       {/* 프로필 수정 모달 (바텀 시트) */}
       <ProfileEditModal
+        key={currentPlant?.userPlantId}
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSave={() => handleSaveProfile}
+        onSave={handleSaveProfile}
       />
     </>
   );

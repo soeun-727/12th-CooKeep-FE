@@ -25,3 +25,8 @@ export const reviveMyPlant = async (userPlantId: number) => {
   const res = await axios.post(`/api/my-plants/${userPlantId}/revive`);
   return res.data;
 };
+
+export const setProfileMyPlant = async (userPlantId: number) => {
+  const res = await axios.patch(`/api/my-plants/${userPlantId}/profile`);
+  return res.data;
+};

@@ -5,6 +5,7 @@ import {
   getMyPlants,
   registerMyPlant,
   reviveMyPlant,
+  setProfileMyPlant,
   waterMyPlant,
 } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
@@ -58,6 +59,8 @@ interface CookeepsState {
   freeWaterPlant: () => void; // 무료물주기
 
   addCookie: () => void;
+
+  setProfilePlant: (userPlantId: number) => Promise<void>;
 
   // ✅ 테스트용
   // setLastWateredAtDaysAgo: (daysAgo: number) => void;
@@ -276,6 +279,13 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     }
   },
   addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
+
+  setProfilePlant: async (userPlantId: number) => {
+    await setProfileMyPlant(userPlantId);
+
+    // 서버 기준으로 다시 동기화
+    await get().fetchMyPlants();
+  },
 
   /* =========================
      테스트용: lastWateredAt 조작
