@@ -10,7 +10,8 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+    const hasBearer = token.startsWith("Bearer ");
+    config.headers.Authorization = hasBearer ? token : `Bearer ${token}`;
   }
   return config;
 });
@@ -18,21 +19,31 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isUnauthorized =
+      error.response?.status === 401 ||
+      error.response?.data?.code === "AUTH-001";
+
+    if (isUnauthorized && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
+        console.log("인증 실패 감지: 토큰 갱신을 시도합니다.");
         const newAccessToken = await refreshAccessToken();
 
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          const hasBearer = newAccessToken.startsWith("Bearer ");
+          originalRequest.headers.Authorization = hasBearer
+            ? newAccessToken
+            : `Bearer ${newAccessToken}`;
         }
 
         return api(originalRequest);
       } catch (refreshError) {
         console.error("세션이 만료되었습니다. 다시 로그인해주세요.");
         clearTokens();
-        window.location.href = "/login";
+        if (!window.location.pathname.includes("/login")) {
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       }
     }

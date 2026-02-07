@@ -19,7 +19,10 @@ import milk from "../../../assets/fridge/milk.svg";
 import Category from "./components/Category";
 import ItemsGrid from "./components/ItemsGrid";
 import AddItemFooter from "./AddItemFooter";
-import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
+import {
+  useAddIngredientStore,
+  type MasterItem,
+} from "../../../stores/useAddIngredientStore";
 import Custom from "./components/Custom";
 
 export default function AddItem() {
@@ -35,10 +38,40 @@ export default function AddItem() {
   } = useAddIngredientStore();
 
   useEffect(() => {
-    const mockHistory = [
-      { id: 101, name: "당근", image: veg, categoryId: 1 },
-      { id: 102, name: "사과", image: fruit, categoryId: 2 },
-      { id: 103, name: "삼겹살", image: meat, categoryId: 3 },
+    const mockHistory: MasterItem[] = [
+      {
+        id: 101,
+        name: "당근",
+        image: veg,
+        categoryId: 1,
+        type: "DEFAULT",
+        storageType: "FRIDGE",
+        unit: "COUNT",
+        expiration: "2025-02-15",
+        quantity: 1,
+      },
+      {
+        id: 102,
+        name: "사과",
+        image: fruit,
+        categoryId: 2,
+        type: "DEFAULT",
+        storageType: "FRIDGE",
+        unit: "COUNT",
+        expiration: "2025-02-15",
+        quantity: 1,
+      },
+      {
+        id: 103,
+        name: "삼겹살",
+        image: meat,
+        categoryId: 3,
+        type: "DEFAULT",
+        storageType: "FRIDGE",
+        unit: "COUNT",
+        expiration: "2025-02-15",
+        quantity: 1,
+      },
     ];
     setHistoryItems(mockHistory);
   }, [setHistoryItems]);
@@ -83,12 +116,18 @@ export default function AddItem() {
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           categories={TEMP_CATEGORY}
-          onConfirm={(categoryId) => {
+          onConfirm={(serverGeneratedId) => {
+            // 커스텀 재료 등록 성공 시 스토어에 추가
             toggleItem({
-              id: `custom-${Date.now()}`,
+              id: serverGeneratedId,
               name: searchTerm,
               image: elseIcon,
-              categoryId: categoryId,
+              categoryId: selectedCategoryId || 13,
+              type: "CUSTOM", // 반드시 CUSTOM으로 지정
+              storageType: "FRIDGE",
+              unit: "COUNT",
+              expiration: new Date().toISOString().split("T")[0],
+              quantity: 1,
             });
             setModalOpen(false);
           }}

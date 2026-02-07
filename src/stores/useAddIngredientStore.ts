@@ -1,15 +1,17 @@
 import { create } from "zustand";
+import type { IngredientType, StorageType, UnitType } from "../api/ingredient";
 
 export interface MasterItem {
   id: number | string;
   name: string;
   image: string;
   categoryId: number;
+  type: IngredientType;
+  storageType: StorageType;
+  unit: UnitType;
+  expiration: string;
+  quantity: number;
   memo?: string;
-  storageType?: "냉장" | "냉동" | "상온";
-  expiration?: string;
-  quantity?: number;
-  unit?: string;
 }
 
 type EditorType = "storage" | "expiry" | "quantity" | "unit" | "memo";
@@ -29,6 +31,34 @@ interface AddIngredientState {
   updateItemDetail: (id: string | number, type: EditorType, value: any) => void;
 }
 
+const REVERSE_STORAGE_MAP: Record<string, StorageType> = {
+  냉장: "FRIDGE",
+  냉동: "FREEZER",
+  상온: "PANTRY",
+  FRIDGE: "FRIDGE",
+  FREEZER: "FREEZER",
+  PANTRY: "PANTRY",
+};
+
+const REVERSE_UNIT_MAP: Record<string, UnitType> = {
+  개: "PIECE",
+  팩: "PACK",
+  봉지: "BAG",
+  병: "BOTTLE",
+  묶음: "BUNDLE",
+  캔: "CAN",
+  g: "GRAM",
+  ml: "MILLILITER",
+  PIECE: "PIECE",
+  PACK: "PACK",
+  BAG: "BAG",
+  BOTTLE: "BOTTLE",
+  BUNDLE: "BUNDLE",
+  CAN: "CAN",
+  GRAM: "GRAM",
+  MILLILITER: "MILLILITER",
+};
+
 export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   searchTerm: "",
   selectedCategoryId: 1,
@@ -42,11 +72,23 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   toggleItem: (item) =>
     set((state) => {
       const isExist = state.selectedItems.find((i) => i.id === item.id);
-      return {
-        selectedItems: isExist
-          ? state.selectedItems.filter((i) => i.id !== item.id)
-          : [...state.selectedItems, item],
+      if (isExist) {
+        return {
+          selectedItems: state.selectedItems.filter((i) => i.id !== item.id),
+        };
+      }
+      const newItem: MasterItem = {
+        ...item,
+        type: item.type || "DEFAULT",
+        storageType: (REVERSE_STORAGE_MAP[item.storageType] ||
+          item.storageType ||
+          "FRIDGE") as StorageType,
+        unit: (REVERSE_UNIT_MAP[item.unit] || item.unit || "PIECE") as UnitType,
+        quantity: item.quantity || 1,
+        expiration: item.expiration || new Date().toISOString().split("T")[0],
       };
+
+      return { selectedItems: [...state.selectedItems, newItem] };
     }),
 
   resetSelected: () => set({ selectedItems: [] }),
@@ -62,11 +104,17 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
         memo: "memo",
       };
 
+      let finalValue = value;
+      if (type === "storage") finalValue = REVERSE_STORAGE_MAP[value] || value;
+      if (type === "unit") finalValue = REVERSE_UNIT_MAP[value] || value;
+      if (type === "expiry" && typeof value === "string")
+        finalValue = value.replace(/\./g, "-");
+
       const fieldName = fieldMap[type];
 
       return {
         selectedItems: state.selectedItems.map((item) =>
-          item.id === id ? { ...item, [fieldName]: value } : item,
+          item.id === id ? { ...item, [fieldName]: finalValue } : item,
         ),
       };
     }),

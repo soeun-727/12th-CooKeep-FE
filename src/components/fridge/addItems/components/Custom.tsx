@@ -7,10 +7,11 @@ import {
   type CategoryType,
   type CustomIngredientRequest,
 } from "../../../../api/ingredient";
+
 interface CustomProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (categoryId: number) => void;
+  onConfirm: (customIngredientId: number) => void;
   categories: { id: number; name: string; image: string }[];
   confirmText?: string;
 }
@@ -31,7 +32,7 @@ const Custom: React.FC<CustomProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = async () => {
-    if (selectedCategoryId === null) return;
+    if (selectedCategoryId === null || isLoading) return;
 
     setIsLoading(true);
     try {
@@ -41,6 +42,7 @@ const Custom: React.FC<CustomProps> = ({
         storage: "FRIDGE",
         category: CATEGORY_ID_MAP[selectedCategoryId] as CategoryType,
       };
+
       const response = await registerCustomIngredient(requestData);
       onConfirm(response.data.customIngredientId);
 
@@ -82,10 +84,8 @@ const Custom: React.FC<CustomProps> = ({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onBlur={finishEditing} // 포커스 잃으면 실행
-              onKeyDown={(e) => {
-                if (e.key === "Enter") finishEditing(); // 엔터 치면 실행
-              }}
+              onBlur={finishEditing}
+              onKeyDown={(e) => e.key === "Enter" && finishEditing()}
               className="typo-body1 w-[180px] text-center font-bold text-neutral-900 border-b border-zinc-300 outline-none"
             />
           ) : (
@@ -103,7 +103,7 @@ const Custom: React.FC<CustomProps> = ({
           )}
         </div>
 
-        <p className="text-[12px] text-zinc-500 mb-4 leading-none">
+        <p className="text-[12px] text-zinc-500 mb-4 leading-none text-center">
           '{searchTerm}'의 카테고리를 선택해주세요
         </p>
 
@@ -113,13 +113,14 @@ const Custom: React.FC<CustomProps> = ({
             <button
               key={cat.id}
               type="button"
+              disabled={isLoading}
               onClick={() => setSelectedCategoryId(cat.id)}
               className={`flex flex-col items-center pt-2 rounded-[6px] transition-all w-12 h-12 gap-[2px]
                 ${
                   selectedCategoryId === cat.id
                     ? "bg-gray-100 ring-1 ring-inset ring-gray-300"
                     : "bg-white hover:bg-gray-50"
-                }`}
+                } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="w-[18px] flex items-center justify-center">
                 <img
@@ -139,7 +140,7 @@ const Custom: React.FC<CustomProps> = ({
           onClick={handleConfirm}
           disabled={selectedCategoryId === null || isLoading}
           className={`typo-label w-full h-11 text-white rounded-[10px] transition-colors
-            ${selectedCategoryId !== null ? "bg-[var(--color-green-deep)]" : "bg-zinc-300 cursor-not-allowed"}`}
+            ${selectedCategoryId !== null && !isLoading ? "bg-[var(--color-green-deep)]" : "bg-zinc-300 cursor-not-allowed"}`}
         >
           {confirmText}
         </button>
