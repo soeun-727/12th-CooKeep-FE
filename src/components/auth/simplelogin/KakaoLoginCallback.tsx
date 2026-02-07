@@ -4,7 +4,7 @@ import { useAuthStore } from "../../../stores/useAuthStore";
 
 export default function KakaoLoginCallback() {
   const navigate = useNavigate();
-  const loginWithKakao = useAuthStore((state) => state.loginWithKakao);
+  const loginSocial = useAuthStore((state) => state.loginSocial);
   const hasCalledAPI = useRef(false);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function KakaoLoginCallback() {
           const { data } = response;
 
           // 1. 모든 유저 정보(상태 포함)를 스토어에 먼저 저장
-          loginWithKakao({
+          loginSocial({
             userId: data.userId,
             accessToken: data.accessToken || "",
             refreshToken: data.refreshToken || "",
@@ -69,7 +69,7 @@ export default function KakaoLoginCallback() {
     };
 
     handleLogin();
-  }, [navigate, loginWithKakao]);
+  }, [navigate, loginSocial]);
 
   return (
     <div
