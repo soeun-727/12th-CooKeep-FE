@@ -61,17 +61,18 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    const { fetchMyPlants, checkStatusByTime } = useCookeepsStore.getState();
+    const { fetchMyPlants, fetchCookies, checkStatusByTime } =
+      useCookeepsStore.getState();
 
-    fetchMyPlants(); // 서버 식물 불러오기
-    checkStatusByTime(); // 최초한번
+    fetchMyPlants();
+    fetchCookies(); //  필수
+    checkStatusByTime();
 
     const interval = setInterval(() => {
       checkStatusByTime();
-    }, 60 * 1000); // 1분마다 인증
+    }, 60 * 1000);
 
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* =========================

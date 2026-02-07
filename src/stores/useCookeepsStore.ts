@@ -10,6 +10,7 @@ import {
 } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
 import { PLANT_NAME_TO_TYPE } from "../constants/plantTypeMap";
+import { getMyCookies } from "../api/cookies";
 
 export type PlantType =
   | "apple"
@@ -39,6 +40,7 @@ interface CookeepsState {
   lastRefreshedAt: Date | null;
   refreshGrowth: () => void;
   cookie: number;
+  fetchCookies: () => Promise<void>;
 
   status: PlantStatus;
   lastWateredAt: Date | null;
@@ -58,7 +60,7 @@ interface CookeepsState {
 
   freeWaterPlant: () => void; // 무료물주기
 
-  addCookie: () => void;
+  // addCookie: () => void;
 
   setProfilePlant: (userPlantId: number) => Promise<void>;
 
@@ -101,7 +103,17 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   selectedPlant: null,
   plantStage: 1,
   // grownPlants: [],
-  cookie: 100,
+  cookie: 0,
+
+  fetchCookies: async () => {
+    try {
+      const cookie = await getMyCookies();
+      set({ cookie });
+    } catch (e) {
+      console.error("쿠키 조회 실패:", e);
+    }
+  },
+
   status: "normal",
   lastWateredAt: null,
   lastRefreshedAt: null,
@@ -176,6 +188,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
 
     // 핵심: 서버 상태 다시 가져오기
     await get().fetchMyPlants();
+    await get().fetchCookies();
   },
 
   // 무료 물주기
@@ -240,6 +253,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
 
       // 핵심: 서버 기준으로 다시 동기화
       await get().fetchMyPlants();
+      await get().fetchCookies();
 
       // UI 보조 상태 초기화
       set({
@@ -278,7 +292,8 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       set({ status: "normal" });
     }
   },
-  addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
+
+  // addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
 
   setProfilePlant: async (userPlantId: number) => {
     await setProfileMyPlant(userPlantId);
