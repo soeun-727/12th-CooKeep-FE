@@ -61,7 +61,9 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    const { checkStatusByTime } = useCookeepsStore.getState();
+    const { fetchMyPlants, checkStatusByTime } = useCookeepsStore.getState();
+
+    fetchMyPlants(); // 서버 식물 불러오기
     checkStatusByTime(); // 최초한번
 
     const interval = setInterval(() => {

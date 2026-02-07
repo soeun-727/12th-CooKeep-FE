@@ -1,5 +1,8 @@
 // src/stores/useCookeepsStore.ts
 import { create } from "zustand";
+import { getMyPlants } from "../api/myPlants";
+import type { MyPlant } from "../types/myPlant";
+import { PLANT_NAME_TO_TYPE } from "../constants/plantTypeMap";
 
 export type PlantType =
   | "apple"
@@ -14,9 +17,17 @@ export type PlantStatus = "normal" | "wilting" | "wilted";
 export type PlantStage = 1 | 2 | 3 | 4;
 
 interface CookeepsState {
+  //  서버 식물 목록
+  myPlants: MyPlant[];
+
+  // 현재 키우는 식물 (서버 기준)
+  currentPlant: MyPlant | null;
+  // API 연동용
+  fetchMyPlants: () => Promise<void>;
+
   selectedPlant: PlantType | null;
   plantStage: PlantStage;
-  grownPlants: PlantType[]; // 다 키운 식물 목록
+  // grownPlants: PlantType[]; // 다 키운 식물 목록
   lastRefreshedAt: Date | null;
   refreshGrowth: () => void;
   cookie: number;
@@ -46,9 +57,35 @@ interface CookeepsState {
 }
 
 export const useCookeepsStore = create<CookeepsState>((set, get) => ({
+  myPlants: [],
+  currentPlant: null,
+
+  fetchMyPlants: async () => {
+    const plants: MyPlant[] = await getMyPlants();
+
+    const current = plants.find((p: MyPlant) => !p.isHarvested && p.isProfile);
+
+    const mappedPlant = current ? PLANT_NAME_TO_TYPE[current.plantName] : null;
+
+    if (current && !mappedPlant) {
+      console.warn("Unknown plantName from server:", current.plantName);
+    }
+
+    set({
+      myPlants: plants,
+      currentPlant: current,
+      selectedPlant: mappedPlant ?? null,
+      plantStage: current?.level ?? 1,
+    });
+
+    console.log("📦 서버 식물 목록:", plants);
+    console.log("🌱 현재 식물:", current);
+    console.log("🔁 매핑 결과:", mappedPlant);
+  },
+
   selectedPlant: null,
   plantStage: 1,
-  grownPlants: [],
+  // grownPlants: [],
   cookie: 100,
   status: "normal",
   lastWateredAt: null,
@@ -82,7 +119,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     }),
 
   growPlant: () => {
-    const { plantStage, selectedPlant, grownPlants } = get();
+    const { plantStage, selectedPlant } = get();
     if (!selectedPlant || plantStage >= 4) return;
 
     const nextStage = (plantStage + 1) as PlantStage;
@@ -92,7 +129,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
         plantStage: 4,
         // selectedPlant: null,
         status: "normal",
-        grownPlants: [...grownPlants, selectedPlant], // 저장
+        // grownPlants: [...grownPlants, selectedPlant], // 저장
       });
     } else {
       set({ plantStage: nextStage });
