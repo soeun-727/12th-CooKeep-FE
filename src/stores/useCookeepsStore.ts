@@ -1,6 +1,11 @@
 // src/stores/useCookeepsStore.ts
 import { create } from "zustand";
-import { getMyPlants, registerMyPlant, waterMyPlant } from "../api/myPlants";
+import {
+  deleteMyPlant,
+  getMyPlants,
+  registerMyPlant,
+  waterMyPlant,
+} from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
 import { PLANT_NAME_TO_TYPE } from "../constants/plantTypeMap";
 
@@ -39,7 +44,7 @@ interface CookeepsState {
   selectPlant: (plant: PlantType) => void;
   growPlant: () => void;
   waterPlant: () => void;
-  abandonPlant: () => void;
+  abandonPlant: () => Promise<void>;
   recoverPlant: () => void;
 
   hasShownWilting: boolean;
@@ -186,14 +191,28 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   },
 
   // 포기하기
-  abandonPlant: () =>
-    set({
-      selectedPlant: null,
-      plantStage: 1,
-      status: "normal",
-      lastWateredAt: null,
-      hasShownWilting: false,
-    }),
+  abandonPlant: async () => {
+    const { currentPlant } = get();
+    if (!currentPlant) return;
+
+    try {
+      await deleteMyPlant(currentPlant.userPlantId);
+
+      // 서버 기준 상태 다시 동기화
+      await get().fetchMyPlants();
+
+      // UI 보조 초기화
+      set({
+        selectedPlant: null,
+        plantStage: 1,
+        status: "normal",
+        lastWateredAt: null,
+        hasShownWilting: false,
+      });
+    } catch (e) {
+      console.error("식물 포기 실패:", e);
+    }
+  },
 
   // 회복하기
   recoverPlant: () => {
