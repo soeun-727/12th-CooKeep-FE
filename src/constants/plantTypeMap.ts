@@ -18,5 +18,5 @@ export const PLANT_NAME_TO_TYPE: Record<string, PlantType> = {
   상추: "lettuce",
   딸기: "strawberry",
   사과: "apple",
-  콩: "beans",
+  강낭콩: "beans",
 };

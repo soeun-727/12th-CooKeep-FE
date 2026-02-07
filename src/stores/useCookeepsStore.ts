@@ -1,6 +1,6 @@
 // src/stores/useCookeepsStore.ts
 import { create } from "zustand";
-import { getMyPlants } from "../api/myPlants";
+import { getMyPlants, registerMyPlant } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
 import { PLANT_NAME_TO_TYPE } from "../constants/plantTypeMap";
 
@@ -24,6 +24,7 @@ interface CookeepsState {
   currentPlant: MyPlant | null;
   // API 연동용
   fetchMyPlants: () => Promise<void>;
+  registerPlant: (plantId: number) => Promise<void>;
 
   selectedPlant: PlantType | null;
   plantStage: PlantStage;
@@ -81,6 +82,11 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     console.log("📦 서버 식물 목록:", plants);
     console.log("🌱 현재 식물:", current);
     console.log("🔁 매핑 결과:", mappedPlant);
+  },
+
+  registerPlant: async (plantId: number) => {
+    await registerMyPlant(plantId);
+    await get().fetchMyPlants(); //  핵심
   },
 
   selectedPlant: null,

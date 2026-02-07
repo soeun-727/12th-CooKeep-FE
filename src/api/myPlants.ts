@@ -5,3 +5,8 @@ export const getMyPlants = async () => {
   const res = await axios.get("/api/my-plants");
   return res.data.data; // MyPlant[]
 };
+
+export const registerMyPlant = async (plantId: number) => {
+  const res = await axios.post(`/api/my-plants/${plantId}`);
+  return res.data;
+};
