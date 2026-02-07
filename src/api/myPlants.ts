@@ -10,3 +10,8 @@ export const registerMyPlant = async (plantId: number) => {
   const res = await axios.post(`/api/my-plants/${plantId}`);
   return res.data;
 };
+
+export const waterMyPlant = async (userPlantId: number) => {
+  const res = await axios.post(`/api/my-plants/${userPlantId}/water`);
+  return res.data;
+};

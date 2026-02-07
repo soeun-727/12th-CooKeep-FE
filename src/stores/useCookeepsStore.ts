@@ -1,6 +1,6 @@
 // src/stores/useCookeepsStore.ts
 import { create } from "zustand";
-import { getMyPlants, registerMyPlant } from "../api/myPlants";
+import { getMyPlants, registerMyPlant, waterMyPlant } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
 import { PLANT_NAME_TO_TYPE } from "../constants/plantTypeMap";
 
@@ -142,21 +142,31 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     }
   },
 
-  waterPlant: () => {
-    const { cookie, selectedPlant, plantStage, growPlant } = get();
+  // waterPlant: () => {
+  //   const { cookie, selectedPlant, plantStage, growPlant } = get();
 
-    if (!selectedPlant) return;
-    if (cookie < 10) return;
-    if (plantStage >= 4) return;
+  //   if (!selectedPlant) return;
+  //   if (cookie < 10) return;
+  //   if (plantStage >= 4) return;
 
-    set({
-      cookie: cookie - 10,
-      status: "normal",
-      lastWateredAt: new Date(),
-      hasShownWilting: false, // 다시 시들 수 있음
-    });
+  //   set({
+  //     cookie: cookie - 10,
+  //     status: "normal",
+  //     lastWateredAt: new Date(),
+  //     hasShownWilting: false, // 다시 시들 수 있음
+  //   });
 
-    growPlant();
+  //   growPlant();
+  // },
+
+  waterPlant: async () => {
+    const { currentPlant } = get();
+    if (!currentPlant) return;
+
+    await waterMyPlant(currentPlant.userPlantId);
+
+    // 핵심: 서버 상태 다시 가져오기
+    await get().fetchMyPlants();
   },
 
   // 무료 물주기
