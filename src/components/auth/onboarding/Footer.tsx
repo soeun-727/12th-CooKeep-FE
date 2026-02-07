@@ -46,6 +46,7 @@ export default function Footer({
             isLastStep ? "invisible" : "visible"
           }`}
           onClick={onSkip}
+          disabled={isLoading}
         >
           질문 건너뛰기
         </button>
