@@ -97,25 +97,6 @@ export default function FridgeTab() {
   const EXPIRY_MODAL_KEY = "expiry-alert-last-shown";
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
 
-  const handleDeleteIngredients = async (ids: number[]) => {
-    if (ids.length === 0) return;
-
-    try {
-      const response = await deleteIngredients({ userIngredientsIds: ids });
-
-      if (response.data.success) {
-        const updatedIngredients = ingredients.filter(
-          (item) => !ids.includes(Number(item.id)),
-        );
-        setIngredients(updatedIngredients);
-        alert(response.data.message);
-      }
-    } catch (error) {
-      console.error("삭제 실패:", error);
-      alert("재료를 삭제하는 중 오류가 발생했습니다.");
-    }
-  };
-
   useEffect(() => {
     if (todayIngredients.length === 0) return;
     const today = new Date().toISOString().slice(0, 10);

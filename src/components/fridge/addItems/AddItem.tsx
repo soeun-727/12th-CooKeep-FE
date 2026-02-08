@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import TextField from "../../ui/TextField";
 import searchIcon from "../../../assets/fridge/search_on.svg";
-import elseIcon from "../../../assets/fridge/items/else.svg";
 import Category from "./components/Category";
 import ItemsGrid from "./components/ItemsGrid";
 import AddItemFooter from "./AddItemFooter";
@@ -53,7 +52,7 @@ export default function AddItem() {
           unit: "PIECE" as const,
           expiration: formattedExpiry,
           quantity: 1,
-        };
+        } as MasterItem;
       });
     });
   };
@@ -137,12 +136,12 @@ export default function AddItem() {
               name: serverData.name || searchTerm,
               image: serverData.imageUrl || defaultChar,
               categoryId: selectedCategoryId || 13,
-              type: "CUSTOM",
-              storageType: "FRIDGE",
+              type: "CUSTOM" as const,
+              storageType: "FRIDGE" as const,
               unit: "PIECE" as const,
               expiration: calculateExpiryDate(defaultDays),
               quantity: 1,
-            });
+            } as MasterItem);
             setModalOpen(false);
           }}
         />
