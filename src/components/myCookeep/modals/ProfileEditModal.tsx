@@ -1,26 +1,36 @@
 import { useState } from "react";
 import Button from "../../ui/Button";
 import { currentIcon, groundImg } from "../../../assets";
+import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (selectedPlant: string) => void;
+  onSave: (userPlantId: number) => void;
 }
 
 export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
   // 1. 내부 상태 정의
-  const [selectedPlant, setSelectedPlant] = useState("sprout"); // 초기 선택값
+  // const [selectedPlant, setSelectedPlant] = useState("sprout"); // 초기 선택값
 
-  // 2. 임시 식물 데이터
-  const plants = [
-    { id: "sprout", name: "새싹" },
-    { id: "leaf", name: "잎새" },
-    { id: "flower", name: "꽃" },
-    { id: "tree", name: "나무" },
-    { id: "plant", name: "식물" },
-  ];
-  const currentGrowingPlantId = "leaf";
+  // // 2. 임시 식물 데이터
+  // const plants = [
+  //   { id: "sprout", name: "새싹" },
+  //   { id: "leaf", name: "잎새" },
+  //   { id: "flower", name: "꽃" },
+  //   { id: "tree", name: "나무" },
+  //   { id: "plant", name: "식물" },
+  // ];
+  // const currentGrowingPlantId = "leaf";
+
+  // if (!isOpen) return null;
+
+  const currentPlant = useCookeepsStore((s) => s.currentPlant);
+  const myPlants = useCookeepsStore((s) => s.myPlants);
+
+  const [selectedId, setSelectedId] = useState<number | null>(
+    () => currentPlant?.userPlantId ?? null,
+  );
 
   if (!isOpen) return null;
 
@@ -51,51 +61,49 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
 
           {/* 2. 식물 도감 (그리드) */}
           <div className="grid grid-cols-4 gap-x-3 gap-y-1 mb-7 w-[331px] -mt-2 px-4">
-            {plants.map((plant) => {
-              const isGrowing = plant.id === currentGrowingPlantId;
+            {myPlants.map((plant) => (
+              // const isGrowing = plant.id === currentGrowingPlantId;
 
-              return (
-                <div key={plant.id} className="relative">
-                  {/* 현재 키우는 식물 위에만 뜨는 말풍선 */}
-                  {isGrowing && (
-                    <div className="absolute -top-[10px] left-1/2 -translate-x-1/2 z-10 w-full flex justify-center">
-                      <img
-                        src={currentIcon}
-                        alt="currently growing"
-                        className="h-6 object-contain"
-                      />
-                    </div>
-                  )}
+              // return (
+              <div key={plant.userPlantId} className="relative">
+                {/* 현재 키우는 식물 위에만 뜨는 말풍선 */}
+                {plant.isProfile && (
+                  <div className="absolute -top-[10px] left-1/2 -translate-x-1/2 z-10 w-full flex justify-center">
+                    <img
+                      src={currentIcon}
+                      alt="currently growing"
+                      className="h-6 object-contain"
+                    />
+                  </div>
+                )}
 
-                  <button
-                    onClick={() => setSelectedPlant(plant.id)}
-                    className={`
+                <button
+                  onClick={() => setSelectedId(plant.userPlantId)}
+                  className={`
                       relative w-full aspect-square rounded-full transition-all flex items-center justify-center
                       ${
-                        selectedPlant === plant.id
+                        selectedId === plant.userPlantId
                           ? "border-2 border-(--color-green)"
                           : "border-2 border-transparent"
                       }
                     `}
-                  >
-                    <div className="w-full h-full rounded-full">
-                      <img
-                        src={groundImg}
-                        alt={plant.name}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
+                >
+                  <div className="w-full h-full rounded-full">
+                    <img
+                      src={plant.imageUrl ?? groundImg}
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </div>
+                </button>
+              </div>
+            ))}
           </div>
 
           {/* 3. 버튼 */}
           <Button
             onClick={() => {
-              onSave(selectedPlant);
-              onClose();
+              if (selectedId) onSave(selectedId);
+              // onClose();
             }}
             className="w-full"
             size="S"
