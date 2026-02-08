@@ -12,12 +12,14 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
     <div className="w-full flex flex-col items-center justify-center pt-6">
       <div className="flex flex-col w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
         <div className="grid grid-cols-3 gap-3 justify-items-center">
-          {items.map((item) => (
+          {items.map((item: MasterItem) => (
             <Item
               key={item.id}
               name={item.name}
               image={item.image}
-              isSelected={selectedItems.some((i) => i.id === item.id)}
+              isSelected={selectedItems.some(
+                (i) => String(i.id) === String(item.id),
+              )}
               onSelect={() => toggleItem(item as MasterItem)}
             />
           ))}
