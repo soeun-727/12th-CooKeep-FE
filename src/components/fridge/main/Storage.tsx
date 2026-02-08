@@ -27,7 +27,6 @@ export default function Storage({
 }: StorageProps) {
   const { selectedIds, toggleSelect, setViewCategory, openDetail } =
     useIngredientStore();
-
   // 3개 이상일 때만 전체보기 활성화
   const isScrollable = ingredients.length >= 3;
   const pages = chunk(ingredients, 3);
