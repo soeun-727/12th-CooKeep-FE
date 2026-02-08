@@ -4,12 +4,13 @@ import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 export default function GrowthProgressBar({
   overridePlantStage,
 }: {
-  overridePlantStage?: number;
+  overridePlantStage?: 1 | 2 | 3 | 4;
 }) {
-  const { plantStage, selectedPlant } = useCookeepsStore();
-  const stageToShow = overridePlantStage ?? plantStage;
   //  선택 전이면 0%, 선택 후에만 단계 반영
-  const percent = selectedPlant ? (stageToShow / 4) * 100 : 0;
+  const currentPlant = useCookeepsStore((s) => s.currentPlant);
+  const stageToShow = overridePlantStage ?? currentPlant?.level ?? 1;
+
+  const percent = currentPlant ? (stageToShow / 4) * 100 : 0;
 
   return (
     <div className="w-full h-[34px] flex items-center">
