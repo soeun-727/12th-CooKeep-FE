@@ -85,7 +85,7 @@ export const getIngredientDetail = (ingredientId: number) => {
     status: string;
     timestamp: string;
     data: IngredientDetailResponse;
-  }>(`/api/users/me/ingredients/${ingredientId}`);
+  }>(`/api/users/me/refrigerator/${ingredientId}`);
 };
 // --- 매핑 사전 (내부용) ---
 const STORAGE_MAP: Record<string, StorageType> = {

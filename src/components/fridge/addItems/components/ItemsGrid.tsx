@@ -2,8 +2,14 @@ import Item from "./Item";
 import character from "../../../../assets/character/confused_char.svg";
 import { useAddIngredientStore } from "../../../../stores/useAddIngredientStore";
 import type { MasterItem } from "../../../../stores/useAddIngredientStore";
+
 interface ItemsGridProps {
-  items: MasterItem[];
+  items: {
+    id: number | string;
+    name: string;
+    image: string;
+    categoryId: number;
+  }[];
 }
 
 export default function ItemsGrid({ items }: ItemsGridProps) {
@@ -12,7 +18,7 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
     <div className="w-full flex flex-col items-center justify-center pt-6">
       <div className="flex flex-col w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
         <div className="grid grid-cols-3 gap-3 justify-items-center">
-          {items.map((item: MasterItem) => (
+          {items.map((item) => (
             <Item
               key={item.id}
               name={item.name}
@@ -20,7 +26,7 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
               isSelected={selectedItems.some(
                 (i) => String(i.id) === String(item.id),
               )}
-              onSelect={() => toggleItem(item as MasterItem)}
+              onSelect={() => toggleItem(item)}
             />
           ))}
         </div>
