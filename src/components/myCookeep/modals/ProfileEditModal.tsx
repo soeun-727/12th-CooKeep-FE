@@ -28,11 +28,19 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
   const currentPlant = useCookeepsStore((s) => s.currentPlant);
   const myPlants = useCookeepsStore((s) => s.myPlants);
 
+  // 모달이 열릴 때 초기 선택값 계산
+  const initialSelectedId = isOpen
+    ? (currentPlant?.userPlantId ?? myPlants[0]?.userPlantId ?? null)
+    : null;
+
   const [selectedId, setSelectedId] = useState<number | null>(
-    () => currentPlant?.userPlantId ?? null,
+    initialSelectedId,
   );
 
   if (!isOpen) return null;
+
+  const selectedPlantImage =
+    myPlants.find((p) => p.userPlantId === selectedId)?.imageUrl ?? groundImg;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center">
@@ -40,7 +48,10 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* 모달 본체 */}
-      <div className="relative w-full max-w-[450px] bg-white rounded-t-[30px] py-[19px] px-4 animate-slide-up flex flex-col">
+      <div
+        key={selectedId ?? "modal"}
+        className="relative w-full max-w-[450px] bg-white rounded-t-[30px] py-[19px] px-4 animate-slide-up flex flex-col"
+      >
         <div className="flex justify-center items-center h-10 p-2">
           <h3 className="typo-body text-neutral-900">
             프로필로 설정할 식물을 선택해주세요
@@ -52,7 +63,7 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
           <div className="-mt-4">
             <div className="relative inline-block overflow-visible">
               <img
-                src={groundImg}
+                src={selectedPlantImage}
                 alt="profileBackground"
                 className="w-[155px] p-6 rounded-full object-cover"
               />
@@ -101,9 +112,12 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
 
           {/* 3. 버튼 */}
           <Button
-            onClick={() => {
-              if (selectedId) onSave(selectedId);
-              // onClose();
+            onClick={async () => {
+              if (selectedId) {
+                await onSave(selectedId); // store 호출
+                setSelectedId(null); // 모달 내부 선택 초기화
+                onClose();
+              }
             }}
             className="w-full"
             size="S"

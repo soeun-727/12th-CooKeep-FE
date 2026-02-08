@@ -8,7 +8,8 @@ export const getMyPlants = async () => {
 
 export const registerMyPlant = async (plantId: number) => {
   const res = await axios.post(`/api/my-plants/${plantId}`);
-  return res.data;
+  console.log("🌱 등록 API 응답:", res.data);
+  return res.data; // { data: { userPlantId: 123, ... } } 형태인지 확인
 };
 
 export const waterMyPlant = async (userPlantId: number) => {
