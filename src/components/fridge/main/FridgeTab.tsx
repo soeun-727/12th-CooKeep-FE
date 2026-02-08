@@ -15,7 +15,6 @@ import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
 
 import {
-  deleteIngredients,
   getRefrigeratorHome,
   type RefrigeratorHomeResponse,
 } from "../../../api/ingredient";

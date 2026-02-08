@@ -18,7 +18,7 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
               name={item.name}
               image={item.image}
               isSelected={selectedItems.some((i) => i.id === item.id)}
-              onSelect={() => toggleItem(item)}
+              onSelect={() => toggleItem(item as MasterItem)}
             />
           ))}
         </div>
