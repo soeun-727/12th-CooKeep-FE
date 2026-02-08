@@ -25,11 +25,12 @@ const Item: React.FC<ItemProps> = ({
       onClick={onDetail}
       role="button"
       tabIndex={0}
-      className={`w-[114px] h-20 rounded-[6px] border flex flex-col items-start overflow-hidden pl-[11px] ${
-        isSelected
-          ? "border-[var(--color-green-deep)] bg-[var(--color-green-light)]"
-          : "border-[#D1D1D1] bg-white"
-      }`}
+      className={`w-[114px] h-20 rounded-[6px] border flex flex-col 
+        items-start shadow-[0px_1px_8px_-2px_rgba(17,17,17,0.25)] overflow-hidden pl-[11px] ${
+          isSelected
+            ? "border-emerald-400 bg-[var(--color-green-light)]"
+            : "border-[#D1D1D1] bg-white"
+        }`}
     >
       <div className="flex flex-col items-start">
         <span className="w-[85px] pt-[10px] text-left truncate typo-caption font-bold block leading-none">

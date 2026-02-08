@@ -51,7 +51,6 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
             />
           ))}
         </div>
-        <div className="h-[34px] bg-white" />
       </div>
     </nav>
   );
