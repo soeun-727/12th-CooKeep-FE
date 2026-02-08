@@ -11,13 +11,9 @@ export default function ItemOption() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
-
-  /** 선택 없고, 어떤 모달도 안 열려 있으면 숨김 */
   if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) {
     return null;
   }
-
-  /** 모달 제목 */
   const firstItemName =
     ingredients.find((item) => item.id === selectedIds[0])?.name ?? "재료";
 

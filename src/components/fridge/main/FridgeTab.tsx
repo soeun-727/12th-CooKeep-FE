@@ -15,6 +15,7 @@ import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
 
 import {
+  deleteIngredients,
   getRefrigeratorHome,
   type RefrigeratorHomeResponse,
 } from "../../../api/ingredient";
@@ -29,34 +30,58 @@ export default function FridgeTab() {
   } = useIngredientStore();
 
   const parseServerData = (data: RefrigeratorHomeResponse) => {
-    const mapItem = (i: any, category: string) => ({
-      ...i,
-      category,
-      id: i.referenceId,
-      name: i.name,
-      dDay: i.leftDays,
-      image: i.imageUrl,
-      quantity: i.quantity || 1,
-      unit: i.unit || "PIECE",
-      expiryDate: i.expirationDate || new Date().toISOString().split("T")[0],
-    });
+    const mapItem = (i: any, category: string) => {
+      return {
+        ...i,
+        category,
+        id: i.ingredientId || i.id || i.referenceId || 0,
+        name: i.name || "이름 없음",
+        dDay: i.leftDays ?? 0,
+        image: i.imageUrl || "",
+        quantity: i.quantity || 1,
+        unit: i.unit || "PIECE",
+        expiryDate: i.expirationDate || new Date().toISOString().split("T")[0],
+        createdAt: i.createdAt || new Date().toISOString(),
+      };
+    };
+
     const fridge = (data.fridge || []).map((i) => mapItem(i, "냉장"));
     const freezer = (data.freezer || []).map((i) => mapItem(i, "냉동"));
     const pantry = (data.pantry || []).map((i) => mapItem(i, "상온"));
 
     return [...fridge, ...freezer, ...pantry];
   };
-
   useEffect(() => {
     const fetchFridgeData = async () => {
       try {
         const response = await getRefrigeratorHome();
-        if (response.data && response.data.data) {
-          const parsed = parseServerData(response.data.data);
+
+        // 🚀 [디버깅] 서버에서 오는 순수 응답 전체를 찍어봅니다.
+        console.log("1. API 전체 응답(Axios Response):", response);
+
+        // response 자체가 없거나 status가 성공이 아닌 경우 체크
+        if (!response || !response.data) {
+          console.error("서버 응답이 없거나 data 필드가 없습니다.");
+          return;
+        }
+
+        // 🚀 [디버깅] data 필드 내부를 확인합니다.
+        console.log("2. 서버 데이터(response.data):", response.data);
+
+        // 서버 응답 구조에 따라 response.data를 보낼지, response.data.data를 보낼지 결정
+        const targetData = response.data.data || response.data;
+
+        if (targetData) {
+          const parsed = parseServerData(targetData);
           setIngredients(parsed);
         }
-      } catch (error) {
-        console.error("냉장고 데이터 로드 실패:", error);
+      } catch (error: any) {
+        // 🚀 [에러 상세 로그] 빨간 에러 메시지의 정체를 확인합니다.
+        console.error("3. 냉장고 데이터 로드 실패 상세:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
       }
     };
     fetchFridgeData();
@@ -71,6 +96,25 @@ export default function FridgeTab() {
 
   const EXPIRY_MODAL_KEY = "expiry-alert-last-shown";
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
+
+  const handleDeleteIngredients = async (ids: number[]) => {
+    if (ids.length === 0) return;
+
+    try {
+      const response = await deleteIngredients({ userIngredientsIds: ids });
+
+      if (response.data.success) {
+        const updatedIngredients = ingredients.filter(
+          (item) => !ids.includes(Number(item.id)),
+        );
+        setIngredients(updatedIngredients);
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("삭제 실패:", error);
+      alert("재료를 삭제하는 중 오류가 발생했습니다.");
+    }
+  };
 
   useEffect(() => {
     if (todayIngredients.length === 0) return;

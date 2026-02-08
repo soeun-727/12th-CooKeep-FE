@@ -65,8 +65,28 @@ export interface AddIngredientRequest {
   storage: string; // "냉장", "FRIDGE" 등 혼용 대응을 위해 string
   expirationDate: string;
   memo?: string;
+} // --- [조회] 식재료 상세 관련 인터페이스 (수정됨) ---
+export interface IngredientDetailResponse {
+  ingredientId: number;
+  name: string;
+  storage: string; // 서버: "FRIDGE"
+  expirationDate: string; // 서버: "2026-12-25"
+  quantity: number;
+  leftDays: number;
+  memo: string;
+  aiTip: string; // 🚀 tip 대신 aiTip으로 변경
+  imageUrl: string;
 }
 
+/** [GET] 식재료 상세 정보 조회 */
+export const getIngredientDetail = (ingredientId: number) => {
+  // 응답 규격이 { status, timestamp, data } 이므로 timestamp 추가 가능 (선택사항)
+  return api.get<{
+    status: string;
+    timestamp: string;
+    data: IngredientDetailResponse;
+  }>(`/api/users/me/ingredients/${ingredientId}`);
+};
 // --- 매핑 사전 (내부용) ---
 const STORAGE_MAP: Record<string, StorageType> = {
   냉장: "FRIDGE",
@@ -96,6 +116,52 @@ const UNIT_MAP: Record<string, UnitType> = {
   MILLILITER: "MILLILITER",
 };
 
+// --- [조회] 검색 결과 관련 인터페이스 ---
+export interface SearchIngredientItem {
+  ingredientId: number;
+  name: string;
+  imageUrl: string;
+  expirationDate: string;
+}
+
+export interface IngredientSearchResponse {
+  content: SearchIngredientItem[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
+
+// --- [삭제] 관련 인터페이스 ---
+export interface DeleteIngredientsRequest {
+  userIngredientsIds: number[];
+}
+
+export interface DeleteIngredientsResponse {
+  success: boolean;
+  message: string;
+  deletedCount: number;
+}
+
+/** [DELETE] 내 식재료 삭제 (벌크) */
+export const deleteIngredients = (data: DeleteIngredientsRequest) => {
+  return api.delete<DeleteIngredientsResponse>("/api/users/me/ingredients", {
+    data: data,
+  });
+};
+
+/** [GET] 내 냉장고 식재료 검색 */
+export const searchIngredients = (term: string, page: number = 0) => {
+  return api.get<{ status: string; data: IngredientSearchResponse }>(
+    `/api/users/me/ingredients/search`,
+    {
+      params: {
+        name: term,
+        page: page,
+        size: 20,
+      },
+    },
+  );
+};
 // --- API 함수 ---
 
 /** [GET] 마스터 식재료 목록 조회 (AddItem 페이지용) */
