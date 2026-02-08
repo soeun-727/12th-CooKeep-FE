@@ -9,17 +9,14 @@ import ItemOption from "../items/ItemOption";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
-import { TEMP_DATA } from "../../../constants/tempIngredients";
-
 import { useIngredientStore } from "../../../stores/useIngredientStore";
 import { useSortedIngredients } from "../../../hooks/useSortedIngredients";
 import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
 
-// 🚀 API 및 타입 임포트 (경로 확인 필요)
 import {
   getRefrigeratorHome,
-  type RefrigeratorResponse,
+  type RefrigeratorHomeResponse,
 } from "../../../api/ingredient";
 
 export default function FridgeTab() {
@@ -31,42 +28,41 @@ export default function FridgeTab() {
     updateIngredient,
   } = useIngredientStore();
 
-  const parseServerData = (data: RefrigeratorResponse) => {
+  const parseServerData = (data: RefrigeratorHomeResponse) => {
     const mapItem = (i: any, category: string) => ({
       ...i,
       category,
-      id: `${i.type}-${i.referenceId}`,
+      id: i.referenceId,
+      name: i.name,
       dDay: i.leftDays,
       image: i.imageUrl,
-      quantity: 1,
-      unit: "PIECE",
-      expiryDate: new Date().toISOString().split("T")[0],
-      createdAt: new Date().toISOString(),
+      quantity: i.quantity || 1,
+      unit: i.unit || "PIECE",
+      expiryDate: i.expirationDate || new Date().toISOString().split("T")[0],
     });
-
-    const fridge = data.fridge.map((i) => mapItem(i, "냉장"));
-    const freezer = data.freezer.map((i) => mapItem(i, "냉동"));
-    const pantry = data.pantry.map((i) => mapItem(i, "상온"));
+    const fridge = (data.fridge || []).map((i) => mapItem(i, "냉장"));
+    const freezer = (data.freezer || []).map((i) => mapItem(i, "냉동"));
+    const pantry = (data.pantry || []).map((i) => mapItem(i, "상온"));
 
     return [...fridge, ...freezer, ...pantry];
   };
 
-  const { filteredIngredients, sortedIngredients } = useSortedIngredients();
-
-  // 데이터 로드
   useEffect(() => {
     const fetchFridgeData = async () => {
       try {
         const response = await getRefrigeratorHome();
-        const parsed = parseServerData(response.data);
-        setIngredients(parsed);
+        if (response.data && response.data.data) {
+          const parsed = parseServerData(response.data.data);
+          setIngredients(parsed);
+        }
       } catch (error) {
         console.error("냉장고 데이터 로드 실패:", error);
-        if (ingredients.length === 0) setIngredients(TEMP_DATA);
       }
     };
     fetchFridgeData();
   }, [setIngredients]);
+
+  const { filteredIngredients, sortedIngredients } = useSortedIngredients();
 
   const todayIngredients = useMemo(
     () => ingredients.filter((i) => i.dDay === 0),

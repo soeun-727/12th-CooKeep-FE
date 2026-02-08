@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAddIngredientStore } from "../../../../stores/useAddIngredientStore";
 import editIcon from "../../../../assets/recipe/rename.svg";
-import { CATEGORY_ID_MAP } from "../../../../constants/category";
+import { CATEGORY_ID_TO_SERVER_KEY } from "../../../../constants/category";
+import { DEFAULT_EXPIRY_DAYS } from "../../../../constants/expiry";
 import {
   registerCustomIngredient,
   type CategoryType,
@@ -11,8 +12,8 @@ import {
 interface CustomProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (customIngredientId: number) => void;
-  categories: { id: number; name: string; image: string }[];
+  onConfirm: (serverData: any) => void;
+  categories: { id: number; name: string; image: string; serverKey: string }[];
   confirmText?: string;
 }
 
@@ -23,7 +24,8 @@ const Custom: React.FC<CustomProps> = ({
   categories,
   confirmText = "추가",
 }) => {
-  const { searchTerm, setSearchTerm } = useAddIngredientStore();
+  const { searchTerm } = useAddIngredientStore();
+  const [localName, setLocalName] = useState(searchTerm);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
   );
@@ -36,41 +38,49 @@ const Custom: React.FC<CustomProps> = ({
 
     setIsLoading(true);
     try {
+      const serverCategoryKey = CATEGORY_ID_TO_SERVER_KEY[
+        selectedCategoryId
+      ] as CategoryType;
+      const expiryDays = DEFAULT_EXPIRY_DAYS[serverCategoryKey] || 7;
+
       const requestData: CustomIngredientRequest = {
-        name: searchTerm,
-        expirationDays: 5,
+        name: searchTerm.trim() || "이름 없음",
+        expirationDays: expiryDays,
         storage: "FRIDGE",
-        category: CATEGORY_ID_MAP[selectedCategoryId] as CategoryType,
+        category: serverCategoryKey,
       };
 
       const response = await registerCustomIngredient(requestData);
-      onConfirm(response.data.customIngredientId);
+
+      if (response.data && response.data.data) {
+        onConfirm(response.data.data);
+      }
 
       setSelectedCategoryId(null);
       setIsEditing(false);
       onClose();
     } catch (error) {
       console.error("식재료 등록 실패:", error);
-      alert("식재료 등록 중 오류가 발생했습니다.");
+      alert("이미 등록한 식재료와 같은 이름의 식재료는 등록할 수 없어요");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
+    if (isOpen) {
+      setLocalName(searchTerm);
     }
-  }, [isEditing]);
-
-  if (!isOpen) return null;
+  }, [isOpen, searchTerm]);
 
   const finishEditing = () => {
-    if (searchTerm.trim() === "") {
-      setSearchTerm("이름 없음");
+    if (localName.trim() === "") {
+      setLocalName("이름 없음");
     }
     setIsEditing(false);
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-[#11111180]">
@@ -82,8 +92,8 @@ const Custom: React.FC<CustomProps> = ({
             <input
               ref={inputRef}
               type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={localName}
+              onChange={(e) => setLocalName(e.target.value)}
               onBlur={finishEditing}
               onKeyDown={(e) => e.key === "Enter" && finishEditing()}
               className="typo-body1 w-[180px] text-center font-bold text-neutral-900 border-b border-zinc-300 outline-none"
@@ -107,7 +117,6 @@ const Custom: React.FC<CustomProps> = ({
           '{searchTerm}'의 카테고리를 선택해주세요
         </p>
 
-        {/* 그리드 영역 */}
         <div className="w-40 h-40 flex-1 overflow-y-auto no-scrollbar grid grid-cols-3 gap-2 mb-4">
           {categories.map((cat) => (
             <button
@@ -140,7 +149,11 @@ const Custom: React.FC<CustomProps> = ({
           onClick={handleConfirm}
           disabled={selectedCategoryId === null || isLoading}
           className={`typo-label w-full h-11 text-white rounded-[10px] transition-colors
-            ${selectedCategoryId !== null && !isLoading ? "bg-[var(--color-green-deep)]" : "bg-zinc-300 cursor-not-allowed"}`}
+            ${
+              selectedCategoryId !== null && !isLoading
+                ? "bg-[var(--color-green-deep)]"
+                : "bg-zinc-300 cursor-not-allowed"
+            }`}
         >
           {confirmText}
         </button>

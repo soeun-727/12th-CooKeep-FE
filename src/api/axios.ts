@@ -15,6 +15,7 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -27,7 +28,6 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        console.log("인증 실패 감지: 토큰 갱신을 시도합니다.");
         const newAccessToken = await refreshAccessToken();
 
         if (originalRequest.headers) {
@@ -37,9 +37,16 @@ api.interceptors.response.use(
             : `Bearer ${newAccessToken}`;
         }
 
+        if (originalRequest.data && typeof originalRequest.data === "string") {
+          try {
+            originalRequest.data = JSON.parse(originalRequest.data);
+          } catch (e) {
+            // parsing error fallback
+          }
+        }
+
         return api(originalRequest);
       } catch (refreshError) {
-        console.error("세션이 만료되었습니다. 다시 로그인해주세요.");
         clearTokens();
         if (!window.location.pathname.includes("/login")) {
           window.location.href = "/login";

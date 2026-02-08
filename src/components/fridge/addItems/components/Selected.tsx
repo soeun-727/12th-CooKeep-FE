@@ -26,7 +26,7 @@ export default function Selected() {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="typo-caption text-zinc-500 truncate w-full text-center">
+                <span className="typo-caption !font-medium text-black truncate w-full text-center">
                   {item.name}
                 </span>
               </>

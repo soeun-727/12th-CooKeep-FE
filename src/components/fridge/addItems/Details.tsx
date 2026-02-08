@@ -18,7 +18,7 @@ export default function Details() {
       const promises = selectedItems.map((item) => {
         const formattedDate = item.expiration.replace(/\./g, "-");
         const payload = {
-          type: item.type, // 이제 스토어에서 "DEFAULT"가 보장됨
+          type: item.type,
           referenceId: Number(item.id),
           quantity: item.quantity,
           unit: item.unit,
@@ -26,18 +26,18 @@ export default function Details() {
           expirationDate: formattedDate,
           memo: item.memo || "",
         };
+
         return addIngredientToFridge(payload);
       });
 
       await Promise.all(promises);
-
       resetSelected();
       navigate("/fridge");
     } catch (error: any) {
-      console.error("등록 실패:", error.response?.data);
-      alert(
-        `등록 실패: ${error.response?.data?.message || "데이터 형식을 확인해주세요."}`,
-      );
+      console.error("등록 실패 상세 로그:", error.response?.data);
+      const errorMessage =
+        error.response?.data?.message || "데이터 형식을 확인해주세요.";
+      alert(`등록 실패: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }

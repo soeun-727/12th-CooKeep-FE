@@ -3,6 +3,7 @@ import type { IngredientType, StorageType, UnitType } from "../api/ingredient";
 
 export interface MasterItem {
   id: number | string;
+  referenceId?: number | string;
   name: string;
   image: string;
   categoryId: number;
@@ -79,6 +80,7 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
       }
       const newItem: MasterItem = {
         ...item,
+        referenceId: item.id,
         type: item.type || "DEFAULT",
         storageType: (REVERSE_STORAGE_MAP[item.storageType] ||
           item.storageType ||

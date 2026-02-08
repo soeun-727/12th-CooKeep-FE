@@ -26,11 +26,14 @@ const STORAGE_NAMES: Record<string, string> = {
   PANTRY: "상온",
 };
 const UNIT_NAMES: Record<string, string> = {
-  COUNT: "개",
-  CUP: "컵",
+  PIECE: "개",
+  PACK: "팩",
+  BAG: "봉지",
+  BOTTLE: "병",
+  BUNDLE: "묶음",
+  CAN: "캔",
   GRAM: "g",
-  ML: "ml",
-  BUNDLE: "봉지",
+  MILLILITER: "ml",
 };
 const DetailedItem: React.FC<DetailedItemProps> = (item) => {
   const { updateItemDetail, toggleItem } = useAddIngredientStore();

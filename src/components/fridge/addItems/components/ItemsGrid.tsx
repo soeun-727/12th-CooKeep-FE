@@ -1,15 +1,9 @@
 import Item from "./Item";
 import character from "../../../../assets/character/confused_char.svg";
 import { useAddIngredientStore } from "../../../../stores/useAddIngredientStore";
-
-interface InventoryItem {
-  id: string | number;
-  name: string;
-  image: string;
-  categoryId: number;
-}
+import type { MasterItem } from "../../../../stores/useAddIngredientStore";
 interface ItemsGridProps {
-  items: InventoryItem[];
+  items: MasterItem[];
 }
 
 export default function ItemsGrid({ items }: ItemsGridProps) {
