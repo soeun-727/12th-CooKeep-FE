@@ -16,7 +16,13 @@ export interface MasterItem {
 }
 
 type EditorType = "storage" | "expiry" | "quantity" | "unit" | "memo";
-
+// 추가 (MasterItem 위나 아래 아무 데나)
+export interface AddSourceItem {
+  id: number | string;
+  name: string;
+  image: string;
+  categoryId: number;
+}
 interface AddIngredientState {
   searchTerm: string;
   selectedCategoryId: number;
@@ -26,7 +32,7 @@ interface AddIngredientState {
   setModalOpen: (open: boolean) => void;
   setSearchTerm: (term: string) => void;
   setCategoryId: (id: number) => void;
-  toggleItem: (item: MasterItem) => void;
+  toggleItem: (item: AddSourceItem) => void;
   resetSelected: () => void;
   setHistoryItems: (items: MasterItem[]) => void;
   updateItemDetail: (id: string | number, type: EditorType, value: any) => void;
@@ -78,16 +84,18 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
           selectedItems: state.selectedItems.filter((i) => i.id !== item.id),
         };
       }
+
       const newItem: MasterItem = {
-        ...item,
+        id: item.id,
         referenceId: item.id,
-        type: item.type || "DEFAULT",
-        storageType: (REVERSE_STORAGE_MAP[item.storageType] ||
-          item.storageType ||
-          "FRIDGE") as StorageType,
-        unit: (REVERSE_UNIT_MAP[item.unit] || item.unit || "PIECE") as UnitType,
-        quantity: item.quantity || 1,
-        expiration: item.expiration || new Date().toISOString().split("T")[0],
+        name: item.name,
+        image: item.image,
+        categoryId: item.categoryId,
+        type: "DEFAULT",
+        storageType: "FRIDGE",
+        unit: "PIECE",
+        quantity: 1,
+        expiration: new Date().toISOString().split("T")[0],
       };
 
       return { selectedItems: [...state.selectedItems, newItem] };

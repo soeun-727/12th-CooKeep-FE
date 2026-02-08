@@ -1,7 +1,6 @@
 import Item from "./Item";
 import character from "../../../../assets/character/confused_char.svg";
 import { useAddIngredientStore } from "../../../../stores/useAddIngredientStore";
-import type { MasterItem } from "../../../../stores/useAddIngredientStore";
 
 interface ItemsGridProps {
   items: {
@@ -14,6 +13,7 @@ interface ItemsGridProps {
 
 export default function ItemsGrid({ items }: ItemsGridProps) {
   const { selectedItems, toggleItem, setModalOpen } = useAddIngredientStore();
+
   return (
     <div className="w-full flex flex-col items-center justify-center pt-6">
       <div className="flex flex-col w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
@@ -30,6 +30,7 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
             />
           ))}
         </div>
+
         <button
           type="button"
           onClick={() => setModalOpen(true)}
