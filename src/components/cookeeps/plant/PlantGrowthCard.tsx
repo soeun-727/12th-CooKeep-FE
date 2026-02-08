@@ -16,22 +16,26 @@ export default function PlantGrowthCard({
   overridePlantStage,
 }: PlantGrowthCardProps) {
   const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
-  const grownPlants = useCookeepsStore((s) => s.grownPlants);
+  // const grownPlants = useCookeepsStore((s) => s.grownPlants);
   const plantStage = useCookeepsStore((s) => s.plantStage);
   const lastRefreshedAt = useCookeepsStore((s) => s.lastRefreshedAt);
   const refreshGrowth = useCookeepsStore((s) => s.refreshGrowth);
 
-  const lastPlantName = grownPlants[grownPlants.length - 1];
-
-  const plantKey = selectedPlant ?? lastPlantName ?? null;
-
-  const plantName = plantKey ? PLANT_NAME_KR[plantKey] : "-";
+  // const lastPlantName = grownPlants[grownPlants.length - 1];
 
   // 페이지 진입시 자동 새로고침
   useEffect(() => {
     refreshGrowth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!selectedPlant) {
+    return null; // 또는 placeholder UI
+  }
+
+  const plantKey = selectedPlant;
+
+  const plantName = plantKey ? PLANT_NAME_KR[plantKey] : "-";
 
   //  분 단위 자동 새로고침 (정책서 충족)
   // useEffect(() => {

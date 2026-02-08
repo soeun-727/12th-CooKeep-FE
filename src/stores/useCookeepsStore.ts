@@ -1,5 +1,16 @@
 // src/stores/useCookeepsStore.ts
 import { create } from "zustand";
+import {
+  deleteMyPlant,
+  getMyPlants,
+  registerMyPlant,
+  reviveMyPlant,
+  setProfileMyPlant,
+  waterMyPlant,
+} from "../api/myPlants";
+import type { MyPlant } from "../types/myPlant";
+import { PLANT_NAME_TO_TYPE } from "../constants/plantTypeMap";
+import { getMyCookies } from "../api/cookies";
 
 export type PlantType =
   | "apple"
@@ -14,12 +25,22 @@ export type PlantStatus = "normal" | "wilting" | "wilted";
 export type PlantStage = 1 | 2 | 3 | 4;
 
 interface CookeepsState {
+  //  서버 식물 목록
+  myPlants: MyPlant[];
+
+  // 현재 키우는 식물 (서버 기준)
+  currentPlant: MyPlant | null;
+  // API 연동용
+  fetchMyPlants: () => Promise<void>;
+  registerPlant: (plantId: number) => Promise<void>;
+
   selectedPlant: PlantType | null;
   plantStage: PlantStage;
-  grownPlants: PlantType[]; // 다 키운 식물 목록
+  // grownPlants: PlantType[]; // 다 키운 식물 목록
   lastRefreshedAt: Date | null;
   refreshGrowth: () => void;
   cookie: number;
+  fetchCookies: () => Promise<void>;
 
   status: PlantStatus;
   lastWateredAt: Date | null;
@@ -27,7 +48,7 @@ interface CookeepsState {
   selectPlant: (plant: PlantType) => void;
   growPlant: () => void;
   waterPlant: () => void;
-  abandonPlant: () => void;
+  abandonPlant: () => Promise<void>;
   recoverPlant: () => void;
 
   hasShownWilting: boolean;
@@ -39,17 +60,60 @@ interface CookeepsState {
 
   freeWaterPlant: () => void; // 무료물주기
 
-  addCookie: () => void;
+  // addCookie: () => void;
+
+  setProfilePlant: (userPlantId: number) => Promise<void>;
 
   // ✅ 테스트용
   // setLastWateredAtDaysAgo: (daysAgo: number) => void;
 }
 
 export const useCookeepsStore = create<CookeepsState>((set, get) => ({
+  myPlants: [],
+  currentPlant: null,
+
+  fetchMyPlants: async () => {
+    const plants: MyPlant[] = await getMyPlants();
+
+    const current = plants.find((p: MyPlant) => !p.isHarvested && p.isProfile);
+
+    const mappedPlant = current ? PLANT_NAME_TO_TYPE[current.plantName] : null;
+
+    if (current && !mappedPlant) {
+      console.warn("Unknown plantName from server:", current.plantName);
+    }
+
+    set({
+      myPlants: plants,
+      currentPlant: current,
+      selectedPlant: mappedPlant ?? null,
+      plantStage: current?.level ?? 1,
+    });
+
+    console.log("📦 서버 식물 목록:", plants);
+    console.log("🌱 현재 식물:", current);
+    console.log("🔁 매핑 결과:", mappedPlant);
+  },
+
+  registerPlant: async (plantId: number) => {
+    await registerMyPlant(plantId);
+    await get().fetchMyPlants(); //  핵심
+  },
+
   selectedPlant: null,
   plantStage: 1,
-  grownPlants: [],
-  cookie: 100,
+  // grownPlants: [],
+  cookie: 0,
+
+  fetchCookies: async () => {
+    try {
+      const cookie = await getMyCookies();
+      set({ cookie });
+    } catch (e) {
+      console.error("쿠키 조회 실패:", e);
+    }
+  },
+
   status: "normal",
   lastWateredAt: null,
   lastRefreshedAt: null,
@@ -82,7 +146,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     }),
 
   growPlant: () => {
-    const { plantStage, selectedPlant, grownPlants } = get();
+    const { plantStage, selectedPlant } = get();
     if (!selectedPlant || plantStage >= 4) return;
 
     const nextStage = (plantStage + 1) as PlantStage;
@@ -92,28 +156,39 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
         plantStage: 4,
         // selectedPlant: null,
         status: "normal",
-        grownPlants: [...grownPlants, selectedPlant], // 저장
+        // grownPlants: [...grownPlants, selectedPlant], // 저장
       });
     } else {
       set({ plantStage: nextStage });
     }
   },
 
-  waterPlant: () => {
-    const { cookie, selectedPlant, plantStage, growPlant } = get();
+  // waterPlant: () => {
+  //   const { cookie, selectedPlant, plantStage, growPlant } = get();
 
-    if (!selectedPlant) return;
-    if (cookie < 10) return;
-    if (plantStage >= 4) return;
+  //   if (!selectedPlant) return;
+  //   if (cookie < 10) return;
+  //   if (plantStage >= 4) return;
 
-    set({
-      cookie: cookie - 10,
-      status: "normal",
-      lastWateredAt: new Date(),
-      hasShownWilting: false, // 다시 시들 수 있음
-    });
+  //   set({
+  //     cookie: cookie - 10,
+  //     status: "normal",
+  //     lastWateredAt: new Date(),
+  //     hasShownWilting: false, // 다시 시들 수 있음
+  //   });
 
-    growPlant();
+  //   growPlant();
+  // },
+
+  waterPlant: async () => {
+    const { currentPlant } = get();
+    if (!currentPlant) return;
+
+    await waterMyPlant(currentPlant.userPlantId);
+
+    // 핵심: 서버 상태 다시 가져오기
+    await get().fetchMyPlants();
+    await get().fetchCookies();
   },
 
   // 무료 물주기
@@ -133,26 +208,62 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   },
 
   // 포기하기
-  abandonPlant: () =>
-    set({
-      selectedPlant: null,
-      plantStage: 1,
-      status: "normal",
-      lastWateredAt: null,
-      hasShownWilting: false,
-    }),
+  abandonPlant: async () => {
+    const { currentPlant } = get();
+    if (!currentPlant) return;
+
+    try {
+      await deleteMyPlant(currentPlant.userPlantId);
+
+      // 서버 기준 상태 다시 동기화
+      await get().fetchMyPlants();
+
+      // UI 보조 초기화
+      set({
+        selectedPlant: null,
+        plantStage: 1,
+        status: "normal",
+        lastWateredAt: null,
+        hasShownWilting: false,
+      });
+    } catch (e) {
+      console.error("식물 포기 실패:", e);
+    }
+  },
 
   // 회복하기
-  recoverPlant: () => {
-    const { cookie } = get();
-    if (cookie < 5) return;
+  // recoverPlant: () => {
+  //   const { cookie } = get();
+  //   if (cookie < 5) return;
 
-    set({
-      cookie: cookie - 5,
-      status: "normal",
-      lastWateredAt: new Date(),
-      hasShownWilting: false,
-    });
+  //   set({
+  //     cookie: cookie - 5,
+  //     status: "normal",
+  //     lastWateredAt: new Date(),
+  //     hasShownWilting: false,
+  //   });
+  // },
+
+  recoverPlant: async () => {
+    const { currentPlant } = get();
+    if (!currentPlant) return;
+
+    try {
+      await reviveMyPlant(currentPlant.userPlantId);
+
+      // 핵심: 서버 기준으로 다시 동기화
+      await get().fetchMyPlants();
+      await get().fetchCookies();
+
+      // UI 보조 상태 초기화
+      set({
+        status: "normal",
+        lastWateredAt: new Date(),
+        hasShownWilting: false,
+      });
+    } catch (e) {
+      console.error("식물 회복 실패:", e);
+    }
   },
 
   checkStatusByTime: () => {
@@ -181,7 +292,15 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       set({ status: "normal" });
     }
   },
-  addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
+
+  // addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
+
+  setProfilePlant: async (userPlantId: number) => {
+    await setProfileMyPlant(userPlantId);
+
+    // 서버 기준으로 다시 동기화
+    await get().fetchMyPlants();
+  },
 
   /* =========================
      테스트용: lastWateredAt 조작

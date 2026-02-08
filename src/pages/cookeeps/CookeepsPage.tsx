@@ -14,7 +14,7 @@ import SelectedModal from "../../components/cookeeps/modals/SelectedModal";
 import WiltingModal from "../../components/cookeeps/modals/WiltingModal";
 import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
-import { PLANT_ID_TO_TYPE } from "../../constants/plantTypeMap";
+// import { PLANT_ID_TO_TYPE } from "../../constants/plantTypeMap";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 
 type ActiveModal =
@@ -37,7 +37,7 @@ export default function CookeepsPage() {
   const [selectedPlantData, setSelectedPlantData] = useState<
     (typeof PLANT_DATA)[0] | null
   >(null);
-  const selectPlantInStore = useCookeepsStore((s) => s.selectPlant);
+  // const selectPlantInStore = useCookeepsStore((s) => s.selectPlant);
 
   const storePlant = useCookeepsStore((s) => s.selectedPlant);
   const status = useCookeepsStore((s) => s.status);
@@ -61,15 +61,18 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    const { checkStatusByTime } = useCookeepsStore.getState();
-    checkStatusByTime(); // 최초한번
+    const { fetchMyPlants, fetchCookies, checkStatusByTime } =
+      useCookeepsStore.getState();
+
+    fetchMyPlants();
+    fetchCookies(); //  필수
+    checkStatusByTime();
 
     const interval = setInterval(() => {
       checkStatusByTime();
-    }, 60 * 1000); // 1분마다 인증
+    }, 60 * 1000);
 
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* =========================
@@ -95,15 +98,15 @@ export default function CookeepsPage() {
   /* =========================
      최종 시작 (store 확정)
   ========================= */
-  const handleFinalStart = () => {
+  const registerPlant = useCookeepsStore((s) => s.registerPlant);
+
+  const handleFinalStart = async () => {
     if (!selectedPlantData) return;
 
-    const plantType = PLANT_ID_TO_TYPE[selectedPlantData.id]; // 추가
-
-    selectPlantInStore(plantType);
+    await registerPlant(selectedPlantData.id);
 
     if (!hasUsedFreeWater) {
-      setActiveModal("free"); // 처음만
+      setActiveModal("free");
     } else {
       setActiveModal(null);
     }
