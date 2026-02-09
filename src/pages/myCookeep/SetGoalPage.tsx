@@ -5,11 +5,14 @@ import SpecificGoal from "../../components/auth/onboarding/SpecificGoal";
 import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
 import GoalcheckModal from "../../components/myCookeep/modals/GoalCheckModal";
+import { GOAL_TYPE_MAP } from "../../utils/mapping";
+import { updateWeeklyGoal } from "../../api/user";
 
 export default function SetGoalPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0); // 현재 단계 (0 또는 1)
+  const [step, setStep] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState({
     id: "cook",
     title: "주 n회 요리하기",
@@ -43,11 +46,28 @@ export default function SetGoalPage() {
       setStep((prev) => prev + 1);
     }
   };
-  const handleConfirm = () => {
-    console.log("최종 제출 데이터:", { selectedGoal, goalCount });
-    navigate("/mycookeep"); // 확인 후 이동할 경로
-  };
+  const handleConfirm = async () => {
+    setIsLoading(true);
+    try {
+      const requestBody = {
+        goalActionType:
+          GOAL_TYPE_MAP[selectedGoal.id as keyof typeof GOAL_TYPE_MAP].value,
+        targetCount: parseInt(goalCount, 10),
+      };
 
+      const response = await updateWeeklyGoal(requestBody);
+
+      if (response.status === "OK" || response.status === 200) {
+        navigate("/mycookeep", { replace: true });
+      }
+    } catch (error) {
+      console.error("목표 수정 실패:", error);
+      alert("이번 주 목표가 이미 설정되어 있습니다");
+    } finally {
+      setIsLoading(false);
+      setIsModalOpen(false);
+    }
+  };
   return (
     <>
       <BackHeader
@@ -63,7 +83,7 @@ export default function SetGoalPage() {
             size="S"
             variant="green"
             onClick={handleNext}
-            disabled={!isValid}
+            disabled={!isValid || isLoading}
           >
             {isLastStep ? "확인" : "다음"}
           </Button>

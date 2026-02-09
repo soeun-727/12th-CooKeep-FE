@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../ui/Button";
 import { currentIcon, groundImg } from "../../../assets";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
@@ -10,38 +10,23 @@ interface Props {
 }
 
 export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
-  // 1. 내부 상태 정의
-  // const [selectedPlant, setSelectedPlant] = useState("sprout"); // 초기 선택값
-
-  // // 2. 임시 식물 데이터
-  // const plants = [
-  //   { id: "sprout", name: "새싹" },
-  //   { id: "leaf", name: "잎새" },
-  //   { id: "flower", name: "꽃" },
-  //   { id: "tree", name: "나무" },
-  //   { id: "plant", name: "식물" },
-  // ];
-  // const currentGrowingPlantId = "leaf";
-
-  // if (!isOpen) return null;
-
   const currentPlant = useCookeepsStore((s) => s.currentPlant);
   const myPlants = useCookeepsStore((s) => s.myPlants);
 
-  // 모달이 열릴 때 초기 선택값 계산
-  const initialSelectedId = isOpen
-    ? (currentPlant?.userPlantId ?? myPlants[0]?.userPlantId ?? null)
-    : null;
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const [selectedId, setSelectedId] = useState<number | null>(
-    initialSelectedId,
-  );
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedId(
+        currentPlant?.userPlantId ?? myPlants[0]?.userPlantId ?? null,
+      );
+    }
+  }, [isOpen, currentPlant, myPlants]);
 
   if (!isOpen) return null;
 
   const selectedPlantImage =
     myPlants.find((p) => p.userPlantId === selectedId)?.imageUrl ?? groundImg;
-
   return (
     <div className="fixed inset-0 z-[100] flex items-end justify-center">
       {/* 배경 어둡게 */}
@@ -122,6 +107,7 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
             className="w-full"
             size="S"
             variant="black"
+            disabled={selectedId === null}
           >
             확인
           </Button>

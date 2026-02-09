@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// UI Components
 import Footer from "./Footer";
 import Progress from "./Progress";
 import FoodType from "./FoodType";
@@ -9,10 +13,28 @@ import AuthHeader from "../AuthHeader";
 import Last from "./Last";
 import Notification from "./Notification";
 import InstallGuide from "./InstallGuide";
-import { useNavigate } from "react-router-dom";
+
+// API & Store & Utils
 import { saveOnboardingInfo } from "../../../api/user";
-import axios from "axios";
 import { useOnboardingStore } from "../../../stores/useOnboardingStore";
+import { GOAL_TYPE_MAP } from "../../../utils/mapping";
+
+// 매퍼 상수 (컴포넌트 외부 정의)
+export const FOOD_TYPE_MAP: Record<string, string> = {
+  한식: "KOREAN",
+  중식: "CHINESE",
+  일식: "JAPANESE",
+  양식: "WESTERN",
+  건강식: "HEALTHY",
+  인스턴트식: "FAST_FOOD",
+};
+
+export const SKILL_LEVEL_MAP: Record<string, string> = {
+  "완전 초보": "BEGINNER",
+  "간단한 요리는 가능": "BASIC",
+  "먹고살기에 나쁘지 않은 수준": "INTERMEDIATE",
+  "요리 고수": "ADVANCED",
+};
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -34,14 +56,41 @@ export default function Onboarding() {
     showInstallGuide,
     setShowInstallGuide,
   } = useOnboardingStore();
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const nextStep = () => {
-    if (step < 3) {
-      setStep(step + 1);
-    } else {
-      handleSaveOnboarding();
+  // --- 비즈니스 로직 ---
+
+  const handleSaveOnboarding = async () => {
+    setIsLoading(true);
+    try {
+      const requestBody = {
+        favoriteFoodTypes: foodTypes.map((type) => FOOD_TYPE_MAP[type] || type),
+        cookingLevel: SKILL_LEVEL_MAP[skillLevel] || "BEGINNER",
+        // utils/mapping에서 가져온 GOAL_TYPE_MAP 활용
+        goalActionType:
+          GOAL_TYPE_MAP[selectedGoal.id as keyof typeof GOAL_TYPE_MAP]?.value ||
+          "COOKING",
+        targetCount: parseInt(goalCount, 10) || 1,
+      };
+
+      const response = await saveOnboardingInfo(requestBody);
+      if (response.data.status === "OK" || response.status === 200) {
+        setIsFinished(true);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("서버 응답 상세:", error.response?.data);
+      }
+      alert("입력 정보를 저장하는 데 실패했습니다.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const nextStep = () => {
+    if (step < 3) setStep(step + 1);
+    else handleSaveOnboarding();
   };
 
   const prevStep = () => {
@@ -49,43 +98,9 @@ export default function Onboarding() {
   };
 
   const skipStep = () => {
-    if (step === 2 || step === 3) {
-      handleSaveOnboarding();
-    } else {
-      nextStep();
-    }
+    if (step >= 2) handleSaveOnboarding();
+    else nextStep();
   };
-
-  const handleSaveOnboarding = async () => {
-    setIsLoading(true);
-    try {
-      const requestBody = {
-        favoriteFoodTypes: foodTypes.map((type) => FOOD_TYPE_MAP[type]),
-        cookingLevel: SKILL_LEVEL_MAP[skillLevel] || "BEGINNER",
-        goalActionType: GOAL_TYPE_MAP[selectedGoal.id] || "COOKING",
-        targetCount: parseInt(goalCount, 10) || 1,
-      };
-      console.log("최종 전송 데이터:", requestBody);
-      const response = await saveOnboardingInfo(requestBody);
-
-      if (response.status === 200) {
-        setIsFinished(true);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("서버 응답 상세:", error.response?.data);
-      }
-      alert("입력 정보를 다시 확인해주세요.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (showInstallGuide)
-    return <InstallGuide onFinish={() => navigate("/fridge")} />;
-  if (showNotification)
-    return <Notification onNext={() => setShowInstallGuide(true)} />;
-  if (isFinished) return <Last onStart={() => setShowNotification(true)} />;
 
   const getIsValid = () => {
     switch (step) {
@@ -103,12 +118,23 @@ export default function Onboarding() {
     }
   };
 
+  // --- 조건부 렌더링 (순서 중요!) ---
+
+  if (showInstallGuide)
+    return <InstallGuide onFinish={() => navigate("/fridge")} />;
+  if (showNotification)
+    return <Notification onNext={() => setShowInstallGuide(true)} />;
+  if (isFinished) return <Last onStart={() => setShowNotification(true)} />;
+
+  // --- 기본 온보딩 UI ---
+
   return (
     <>
       <AuthHeader />
-      <div className="min-h-screen relative pb-32">
+      <div className="min-h-screen relative pb-32 bg-[#FAFAFA]">
         <div className="w-[361px] mx-auto flex flex-col items-center">
           <Progress currentStep={step} />
+
           {step === 0 && (
             <FoodType selectedTypes={foodTypes} onToggle={setFoodTypes} />
           )}
@@ -126,6 +152,7 @@ export default function Onboarding() {
             />
           )}
         </div>
+
         <Footer
           onNext={nextStep}
           onPrev={prevStep}
@@ -139,26 +166,3 @@ export default function Onboarding() {
     </>
   );
 }
-
-export const FOOD_TYPE_MAP: Record<string, string> = {
-  한식: "KOREAN",
-  중식: "CHINESE",
-  일식: "JAPANESE",
-  양식: "WESTERN",
-  건강식: "HEALTHY",
-  인스턴트식: "FAST_FOOD",
-};
-
-export const SKILL_LEVEL_MAP: Record<string, string> = {
-  "완전 초보": "BEGINNER",
-  "간단한 요리는 가능": "BASIC",
-  "먹고살기에 나쁘지 않은 수준": "INTERMEDIATE",
-  "요리 고수": "ADVANCED",
-};
-
-export const GOAL_TYPE_MAP: Record<string, string> = {
-  cook: "COOKING",
-  photo: "PHOTO_RECORD",
-  expired: "USE_EXPIRING_INGREDIENT",
-  like: "RECIPE_LIKE",
-};
