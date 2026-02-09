@@ -1,53 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
-// import apple from "../../assets/cookeeps/apple.svg";
-// import beans from "../../assets/cookeeps/beans.svg";
-// import lettuce from "../../assets/cookeeps/lettus.svg";
-// import tomato from "../../assets/cookeeps/tomato.svg";
-// import potato from "../../assets/cookeeps/potato.svg";
-// import strawberry from "../../assets/cookeeps/strawberry.svg";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { PLANT_DATA } from "../../constants/plantData";
-
-// plant 타입 지정
-// type PlantKey =
-//   | "apple"
-//   | "beans"
-//   | "lettuce"
-//   | "tomato"
-//   | "potato"
-//   | "strawberry";
-
-// const plantImageMap: Record<PlantKey, string> = {
-//   apple,
-//   beans,
-//   lettuce,
-//   tomato,
-//   potato,
-//   strawberry,
-// };
-
-// 한글 매핑
-// const plantNameMap: Record<PlantKey, string> = {
-//   apple: "사과",
-//   beans: "강낭콩",
-//   lettuce: "상추",
-//   tomato: "토마토",
-//   potato: "감자",
-//   strawberry: "딸기",
-// };
-
-// 임시 데이터
-// const tempGrownPlants: PlantKey[] = [
-//   "apple",
-//   "beans",
-//   "lettuce",
-//   "tomato",
-//   "potato",
-//   "strawberry",
-//   "apple",
-//   "beans",
-// ];
 
 export default function MyPlantPage() {
   const navigate = useNavigate();

@@ -1,5 +1,6 @@
 // src/api/myPlants.ts
 import axios from "./axios";
+import type { ApiResponse } from "./types";
 
 export const getMyPlants = async () => {
   const res = await axios.get("/api/my-plants");
@@ -7,9 +8,10 @@ export const getMyPlants = async () => {
 };
 
 export const registerMyPlant = async (plantId: number) => {
-  const res = await axios.post(`/api/my-plants/${plantId}`);
-  console.log("🌱 등록 API 응답:", res.data);
-  return res.data; // { data: { userPlantId: 123, ... } } 형태인지 확인
+  const res = await axios.post<ApiResponse<string>>(
+    `/api/my-plants/${plantId}`,
+  );
+  return res.data; // { status, timestamp, data: string }
 };
 
 export const waterMyPlant = async (userPlantId: number) => {

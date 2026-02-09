@@ -15,7 +15,7 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
 }) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  // 🔥 모달이 열릴 때마다 선택 초기화
+  // 모달이 열릴 때마다 선택 초기화
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => setSelectedId(null), 0);
@@ -27,7 +27,7 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
 
   const handleConfirm = () => {
     if (selectedId !== null) {
-      console.log("🎯 선택한 식물 ID:", selectedId);
+      console.log("선택한 식물 ID:", selectedId);
       onConfirm(selectedId);
     }
   };
@@ -105,43 +105,3 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
 };
 
 export default PlantSelectModal;
-
-// 나중에 사용할 때 CookeepsPage에
-// const [activeModal, setActiveModal] = useState<"select" | "selected" | null>(
-//     "select",
-//   );
-//   const [selectedPlant, setSelectedPlant] = useState<
-//     (typeof PLANT_DATA)[0] | null
-//   >(null);
-
-//   // 1단계 모달에서 식물 선택 후 '확인' 클릭 시 실행
-//   const handleSelectConfirm = (id: number) => {
-//     const plant = PLANT_DATA.find((p) => p.id === id);
-//     if (plant) {
-//       setSelectedPlant(plant);
-//       setActiveModal("selected"); // 두 번째 확인 모달로 변경
-//     }
-//   };
-
-//   const handleFinalStart = () => {
-//     console.log(`${selectedPlant?.text} 키우기 시작!`);
-//     setActiveModal(null); // 모든 모달 닫기
-//   };
-//   <AppLayout>
-//       <PlantSelectModal
-//         isOpen={activeModal === "select"}
-//         onClose={() => setActiveModal(null)}
-//         onConfirm={handleSelectConfirm}
-//       />
-
-//       {/* 2. 최종 확인 모달 */}
-//       {selectedPlant && (
-//         <SelectedModal
-//           isOpen={activeModal === "selected"}
-//           onClose={() => setActiveModal("select")} // '다시 고르기' 클릭 시 1단계로 회귀
-//           plant={selectedPlant.text}
-//           image={selectedPlant.img}
-//           description={selectedPlant.description}
-//           onConfirm={handleFinalStart}
-//         />
-//       )}

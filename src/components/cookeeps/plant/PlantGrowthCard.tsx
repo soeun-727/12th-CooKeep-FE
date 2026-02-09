@@ -17,14 +17,9 @@ export default function PlantGrowthCard({
   onWaterSuccess,
   overridePlantStage,
 }: PlantGrowthCardProps) {
-  // const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
-  // // const grownPlants = useCookeepsStore((s) => s.grownPlants);
-  // const plantStage = useCookeepsStore((s) => s.plantStage);
   const currentPlant = useCookeepsStore((s) => s.currentPlant);
   const lastRefreshedAt = useCookeepsStore((s) => s.lastRefreshedAt);
   const refreshGrowth = useCookeepsStore((s) => s.refreshGrowth);
-
-  // const lastPlantName = grownPlants[grownPlants.length - 1];
 
   // 페이지 진입시 자동 새로고침
   useEffect(() => {

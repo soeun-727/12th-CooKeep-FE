@@ -58,9 +58,6 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
           {/* 2. 식물 도감 (그리드) */}
           <div className="grid grid-cols-4 gap-x-3 gap-y-1 mb-7 w-[331px] -mt-2 px-4">
             {myPlants.map((plant) => (
-              // const isGrowing = plant.id === currentGrowingPlantId;
-
-              // return (
               <div key={plant.userPlantId} className="relative">
                 {/* 현재 키우는 식물 위에만 뜨는 말풍선 */}
                 {plant.isProfile && (
