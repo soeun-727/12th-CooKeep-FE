@@ -201,7 +201,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       const response = await registerMyPlant(plantId);
       console.log("등록 API 응답:", response);
 
-      set({ hasShownHarvestModal: false });
+      set({ hasShownHarvestModal: false, justHarvestedPlant: null });
 
       const expectedPlantName = PLANT_ID_TO_NAME[plantId];
       await get().fetchMyPlants();

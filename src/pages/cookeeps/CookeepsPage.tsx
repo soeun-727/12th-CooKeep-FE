@@ -72,23 +72,23 @@ export default function CookeepsPage() {
     // justHarvestedPlant가 설정되면 즉시 모달 표시
     if (justHarvestedPlant && !hasShownHarvestModal) {
       harvestTriggeredRef.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowHarvestModal(true);
     }
   }, [justHarvestedPlant, hasShownHarvestModal]);
 
   // 수확 모달 닫을 때 로직 수정
-  const handleHarvestModalClose = async () => {
+  const handleHarvestModalClose = () => {
     const store = useCookeepsStore.getState();
 
     store.setHasShownHarvestModal(true);
+    store.setJustHarvestedPlant(null); // 제일 중요
     store.setPrevCookie(null);
-    store.setJustHarvestedPlant(null); // 추가
-    store.resetCurrentPlant();
 
     harvestTriggeredRef.current = false;
-    setSelectedPlantData(null);
     setShowHarvestModal(false);
 
-    // 선택 모달로 전환
+    setSelectedPlantData(null);
     setActiveModal("select");
   };
 
