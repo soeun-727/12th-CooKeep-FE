@@ -56,9 +56,9 @@ export default function CookeepsPage() {
 
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
 
-  const [hasUsedFreeWater, setHasUsedFreeWater] = useState(() => {
-    return localStorage.getItem("hasUsedFreeWater") === "true";
-  }); // 처음만 무료 물주기
+  // const [hasUsedFreeWater, setHasUsedFreeWater] = useState(() => {
+  //   return localStorage.getItem("hasUsedFreeWater") === "true";
+  // }); // 처음만 무료 물주기
 
   const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
 
@@ -110,11 +110,12 @@ export default function CookeepsPage() {
 
     // 🔥 수확 모달 최우선
     if (showHarvestModal) return null; // 수확 모달은 별도 관리
-
+    // 3. 식물은 있는데 무료 물주기를 안 했다면? (이 부분이 누락됨)
+    if (activeModal === "free") return "free";
     if (!currentPlant) return "select";
+
     if (status === "wilting") return "wilting";
     if (status === "wilted") return "wilted";
-    if (!hasUsedFreeWater) return "free";
     return null;
   })();
 
@@ -166,33 +167,70 @@ export default function CookeepsPage() {
 
   // CookeepsPage.tsx의 handleFinalStart 수정
 
+  // const handleFinalStart = async () => {
+  //   if (!selectedPlantData) return;
+
+  //   try {
+  //     console.log("🌱 등록 시작:", selectedPlantData);
+
+  //     // 1. 선택한 식물 등록 (내부에서 fetchMyPlants 호출됨)
+  //     await registerPlant(selectedPlantData.id); // 1. 식물 등록 완료
+
+  //     // 🔥 여기서 fetchMyPlants 중복 호출 제거!
+  //     // await useCookeepsStore.getState().fetchMyPlants(); // ← 삭제
+
+  //     // 2. store에서 업데이트된 currentPlant 가져오기
+  //     const store = useCookeepsStore.getState();
+  //     const current = store.currentPlant;
+
+  //     console.log("✅ 등록 완료:", current);
+
+  //     if (!current) {
+  //       console.error("❌ 식물 등록 후 currentPlant가 없습니다");
+  //       setActiveModal("select");
+  //       return;
+  //     }
+
+  //     // 3. UI용 selectedPlantData 업데이트
+  //     const plantData = PLANT_DATA.find((p) => p.text === current.plantName);
+
+  //     setSelectedPlantData({
+  //       id: current.userPlantId,
+  //       text: current.plantName,
+  //       img: plantData?.img || "",
+  //       description: plantData?.description || "",
+  //       isHarvested: current.isHarvested,
+  //     });
+
+  //     // 4. 무료 물주기 여부에 따른 모달 전환
+  //     // localStorage를 직접 보는 것보다 상태 변수를 쓰는 것이 리액트답습니다.
+  //     if (!hasUsedFreeWater) {
+  //       setActiveModal("free");
+  //     } else {
+  //       setActiveModal(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ 식물 시작 실패:", error);
+  //     setActiveModal("select");
+  //   }
+  // };
   const handleFinalStart = async () => {
     if (!selectedPlantData) return;
 
     try {
-      console.log("🌱 등록 시작:", selectedPlantData);
+      // 1. 등록 실행 및 서버 응답 받기
+      const res = await registerPlant(selectedPlantData.id);
 
-      // 1. 선택한 식물 등록 (내부에서 fetchMyPlants 호출됨)
-      await registerPlant(selectedPlantData.id);
-
-      // 🔥 여기서 fetchMyPlants 중복 호출 제거!
-      // await useCookeepsStore.getState().fetchMyPlants(); // ← 삭제
-
-      // 2. store에서 업데이트된 currentPlant 가져오기
       const store = useCookeepsStore.getState();
       const current = store.currentPlant;
 
-      console.log("✅ 등록 완료:", current);
-
       if (!current) {
-        console.error("❌ 식물 등록 후 currentPlant가 없습니다");
         setActiveModal("select");
         return;
       }
 
-      // 3. UI용 selectedPlantData 업데이트
+      // 2. UI 데이터 업데이트
       const plantData = PLANT_DATA.find((p) => p.text === current.plantName);
-
       setSelectedPlantData({
         id: current.userPlantId,
         text: current.plantName,
@@ -201,8 +239,14 @@ export default function CookeepsPage() {
         isHarvested: current.isHarvested,
       });
 
-      // 4. 다음 단계로
-      setActiveModal(!hasUsedFreeWater ? "free" : null);
+      // 🔥 실제 서버 응답 body의 'data' 필드에 메시지가 담겨 오므로 이를 체크합니다.
+      if (res?.data === "첫 식물 등록이 완료되었습니다.") {
+        console.log("🎁 첫 등록 보너스 감지!");
+        setActiveModal("free");
+      } else {
+        console.log("🌱 일반 등록 완료");
+        setActiveModal(null);
+      }
     } catch (error) {
       console.error("❌ 식물 시작 실패:", error);
       setActiveModal("select");
@@ -242,11 +286,9 @@ export default function CookeepsPage() {
       )}
       {/* 무료 물주기 모달 */}
       <FreeWaterModal
-        isOpen={activeModal === "free"}
+        isOpen={derivedModal === "free"}
         onConfirm={async () => {
-          await freeWaterPlant(); // 이게 핵심
-          localStorage.setItem("hasUsedFreeWater", "true");
-          setHasUsedFreeWater(true);
+          await freeWaterPlant(); // 쿠키 소모 없이 물주기 API 호출
           setActiveModal(null);
         }}
         onClose={() => {

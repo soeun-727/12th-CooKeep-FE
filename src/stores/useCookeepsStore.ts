@@ -14,6 +14,7 @@ import {
   PLANT_NAME_TO_TYPE,
 } from "../constants/plantTypeMap";
 import { getMyCookies } from "../api/cookies";
+import type { ApiResponse } from "../api/types";
 
 export type PlantType =
   | "apple"
@@ -39,7 +40,7 @@ interface CookeepsState {
   justHarvestedPlant: MyPlant | null;
   setJustHarvestedPlant: (plant: MyPlant | null) => void;
   fetchMyPlants: () => Promise<void>;
-  registerPlant: (plantId: number) => Promise<void>;
+  registerPlant: (plantId: number) => Promise<ApiResponse<string>>;
 
   selectedPlant: PlantType | null;
   plantStage: PlantStage;
@@ -229,6 +230,51 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   },
   // useCookeepsStore.ts
 
+  // registerPlant: async (plantId: number) => {
+  //   try {
+  //     console.log("🌱 식물 등록 API 호출:", plantId);
+
+  //     const response = await registerMyPlant(plantId);
+  //     console.log("📥 등록 API 응답:", response);
+
+  //     set({ hasShownHarvestModal: false });
+
+  //     // 🔥 등록 전에 plantName 미리 저장
+  //     const expectedPlantName = PLANT_ID_TO_NAME[plantId];
+  //     console.log("  → 예상 식물 이름:", expectedPlantName);
+
+  //     // 등록 후 서버 데이터 가져오기
+  //     await get().fetchMyPlants();
+
+  //     // 🔥 방금 등록한 식물 찾기: plantName + 최신 + 미수확
+  //     const plants = get().myPlants;
+
+  //     const candidates = plants.filter(
+  //       (p) => p.plantName === expectedPlantName && !p.isHarvested,
+  //     );
+
+  //     console.log("  → 후보 식물들:", candidates);
+
+  //     // 가장 최근에 생성된 것 선택
+  //     const justRegistered = candidates.sort(
+  //       (a, b) =>
+  //         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  //     )[0];
+
+  //     if (justRegistered) {
+  //       set({
+  //         currentPlant: justRegistered,
+  //         selectedPlant: PLANT_NAME_TO_TYPE[justRegistered.plantName],
+  //         plantStage: justRegistered.level,
+  //       });
+  //       console.log("✅ 등록된 식물 설정 완료:", justRegistered);
+  //     } else {
+  //       console.error("❌ 등록된 식물을 찾을 수 없습니다");
+  //     }
+  //   } catch (e) {
+  //     console.error("식물 등록 실패", e);
+  //   }
+  // },
   registerPlant: async (plantId: number) => {
     try {
       console.log("🌱 식물 등록 API 호출:", plantId);
@@ -238,23 +284,14 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
 
       set({ hasShownHarvestModal: false });
 
-      // 🔥 등록 전에 plantName 미리 저장
       const expectedPlantName = PLANT_ID_TO_NAME[plantId];
-      console.log("  → 예상 식물 이름:", expectedPlantName);
-
-      // 등록 후 서버 데이터 가져오기
       await get().fetchMyPlants();
 
-      // 🔥 방금 등록한 식물 찾기: plantName + 최신 + 미수확
       const plants = get().myPlants;
-
       const candidates = plants.filter(
         (p) => p.plantName === expectedPlantName && !p.isHarvested,
       );
 
-      console.log("  → 후보 식물들:", candidates);
-
-      // 가장 최근에 생성된 것 선택
       const justRegistered = candidates.sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -267,11 +304,13 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
           plantStage: justRegistered.level,
         });
         console.log("✅ 등록된 식물 설정 완료:", justRegistered);
-      } else {
-        console.error("❌ 등록된 식물을 찾을 수 없습니다");
       }
+
+      // 🔥 핵심: 백엔드 응답을 그대로 리턴해서 페이지에서 메시지를 읽을 수 있게 함
+      return response;
     } catch (e) {
       console.error("식물 등록 실패", e);
+      throw e;
     }
   },
 
