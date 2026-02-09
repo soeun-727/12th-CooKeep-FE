@@ -51,10 +51,12 @@ export default function RecipeResultPage() {
         className="flex-1 overflow-y-auto no-scrollbar flex flex-col gap-9 px-4 pt-[75px]"
       >
         {/* {recipeHistory.map((recipe, idx) => { */}
-        {recipesToRender.map((recipe) => {
+        {recipesToRender.map((recipe, index) => {
           const requiredIngredients = recipe.ingredients
             .filter((i) => i.isRequired)
             .map((i) => i.name);
+
+          const isLastRecipe = index === recipesToRender.length - 1;
 
           return (
             <div
@@ -83,6 +85,27 @@ export default function RecipeResultPage() {
                   videos={recipe.relatedVideos}
                   tags={recipe.tags ?? []}
                 />
+              )}
+
+              {/* 마지막 레시피에만 AI 안내 문구 */}
+              {isLastRecipe && (
+                <div
+                  className="
+            flex justify-center
+            mt-[10px]
+            w-full
+            text-center
+            text-[11px] leading-[14px]
+            text-[#7D7D7D]
+            font-pretendard
+          "
+                >
+                  <div className="w-[361px]">
+                    AI가 제공하는 정보에는 실수가 있을 수 있습니다
+                    <br />
+                    관련 정보를 확인 후 활용해주세요
+                  </div>
+                </div>
               )}
             </div>
           );
