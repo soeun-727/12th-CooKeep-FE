@@ -4,14 +4,9 @@ import congratsImg from "../../../assets/character/congrats_happy_char.svg";
 interface HarvestModalProps {
   isOpen: boolean;
   onClose: () => void;
-  cookieAmount: number;
 }
 
-export default function HarvestModal({
-  isOpen,
-  onClose,
-  cookieAmount,
-}: HarvestModalProps) {
+export default function HarvestModal({ isOpen, onClose }: HarvestModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -40,7 +35,7 @@ export default function HarvestModal({
               </p>
 
               <p className="font-bold text-[16px] leading-[24px] text-[#1FC16F] text-center">
-                쿠키 +{cookieAmount} 🍪
+                쿠키 +15 🍪
               </p>
             </div>
           </div>

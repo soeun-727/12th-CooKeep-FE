@@ -408,47 +408,6 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       const response = await waterMyPlant(currentPlant.userPlantId);
       console.log("✅ 물주기 API 응답:", response);
 
-      // 🔥 폴링으로 레벨 변화 확인 (최대 3초, 500ms 간격)
-      let attempts = 0;
-      const maxAttempts = 6; // 3초
-      let levelChanged = false;
-
-      while (attempts < maxAttempts && !levelChanged) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // const plants = await getMyPlants();
-        // const updatedPlant = plants.find(
-        //   (p) => p.userPlantId === currentPlant.userPlantId,
-        // );
-        const plants: MyPlant[] = await getMyPlants();
-
-        const updatedPlant = plants.find(
-          (p: MyPlant) => p.userPlantId === currentPlant.userPlantId,
-        );
-
-        console.log(`  🔍 폴링 ${attempts + 1}회:`, {
-          이전레벨: beforeLevel,
-          현재레벨: updatedPlant?.level,
-          수확여부: updatedPlant?.isHarvested,
-        });
-
-        // 레벨이 올라갔거나 수확되었으면 성공
-        if (
-          updatedPlant &&
-          (updatedPlant.level > beforeLevel || updatedPlant.isHarvested)
-        ) {
-          levelChanged = true;
-          console.log("  ✅ 레벨 변화 감지!");
-          break;
-        }
-
-        attempts++;
-      }
-
-      if (!levelChanged) {
-        console.warn("⚠️ 레벨 변화를 감지하지 못했습니다 (타임아웃)");
-      }
-
       // 최종 상태 갱신
       await get().fetchMyPlants();
       await get().fetchCookies();

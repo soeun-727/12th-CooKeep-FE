@@ -84,7 +84,6 @@ export default function CookeepsPage() {
     // justHarvestedPlant가 설정되면 즉시 모달 표시
     if (justHarvestedPlant && !hasShownHarvestModal) {
       harvestTriggeredRef.current = true;
-      setShowHarvestModal(true);
     }
   }, [justHarvestedPlant, hasShownHarvestModal]);
 
@@ -104,16 +103,6 @@ export default function CookeepsPage() {
     // 🔥 선택 모달로 전환
     setActiveModal("select");
   };
-
-  // 획득 쿠키 계산 수정
-  const earnedCookie = (() => {
-    const store = useCookeepsStore.getState();
-    const { cookie, prevCookie } = store;
-    if (prevCookie !== null && cookie > prevCookie) {
-      return cookie - prevCookie;
-    }
-    return 0;
-  })();
 
   // 모달 순서 자동 계산
   const derivedModal: ActiveModal = (() => {
@@ -292,7 +281,6 @@ export default function CookeepsPage() {
       {/* 수확 모달 */}
       <HarvestModal
         isOpen={showHarvestModal}
-        cookieAmount={earnedCookie}
         onClose={handleHarvestModalClose}
       />
 
