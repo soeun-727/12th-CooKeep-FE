@@ -109,6 +109,7 @@ export default function App() {
             <Route path="confirm" element={<RecipeConfirmPage />} />
             <Route path="loading" element={<RecipeLoadingPage />} />
             <Route path="result" element={<RecipeResultPage />} />
+            <Route path="result/:sessionId" element={<RecipeResultPage />} />
           </Route>
           <Route element={<AddItemLayout />}>
             <Route path="/fridge/add" element={<AddItemPage />} />

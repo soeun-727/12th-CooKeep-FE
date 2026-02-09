@@ -4,6 +4,7 @@ import DoublecheckModal from "../../ui/DoublecheckModal";
 import TextField from "../../ui/TextField";
 import searchIcon from "../../../assets/recipe/search.svg";
 import { useRecipeStore } from "../../../stores/useRecipeStore";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
   const { recipes, toggleLike, renameRecipe, deleteRecipe } = useRecipeStore();
   const [isVisible, setIsVisible] = useState(isOpen);
   const [shouldAnimateOpen, setShouldAnimateOpen] = useState(false);
@@ -74,7 +77,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               setSelectedRecipe(item);
               setIsDeleteModalOpen(true);
             }}
-            onSelect={() => console.log(`${item.name} 상세 이동`)}
+            onSelect={() => {
+              onClose(); // 사이드바 닫고
+              navigate(`/recipe/result/${item.id}`);
+            }}
           />
         ))}
     </div>

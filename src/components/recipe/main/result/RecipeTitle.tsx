@@ -1,5 +1,5 @@
 import { useState } from "react";
-import tempIcon from "../../../../assets/recipe/main/temp_recipe_title.svg";
+import tempIcon from "../../../../assets/mycookeep/record/fork_knife_plate.svg";
 import unlikedIcon from "../../../../assets/recipe/unliked.svg";
 import likedIcon from "../../../../assets/recipe/liked.svg";
 
