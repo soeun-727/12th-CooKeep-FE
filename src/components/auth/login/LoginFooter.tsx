@@ -49,14 +49,14 @@ export default function LoginFooter() {
         <img src={Line} alt="구분선" />
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-3 mt-7">
+      <div className="flex items-center justify-center gap-3 mt-7">
         {/* 간편 로그인 미구현  */}
         <button onClick={handleGoogleLogin}>
-          <img src={Google} alt="구글 로고" className="w-50" />
+          <img src={Google} alt="구글 로고" className="" />
         </button>
 
         <button onClick={handleKakaoLogin}>
-          <img src={Kakao} alt="카카오 로고" className="w-50" />
+          <img src={Kakao} alt="카카오 로고" className="" />
         </button>
       </div>
 
@@ -64,7 +64,6 @@ export default function LoginFooter() {
       <div className="mt-8 flex flex-col items-center justify-center">
         <div className="flex justify-center gap-4">
           <span className="typo-caption">전화번호를 변경했어요</span>
-          {/* 현재 페이지 미구현 */}
           <button
             onClick={() => navigate("/support")}
             className="typo-caption underline"

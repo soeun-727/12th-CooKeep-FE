@@ -88,7 +88,7 @@ export default function MyCookeepPage() {
         <MyCookeepTabBar activeTab={activeTab} onTabChange={handleTabChange} />
       </div>
 
-      <div className="flex-1 mb-[15px]">{renderContent()}</div>
+      <div className="flex-1 mt-[10px] mb-[15px]">{renderContent()}</div>
 
       {shouldShowAddMoreModal && (
         <AddMoreModal

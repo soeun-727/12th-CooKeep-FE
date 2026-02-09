@@ -62,39 +62,46 @@ export default function Profile() {
     <>
       <div className="flex flex-col items-center justify-center">
         {/* 헤더 섹션 */}
-        <div className="w-full h-[369px] bg-gradient-to-b from-[#32E389] to-[#1FC16F] rounded-b-[36px] flex flex-col items-center justify-center">
+        <div className="w-full h-[260px] bg-gradient-to-b from-[#32E389] to-[#1FC16F] rounded-b-[36px] flex flex-col items-center justify-center">
           <MyCookeepHeader />
 
-          {/* 식물 사진 및 수정 버튼 */}
-          <div className="relative inline-block overflow-visible">
-            <img
-              src={profile.profilePlantImageUrl || groundImg}
-              alt="profileBackground"
-              className="w-[155px] p-6 rounded-full object-cover"
-            />
-
-            <button
-              className="absolute bottom-6 right-6 transition-transform active:scale-90"
-              onClick={() => {
-                console.log("프로필 수정 버튼 클릭됨");
-                setIsEditModalOpen(true);
-              }}
-            >
-              <img src={refreshIcon} alt="refresh" className="w-[22px]" />
-            </button>
-          </div>
-
-          <p className="typo-h2 text-white -mt-2">{profile.nickname}</p>
-
-          <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-[7px]">
-            <span className="text-(--color-green)">
-              {profile.daysSinceJoined}
-            </span>
-            <span className="text-zinc-500">일 째 Cookeep</span>
+          <div className="flex w-[361px] mt-5 items-center justify-start">
+            {/* 식물 사진 및 수정 버튼 */}
+            <div className="relative w-31 shrink-0 inline-block">
+              <img
+                src={profile.profilePlantImageUrl || groundImg}
+                alt="profileBackground"
+                className="w-full p-6 rounded-full object-cover"
+              />
+              <button
+                className="absolute bottom-4.5 right-5 transition-transform active:scale-90"
+                onClick={() => {
+                  console.log("프로필 수정 버튼 클릭됨");
+                  setIsEditModalOpen(true);
+                }}
+              >
+                <img src={refreshIcon} alt="refresh" className="w-[32px]" />
+              </button>
+            </div>
+            {/* 유저 정보 */}
+            <div className="flex flex-col">
+              <p className="typo-h2 text-white">{profile.nickname}</p>
+              <div className="typo-caption text-white">
+                <span>지금 내가 키우는 식물 </span>
+                {/* 임시로 */}
+                <span>토마토</span>
+              </div>
+              <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-3">
+                <span className="text-(--color-green)">
+                  {profile.daysSinceJoined}
+                </span>
+                <span className="text-zinc-500">일 째 Cookeep</span>
+              </div>
+            </div>
           </div>
 
           {/* 목표 요약 바 */}
-          <div className="bg-[#1DAD64] p-3 w-[361px] h-12 flex items-center justify-between gap-3 rounded-[12px] shadow-[0px_4px_16px_-10px_rgba(0,0,0,0.25)] mt-[23px]">
+          <div className="bg-[#1DAD64] p-3 w-[361px] h-12 flex items-center justify-between gap-3 rounded-[12px] shadow-[0px_4px_16px_-10px_rgba(0,0,0,0.25)]">
             <span className="text-white typo-body2 truncate">
               이번주 목표는... 주 {profile.weeklyGoal.targetCount}회 {goalLabel}
               !

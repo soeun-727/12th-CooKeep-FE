@@ -25,7 +25,7 @@ export default function RecordEntry() {
       <div
         className="
           flex justify-center items-center
-          px-4 pt-[27px] pb-[26px]
+          px-4 pt-[50px] pb-[72px]
           bg-white
           rounded-b-[6px]
         "
