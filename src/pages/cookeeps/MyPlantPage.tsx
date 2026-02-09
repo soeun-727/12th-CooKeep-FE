@@ -7,6 +7,7 @@ import BackHeader from "../../components/ui/BackHeader";
 // import potato from "../../assets/cookeeps/potato.svg";
 // import strawberry from "../../assets/cookeeps/strawberry.svg";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
+import { PLANT_DATA } from "../../constants/plantData";
 
 // plant 타입 지정
 // type PlantKey =
@@ -54,6 +55,9 @@ export default function MyPlantPage() {
   const myPlants = useCookeepsStore((s) => s.myPlants);
 
   const grownPlants = myPlants.filter((p) => p.isHarvested);
+  const plantImageMap = Object.fromEntries(
+    PLANT_DATA.map((p) => [p.text, p.img]),
+  );
 
   return (
     <div className="relative min-h-screen bg-[#FAFAFA] pt-[110px]">
@@ -74,7 +78,7 @@ export default function MyPlantPage() {
               >
                 <div className="flex flex-col items-center gap-[4px] w-[58px]">
                   <img
-                    src={plant.imageUrl}
+                    src={plantImageMap[plant.plantName]}
                     alt={plant.plantName}
                     className="w-[48px] h-[48px]"
                     loading="lazy"

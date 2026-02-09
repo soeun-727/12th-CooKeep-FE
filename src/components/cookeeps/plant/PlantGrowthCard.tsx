@@ -5,19 +5,22 @@ import GrowthProgressBar from "./GrowthProgressBar";
 import { PLANT_NAME_KR } from "../../../constants/plantNames";
 import { useEffect } from "react";
 import { preloadNextStage } from "./preloadPlantImages";
+import { PLANT_NAME_TO_TYPE } from "../../../constants/plantTypeMap";
 
 interface PlantGrowthCardProps {
   onWaterSuccess?: () => void; // 여기에 onSuccess 콜백 추가
-  overridePlantStage?: number; // 추가
+  overridePlantStage?: 1 | 2 | 3 | 4; // 추가
+  plant?: string;
 }
 
 export default function PlantGrowthCard({
   onWaterSuccess,
   overridePlantStage,
 }: PlantGrowthCardProps) {
-  const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
-  // const grownPlants = useCookeepsStore((s) => s.grownPlants);
-  const plantStage = useCookeepsStore((s) => s.plantStage);
+  // const selectedPlant = useCookeepsStore((s) => s.selectedPlant);
+  // // const grownPlants = useCookeepsStore((s) => s.grownPlants);
+  // const plantStage = useCookeepsStore((s) => s.plantStage);
+  const currentPlant = useCookeepsStore((s) => s.currentPlant);
   const lastRefreshedAt = useCookeepsStore((s) => s.lastRefreshedAt);
   const refreshGrowth = useCookeepsStore((s) => s.refreshGrowth);
 
@@ -29,13 +32,19 @@ export default function PlantGrowthCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!selectedPlant) {
-    return null; // 또는 placeholder UI
-  }
+  useEffect(() => {
+    if (!currentPlant) return;
 
-  const plantKey = selectedPlant;
+    preloadNextStage(
+      PLANT_NAME_TO_TYPE[currentPlant.plantName],
+      currentPlant.level,
+    );
+    console.log("🌱 currentPlant changed", currentPlant);
+  }, [currentPlant]);
 
-  const plantName = plantKey ? PLANT_NAME_KR[plantKey] : "-";
+  const plantName = currentPlant
+    ? PLANT_NAME_KR[PLANT_NAME_TO_TYPE[currentPlant.plantName]]
+    : "-";
 
   //  분 단위 자동 새로고침 (정책서 충족)
   // useEffect(() => {
@@ -63,11 +72,6 @@ export default function PlantGrowthCard({
           <WaterButton
             onSuccess={() => {
               onWaterSuccess?.(); // 부모용
-
-              if (selectedPlant) {
-                preloadNextStage(selectedPlant, plantStage);
-              }
-
               refreshGrowth(); // 정책용
             }}
           />

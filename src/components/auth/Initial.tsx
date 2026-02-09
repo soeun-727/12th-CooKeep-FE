@@ -1,14 +1,9 @@
-import {
-  mainLogo,
-  congratsChar,
-  cookingChar,
-  servingChar,
-  confetti,
-} from "../../assets";
+import { mainLogo, confetti } from "../../assets";
+import chars from "../../assets/onboarding/Frame 781.svg";
 import Button from "../ui/Button";
 import { useNavigate } from "react-router-dom";
 
-const CHAR = [servingChar, congratsChar, cookingChar];
+const CHAR = [chars];
 const INFINITE_CHAR = [...CHAR, ...CHAR];
 
 export default function Initial() {
@@ -37,13 +32,13 @@ export default function Initial() {
 
       {/* 애니메이션 */}
       <div className="relative flex mt-13 w-full overflow-hidden">
-        <div className="flex gap-4 h-50 items-end animate-roll-left">
+        <div className="flex h-50 items-end animate-roll-left">
           {INFINITE_CHAR.map((char, index) => (
             <img
               key={index}
               src={char}
               alt={`character-${index}`}
-              className="w-[186px] flex-shrink-0"
+              className="w-[791.5px] flex-shrink-0 px-4"
             />
           ))}
         </div>

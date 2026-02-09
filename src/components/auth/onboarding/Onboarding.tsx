@@ -16,12 +16,6 @@ import { useOnboardingStore } from "../../../stores/useOnboardingStore";
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showInstallGuide, setShowInstallGuide] = useState(false);
-
   const {
     foodTypes,
     setFoodTypes,
@@ -31,24 +25,31 @@ export default function Onboarding() {
     setSelectedGoal,
     goalCount,
     setGoalCount,
+    step,
+    setStep,
+    isFinished,
+    setIsFinished,
+    showNotification,
+    setShowNotification,
+    showInstallGuide,
+    setShowInstallGuide,
   } = useOnboardingStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const nextStep = () => {
-    if (step < 4 - 1) {
-      setStep((prev) => prev + 1);
+    if (step < 3) {
+      setStep(step + 1);
     } else {
       handleSaveOnboarding();
     }
   };
 
   const prevStep = () => {
-    if (step > 0) setStep((prev) => prev - 1);
+    if (step > 0) setStep(step - 1);
   };
 
   const skipStep = () => {
-    if (step === 2) {
-      handleSaveOnboarding();
-    } else if (step === 3) {
+    if (step === 2 || step === 3) {
       handleSaveOnboarding();
     } else {
       nextStep();
@@ -139,7 +140,6 @@ export default function Onboarding() {
   );
 }
 
-// 매핑 데이터 (변화 없음)
 export const FOOD_TYPE_MAP: Record<string, string> = {
   한식: "KOREAN",
   중식: "CHINESE",

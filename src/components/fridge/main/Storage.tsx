@@ -27,7 +27,6 @@ export default function Storage({
 }: StorageProps) {
   const { selectedIds, toggleSelect, setViewCategory, openDetail } =
     useIngredientStore();
-
   // 3개 이상일 때만 전체보기 활성화
   const isScrollable = ingredients.length >= 3;
   const pages = chunk(ingredients, 3);
@@ -37,8 +36,8 @@ export default function Storage({
       {/* 배경 레이어 */}
       <div className="absolute inset-0 -z-10 flex flex-col overflow-hidden pointer-events-none">
         <div className="w-full h-[115px] rounded-t-[36px] bg-[#E3EBE6]" />
-        <div className="relative w-full bg-[#75D99F] h-12">
-          <div className="absolute inset-0 flex gap-[6px] items-center justify-center pt-[7px]">
+        <div className="flex flex-col relative w-full bg-[#75D99F] h-12">
+          <div className="absolute inset-0 flex gap-[6px] items-start justify-center mt-[7px]">
             <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
             <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
             <div className="w-[114px] h-[26px] rounded-[7px] bg-[#63C88D] blur-[1px]" />
@@ -52,7 +51,7 @@ export default function Storage({
         <div className="relative z-10 px-[20px] pt-[5px] pb-5">
           <div className="flex justify-between w-full h-10 items-center">
             {/* 카테고리 태그 */}
-            <div className="flex items-center justify-center bg-neutral-800 rounded-[6px] h-[22px] min-w-[59px] px-2 gap-1 text-white">
+            <div className="flex items-center justify-center bg-neutral-800 rounded-[6px] h-[22px] min-w-[59px] px-2 gap-1 text-(--color-green)">
               <img src={image} alt="category" className="w-3 h-3" />
               <span className="typo-caption leading-none whitespace-nowrap">
                 {category}
@@ -66,10 +65,10 @@ export default function Storage({
               className="flex items-center gap-1 group transition-all active:scale-95"
             >
               <span
-                className={`typo-caption font-semibold transition-colors ${
+                className={`typo-caption !text-[13px] !font-semibold transition-colors ${
                   isScrollable
                     ? "text-[var(--color-green-deep)]"
-                    : "text-[#BFC6D7]"
+                    : "text-zinc-500"
                 }`}
               >
                 전체보기
@@ -113,8 +112,8 @@ export default function Storage({
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center h-20 -mt-[10px] animate-fadeIn justify-between">
-          <span className="typo-caption text-[#7A8093] font-medium">
+        <div className="flex flex-col items-center h-20 animate-fadeIn justify-between -mt-2">
+          <span className="typo-caption text-[#7A8093] !font-medium">
             재료를 등록해주세요
           </span>
           <img src={character} className="w-[74px]" alt="empty" />
