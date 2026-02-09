@@ -13,7 +13,7 @@ export default memo(function PlantImage({
   const currentPlant = useCookeepsStore((s) => s.currentPlant);
   const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
 
-  // 🔥 수확 직후 - 수확된 식물의 4단계 이미지 유지
+  // 수확 직후 - 수확된 식물의 4단계 이미지 유지
   if (justHarvestedPlant && !currentPlant) {
     const imageSrc =
       PLANT_IMAGES[PLANT_NAME_TO_TYPE[justHarvestedPlant.plantName]][4];

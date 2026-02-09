@@ -14,7 +14,6 @@ import SelectedModal from "../../components/cookeeps/modals/SelectedModal";
 import WiltingModal from "../../components/cookeeps/modals/WiltingModal";
 import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
-// import { PLANT_ID_TO_TYPE } from "../../constants/plantTypeMap";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 import HarvestModal from "../../components/cookeeps/modals/HarvestModal";
 
@@ -43,22 +42,11 @@ export default function CookeepsPage() {
     return localStorage.getItem("hasSeenOnboarding") === "true";
   }); // 온보딩 모달 뜨게 하기 처음 접속 시 한번만 보이도록
 
-  // 모달용 임시 선택 (확정 아님)
-  // const [selectedPlantData, setSelectedPlantData] = useState<
-  //   (typeof PLANT_DATA)[0] | null
-  // >(null);
-  // const selectPlantInStore = useCookeepsStore((s) => s.selectPlant);
-
-  // const storePlant = useCookeepsStore((s) => s.selectedPlant);
   const status = useCookeepsStore((s) => s.status);
   const abandonPlant = useCookeepsStore((s) => s.abandonPlant);
   const recoverPlant = useCookeepsStore((s) => s.recoverPlant);
 
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
-
-  // const [hasUsedFreeWater, setHasUsedFreeWater] = useState(() => {
-  //   return localStorage.getItem("hasUsedFreeWater") === "true";
-  // }); // 처음만 무료 물주기
 
   const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
 
@@ -77,7 +65,7 @@ export default function CookeepsPage() {
   const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
   // const setJustHarvestedPlant = useCookeepsStore((s) => s.setJustHarvestedPlant);
 
-  // 🔥 수확 감지 로직 수정
+  // 수확 감지 로직 수정
   useEffect(() => {
     if (harvestTriggeredRef.current) return;
 
@@ -87,20 +75,20 @@ export default function CookeepsPage() {
     }
   }, [justHarvestedPlant, hasShownHarvestModal]);
 
-  // 🔥 수확 모달 닫을 때 로직 수정
+  // 수확 모달 닫을 때 로직 수정
   const handleHarvestModalClose = async () => {
     const store = useCookeepsStore.getState();
 
     store.setHasShownHarvestModal(true);
     store.setPrevCookie(null);
-    store.setJustHarvestedPlant(null); // 🔥 추가
+    store.setJustHarvestedPlant(null); // 추가
     store.resetCurrentPlant();
 
     harvestTriggeredRef.current = false;
     setSelectedPlantData(null);
     setShowHarvestModal(false);
 
-    // 🔥 선택 모달로 전환
+    // 선택 모달로 전환
     setActiveModal("select");
   };
 
@@ -108,7 +96,7 @@ export default function CookeepsPage() {
   const derivedModal: ActiveModal = (() => {
     if (!hasSeenOnboarding) return "onboarding";
 
-    // 🔥 수확 모달 최우선
+    // 수확 모달 최우선
     if (showHarvestModal) return null; // 수확 모달은 별도 관리
     // 3. 식물은 있는데 무료 물주기를 안 했다면? (이 부분이 누락됨)
     if (activeModal === "free") return "free";
@@ -150,7 +138,7 @@ export default function CookeepsPage() {
     const plant = PLANT_DATA.find((p) => p.id === id);
     if (!plant) return;
 
-    console.log("🎯 사용자가 선택한 식물:", plant.text, "id:", id);
+    console.log("사용자가 선택한 식물:", plant.text, "id:", id);
 
     setHideWiltingModal(false); // 새 식물 → 알림 리셋
     setSelectedPlantData(plant);
@@ -165,55 +153,6 @@ export default function CookeepsPage() {
   const [selectedPlantData, setSelectedPlantData] =
     useState<SelectedPlant | null>(null);
 
-  // CookeepsPage.tsx의 handleFinalStart 수정
-
-  // const handleFinalStart = async () => {
-  //   if (!selectedPlantData) return;
-
-  //   try {
-  //     console.log("🌱 등록 시작:", selectedPlantData);
-
-  //     // 1. 선택한 식물 등록 (내부에서 fetchMyPlants 호출됨)
-  //     await registerPlant(selectedPlantData.id); // 1. 식물 등록 완료
-
-  //     // 🔥 여기서 fetchMyPlants 중복 호출 제거!
-  //     // await useCookeepsStore.getState().fetchMyPlants(); // ← 삭제
-
-  //     // 2. store에서 업데이트된 currentPlant 가져오기
-  //     const store = useCookeepsStore.getState();
-  //     const current = store.currentPlant;
-
-  //     console.log("✅ 등록 완료:", current);
-
-  //     if (!current) {
-  //       console.error("❌ 식물 등록 후 currentPlant가 없습니다");
-  //       setActiveModal("select");
-  //       return;
-  //     }
-
-  //     // 3. UI용 selectedPlantData 업데이트
-  //     const plantData = PLANT_DATA.find((p) => p.text === current.plantName);
-
-  //     setSelectedPlantData({
-  //       id: current.userPlantId,
-  //       text: current.plantName,
-  //       img: plantData?.img || "",
-  //       description: plantData?.description || "",
-  //       isHarvested: current.isHarvested,
-  //     });
-
-  //     // 4. 무료 물주기 여부에 따른 모달 전환
-  //     // localStorage를 직접 보는 것보다 상태 변수를 쓰는 것이 리액트답습니다.
-  //     if (!hasUsedFreeWater) {
-  //       setActiveModal("free");
-  //     } else {
-  //       setActiveModal(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ 식물 시작 실패:", error);
-  //     setActiveModal("select");
-  //   }
-  // };
   const handleFinalStart = async () => {
     if (!selectedPlantData) return;
 
@@ -239,16 +178,16 @@ export default function CookeepsPage() {
         isHarvested: current.isHarvested,
       });
 
-      // 🔥 실제 서버 응답 body의 'data' 필드에 메시지가 담겨 오므로 이를 체크합니다.
+      // 실제 서버 응답 body의 'data' 필드에 메시지가 담겨 오므로 이를 체크합니다.
       if (res?.data === "첫 식물 등록이 완료되었습니다.") {
-        console.log("🎁 첫 등록 보너스 감지!");
+        console.log("첫 등록 보너스 감지!");
         setActiveModal("free");
       } else {
-        console.log("🌱 일반 등록 완료");
+        console.log("일반 등록 완료");
         setActiveModal(null);
       }
     } catch (error) {
-      console.error("❌ 식물 시작 실패:", error);
+      console.error("식물 시작 실패:", error);
       setActiveModal("select");
     }
   };
@@ -353,7 +292,7 @@ export default function CookeepsPage() {
           plant={currentPlant?.plantName}
           overridePlantStage={
             showHarvestModal
-              ? 4 // 🔥 수확 모달 떠있을 때 4단계 유지
+              ? 4 // 수확 모달 떠있을 때 4단계 유지
               : activeModal === "wilted"
                 ? 1
                 : undefined
@@ -369,7 +308,7 @@ export default function CookeepsPage() {
           onWaterSuccess={handleWaterSuccess}
           overridePlantStage={
             showHarvestModal
-              ? 4 // 🔥 수확 모달 떠있을 때 4단계 유지
+              ? 4 // 수확 모달 떠있을 때 4단계 유지
               : activeModal === "wilted"
                 ? 1
                 : undefined

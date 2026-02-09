@@ -10,21 +10,6 @@ interface Props {
 }
 
 export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
-  // 1. 내부 상태 정의
-  // const [selectedPlant, setSelectedPlant] = useState("sprout"); // 초기 선택값
-
-  // // 2. 임시 식물 데이터
-  // const plants = [
-  //   { id: "sprout", name: "새싹" },
-  //   { id: "leaf", name: "잎새" },
-  //   { id: "flower", name: "꽃" },
-  //   { id: "tree", name: "나무" },
-  //   { id: "plant", name: "식물" },
-  // ];
-  // const currentGrowingPlantId = "leaf";
-
-  // if (!isOpen) return null;
-
   const currentPlant = useCookeepsStore((s) => s.currentPlant);
   const myPlants = useCookeepsStore((s) => s.myPlants);
 
@@ -73,9 +58,6 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
           {/* 2. 식물 도감 (그리드) */}
           <div className="grid grid-cols-4 gap-x-3 gap-y-1 mb-7 w-[331px] -mt-2 px-4">
             {myPlants.map((plant) => (
-              // const isGrowing = plant.id === currentGrowingPlantId;
-
-              // return (
               <div key={plant.userPlantId} className="relative">
                 {/* 현재 키우는 식물 위에만 뜨는 말풍선 */}
                 {plant.isProfile && (

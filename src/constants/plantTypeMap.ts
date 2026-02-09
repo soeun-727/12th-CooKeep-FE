@@ -21,7 +21,7 @@ export const PLANT_NAME_TO_TYPE: Record<string, PlantType> = {
   강낭콩: "beans",
 };
 
-// 🔥 plantId → plantName 매핑 추가
+// plantId → plantName 매핑 추가
 export const PLANT_ID_TO_NAME: Record<number, string> = {
   1: "강낭콩",
   2: "감자",
