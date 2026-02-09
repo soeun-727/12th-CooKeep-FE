@@ -32,7 +32,7 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
   return (
     <div className="flex flex-col w-[357px] mx-auto items-center justify-center rounded-[6px] p-4 shadow-[0px_10px_60px_0px_rgba(0,0,0,0.1)] bg-white/10">
       {/* 1. 헤더 */}
-      <div className="flex items-center justify-between w-full px-2 mb-2">
+      <div className="flex items-center justify-between w-full px-2 mt-[13px] mb-2">
         <h2 className="typo-h3 text-neutral-900">
           {monthName} {year}
         </h2>
@@ -47,7 +47,7 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
       </div>
 
       {/* 2. 요일 */}
-      <div className="grid grid-cols-7 w-full mb-1">
+      <div className="grid grid-cols-7 w-full mb-2">
         {daysOfWeek.map((day) => (
           <div
             key={day}
@@ -59,7 +59,7 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
       </div>
 
       {/* 3. 날짜 그리드 */}
-      <div className="grid grid-cols-7 w-full relative">
+      <div className="grid grid-cols-7 w-full relative gap-y-[6px] mb-[13px]">
         {Array.from({ length: firstDayOfMonth }).map((_, i) => (
           <div key={`empty-${i}`} />
         ))}
@@ -117,10 +117,10 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
       h-12
       bg-[#96E8BE]
       z-0
-      ${hasPrev && hasNext ? "w-[110%] rounded-none" : ""}
-      ${hasPrev && !hasNext ? "w-[105%] left-0 rounded-r-full" : ""}
-      ${!hasPrev && hasNext ? "w-[105%] right-0 rounded-l-full" : ""}
-      ${!hasPrev && !hasNext ? "w-8 rounded-full" : ""}
+      ${hasPrev && hasNext ? "left-[-60%] right-[-60%] rounded-none" : ""}
+      ${hasPrev && !hasNext ? "left-[-60%] right-[-2px] rounded-r-full" : ""}
+      ${!hasPrev && hasNext ? "left-[-2px] right-[-60%] rounded-l-full" : ""}
+      ${!hasPrev && !hasNext ? "w-10 rounded-full" : ""}
     `}
                 />
               )}
