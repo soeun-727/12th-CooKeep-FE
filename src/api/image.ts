@@ -12,7 +12,7 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
   const formData = new FormData();
   formData.append("image", file, file.name);
   const res = await api.post<ImageUploadResponse>(
-    `/api/images?folder=RECIPE_IMAGES`,
+    `/api/images?folder=recipeImages`,
     formData,
     {
       headers: {
