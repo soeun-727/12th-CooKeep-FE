@@ -53,7 +53,7 @@ export const saveOnboardingInfo = (data: OnboardingData) => {
 
 // 4. [POST] 약관 동의 여부 저장 (소셜 로그인 회원 대상)
 export const updateAgreements = (marketingConsent: boolean) => {
-  return api.post<{ status: string; timestamp: string }>(
+  return api.patch<{ status: string; timestamp: string }>(
     `/api/users/me/agreements`,
     { marketingConsent },
   );
