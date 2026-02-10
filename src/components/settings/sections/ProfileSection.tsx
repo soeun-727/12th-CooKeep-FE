@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import SettingsInputItem from "../components/SettingsInputItem";
+import axios from "axios";
+import { updateNickname } from "../../../api/user";
 
 const MASKED_PASSWORD = "********";
 
@@ -20,15 +22,18 @@ export default function ProfileSection() {
     email: "",
   });
 
+  const isSocialLogin = !account.phone;
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
+
+  const isNicknameError = account.nickname.length > MAX_NICKNAME_LENGTH;
 
   useEffect(() => {
     const fetchAccount = async () => {
       // 나중에 API
       const data = {
         nickname: "밥말아먹는 수육",
-        phone: "010-1234-5678",
+        phone: "",
         email: "abcdef@gmail.com",
       };
       setAccount(data);
@@ -43,22 +48,43 @@ export default function ProfileSection() {
     }
   }, [isEditingNickname]);
 
-  const handleNicknameSave = () => {
-    if (!account.nickname.trim()) return;
-    if (account.nickname.length > MAX_NICKNAME_LENGTH) return;
+  const handleNicknameSave = async () => {
+    if (!account.nickname.trim() || isNicknameError) return;
 
-    // TODO: 닉네임 변경 API
-    setIsEditingNickname(false);
+    try {
+      await updateNickname(account.nickname);
+
+      setIsEditingNickname(false);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const code = err.response?.data?.code;
+
+        if (code === "DUPLICATE_NICKNAME") {
+          alert("이미 사용 중인 닉네임입니다.");
+        } else if (code === "UNAUTHORIZED") {
+          alert("로그인이 필요합니다.");
+        } else {
+          alert("닉네임 변경 중 오류가 발생했습니다.");
+        }
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+      }
+    }
   };
 
   return (
     <section className="px-4">
       <div className="flex flex-col gap-[22px]">
         {/* ===== 닉네임 (inline edit) ===== */}
-        <div className="flex flex-col gap-2 h-[80px] w-full">
+        <div className="flex flex-col h-20 gap-2 w-full relative">
           <span className="typo-body text-[#202020] px-3">닉네임</span>
 
-          <div className="flex items-center justify-between w-full h-[44px] px-3 border border-[#DDD] rounded-[6px]">
+          <div
+            className={`
+            flex items-center justify-between w-full h-[44px] px-3 border rounded-[6px] transition-colors
+            ${isNicknameError ? "border-[#D91F1F]" : "border-[#DDD]"}
+          `}
+          >
             {isEditingNickname ? (
               <>
                 <input
@@ -66,9 +92,6 @@ export default function ProfileSection() {
                   value={account.nickname}
                   onChange={(e) => {
                     const value = e.target.value;
-
-                    if (value.length > MAX_NICKNAME_LENGTH) return;
-
                     setAccount((prev) => ({
                       ...prev,
                       nickname: value,
@@ -77,6 +100,7 @@ export default function ProfileSection() {
                   className="
                     flex-1
                     h-full
+                    w-45
                     outline-none
                     typo-body-sm
                     text-[#202020]
@@ -84,10 +108,7 @@ export default function ProfileSection() {
                 />
                 <button
                   onClick={handleNicknameSave}
-                  disabled={
-                    !account.nickname.trim() ||
-                    account.nickname.length > MAX_NICKNAME_LENGTH
-                  }
+                  disabled={!account.nickname.trim() || isNicknameError}
                   className="
                     w-[115px]
                     px-[18px]
@@ -95,8 +116,6 @@ export default function ProfileSection() {
                     rounded-full
                     bg-[#202020]
                     text-white
-                    disabled:bg-[#DDD]
-    disabled:text-[#999]
                     typo-caption
                     font-medium
                   "
@@ -128,13 +147,21 @@ export default function ProfileSection() {
               </>
             )}
           </div>
+          <div className="absolute top-19 px-2">
+            {isEditingNickname && isNicknameError && (
+              <span className="text-[#D91F1F] typo-caption leading-0">
+                닉네임은 10글자 이하로 입력해주세요
+              </span>
+            )}
+          </div>
         </div>
 
         <SettingsInputItem
           label="휴대전화"
-          value={account.phone}
+          value={isSocialLogin ? " " : account.phone}
           buttonText="휴대폰 번호 변경"
           to="/settings/phone"
+          disabled={isSocialLogin}
         />
 
         <SettingsInputItem
@@ -147,9 +174,10 @@ export default function ProfileSection() {
         {/* 비밀번호는 항상 고정 */}
         <SettingsInputItem
           label="비밀번호"
-          value={MASKED_PASSWORD}
+          value={isSocialLogin ? " " : MASKED_PASSWORD}
           buttonText="비밀번호 변경"
           to="/settings/password"
+          disabled={isSocialLogin}
         />
       </div>
     </section>

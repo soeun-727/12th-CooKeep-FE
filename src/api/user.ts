@@ -1,25 +1,73 @@
-// src/api/user.ts
 import api from "./axios";
+import type { GoalActionType } from "../utils/mapping";
 
-export interface OnboardingData {
-  favoriteFoodTypes: string[];
-  cookingLevel: string;
-  goalActionType: string;
+/** 타입 정의 */
+export interface UpdateGoalRequest {
+  goalActionType: GoalActionType;
   targetCount: number;
 }
 
+export interface OnboardingData {
+  favoriteFoodTypes: string[] | null;
+  cookingLevel: string | null;
+  goalActionType: string | null;
+  targetCount: number | null;
+}
+
+export interface ProfileData {
+  daysSinceJoined: number;
+  nickname: string;
+  profilePlantImageUrl: string;
+  weeklyGoal: {
+    achieved: boolean;
+    currentCount: number;
+    goalActionType: "COOKING" | "RECIPE_SAVE";
+    targetCount: number;
+  };
+}
+
+export interface ProfileResponse {
+  status: string;
+  timestamp: string;
+  data: ProfileData;
+}
+
+/** API 함수들 */
+
+// 1. 주간 목표 재설정 API
+export const updateWeeklyGoal = async (data: UpdateGoalRequest) => {
+  const res = await api.post("/api/my-cookeep/weekly-goal", data);
+  return res.data;
+};
+
+// 2. 프로필 정보 조회 API
+export const getProfileInfo = async (): Promise<ProfileResponse> => {
+  const res = await api.get<ProfileResponse>("/api/my-cookeep/profile");
+  return res.data;
+};
+
+// 3. 온보딩 정보 저장 API
 export const saveOnboardingInfo = (data: OnboardingData) => {
   return api.post("/api/users/me/onboarding", data);
 };
 
-export const updatePushConsent = (marketingConsent: boolean) => {
-  return api.patch("/api/users/me/onboarding/push", { marketingConsent });
-};
-
-/** [POST] 약관 동의 여부 저장 */
+// 4. [POST] 약관 동의 여부 저장 (소셜 로그인 회원 대상)
 export const updateAgreements = (marketingConsent: boolean) => {
   return api.post<{ status: string; timestamp: string }>(
     `/api/users/me/agreements`,
     { marketingConsent },
   );
+};
+
+// 5. 닉네임 수정 API
+export const updateNickname = async (nickname: string) => {
+  const res = await api.patch("/api/users/me/nickname", {
+    nickname,
+  });
+  return res.data;
+};
+
+// 6. (참고) 푸시 알림 동의 수정 API (기존 기능 유지 시)
+export const updatePushConsent = (marketingConsent: boolean) => {
+  return api.patch("/api/users/me/onboarding/push", { marketingConsent });
 };

@@ -17,7 +17,7 @@ export default function Search() {
 
   const hasText = searchTerm.trim().length > 0;
   return (
-    <div className="w-full pb-[26px]">
+    <div className="w-full pb-[26px] pt-1">
       <div className="w-[361px] mx-auto transition-all duration-200">
         <div
           className={`

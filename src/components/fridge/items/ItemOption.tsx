@@ -11,13 +11,13 @@ export default function ItemOption() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
-
-  /** 선택 없고, 어떤 모달도 안 열려 있으면 숨김 */
+  const [rewardInfo, setRewardInfo] = useState<{
+    points: number;
+    granted: boolean;
+  } | null>(null);
   if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) {
     return null;
   }
-
-  /** 모달 제목 */
   const firstItemName =
     ingredients.find((item) => item.id === selectedIds[0])?.name ?? "재료";
 
@@ -33,11 +33,17 @@ export default function ItemOption() {
 
   const handleConfirm = async () => {
     const type = modalType;
-    await deleteSelected(type);
-
+    const result = await deleteSelected(type);
     setIsModalOpen(false);
-
     if (type === "eaten") {
+      if (result && result.reward.granted) {
+        setRewardInfo({
+          points: result.reward.points,
+          granted: result.reward.granted,
+        });
+      } else {
+        setRewardInfo(null);
+      }
       setTimeout(() => setIsAlertOpen(true), 100);
     }
   };
@@ -86,6 +92,7 @@ export default function ItemOption() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirm}
         title={modalTitle}
+        variant="green"
         description={
           modalType === "eaten"
             ? "섭취완료로 변경하시겠습니까?"
@@ -94,7 +101,14 @@ export default function ItemOption() {
       />
 
       {/* 알림 */}
-      <AlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
+      <AlertModal
+        isOpen={isAlertOpen}
+        onClose={() => {
+          setIsAlertOpen(false);
+          setRewardInfo(null);
+        }}
+        rewardPoints={rewardInfo?.points}
+      />
     </>
   );
 }

@@ -36,3 +36,10 @@ export interface RecipeContent {
     description: string;
   }[];
 }
+
+// 사이드바용
+export interface RecipeSession {
+  sessionId: number;
+  createdAt: string;
+  recipes: Recipe[];
+}

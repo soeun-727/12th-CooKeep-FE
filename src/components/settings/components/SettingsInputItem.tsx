@@ -6,6 +6,7 @@ type SettingsInputItemProps = {
   value: string;
   buttonText: string;
   to: string;
+  disabled?: boolean;
 };
 
 export default function SettingsInputItem({
@@ -13,6 +14,7 @@ export default function SettingsInputItem({
   value,
   buttonText,
   to,
+  disabled = false,
 }: SettingsInputItemProps) {
   const navigate = useNavigate();
 
@@ -42,7 +44,8 @@ export default function SettingsInputItem({
         <button
           type="button"
           onClick={() => navigate(to)}
-          className="
+          disabled={disabled}
+          className={`
             flex
             items-center
             justify-center
@@ -50,11 +53,14 @@ export default function SettingsInputItem({
             px-[18px]
             py-1
             rounded-full
-            bg-[#202020]
-            text-white
+            transition-colors
             typo-caption
-            font-medium
-          "
+            ${
+              disabled
+                ? "bg-stone-300 text-white cursor-not-allowed" // 비활성화 스타일
+                : "bg-[#202020] text-white cursor-pointer active:bg-[#404040]" // 활성화 스타일
+            }
+          `}
         >
           {buttonText}
         </button>

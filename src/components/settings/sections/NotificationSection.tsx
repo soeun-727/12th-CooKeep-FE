@@ -26,14 +26,14 @@ export default function NotificationSection() {
   return (
     <section className="px-4 mt-[26px]">
       <SettingsToggleItem
-        label="마케팅 PUSH 수신 동의"
+        label="Push 수신 동의"
         checked={enabled}
         onChange={handleToggle}
       />
 
       {showConfirm && (
         <ConfirmModal
-          message="마케팅 수신에 동의하시겠습니까?"
+          message="Push 수신에 동의하시겠습니까?"
           onConfirm={handleConfirm}
           onCancel={handleCancel}
         />

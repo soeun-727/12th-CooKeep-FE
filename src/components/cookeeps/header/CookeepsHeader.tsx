@@ -9,7 +9,7 @@ import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 export default function CookeepsHeader() {
   const navigate = useNavigate();
-  const { cookie } = useCookeepsStore();
+  const cookie = useCookeepsStore((s) => s.cookie);
 
   const TOOLTIP_KEY = "cookeepsPlantShortcutSeen";
 

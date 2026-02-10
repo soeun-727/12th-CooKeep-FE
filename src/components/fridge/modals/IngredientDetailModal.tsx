@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Ingredient } from "../../../stores/useIngredientStore";
+import {
+  useIngredientStore,
+  type Ingredient,
+} from "../../../stores/useIngredientStore";
 import character from "../../../assets/character/tip_char.svg";
 import memoIcon from "../../../assets/fridge/edit_memo.svg";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
@@ -10,6 +13,8 @@ import EditModal from "../../ui/EditModal";
 import StorageEditor from "../addItems/components/edit/StorageEditor";
 import ExpiryEditor from "../addItems/components/edit/ExpiryEditor";
 import QuantityEditor from "../addItems/components/edit/QuantityEditor";
+import { getIngredientDetail } from "../../../api/ingredient";
+import { getKoreanStorage, getKoreanUnit } from "../../../utils/mapping";
 
 interface Props {
   ingredient: Ingredient;
@@ -29,13 +34,51 @@ export default function IngredientDetailModal({
     };
   }, []);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [memo, setMemo] = useState(ingredient.memo ?? "");
+  const [memo, setMemo] = useState("");
+  const [openEditor, setOpenEditor] = useState<
+    null | "storage" | "expiry" | "quantity"
+  >(null);
 
-  const handleSave = () => {
-    setIsEditing(false);
-    onUpdate({ memo });
-  };
+  const { changeStorage, changeExpiryDate, changeQuantity, changeMemo } =
+    useIngredientStore();
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    const fetchDetail = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getIngredientDetail(Number(ingredient.id));
+        if (response.data && response.data.data) {
+          const data = response.data.data;
+
+          onUpdate({
+            memo: data.memo,
+            quantity: data.quantity,
+            expiryDate: data.expirationDate.replace(/-/g, "."),
+            dDay: data.leftDays,
+            tip: data.aiTip,
+            image: data.imageUrl,
+            category: getKoreanStorage(data.storage) as any,
+            unit: ingredient.unit,
+            createdAt: ingredient.createdAt,
+          });
+        }
+      } catch (error) {
+        console.error("상세 정보 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDetail();
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [ingredient.id]);
 
   const storageIconMap = {
     냉장: fridgeIcon,
@@ -43,11 +86,25 @@ export default function IngredientDetailModal({
     상온: pantryIcon,
   };
 
-  const tip = ingredient.tip;
+  const handleSave = async () => {
+    try {
+      await changeMemo(ingredient.id, memo);
+      setIsEditing(false);
+      onUpdate({ memo });
+    } catch (error) {
+      console.error("메모 저장 실패:", error);
+    }
+  };
 
-  const [openEditor, setOpenEditor] = useState<
-    null | "storage" | "expiry" | "quantity"
-  >(null);
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-sm font-medium">
+          정보를 불러오는 중...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
@@ -94,7 +151,7 @@ export default function IngredientDetailModal({
                   {ingredient.name}
                 </span>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-start gap-2">
                   <span className="text-[12px] text-[#C3C3C3] leading-4">
                     D-{ingredient.dDay}
                   </span>
@@ -184,7 +241,7 @@ export default function IngredientDetailModal({
                     </span>
                     <span className="text-[12px] leading-4 text-[#202020]">
                       {ingredient.quantity}
-                      {ingredient.unit}
+                      {getKoreanUnit(ingredient.unit)}
                     </span>
                   </div>
                 </div>
@@ -194,7 +251,10 @@ export default function IngredientDetailModal({
                   <div className="flex justify-end items-end gap-1">
                     <span className="text-[10px] font-semibold text-[#C3C3C3] leading-4">
                       등록일자{" "}
-                      {new Date(ingredient.createdAt).toLocaleDateString()}
+                      {ingredient.createdAt &&
+                      !isNaN(new Date(ingredient.createdAt).getTime())
+                        ? new Date(ingredient.createdAt).toLocaleDateString()
+                        : "정보 없음"}
                     </span>
                   </div>
                 </div>
@@ -202,7 +262,7 @@ export default function IngredientDetailModal({
             </div>
 
             {/* TIP 캐릭터 및 말풍선 */}
-            {tip && (
+            {ingredient.tip && (
               <div className="flex flex-col items-center gap-5 self-stretch mt-1">
                 {/* 컨테이너: items-end를 유지하여 캐릭터와 말풍선 바닥 라인을 맞춤 */}
                 <div className="flex items-end justify-center gap-5 w-full relative">
@@ -213,18 +273,12 @@ export default function IngredientDetailModal({
                     className="w-[64px] h-[56px] flex-shrink-0 relative z-30"
                   />
 
-                  {/* 말풍선 래퍼: 여기에 relative를 주고 꼬리를 배치 */}
                   <div className="relative flex-1 max-w-[178px]">
-                    {/* 말풍선 꼬리: 
-            본체가 위로 늘어나도 '바닥'에서의 위치를 고정(bottom-[12px])하면 
-            캐릭터 입 위치와 계속 일치하게 됩니다. */}
                     <img
                       src={bubbleTail}
                       alt=""
                       className="absolute left-[-14px] bottom-[12px] w-[27.2px] z-20"
                     />
-
-                    {/* 말풍선 본체: h-96 삭제, 텍스트에 따라 유동적 높이 */}
                     <div
                       className="
             relative z-10
@@ -242,7 +296,7 @@ export default function IngredientDetailModal({
                         TIP
                       </span>
                       <p className="text-[10px] font-medium leading-[14px] text-[#202020] self-stretch break-words">
-                        {tip}
+                        {ingredient.tip}
                       </p>
                     </div>
                   </div>
@@ -267,7 +321,8 @@ export default function IngredientDetailModal({
             >
               <StorageEditor
                 value={ingredient.category}
-                onSave={(val) => {
+                onSave={async (val) => {
+                  await changeStorage(ingredient.id, val);
                   onUpdate({ category: val as Ingredient["category"] });
                   setOpenEditor(null);
                 }}
@@ -282,16 +337,16 @@ export default function IngredientDetailModal({
             >
               <ExpiryEditor
                 value={ingredient.expiryDate}
-                onSave={(val) => {
-                  onUpdate({
-                    expiryDate: val,
-                    dDay: Math.ceil(
-                      (new Date(val.replace(/\./g, "-")).getTime() -
-                        Date.now()) /
-                        (1000 * 60 * 60 * 24),
-                    ),
-                  });
-                  setOpenEditor(null);
+                onSave={async (val) => {
+                  try {
+                    await changeExpiryDate(ingredient.id, val);
+                    onUpdate({
+                      expiryDate: val,
+                    });
+                    setOpenEditor(null);
+                  } catch (error) {
+                    console.error("날짜 수정 중 오류:", error);
+                  }
                 }}
               />
             </EditModal>
@@ -304,9 +359,14 @@ export default function IngredientDetailModal({
             >
               <QuantityEditor
                 value={ingredient.quantity}
-                onSave={(val) => {
-                  onUpdate({ quantity: val });
-                  setOpenEditor(null);
+                onSave={async (val) => {
+                  try {
+                    await changeQuantity(ingredient.id, Number(val));
+                    onUpdate({ quantity: Number(val) });
+                    setOpenEditor(null);
+                  } catch (error) {
+                    console.error("수량 수정 실패:", error);
+                  }
                 }}
               />
             </EditModal>

@@ -8,13 +8,12 @@ import { useRecipeFlowStore } from "../stores/useRecipeFlowStore";
 
 export default function Layout() {
   const location = useLocation();
+  const { viewCategory } = useIngredientStore();
   const [activeTab, setActiveTab] = useState("냉장고");
 
   const isRecipe = location.pathname.startsWith("/recipe");
   const isCookeeps = location.pathname.startsWith("/cookeeps");
   const isMyCookeep = location.pathname.startsWith("/mycookeep");
-
-  // 헤더와 탭바의 노출 여부를 변수로 관리
   const showHeader = !isRecipe && !isCookeeps && !isMyCookeep;
 
   const hideTabBarInRecipe =
@@ -24,7 +23,7 @@ export default function Layout() {
       location.pathname.startsWith("/recipe/loading") ||
       isMyCookeep);
   const showTabBar = !hideTabBarInRecipe;
-
+  const isAllViewMode = location.pathname.includes("fridge") && !!viewCategory;
   useEffect(() => {
     if (!location.pathname.startsWith("/recipe")) {
       useIngredientStore.getState().clearSelection();
@@ -41,13 +40,13 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen">
-      {showHeader && <MainHeader />}
-
+    <div className="flex flex-col justify-center bg-[#FAFAFA]">
+      {showHeader && <MainHeader isAllView={isAllViewMode} />}
       <main
         className={`
           ${showHeader ? "pt-[48px]" : ""} 
           ${showTabBar ? "pb-[90px]" : ""}
+          min-h-[100dvh]
         `}
       >
         <Outlet />

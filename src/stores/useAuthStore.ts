@@ -1,8 +1,11 @@
 import { create } from "zustand";
 import { saveTokens } from "../utils/auth";
+import { loginApi } from "../api/auth";
+import axios from "axios";
+import { clearTokens } from "../utils/auth";
 
-// 1. 카카오 로그인 시 받는 데이터 구조 정의
-interface KakaoLoginPayload {
+// 1. 소셜 로그인 시 받는 데이터 구조 정의
+interface SocialLoginPayload {
   userId: number;
   accessToken: string;
   refreshToken: string;
@@ -32,8 +35,8 @@ interface AuthState {
   setPhoneNumber: (phone: string) => void;
   setPassword: (pw: string) => void;
   login: () => Promise<LoginResponse | null>;
-  // 3. 카카오 로그인 액션 업데이트
-  loginWithKakao: (payload: KakaoLoginPayload) => void;
+  // 3. 소셜 로그인 액션 업데이트
+  loginSocial: (payload: SocialLoginPayload) => void;
   logout: () => void; // 로그아웃 기능도 있으면 좋아요!
 }
 
@@ -71,22 +74,54 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { phoneNumber, password, canLogin } = get();
     if (!canLogin) return null;
 
-    set({ isSubmitting: true });
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      set({ isSubmitting: true });
 
-    if (phoneNumber === "01012341234" && password === "test1234") {
-      set({ isSubmitting: false, isLoggedIn: true });
-      const isFirstLogin = phoneNumber === "01012341234";
-      return { success: true, isFirst: isFirstLogin };
-    } else {
+      const data = await loginApi({
+        phoneNumber,
+        password,
+      });
+
+      // 토큰 저장
+      saveTokens({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
+
+      set({
+        isLoggedIn: true,
+        userId: data.userId,
+        userStatus: data.userStatus,
+        isSubmitting: false,
+      });
+
+      return {
+        success: true,
+        isFirst: data.userStatus === "CREATED",
+      };
+    } catch (err) {
       set({ isSubmitting: false });
-      alert("휴대폰 번호 또는 비밀번호가 일치하지 않습니다.");
+
+      if (axios.isAxiosError(err)) {
+        const code = err.response?.data?.code;
+
+        if (code === "AUTH-004") {
+          alert("가입되지 않은 전화번호입니다.");
+        } else if (code === "AUTH-003") {
+          alert("비밀번호가 올바르지 않습니다.");
+        } else {
+          alert("로그인 중 오류가 발생했습니다.");
+        }
+      } else {
+        alert("알 수 없는 오류가 발생했습니다.");
+      }
+
       return { success: false, isFirst: false };
     }
   },
 
-  // 4. 카카오 로그인 정보 저장 로직 강화
-  loginWithKakao: (data) => {
+  // 4. 소셜 로그인 정보 저장 로직 강화
+  loginSocial: (data) => {
     saveTokens({
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
@@ -101,6 +136,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: () => {
+    clearTokens(); // 추가해야한다고 해서 추가했습니다.
     // 로그아웃 시 토큰 및 유저 정보 초기화
     set({
       isLoggedIn: false,
