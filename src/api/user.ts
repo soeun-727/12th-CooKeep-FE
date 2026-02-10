@@ -15,3 +15,11 @@ export const saveOnboardingInfo = (data: OnboardingData) => {
 export const updatePushConsent = (marketingConsent: boolean) => {
   return api.patch("/api/users/me/onboarding/push", { marketingConsent });
 };
+
+/** [POST] 약관 동의 여부 저장 */
+export const updateAgreements = (marketingConsent: boolean) => {
+  return api.post<{ status: string; timestamp: string }>(
+    `/api/users/me/agreements`,
+    { marketingConsent },
+  );
+};
