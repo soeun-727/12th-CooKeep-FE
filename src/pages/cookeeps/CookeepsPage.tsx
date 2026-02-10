@@ -1,5 +1,5 @@
 // CookeepsPage.tsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
@@ -60,35 +60,54 @@ export default function CookeepsPage() {
 
   const [showHarvestModal, setShowHarvestModal] = useState(false);
 
-  const harvestTriggeredRef = useRef(false);
+  // const harvestTriggeredRef = useRef(false);
 
-  const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
+  // const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
   // const setJustHarvestedPlant = useCookeepsStore((s) => s.setJustHarvestedPlant);
 
   // 수확 감지 로직 수정
-  useEffect(() => {
-    if (harvestTriggeredRef.current) return;
+  // useEffect(() => {
+  //   if (harvestTriggeredRef.current) return;
 
-    // justHarvestedPlant가 설정되면 즉시 모달 표시
+  //   // justHarvestedPlant가 설정되면 즉시 모달 표시
+  //   if (justHarvestedPlant && !hasShownHarvestModal) {
+  //     harvestTriggeredRef.current = true;
+  //     // eslint-disable-next-line react-hooks/set-state-in-effect
+  //     setShowHarvestModal(true);
+  //   }
+  // }, [justHarvestedPlant, hasShownHarvestModal]);
+
+  // const myPlants = useCookeepsStore((s) => s.myPlants);
+
+  const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
+
+  useEffect(() => {
     if (justHarvestedPlant && !hasShownHarvestModal) {
-      harvestTriggeredRef.current = true;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowHarvestModal(true);
     }
   }, [justHarvestedPlant, hasShownHarvestModal]);
 
   // 수확 모달 닫을 때 로직 수정
-  const handleHarvestModalClose = () => {
+  // const handleHarvestModalClose = () => {
+  //   const store = useCookeepsStore.getState();
+
+  //   store.setHasShownHarvestModal(true);
+  //   store.setPrevCookie(null);
+
+  //   setShowHarvestModal(false);
+  //   setSelectedPlantData(null);
+  //   setActiveModal("select");
+  // };
+  const handleHarvestModalClose = async () => {
     const store = useCookeepsStore.getState();
 
     store.setHasShownHarvestModal(true);
-    store.setJustHarvestedPlant(null); // 제일 중요
-    store.setPrevCookie(null);
+    store.setJustHarvestedPlant(null);
 
-    harvestTriggeredRef.current = false;
+    store.resetCurrentPlant();
+    await store.fetchMyPlants();
     setShowHarvestModal(false);
-
-    setSelectedPlantData(null);
     setActiveModal("select");
   };
 
@@ -96,14 +115,19 @@ export default function CookeepsPage() {
   const derivedModal: ActiveModal = (() => {
     if (!hasSeenOnboarding) return "onboarding";
 
-    // 수확 모달 최우선
-    if (showHarvestModal) return null; // 수확 모달은 별도 관리
-    // 3. 식물은 있는데 무료 물주기를 안 했다면? (이 부분이 누락됨)
+    // 수확 모달은 별도 관리
+    if (showHarvestModal) return null;
+
+    // 무료 물주기 모달
     if (activeModal === "free") return "free";
+
+    // 식물이 없는 경우 선택 모달
     if (!currentPlant) return "select";
 
+    // 식물 상태에 따른 모달
     if (status === "wilting") return "wilting";
     if (status === "wilted") return "wilted";
+
     return null;
   })();
 
