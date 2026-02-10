@@ -7,11 +7,12 @@ export const getMyPlants = async () => {
   return res.data.data; // MyPlant[]
 };
 
+// src/api/myPlants.ts
+
 export const registerMyPlant = async (plantId: number) => {
-  const res = await axios.post<ApiResponse<string>>(
-    `/api/my-plants/${plantId}`,
-  );
-  return res.data; // { status, timestamp, data: string }
+  // string 대신 any나 실제 객체 타입을 넣어주세요.
+  const res = await axios.post<ApiResponse<any>>(`/api/my-plants/${plantId}`);
+  return res.data;
 };
 
 export const waterMyPlant = async (userPlantId: number) => {
