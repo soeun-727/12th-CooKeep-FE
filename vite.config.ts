@@ -14,7 +14,7 @@ export default defineConfig({
       manifest: {
         name: "CooKeep",
         short_name: "CooKeep",
-        description: "지금 있는 재료로 즐거운 요리 경험, CooKeep",
+        description: "재료 관리부터, 요리 기록까지! CooKeep",
         theme_color: "#FAFAFA",
         background_color: "#FAFAFA",
         display: "standalone",
