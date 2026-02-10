@@ -16,7 +16,7 @@ export default function RecipeIntroPage() {
   }, []);
 
   return (
-    <div className="relative h-[calc(100vh-90px)] flex justify-center overflow-hidden">
+    <div className="relative h-[calc(100vh-90px)] flex justify-center overflow-hidden bg-[#FAFAFA]">
       {/* 헤더 */}
       <RecipeHeader transparent />
 
@@ -27,17 +27,17 @@ export default function RecipeIntroPage() {
           top-[72px]
           left-1/2
           -translate-x-1/2
-          w-[434px]
-          h-[433px]
-          rounded-full
-          bg-[rgba(31,193,111,0.15)]
-          blur-[125px]
+          w-[450px]
+          h-[450px]
+          rounded-full 
+         bg-[#1FC16F]/15 blur-[100px]
           pointer-events-none
+          z-0
         "
       />
 
       {/* 콘텐츠 */}
-      <div className="flex flex-col items-center w-[361px] gap-[28px] mt-[203.62px]">
+      <div className="flex flex-col items-center w-[361px] gap-[28px] mt-[203.62px] z-10">
         <img
           src={cookChar}
           alt="요리 캐릭터"
@@ -58,7 +58,7 @@ export default function RecipeIntroPage() {
               onClick={() => navigate("/recipe/select")}
               className="w-full h-full !text-[#32E389]"
             >
-              요리할 재료를 선택할까요?
+              요리할 재료 선택하기
             </Button>
           </div>
         </div>

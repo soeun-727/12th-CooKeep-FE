@@ -1,59 +1,130 @@
 import MyCookeepHeader from "./MyCookeepHeader";
 import { groundImg, refreshIcon, renameIcon } from "../../../assets";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ProfileEditModal from "../modals/ProfileEditModal";
+import { useCookeepsStore } from "../../../stores/useCookeepsStore";
+import { getProfileInfo, type ProfileData } from "../../../api/user";
+import { GOAL_TYPE_MAP } from "../../../utils/mapping";
 
 export default function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const goal = location.state?.updatedGoal || "주 3회 요리하기!";
-  //사용자 정보 (나중에 API 연동 시 상태로 관리)
-  const [nickname, setNickname] = useState("요리잘하는 쿠쿠");
-  const daysCookeep = "365";
-  const handleSaveProfile = (newNickname: string, selectedPlant: string) => {
-    console.log("저장될 데이터:", { newNickname, selectedPlant });
-    setNickname(newNickname);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchProfile = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await getProfileInfo();
+      if (response.status === "OK") {
+        setProfile(response.data);
+      }
+    } catch (error) {
+      console.error("프로필 로딩 실패:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile, location.key]);
+
+  const setProfilePlant = useCookeepsStore((s) => s.setProfilePlant);
+
+  const handleSaveProfile = async (userPlantId: number) => {
+    await setProfilePlant(userPlantId);
+    await fetchProfile();
     setIsEditModalOpen(false);
   };
+
+  if (isLoading)
+    return (
+      <div className="flex justify-center pt-20">유저 데이터 로딩 중...</div>
+    );
+  if (!profile)
+    return (
+      <div className="flex justify-center pt-20">
+        데이터를 불러올 수 없습니다.
+      </div>
+    );
+
+  const currentGoalEntry = Object.entries(GOAL_TYPE_MAP).find(
+    ([, g]) => g.value === profile.weeklyGoal?.goalActionType,
+  );
+
+  const goalLabel = currentGoalEntry
+    ? currentGoalEntry[1].label
+    : "목표를 설정해주세요";
+  const goalId = currentGoalEntry ? currentGoalEntry[0] : "cook";
+  const targetCount = profile.weeklyGoal?.targetCount ?? 0;
 
   return (
     <>
       <div className="flex flex-col items-center justify-center">
         {/* 헤더 섹션 */}
-        <div className="w-full h-[369px] bg-gradient-to-b from-[#32E389] to-[#1FC16F] rounded-b-[36px] flex flex-col items-center justify-center">
+        <div className="w-full h-[260px] bg-gradient-to-b from-[#32E389] to-[#1FC16F] rounded-b-[36px] flex flex-col items-center justify-center">
           <MyCookeepHeader />
 
-          {/* 식물 사진 및 수정 버튼 */}
-          <div className="relative inline-block overflow-visible">
-            <img
-              src={groundImg}
-              alt="profileBackground"
-              className="w-[155px] p-6 rounded-full object-cover"
-            />
-            <button
-              className="absolute bottom-6 right-6 transition-transform active:scale-90"
-              onClick={() => setIsEditModalOpen(true)}
-            >
-              <img src={refreshIcon} alt="refresh" className="w-[22px]" />
-            </button>
-          </div>
-
-          <p className="typo-h2 text-white -mt-2">{nickname}</p>
-
-          <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-[7px]">
-            <span className="text-(--color-green)">{daysCookeep}</span>
-            <span className="text-zinc-500">일 째 Cookeep</span>
+          <div className="flex w-[361px] mt-5 items-center justify-start">
+            {/* 식물 사진 및 수정 버튼 */}
+            <div className="relative w-31 shrink-0 inline-block">
+              <img
+                src={profile.profilePlantImageUrl || groundImg}
+                alt="profileBackground"
+                className="w-full p-6 rounded-full object-cover"
+              />
+              <button
+                className="absolute bottom-4.5 right-5 transition-transform active:scale-90"
+                onClick={() => {
+                  console.log("프로필 수정 버튼 클릭됨");
+                  setIsEditModalOpen(true);
+                }}
+              >
+                <img src={refreshIcon} alt="refresh" className="w-[32px]" />
+              </button>
+            </div>
+            {/* 유저 정보 */}
+            <div className="flex flex-col">
+              <p className="typo-h2 text-white">{profile.nickname}</p>
+              <div className="typo-caption text-white">
+                <span>지금 내가 키우는 식물 </span>
+                {/* 임시로 */}
+                <span>토마토</span>
+              </div>
+              <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-3">
+                <span className="text-(--color-green)">
+                  {profile.daysSinceJoined}
+                </span>
+                <span className="text-zinc-500">일 째 Cookeep</span>
+              </div>
+            </div>
           </div>
 
           {/* 목표 요약 바 */}
-          <div className="bg-[#1DAD64] p-3 w-[361px] h-12 flex items-center justify-between gap-3 rounded-[12px] shadow-[0px_4px_16px_-10px_rgba(0,0,0,0.25)] mt-[23px]">
-            <span className="text-green-300 typo-body2 truncate">
-              이번주 목표는... {goal}
+          <div className="bg-[#1DAD64] p-3 w-[361px] h-12 flex items-center justify-between gap-3 rounded-[12px] shadow-[0px_4px_16px_-10px_rgba(0,0,0,0.25)]">
+            <span
+              className={`typo-body2 truncate ${profile.weeklyGoal ? "text-white" : "text-green-300"}`}
+            >
+              {profile.weeklyGoal ? (
+                <>
+                  이번주 목표는... 주 {targetCount}회 {goalLabel}!
+                </>
+              ) : (
+                <>이번주 목표는...</>
+              )}
             </span>
             <button
-              onClick={() => navigate("/mycookeep/goals")}
+              onClick={() =>
+                navigate("/mycookeep/goals", {
+                  state: {
+                    currentGoalId: goalId,
+                    currentCount: profile.weeklyGoal?.targetCount ?? 0,
+                  },
+                })
+              }
               className="w-6 flex items-center justify-center h-full"
             >
               <img
@@ -70,7 +141,7 @@ export default function Profile() {
       <ProfileEditModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSave={() => handleSaveProfile}
+        onSave={handleSaveProfile}
       />
     </>
   );

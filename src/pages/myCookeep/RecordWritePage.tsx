@@ -106,7 +106,7 @@ export default function RecordWritePage() {
   };
 
   // 쿠키추가
-  const addCookie = useCookeepsStore((state) => state.addCookie);
+  // const addCookie = useCookeepsStore((state) => state.addCookie);
 
   if (!recipe) return null;
   if (selectedRecipeId === null) return null;
@@ -272,8 +272,27 @@ export default function RecordWritePage() {
         </div>
       </div>
       {showUploadModal && (
+        // <UploadCompleteModal
+        //   onConfirm={() => {
+        //     if (editingRecordId) {
+        //       updateRecordContent({
+        //         recordId: editingRecordId,
+        //         memo,
+        //         images,
+        //         isPublic,
+        //       });
+        //     } else {
+        //       // 신규 등록일 때만 쿠키 증가
+        //       addCookie();
+        //     }
+
+        //     navigate("/mycookeep");
+        //     resetRecord(); // setTimeout 필요 없음
+        //   }}
+        //   onCancel={() => setShowUploadModal(false)}
+        // />
         <UploadCompleteModal
-          onConfirm={() => {
+          onConfirm={async () => {
             if (editingRecordId) {
               updateRecordContent({
                 recordId: editingRecordId,
@@ -282,12 +301,11 @@ export default function RecordWritePage() {
                 isPublic,
               });
             } else {
-              // 신규 등록일 때만 쿠키 증가
-              addCookie();
+              await useCookeepsStore.getState().fetchCookies();
             }
 
             navigate("/mycookeep");
-            resetRecord(); // setTimeout 필요 없음
+            resetRecord();
           }}
           onCancel={() => setShowUploadModal(false)}
         />
