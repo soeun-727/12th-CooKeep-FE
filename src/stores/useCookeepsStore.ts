@@ -7,6 +7,7 @@ import {
   reviveMyPlant,
   setProfileMyPlant,
   waterMyPlant,
+  type RegisterResponseData,
 } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
 import {
@@ -40,7 +41,9 @@ interface CookeepsState {
   justHarvestedPlant: MyPlant | null;
   setJustHarvestedPlant: (plant: MyPlant | null) => void;
   fetchMyPlants: () => Promise<void>;
-  registerPlant: (plantId: number) => Promise<ApiResponse<string>>;
+  registerPlant: (
+    plantId: number,
+  ) => Promise<ApiResponse<RegisterResponseData>>;
 
   selectedPlant: PlantType | null;
   plantStage: PlantStage;

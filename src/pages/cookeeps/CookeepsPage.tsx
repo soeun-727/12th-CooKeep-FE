@@ -218,7 +218,7 @@ export default function CookeepsPage() {
       // 2. 조건문 수정 (가장 중요)
       // res.data가 객체이므로, 그 안의 message 필드나 혹은 별도의 flag를 확인해야 합니다.
       // 만약 서버가 응답 객체에 message라는 필드를 따로 준다면 아래처럼 수정하세요.
-      const responseMsg = (res as any).message || (res.data as any).message;
+      const responseMsg = res.data.message;
 
       if (responseMsg === "첫 식물 등록이 완료되었습니다.") {
         console.log("✅ 첫 등록 보너스 감지!");
