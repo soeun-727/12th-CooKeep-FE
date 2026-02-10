@@ -14,9 +14,7 @@ interface GoalProps {
 
 export default function Goal({ selectedGoal, onSelect }: GoalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const currentGoalTitle = selectedGoal.id
-    ? selectedGoal.title
-    : goals[0].title;
+  const currentGoal = selectedGoal.id ? selectedGoal : goals[0];
 
   return (
     <>
@@ -36,7 +34,7 @@ export default function Goal({ selectedGoal, onSelect }: GoalProps) {
             onClick={() => setIsOpen(!isOpen)}
             className="w-full h-[48px] px-5 flex items-center justify-between text-left"
           >
-            <span className="typo-body2 text-black">{currentGoalTitle}</span>
+            <span className="typo-body2 text-black">{currentGoal.title}</span>
             <svg
               className={`w-5 h-5 transition-transform duration-300 ${
                 isOpen ? "rotate-180" : ""
@@ -61,21 +59,20 @@ export default function Goal({ selectedGoal, onSelect }: GoalProps) {
             }`}
           >
             <div className="flex flex-col">
-              {goals
-                .filter((goal) => goal.id !== selectedGoal.id)
-                .map((goal) => (
-                  <button
-                    key={goal.id}
-                    onClick={() => {
-                      // 내부 state가 아닌 부모의 onSelect 호출
-                      onSelect({ id: goal.id, title: goal.title });
-                      setIsOpen(false);
-                    }}
-                    className="w-full h-[48px] px-5 text-left typo-body2 bg-white hover:bg-gray-50 transition-colors text-gray-500"
-                  >
-                    {goal.title}
-                  </button>
-                ))}
+              {goals.map((goal) => (
+                <button
+                  key={goal.id}
+                  onClick={() => {
+                    onSelect({ id: goal.id, title: goal.title });
+                    setIsOpen(false);
+                  }}
+                  className={`w-full h-[48px] px-5 text-left typo-body2 transition-colors 
+                    ${goal.id === currentGoal.id ? "text-(--color-green) font-semibold bg-[#F9F9F9]" : "text-gray-500 bg-white hover:bg-gray-50"}
+                  `}
+                >
+                  {goal.title}
+                </button>
+              ))}
             </div>
           </div>
         </div>

@@ -4,15 +4,7 @@ import { BrowserRouter, HashRouter } from "react-router-dom";
 import "./styles/index.css";
 import App from "./App.tsx";
 
-const Router = isIOSPWA() ? HashRouter : BrowserRouter;
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Router>
-      <App />
-    </Router>
-  </StrictMode>,
-);
+import { registerSW } from "virtual:pwa-register";
 
 function isIOSPWA() {
   return (
@@ -21,8 +13,12 @@ function isIOSPWA() {
   );
 }
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
-}
+const Router = isIOSPWA() ? HashRouter : BrowserRouter;
+registerSW({ immediate: true });
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <Router>
+      <App />
+    </Router>
+  </StrictMode>,
+);
