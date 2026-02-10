@@ -207,3 +207,25 @@ body,
 .animate-float-bubble {
   animation: floatBubble 2s ease-in-out infinite;
 }
+
+/* 글로벌 CSS에 추가하는 경우 */
+@keyframes loading-dot {
+  0%,
+  100% {
+    background-color: #d9d9d9;
+  }
+  33% {
+    background-color: #2d2d2d;
+  }
+}
+
+.animate-dot {
+  animation: loading-dot 1.2s infinite;
+}
+
+.delay-200 {
+  animation-delay: 0.4s;
+}
+.delay-400 {
+  animation-delay: 0.8s;
+}

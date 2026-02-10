@@ -4,17 +4,19 @@ import { useRecipeFlowStore } from "../../../../stores/useRecipeFlowStore";
 interface Props {
   retryCount: number;
   maxRetry?: number;
+  onRetry: () => void;
 }
 
 export default function RecipeActionButtons({
   retryCount,
   maxRetry = 5,
+  onRetry,
 }: Props) {
   const navigate = useNavigate();
 
   const {
-    increaseRetry,
-    generateRecipe,
+    // increaseRetry,
+    // generateRecipe,
     selectedIngredients,
     difficulty,
     recipeHistory,
@@ -25,10 +27,10 @@ export default function RecipeActionButtons({
   const isMaxed = retryCount >= maxRetry - 1;
   const retryBtnText = `다른 레시피 받기 (${retryCount + 1}/${maxRetry})`;
 
-  const handleRetry = () => {
-    increaseRetry();
-    generateRecipe();
-  };
+  // const handleRetry = () => {
+  //   increaseRetry();
+  //   generateRecipe();
+  // };
 
   const handleCookClick = () => {
     if (!latestRecipe) return;
@@ -55,7 +57,7 @@ export default function RecipeActionButtons({
 
       {/* 다른 레시피 버튼 */}
       <button
-        onClick={handleRetry}
+        onClick={onRetry}
         disabled={isMaxed}
         className={`w-full rounded-[10px] h-[38px] typo-button ${
           isMaxed ? "bg-gray-300 text-[#7D7D7D]" : "bg-[#202020] text-white"
