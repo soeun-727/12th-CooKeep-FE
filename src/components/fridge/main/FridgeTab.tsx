@@ -54,7 +54,6 @@ export default function FridgeTab() {
     const fetchFridgeData = async () => {
       try {
         const response = await getRefrigeratorHome();
-        // response 자체가 없거나 status가 성공이 아닌 경우 체크
         if (!response || !response.data) {
           console.error("서버 응답이 없거나 data 필드가 없습니다.");
           return;

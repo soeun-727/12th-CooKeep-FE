@@ -11,6 +11,10 @@ export default function ItemOption() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
+  const [rewardInfo, setRewardInfo] = useState<{
+    points: number;
+    granted: boolean;
+  } | null>(null);
   if (selectedIds.length === 0 && !isModalOpen && !isAlertOpen) {
     return null;
   }
@@ -29,11 +33,17 @@ export default function ItemOption() {
 
   const handleConfirm = async () => {
     const type = modalType;
-    await deleteSelected(type);
-
+    const result = await deleteSelected(type);
     setIsModalOpen(false);
-
     if (type === "eaten") {
+      if (result && result.reward.granted) {
+        setRewardInfo({
+          points: result.reward.points,
+          granted: result.reward.granted,
+        });
+      } else {
+        setRewardInfo(null);
+      }
       setTimeout(() => setIsAlertOpen(true), 100);
     }
   };
@@ -82,6 +92,7 @@ export default function ItemOption() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirm}
         title={modalTitle}
+        variant="green"
         description={
           modalType === "eaten"
             ? "섭취완료로 변경하시겠습니까?"
@@ -90,7 +101,14 @@ export default function ItemOption() {
       />
 
       {/* 알림 */}
-      <AlertModal isOpen={isAlertOpen} onClose={() => setIsAlertOpen(false)} />
+      <AlertModal
+        isOpen={isAlertOpen}
+        onClose={() => {
+          setIsAlertOpen(false);
+          setRewardInfo(null);
+        }}
+        rewardPoints={rewardInfo?.points}
+      />
     </>
   );
 }

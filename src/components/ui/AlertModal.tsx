@@ -5,24 +5,35 @@ interface AlertModalProps {
   isOpen: boolean;
   onClose: () => void;
   buttonText?: string;
+  rewardPoints?: number | null;
 }
 
 const AlertModal: React.FC<AlertModalProps> = ({
   isOpen,
   onClose,
   buttonText = "확인",
+  rewardPoints,
 }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[160] flex items-center justify-center bg-[#11111180]">
       <div className="absolute inset-0" onClick={onClose}></div>
-      <div className="relative w-60 h-59 bg-white rounded-[10px] flex flex-col items-center text-center px-7 pt-[35px] pb-[25px] gap-4">
+      <div className="relative w-60 bg-white rounded-[10px] flex flex-col items-center text-center px-7 pt-[35px] pb-[25px] gap-4">
         <img src={icon} className="w-20" />
         <div className="typo-body2 font-medium text-neutral-900">
           섭취완료!
           <br />
           냉장고가 가벼워졌어요!
+          {rewardPoints !== undefined && rewardPoints !== null && (
+            <div className="typo-caption text-zinc-400">
+              쿠키{" "}
+              <span className="text-(--color-green) font-bold">
+                {rewardPoints}
+              </span>
+              개를 획득하셨어요
+            </div>
+          )}
         </div>
         <button
           onClick={onClose}
