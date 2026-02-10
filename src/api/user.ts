@@ -16,12 +16,17 @@ export interface OnboardingData {
 
 export interface ProfileData {
   daysSinceJoined: number;
+  growingPlantName: string;
   nickname: string;
   profilePlantImageUrl: string;
   weeklyGoal: {
     achieved: boolean;
     currentCount: number;
-    goalActionType: "COOKING" | "RECIPE_SAVE";
+    goalActionType:
+      | "COOKING"
+      | "RECIPE_SAVE"
+      | "RECIPE_LIKE"
+      | "INGREDIENT_MANAGEMENT";
     targetCount: number;
   };
 }
