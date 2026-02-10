@@ -60,25 +60,6 @@ export default function CookeepsPage() {
 
   const [showHarvestModal, setShowHarvestModal] = useState(false);
 
-  // const harvestTriggeredRef = useRef(false);
-
-  // const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
-  // const setJustHarvestedPlant = useCookeepsStore((s) => s.setJustHarvestedPlant);
-
-  // 수확 감지 로직 수정
-  // useEffect(() => {
-  //   if (harvestTriggeredRef.current) return;
-
-  //   // justHarvestedPlant가 설정되면 즉시 모달 표시
-  //   if (justHarvestedPlant && !hasShownHarvestModal) {
-  //     harvestTriggeredRef.current = true;
-  //     // eslint-disable-next-line react-hooks/set-state-in-effect
-  //     setShowHarvestModal(true);
-  //   }
-  // }, [justHarvestedPlant, hasShownHarvestModal]);
-
-  // const myPlants = useCookeepsStore((s) => s.myPlants);
-
   const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
 
   useEffect(() => {
@@ -89,16 +70,6 @@ export default function CookeepsPage() {
   }, [justHarvestedPlant, hasShownHarvestModal]);
 
   // 수확 모달 닫을 때 로직 수정
-  // const handleHarvestModalClose = () => {
-  //   const store = useCookeepsStore.getState();
-
-  //   store.setHasShownHarvestModal(true);
-  //   store.setPrevCookie(null);
-
-  //   setShowHarvestModal(false);
-  //   setSelectedPlantData(null);
-  //   setActiveModal("select");
-  // };
   const handleHarvestModalClose = async () => {
     const store = useCookeepsStore.getState();
 

@@ -143,7 +143,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
         }
       }
 
-      // ✅ 평소 로직
+      // 평소 로직
       const current = plants.find((p: MyPlant) => !p.isHarvested) ?? null;
 
       set({
@@ -159,113 +159,6 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       console.error(e);
     }
   },
-
-  // fetchMyPlants: async () => {
-  //   try {
-  //     const plants: MyPlant[] = await getMyPlants();
-  //     const prevPlant = get().currentPlant;
-
-  //     console.log("fetchMyPlants 호출");
-  //     console.log(
-  //       "  - 이전 currentPlant:",
-  //       prevPlant?.plantName,
-  //       prevPlant?.level,
-  //     );
-  //     console.log(
-  //       "  - justHarvestedPlant:",
-  //       get().justHarvestedPlant?.plantName,
-  //     );
-
-  //     // 수확 감지
-  //     // if (prevPlant && prevPlant.level === 3) {
-  //     //   const harvestedVersion = plants.find(
-  //     //     (p) => p.userPlantId === prevPlant.userPlantId && p.isHarvested,
-  //     //   );
-
-  //     //   if (harvestedVersion) {
-  //     //     console.log("수확 감지!", harvestedVersion.plantName);
-
-  //     //     // 잠깐 level 4로 보여주기 위해 임시 상태 설정
-  //     //     const temp4thStage: MyPlant = {
-  //     //       ...harvestedVersion,
-  //     //       level: 4,
-  //     //       isHarvested: false, // 임시로 false
-  //     //     };
-
-  //     //     set({
-  //     //       currentPlant: temp4thStage, // 4단계 이미지 보여주기
-  //     //       plantStage: 4,
-  //     //       selectedPlant: PLANT_NAME_TO_TYPE[temp4thStage.plantName],
-  //     //     });
-
-  //     //     // 2초 후에 수확 상태로 전환
-  //     //     await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  //     //     set({ justHarvestedPlant: harvestedVersion });
-  //     //   }
-  //     // }
-
-  //     let current: MyPlant | null = null;
-
-  //     if (get().justHarvestedPlant) {
-  //       console.log("  → 수확 직후이므로 currentPlant = null");
-  //       current = null;
-  //     } else {
-  //       current = plants.find((p) => p.isProfile && !p.isHarvested) || null;
-
-  //       if (current) {
-  //         console.log(
-  //           "  → 프로필 식물 선택:",
-  //           current.plantName,
-  //           current.level,
-  //         );
-  //       } else if (prevPlant && !prevPlant.isHarvested) {
-  //         const stillValid = plants.find(
-  //           (p) => p.userPlantId === prevPlant.userPlantId && !p.isHarvested,
-  //         );
-  //         if (stillValid) {
-  //           current = stillValid;
-  //           console.log(
-  //             "  → 이전 식물 유지:",
-  //             current.plantName,
-  //             current.level,
-  //           );
-
-  //           if (prevPlant.level !== stillValid.level) {
-  //             console.log(
-  //               `  레벨 변화 감지: ${prevPlant.level} → ${stillValid.level}`,
-  //             );
-  //           }
-  //         }
-  //       }
-  //     }
-
-  //     set({
-  //       myPlants: plants,
-  //       currentPlant: current,
-  //       harvestedPlantNames: plants
-  //         .filter((p) => p.isHarvested)
-  //         .map((p) => p.plantName),
-  //       plantStage: current?.level ?? 1,
-  //       selectedPlant: current ? PLANT_NAME_TO_TYPE[current.plantName] : null,
-  //     });
-  //     console.log("🔄 [fetchMyPlants 최종 선택된 currentPlant]", {
-  //       plantName: current?.plantName,
-  //       level: current?.level,
-  //       userPlantId: current?.userPlantId,
-  //       isHarvested: current?.isHarvested,
-  //     });
-
-  //     console.log("서버 식물 목록:", plants.length, "개");
-  //     console.log(
-  //       "최종 currentPlant:",
-  //       current?.plantName || "없음",
-  //       current?.level || "-",
-  //     );
-  //   } catch (e) {
-  //     console.error("식물 조회 실패", e);
-  //   }
-  // },
 
   registerPlant: async (plantId: number) => {
     try {
@@ -296,7 +189,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
         isProfileAuto,
       });
 
-      // ✅ A 시나리오일 때만 프로필 자동 변경
+      // A 시나리오일 때만 프로필 자동 변경
       if (isProfileAuto) {
         await setProfileMyPlant(justRegistered.userPlantId);
       }
