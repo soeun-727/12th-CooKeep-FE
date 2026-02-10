@@ -1,5 +1,4 @@
 import Button from "../../ui/Button";
-//지금 하단 고정되어 있어요
 interface FooterProps {
   onNext: () => void;
   onPrev: () => void;
@@ -7,6 +6,7 @@ interface FooterProps {
   isFirstStep: boolean;
   isLastStep: boolean;
   isValid: boolean;
+  isLoading: boolean;
 }
 
 export default function Footer({
@@ -16,29 +16,38 @@ export default function Footer({
   isFirstStep,
   isLastStep,
   isValid,
+  isLoading,
 }: FooterProps) {
   return (
     <div className="fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
       <div className="w-[361px] mx-auto flex flex-col items-center gap-2">
         <Button
           size="S"
-          className="bg-[var(--color-green-deep)]"
+          variant="green"
           onClick={() => isValid && onNext()}
-          disabled={!isValid}
+          disabled={!isValid || isLoading}
         >
           {isLastStep ? "쿠킵 시작하기" : "다음"}
         </Button>
 
-        <Button
-          size="S"
-          className="bg-gray-300"
-          onClick={() => !isFirstStep && onPrev()}
-          disabled={isFirstStep}
-        >
-          이전
-        </Button>
+        {!isFirstStep && (
+          <Button
+            size="S"
+            className="bg-gray-300"
+            disabled={isLoading}
+            onClick={onPrev}
+          >
+            이전
+          </Button>
+        )}
 
-        <button className="typo-caption text-gray-500" onClick={onSkip}>
+        <button
+          className={`typo-caption text-gray-500 transition-opacity ${
+            isLastStep ? "invisible" : "visible"
+          }`}
+          onClick={onSkip}
+          disabled={isLoading}
+        >
           질문 건너뛰기
         </button>
       </div>

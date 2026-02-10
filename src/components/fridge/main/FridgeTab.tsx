@@ -9,15 +9,15 @@ import ItemOption from "../items/ItemOption";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
 import freezerIcon from "../../../assets/fridge/freezer.svg";
 import pantryIcon from "../../../assets/fridge/pantry.svg";
-import { TEMP_DATA } from "../../../constants/tempIngredients";
-
-import {
-  useIngredientStore,
-  type Ingredient,
-} from "../../../stores/useIngredientStore";
-import { useSortedIngredients } from "../../../hooks/useSortedIngredients"; // 커스텀 훅 임포트
+import { useIngredientStore } from "../../../stores/useIngredientStore";
+import { useSortedIngredients } from "../../../hooks/useSortedIngredients";
 import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
+
+import {
+  getRefrigeratorHome,
+  type RefrigeratorHomeResponse,
+} from "../../../api/ingredient";
 
 export default function FridgeTab() {
   const {
@@ -27,55 +27,79 @@ export default function FridgeTab() {
     viewCategory,
     updateIngredient,
   } = useIngredientStore();
+
+  const parseServerData = (data: RefrigeratorHomeResponse) => {
+    const mapItem = (i: any, category: string) => {
+      return {
+        ...i,
+        category,
+        id: i.ingredientId || i.id || i.referenceId || 0,
+        name: i.name || "이름 없음",
+        dDay: i.leftDays ?? 0,
+        image: i.imageUrl || "",
+        quantity: i.quantity || 1,
+        unit: i.unit || "PIECE",
+        expiryDate: i.expirationDate || new Date().toISOString().split("T")[0],
+        createdAt: i.createdAt || new Date().toISOString(),
+      };
+    };
+
+    const fridge = (data.fridge || []).map((i) => mapItem(i, "냉장"));
+    const freezer = (data.freezer || []).map((i) => mapItem(i, "냉동"));
+    const pantry = (data.pantry || []).map((i) => mapItem(i, "상온"));
+
+    return [...fridge, ...freezer, ...pantry];
+  };
+  useEffect(() => {
+    const fetchFridgeData = async () => {
+      try {
+        const response = await getRefrigeratorHome();
+        if (!response || !response.data) {
+          console.error("서버 응답이 없거나 data 필드가 없습니다.");
+          return;
+        }
+        const targetData = response.data.data || response.data;
+
+        if (targetData) {
+          const parsed = parseServerData(targetData);
+          setIngredients(parsed);
+        }
+      } catch (error: any) {
+        console.error("냉장고 데이터 로드 실패 상세:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+      }
+    };
+    fetchFridgeData();
+  }, [setIngredients]);
+
   const { filteredIngredients, sortedIngredients } = useSortedIngredients();
 
-  useEffect(() => {
-    if (ingredients.length === 0) setIngredients(TEMP_DATA);
-  }, [ingredients.length, setIngredients]);
-
-  // parsing func--------------------------
-  // 오늘까지인 재료만
   const todayIngredients = useMemo(
     () => ingredients.filter((i) => i.dDay === 0),
     [ingredients],
   );
 
-  // // 모달 오픈 조건 (그냥 새로고침하면 계속)
-  // const isExpiryModalOpen = useMemo(
-  //   () => ingredients.some((i) => i.dDay === 0),
-  //   [ingredients],
-  // );
-
-  // 하루한번만 열리게 하는 조건 포함
   const EXPIRY_MODAL_KEY = "expiry-alert-last-shown";
-
-  // 유통기한 모달 상태
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
 
   useEffect(() => {
     if (todayIngredients.length === 0) return;
-
     const today = new Date().toISOString().slice(0, 10);
     const lastShown = localStorage.getItem(EXPIRY_MODAL_KEY);
-
     if (lastShown !== today) {
-      // 경고 무시용 주석
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsExpiryModalOpen(true);
       localStorage.setItem(EXPIRY_MODAL_KEY, today);
     }
   }, [todayIngredients]);
 
-  // 상세정보 부분 추가
   const { selectedIngredientId, closeDetail } = useIngredientStore();
-
   const selectedIngredient = ingredients.find(
     (i) => i.id === selectedIngredientId,
   );
 
-  //---------------------------
-
-  // 카테고리에 따른 아이콘 반환 함수
   const getCategoryIcon = (category: string | null) => {
     switch (category) {
       case "냉장":
@@ -95,23 +119,18 @@ export default function FridgeTab() {
   return (
     <div className="w-full flex flex-col transition-all">
       <Search />
-
-      {/* 유통기한 모달 */}
       <ExpiryAlertModal
         isOpen={isExpiryModalOpen}
         onClose={() => setIsExpiryModalOpen(false)}
         items={todayIngredients}
       />
 
-      {/* 1. 검색 모드 */}
       {isSearching &&
         (filteredIngredients.length > 0 ? (
           <IngredientGrid items={filteredIngredients} />
         ) : (
           <NoResultView />
         ))}
-
-      {/* 2. 카테고리 리스트 모드 (전체보기) */}
       {isListView && (
         <>
           <Sort
@@ -122,7 +141,6 @@ export default function FridgeTab() {
         </>
       )}
 
-      {/* 3. 기본 메인 화면 (카테고리별 요약) */}
       {!isSearching && !viewCategory && (
         <div className="flex flex-col gap-[10px]">
           <Storage
@@ -144,18 +162,13 @@ export default function FridgeTab() {
       )}
 
       <ItemOption />
-
-      {/* 상세정보땜에 일단 수정해보기 */}
       {selectedIngredient && (
         <IngredientDetailModal
           ingredient={selectedIngredient}
           onClose={closeDetail}
-          onUpdate={(updated: Partial<Ingredient>) => {
-            updateIngredient({
-              ...selectedIngredient,
-              ...updated,
-            });
-          }}
+          onUpdate={(updated) =>
+            updateIngredient({ ...selectedIngredient, ...updated })
+          }
         />
       )}
     </div>

@@ -8,6 +8,7 @@ interface DoublecheckModalProps {
   onConfirm: () => void;
   confirmText?: string;
   cancelText?: string;
+  variant?: "black" | "green";
 }
 
 const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
@@ -18,9 +19,11 @@ const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
   onConfirm,
   confirmText = "네",
   cancelText = "아니오",
+  variant = "black",
 }) => {
   if (!isOpen) return null;
-
+  const confirmBtnColor =
+    variant === "green" ? "bg-(--color-green)" : "bg-black";
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-[#11111180]">
       <div className="absolute inset-0" onClick={onClose}></div>
@@ -37,7 +40,7 @@ const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
               onConfirm();
               onClose();
             }}
-            className="typo-label w-[95px] h-11 text-white bg-black rounded-[10px]"
+            className={`typo-label w-[95px] h-11 text-white rounded-[10px] transition-colors active:opacity-80 ${confirmBtnColor}`}
           >
             {confirmText}
           </button>

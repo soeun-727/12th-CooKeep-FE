@@ -8,10 +8,22 @@ import { useRecipeFlowStore } from "../stores/useRecipeFlowStore";
 
 export default function Layout() {
   const location = useLocation();
+  const { viewCategory } = useIngredientStore();
   const [activeTab, setActiveTab] = useState("냉장고");
 
   const isRecipe = location.pathname.startsWith("/recipe");
+  const isCookeeps = location.pathname.startsWith("/cookeeps");
+  const isMyCookeep = location.pathname.startsWith("/mycookeep");
+  const showHeader = !isRecipe && !isCookeeps && !isMyCookeep;
 
+  const hideTabBarInRecipe =
+    isRecipe &&
+    (location.pathname.startsWith("/recipe/select") ||
+      location.pathname.startsWith("/recipe/confirm") ||
+      location.pathname.startsWith("/recipe/loading") ||
+      isMyCookeep);
+  const showTabBar = !hideTabBarInRecipe;
+  const isAllViewMode = location.pathname.includes("fridge") && !!viewCategory;
   useEffect(() => {
     if (!location.pathname.startsWith("/recipe")) {
       useIngredientStore.getState().clearSelection();
@@ -19,37 +31,28 @@ export default function Layout() {
     }
   }, [location.pathname]);
 
-  // 레시피 중 TabBar를 숨길 페이지들
-  const hideTabBarInRecipe =
-    location.pathname.startsWith("/recipe/select") ||
-    location.pathname.startsWith("/recipe/confirm") ||
-    location.pathname.startsWith("/recipe/loading");
-
   useEffect(() => {
     const path = location.pathname;
     if (path.includes("fridge")) setActiveTab("냉장고");
     else if (path.includes("recipe")) setActiveTab("레시피");
     else if (path.includes("cookeeps")) setActiveTab("쿠킵스");
-    else if (path.includes("mypage")) setActiveTab("MY쿠킵");
+    else if (path.includes("mycookeep")) setActiveTab("MY쿠킵");
   }, [location.pathname]);
 
   return (
-    <div className="bg-[#FAFAFA] min-h-screen">
-      {!isRecipe && <MainHeader />}
-
+    <div className="flex flex-col justify-center bg-[#FAFAFA]">
+      {showHeader && <MainHeader isAllView={isAllViewMode} />}
       <main
-        className={
-          isRecipe
-            ? hideTabBarInRecipe
-              ? ""
-              : "pb-[90px]"
-            : "pt-[48px] pb-[90px]"
-        }
+        className={`
+          ${showHeader ? "pt-[48px]" : ""} 
+          ${showTabBar ? "pb-[90px]" : ""}
+          min-h-[100dvh]
+        `}
       >
         <Outlet />
       </main>
 
-      {!(isRecipe && hideTabBarInRecipe) && (
+      {showTabBar && (
         <TabBar
           selectedTab={activeTab}
           onSelect={(name) => setActiveTab(name)}

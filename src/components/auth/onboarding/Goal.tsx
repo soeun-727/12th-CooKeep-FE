@@ -8,21 +8,22 @@ const goals = [
 ];
 
 interface GoalProps {
-  selectedGoal: { id: string; title: string }; // 부모로부터 받은 현재 선택된 목표
-  onSelect: (goal: { id: string; title: string }) => void; // 부모의 상태를 변경하는 함수
+  selectedGoal: { id: string; title: string };
+  onSelect: (goal: { id: string; title: string }) => void;
 }
 
 export default function Goal({ selectedGoal, onSelect }: GoalProps) {
-  // 열림/닫힘 상태는 UI적인 요소이므로 컴포넌트 내부에서 관리해도 무방합니다.
   const [isOpen, setIsOpen] = useState(false);
-
-  // 헤더에 표시할 텍스트 (부모에서 내려준 selectedGoal 사용)
-  const currentGoalTitle = selectedGoal.title;
+  const currentGoalTitle = selectedGoal.id
+    ? selectedGoal.title
+    : goals[0].title;
 
   return (
     <>
       <div className="w-[361px] mt-[46px]">
-        <h1 className="typo-h1">이번 주 목표부터 정해볼까요?</h1>
+        <h1 className="typo-h1 !text-[22px]">
+          이번 주 달성하고 싶은 목표를 세워보세요!
+        </h1>
         <h3 className="typo-h3 text-gray-500">
           목표를 이룰 수 있도록 쿠킵이 도와줄게요
         </h3>

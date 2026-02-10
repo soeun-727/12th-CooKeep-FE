@@ -13,21 +13,36 @@ import UnitEditor from "./components/edit/UnitEditor";
 import StorageEditor from "./components/edit/StorageEditor";
 import ExpiryEditor from "./components/edit/ExpiryEditor";
 import MemoEditor from "./components/edit/MemoEditor";
+import { calculateExpiryDate } from "../../../utils/expiryDate";
 
 interface DetailedItemProps extends MasterItem {}
 const STORAGE_ICONS: Record<string, string> = {
-  냉장: coldIcon,
-  냉동: frozenIcon,
-  상온: roomIcon,
+  FRIDGE: coldIcon,
+  FREEZER: frozenIcon,
+  PANTRY: roomIcon,
 };
-
+const STORAGE_NAMES: Record<string, string> = {
+  FRIDGE: "냉장",
+  FREEZER: "냉동",
+  PANTRY: "상온",
+};
+const UNIT_NAMES: Record<string, string> = {
+  PIECE: "개",
+  PACK: "팩",
+  BAG: "봉지",
+  BOTTLE: "병",
+  BUNDLE: "묶음",
+  CAN: "캔",
+  GRAM: "g",
+  MILLILITER: "ml",
+};
 const DetailedItem: React.FC<DetailedItemProps> = (item) => {
   const { updateItemDetail, toggleItem } = useAddIngredientStore();
   const [modalType, setModalType] = useState<
     "storage" | "expiry" | "quantity" | "unit" | "memo" | null
   >(null);
-  const currentIcon = STORAGE_ICONS[item.storageType || "냉장"] || coldIcon;
-
+  const currentIcon = STORAGE_ICONS[item.storageType] || coldIcon;
+  const currentText = STORAGE_NAMES[item.storageType] || "냉장";
   const handleUpdate = (value: any) => {
     if (modalType) {
       updateItemDetail(item.id, modalType, value);
@@ -41,7 +56,6 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
           title: "보관 장소를 선택해주세요",
           component: (
             <StorageEditor
-              // 스토어 필드명과 일치하는 item.storageType을 넘깁니다.
               value={item.storageType || "냉장"}
               onSave={handleUpdate}
             />
@@ -118,7 +132,7 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
                 className="h-[15px]"
               />
               <span className="text-[var(--color-green-deep)]">
-                {item.storageType || "냉장"}
+                {currentText}
               </span>
             </div>
           </div>
@@ -126,7 +140,9 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
             <span className="w-[42px]">유통기한</span>
             <div className="flex w-[122px] h-8 border border-[#D1D1D1] rounded-[6px] items-center justify-between px-[10px] py-3">
               <span className="w-[58px] h-4">
-                {item.expiration || "2026.01.20"}
+                {item.expiration
+                  ? item.expiration.replace(/-/g, ".")
+                  : calculateExpiryDate(0)}
               </span>
               <img
                 onClick={() => setModalType("expiry")}
@@ -149,7 +165,9 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
           <div className="flex gap-3 items-center">
             <span className="w-[42px]">단위</span>
             <div className="flex w-[66px] h-8 border border-[#D1D1D1] rounded-[6px] items-center justify-between px-[10px] py-3">
-              <span className="w-[58px] h-4">{item.unit || "개"}</span>
+              <span className="w-[58px] h-4">
+                {UNIT_NAMES[item.unit] || item.unit || "개"}
+              </span>
               <img
                 onClick={() => setModalType("unit")}
                 src={renameIcon}

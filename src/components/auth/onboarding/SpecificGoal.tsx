@@ -9,18 +9,13 @@ export default function SpecificGoal({
   count,
   onCountChange,
 }: SpecificGoalProps) {
-  // 'n'을 기준으로 문장을 앞뒤로 분리
   const titleParts = selectedGoal.title.split("n");
-
-  // 1~10 사이 숫자인지 체크하는 로직 (에러 메시지 표시용)
   const numValue = parseInt(count, 10);
   const isError =
     count !== "" && (isNaN(numValue) || numValue < 1 || numValue > 10);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
-    // 숫자만 입력 가능하도록 제어 후 부모 상태 업데이트
     if (value === "" || /^\d+$/.test(value)) {
       onCountChange(value);
     }
@@ -29,7 +24,9 @@ export default function SpecificGoal({
   return (
     <>
       <div className="w-[361px] mt-[46px]">
-        <h1 className="typo-h1">이번 주 목표부터 정해볼까요?</h1>
+        <h1 className="typo-h1 !text-[22px]">
+          이번 주 달성하고 싶은 목표를 세워보세요!
+        </h1>
         <h3 className="typo-h3 text-gray-500">
           목표를 이룰 수 있도록 쿠킵이 도와줄게요
         </h3>
@@ -50,7 +47,7 @@ export default function SpecificGoal({
             value={count}
             onChange={handleChange}
             placeholder="3"
-            className={`typo-body2 font-bold underline outline-none bg-transparent w-10 text-center transition-colors ${
+            className={`typo-body2 font-bold underline outline-none bg-transparent w-5 text-center transition-colors ${
               isError ? "text-red-500" : "text-green-500"
             }`}
           />

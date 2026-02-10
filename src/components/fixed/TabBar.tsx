@@ -1,12 +1,12 @@
 import Tab from "./Tab";
 import fridgeIcon from "../../assets/fixed/fridge.svg";
-import fridgeOnIcon from "../../assets/fixed/Vector-1.svg";
+import fridgeOnIcon from "../../assets/fixed/fridgeTab.svg";
 import recipeIcon from "../../assets/fixed/recipe.svg";
-import recipeOnIcon from "../../assets/fixed/Vector-5.svg";
+import recipeOnIcon from "../../assets/fixed/recipeTab.svg";
 import cookeepsIcon from "../../assets/fixed/cookeeps.svg";
-import cookeepsOnIcon from "../../assets/fixed/Vector-7.svg";
+import cookeepsOnIcon from "../../assets/fixed/cookeepsTab.svg";
 import mycookeepIcon from "../../assets/fixed/mycookeep.svg";
-import mycookeepOnIcon from "../../assets/fixed/Vector-3.svg";
+import mycookeepOnIcon from "../../assets/fixed/mycookeepTab.svg";
 import { useNavigate } from "react-router-dom";
 
 interface TabBarProps {
@@ -22,7 +22,11 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
     if (name === "냉장고") navigate("/fridge");
     else if (name === "레시피") navigate("/recipe");
     else if (name === "쿠킵스") navigate("/cookeeps");
-    else if (name === "MY쿠킵") navigate("/mypage");
+    else if (name === "MY쿠킵") {
+      navigate("/mycookeep", {
+        state: { fromTab: true },
+      });
+    }
   };
 
   const tabs = [
@@ -47,7 +51,6 @@ export default function TabBar({ selectedTab, onSelect }: TabBarProps) {
             />
           ))}
         </div>
-        <div className="h-[34px] bg-white" />
       </div>
     </nav>
   );

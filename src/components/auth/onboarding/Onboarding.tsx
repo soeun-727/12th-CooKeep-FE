@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// UI Components
 import Footer from "./Footer";
 import Progress from "./Progress";
 import FoodType from "./FoodType";
@@ -8,80 +11,132 @@ import SpecificGoal from "./SpecificGoal";
 import AuthHeader from "../AuthHeader";
 import Last from "./Last";
 import Notification from "./Notification";
+import InstallGuide from "./InstallGuide";
+
+// API & Store & Utils
+import { saveOnboardingInfo } from "../../../api/user";
+import { useOnboardingStore } from "../../../stores/useOnboardingStore";
+import { GOAL_TYPE_MAP } from "../../../utils/mapping";
+
+// 매퍼 상수 (컴포넌트 외부 정의)
+export const FOOD_TYPE_MAP: Record<string, string> = {
+  한식: "KOREAN",
+  중식: "CHINESE",
+  일식: "JAPANESE",
+  양식: "WESTERN",
+  건강식: "HEALTHY",
+  인스턴트식: "FAST_FOOD",
+};
+
+export const SKILL_LEVEL_MAP: Record<string, string> = {
+  "완전 초보": "BEGINNER",
+  "간단한 요리는 가능": "BASIC",
+  "먹고살기에 나쁘지 않은 수준": "INTERMEDIATE",
+  "요리 고수": "ADVANCED",
+};
 
 export default function Onboarding() {
-  const [step, setStep] = useState(0);
-  const [isFinished, setIsFinished] = useState(false); // 마지막 화면 여부 상태
-  const [showNotification, setShowNotification] = useState(false); // Notification 화면 여부
-  const [foodTypes, setFoodTypes] = useState<string[]>([]); // 다중 선택 (최대 3개)
-  const [skillLevel, setSkillLevel] = useState<string>(""); // 단일 선택
-  const [selectedGoal, setSelectedGoal] = useState({
-    id: "cook",
-    title: "주 n회 요리하기",
-  }); // 목표 선택
-  const [goalCount, setGoalCount] = useState<string>("3"); // 목표 수치 입력
+  const navigate = useNavigate();
+  const {
+    foodTypes,
+    setFoodTypes,
+    skillLevel,
+    setSkillLevel,
+    selectedGoal,
+    setSelectedGoal,
+    goalCount,
+    setGoalCount,
+    step,
+    setStep,
+    isFinished,
+    setIsFinished,
+    showNotification,
+    setShowNotification,
+    showInstallGuide,
+    setShowInstallGuide,
+  } = useOnboardingStore();
 
-  const nextStep = () => {
-    if (step < STEPS.length - 1) setStep((prev) => prev + 1);
-    else {
-      //추후 최종 DB 저장 로직 수행
-      console.log("온보딩 완료 데이터:", {
-        foodTypes,
-        skillLevel,
-        selectedGoal,
-        goalCount,
-      });
-      setIsFinished(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // --- 비즈니스 로직 ---
+
+  const handleSaveOnboarding = async () => {
+    setIsLoading(true);
+    try {
+      // 🚀 데이터 가공 시 매퍼 키가 정확한지 다시 한번 확인하세요.
+      const requestBody = {
+        favoriteFoodTypes:
+          foodTypes.length > 0
+            ? foodTypes.map((type) => FOOD_TYPE_MAP[type])
+            : null,
+        cookingLevel: skillLevel ? SKILL_LEVEL_MAP[skillLevel] : null,
+        goalActionType: selectedGoal.id
+          ? (GOAL_TYPE_MAP as Record<string, any>)[selectedGoal.id]?.value
+          : null,
+        targetCount:
+          goalCount && parseInt(goalCount, 10) > 0
+            ? parseInt(goalCount, 10)
+            : null,
+      };
+
+      const response = await saveOnboardingInfo(requestBody);
+
+      // 서버 응답 규격이 { status: "OK", data: ... } 라면 아래 조건이 맞습니다.
+      if (response.status === 200 || response.data?.status === "OK") {
+        setIsFinished(true);
+      }
+    } catch (error) {
+      console.error("저장 실패:", error);
+      alert("입력 정보를 저장하는 데 실패했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const nextStep = () => {
+    if (step < 3) setStep(step + 1);
+    else handleSaveOnboarding();
+  };
+
   const prevStep = () => {
-    if (step > 0) setStep((prev) => prev - 1);
+    if (step > 0) setStep(step - 1);
   };
+
   const skipStep = () => {
-    nextStep();
+    if (step >= 2) handleSaveOnboarding();
+    else nextStep();
   };
 
-  if (showNotification) {
-    return <Notification />;
-  }
-
-  if (isFinished) {
-    return <Last onStart={() => setShowNotification(true)} />;
-  }
-
-  // 현재 스텝의 입력값이 유효한지 체크
   const getIsValid = () => {
     switch (step) {
       case 0:
-        return foodTypes.length > 0; // 음식 취향 1개 이상 선택 시
+        return foodTypes.length > 0;
       case 1:
-        return skillLevel !== ""; // 숙련도 선택 시
+        return skillLevel !== "";
       case 2:
-        return !!selectedGoal.id; // 목표 선택 시 (기본값 있어서 항상 true일 가능성 높음)
+        return !!selectedGoal.id;
       case 3:
         const count = parseInt(goalCount, 10);
-        return !isNaN(count) && count >= 1 && count <= 10; // 1~10 사이 입력 시
+        return !isNaN(count) && count >= 1 && count <= 10;
       default:
         return false;
     }
   };
 
-  //컴포넌트 배열
-  const STEPS = [
-    <FoodType selectedTypes={foodTypes} onToggle={setFoodTypes} />,
-    <Skill selectedSkill={skillLevel} onSelect={setSkillLevel} />,
-    <Goal selectedGoal={selectedGoal} onSelect={setSelectedGoal} />,
-    <SpecificGoal
-      selectedGoal={selectedGoal}
-      count={goalCount}
-      onCountChange={setGoalCount}
-    />,
-  ];
+  // --- 조건부 렌더링 (순서 중요!) ---
+
+  if (showInstallGuide)
+    return <InstallGuide onFinish={() => navigate("/fridge")} />;
+  if (showNotification)
+    return <Notification onNext={() => setShowInstallGuide(true)} />;
+  if (isFinished) return <Last onStart={() => setShowNotification(true)} />;
+
+  // --- 기본 온보딩 UI ---
+
   return (
     <>
       <AuthHeader />
-
-      <div className="min-h-screen relative pb-32">
+      <div className="min-h-screen relative pb-32 bg-[#FAFAFA]">
         <div className="w-[361px] mx-auto flex flex-col items-center">
           <Progress currentStep={step} />
 
@@ -102,6 +157,7 @@ export default function Onboarding() {
             />
           )}
         </div>
+
         <Footer
           onNext={nextStep}
           onPrev={prevStep}
@@ -109,6 +165,7 @@ export default function Onboarding() {
           isFirstStep={step === 0}
           isLastStep={step === 3}
           isValid={getIsValid()}
+          isLoading={isLoading}
         />
       </div>
     </>

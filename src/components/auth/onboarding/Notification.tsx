@@ -1,14 +1,54 @@
 import Button from "../../ui/Button";
-import temp from "../../../assets/temporary-image.png";
-import { useNavigate } from "react-router-dom";
+import ExampleNotification from "./ExampleNotification";
+import char from "../../../assets/character/noti_char.svg";
+import { useState } from "react";
+import { updatePushConsent } from "../../../api/user";
 
-export default function Notification() {
-  const navigate = useNavigate();
+const EXAMPLE_DATA = [
+  {
+    title: "유통기한 임박 🚨",
+    description: "두부 유통기한이 하루 남았어요!\n지금 요리하러 가볼까요?",
+  },
+  {
+    title: "주간 목표 달성 🎉",
+    description:
+      "'주 3회 요리하기' 목표를 달성했어요\n쿠키 리워드를 확인해보세요!",
+  },
+  {
+    title: "식물에 물 줄 시간 🌱",
+    description:
+      "토마토가 시들고 있어요\n보유하신 쿠키를 사용해 물을 줄 수 있어요",
+  },
+  {
+    title: "오늘의 쿠킵 레시피 🍳",
+    description:
+      "지금 있는 재료로 만들 수 있는 요리가 있어요\n지금 레시피를 확인해보세요!",
+  },
+];
 
-  const handleFinish = () => {
-    // 알림 권한 요청 로직이 들어갈 자리
-    // 이후 메인 대시보드로 이동
-    navigate("/fridge");
+interface Props {
+  onNext: () => void;
+}
+
+export default function Notification({ onNext }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
+  const INFINITE_DATA = [...EXAMPLE_DATA, ...EXAMPLE_DATA];
+
+  const handleAgreePush = async () => {
+    setIsLoading(true);
+    try {
+      await updatePushConsent(true);
+      console.log("알림 설정 업데이트 성공 (PATCH)");
+    } catch (error) {
+      console.error("알림 설정 실패:", error);
+    } finally {
+      setIsLoading(false);
+      onNext();
+    }
+  };
+
+  const handleSkip = () => {
+    onNext();
   };
 
   return (
@@ -25,21 +65,39 @@ export default function Notification() {
           언제든지 설정에서 변경할 수 있어요.
         </p>
 
-        <div className="flex flex-col items-center justify-center">
-          <img src={temp} className="w-[184px] mt-[122px]" />
-
-          <div className="flex flex-col gap-2 fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
-            <Button
-              size="S"
-              className="!bg-[var(--color-green-deep)]"
-              onClick={handleFinish}
-            >
-              알림을 켤게요
-            </Button>
-            <Button size="S" className="!bg-gray-300" onClick={handleFinish}>
-              괜찮아요
-            </Button>
+        <div className="relative flex flex-col items-center justify-start h-71 overflow-hidden mt-14 mb-[140px]">
+          <div className="absolute -top-6 left-0 w-full h-12 bg-gradient-to-b from-[#fafafa] via-[#fafafa] to-transparent z-10" />
+          <div className="flex flex-col gap-[6px] animate-roll">
+            {INFINITE_DATA.map((data, index) => (
+              <ExampleNotification
+                key={index}
+                title={data.title}
+                description={data.description}
+              />
+            ))}
           </div>
+          <div className="absolute -bottom-6 left-0 w-full h-12 bg-gradient-to-t from-[#fafafa] via-[#fafafa] to-transparent z-10" />
+        </div>
+        <div className="flex flex-col gap-2 fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px]">
+          <div className="flex justify-end">
+            <img src={char} className="w-[95px] mt-[35px] mb-[26.5px]" />
+          </div>
+          <Button
+            size="S"
+            variant="black"
+            onClick={handleAgreePush}
+            disabled={isLoading}
+          >
+            알림을 켤게요
+          </Button>
+          <Button
+            size="S"
+            className="!bg-gray-300"
+            onClick={handleSkip}
+            disabled={isLoading}
+          >
+            괜찮아요
+          </Button>
         </div>
       </div>
     </>

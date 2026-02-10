@@ -8,8 +8,8 @@ interface ExpiryEditorProps {
 }
 
 export default function ExpiryEditor({ value, onSave }: ExpiryEditorProps) {
-  const savedDate = value ? new Date(value.replace(/\./g, "-")) : null;
-  const initialDate = value ? new Date(value.replace(/\./g, "-")) : new Date();
+  const currentDate = value ? new Date(value.replace(/\./g, "-")) : null;
+  const initialDate = currentDate || new Date();
   const [viewDate, setViewDate] = useState(
     new Date(initialDate.getFullYear(), initialDate.getMonth(), 1),
   );
@@ -22,10 +22,14 @@ export default function ExpiryEditor({ value, onSave }: ExpiryEditorProps) {
   const prevMonth = () => setViewDate(new Date(year, month - 1, 1));
   const nextMonth = () => setViewDate(new Date(year, month + 1, 1));
   const monthName = viewDate.toLocaleString("en-US", { month: "long" });
+
   const handleDateClick = (day: number) => {
-    const newDate = new Date(year, month, day);
+    const newDate = new Date(year, month, day, 12, 0, 0);
     setSelectedDate(newDate);
-    const formattedDate = `${newDate.getFullYear()}.${String(newDate.getMonth() + 1).padStart(2, "0")}.${String(newDate.getDate()).padStart(2, "0")}`;
+
+    const formattedDate = `${newDate.getFullYear()}.${String(
+      newDate.getMonth() + 1,
+    ).padStart(2, "0")}.${String(newDate.getDate()).padStart(2, "0")}`;
     setTimeout(() => onSave(formattedDate), 250);
   };
 
@@ -68,11 +72,11 @@ export default function ExpiryEditor({ value, onSave }: ExpiryEditorProps) {
         {/* 실제 날짜 버튼 */}
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
-          const isSaved =
-            savedDate &&
-            savedDate.getFullYear() === year &&
-            savedDate.getMonth() === month &&
-            savedDate.getDate() === day;
+          const isCurrent =
+            currentDate &&
+            currentDate.getFullYear() === year &&
+            currentDate.getMonth() === month &&
+            currentDate.getDate() === day;
           const isNewlySelected =
             selectedDate &&
             selectedDate.getFullYear() === year &&
@@ -82,13 +86,12 @@ export default function ExpiryEditor({ value, onSave }: ExpiryEditorProps) {
           return (
             <button
               key={day}
-              disabled={isSaved ? true : false}
               onClick={() => handleDateClick(day)}
-              className={`h-10 w-10 mx-auto flex items-center justify-center rounded-full typo-h2 text-zinc-800 transition-all font-normal
+              className={`h-10 w-10 mx-auto flex items-center justify-center rounded-full typo-h2 text-zinc-800 transition-all !font-normal
                 ${
                   isNewlySelected
                     ? "!bg-[var(--color-green-light)] !border !border-[var(--color-green-deep)] !font-semibold"
-                    : isSaved
+                    : isNewlySelected || isCurrent
                       ? "!bg-zinc-200 !text-zinc-500 !cursor-not-allowed"
                       : "hover:bg-zinc-50"
                 }`}

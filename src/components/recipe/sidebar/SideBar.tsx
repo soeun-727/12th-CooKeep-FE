@@ -4,6 +4,7 @@ import DoublecheckModal from "../../ui/DoublecheckModal";
 import TextField from "../../ui/TextField";
 import searchIcon from "../../../assets/recipe/search.svg";
 import { useRecipeStore } from "../../../stores/useRecipeStore";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
   const { recipes, toggleLike, renameRecipe, deleteRecipe } = useRecipeStore();
   const [isVisible, setIsVisible] = useState(isOpen);
   const [shouldAnimateOpen, setShouldAnimateOpen] = useState(false);
@@ -74,7 +77,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               setSelectedRecipe(item);
               setIsDeleteModalOpen(true);
             }}
-            onSelect={() => console.log(`${item.name} 상세 이동`)}
+            onSelect={() => {
+              onClose(); // 사이드바 닫고
+              navigate(`/recipe/result/${item.id}`);
+            }}
           />
         ))}
     </div>
@@ -93,8 +99,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* 2. 사이드바 본체 */}
       <div
-        className={`absolute left-0 z-[130] top-[22px]
-          w-[342px] h-[calc(100%-152px+54px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
+        className={`fixed left-0 z-[130] top-[22px]
+          w-[342px] h-[calc(100%-112px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
           transform transition-transform duration-300 ease-in-out
           ${translateClasses}`}
       >
@@ -103,7 +109,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="flex-1 overflow-y-auto py-[35px] px-[26px] no-scrollbar">
             <div className="w-[290px]">
               <div
-                className={`[&_>_div]:!w-full [&_input]:border-none [&_input::placeholder]:text-stone-300
+                className={`[&_>_div]:!w-full [&_p]:hidden
+          [&_input]:outline-none  [&_input]:border-none [&_input::placeholder]:text-stone-300
                   shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)] ${
                     searchTerm ? "[&_input]:bg-white" : "[&_input]:bg-[#EBEDF1]"
                   }`}
@@ -116,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 />
               </div>
             </div>
-            <div className="flex flex-col items-center w-full">
+            <div className="flex flex-col items-center w-full mt-2">
               {recipes.length > 0 ? (
                 <>
                   {renderRecipeList(true)}

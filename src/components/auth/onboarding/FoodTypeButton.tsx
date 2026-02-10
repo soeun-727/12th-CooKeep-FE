@@ -25,11 +25,11 @@ const FoodTypeButton: React.FC<FoodTypeButtonProps> = ({
           : "border-[#D1D1D1] bg-white"
       }`}
     >
-      <div className="flex flex-col items-center w-full">
+      <div className="flex flex-col items-center w-full gap-[7px]">
         <img className="w-12 h-12 object-contain" src={displayImage} />
         <span
-          className={`typo-caption font-bold ${
-            isSelected ? "text-[var(--color-green-deep)]" : "text-[#A1A1A1]"
+          className={`typo-caption !font-semibold ${
+            isSelected ? "text-black" : "text-[#7D7D7D]"
           }`}
         >
           {title}

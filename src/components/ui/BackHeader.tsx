@@ -10,11 +10,11 @@ const BackHeader = ({ title, onBack }: BackHeaderProps) => {
   return (
     <header
       className="
-    absolute top-0 z-50
+    fixed top-0 z-50
     w-full max-w-[450px]
-    h-[56px]
+    h-12
     flex items-center
-    px-4 py-4 pt-[54px]
+    px-4 py-4
     bg-[#FAFAFA]
   "
     >

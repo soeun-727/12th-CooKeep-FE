@@ -32,6 +32,7 @@ export default function AgreementList({
             agreement={agreementPage}
             isChecked={agreements[agreementPage.key]}
             onBack={() => setAgreementPage(null)}
+            updateAgreements={updateAgreements}
             onConfirm={(key) => {
               updateAgreements({ [key]: true });
               setAgreementPage(null);
@@ -52,7 +53,7 @@ export default function AgreementList({
       <label className="relative flex items-center px-4 h-[48px] max-w-[361px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
         <input
           type="checkbox"
-          className="peer w-4 h-4 appearance-none border border-[#7D7D7D] rounded-sm checked:bg-[#1FC16F] cursor-pointer"
+          className="peer w-4 h-4 appearance-none border border-[#7D7D7D] rounded-sm checked:bg-(--color-green) cursor-pointer"
           checked={isAllChecked}
           onChange={(e) =>
             updateAgreements({

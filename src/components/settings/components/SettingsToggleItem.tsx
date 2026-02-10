@@ -20,14 +20,14 @@ export default function SettingsToggleItem({
         className={`
           relative flex items-center
           w-[50px] h-[26px] rounded-full transition-colors
-          ${checked ? "bg-[#1FC16F]" : "bg-[#C3C3C3]"}
+          ${checked ? "bg-gray-200" : "bg-gray-200"}
         `}
       >
         <div
           className={`
             absolute top-[2px]
-            w-[22px] h-[22px] rounded-full bg-white transition-transform
-            ${checked ? "translate-x-[26px]" : "translate-x-[2px]"}
+            w-[22px] h-[22px] rounded-full  transition-transform
+            ${checked ? "translate-x-[26px] bg-(--color-green-deep)" : "translate-x-[2px] bg-stone-300"}
           `}
         />
       </button>
