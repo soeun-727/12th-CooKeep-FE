@@ -92,7 +92,9 @@ export default function Profile() {
             <div className="flex flex-col">
               <p className="typo-h2 text-white">{profile.nickname}</p>
               <div className="typo-caption text-white">
-                <span>지금은 {"토마토"} 키우는 중</span>
+                <span>
+                  지금은 {profile.growingPlantName || "요리 실력을"} 키우는 중!
+                </span>
               </div>
               <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-3">
                 <span className="text-(--color-green)">

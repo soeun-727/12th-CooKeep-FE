@@ -9,11 +9,14 @@ export default function SpecificGoal({
   count,
   onCountChange,
 }: SpecificGoalProps) {
-  const titleParts = selectedGoal.title.split("n");
+  const displayTitle = selectedGoal.title || "주 n회 요리하기";
+
+  // displayTitle을 기준으로 글자를 자릅니다.
+  const titleParts = displayTitle.split("n");
+
   const numValue = parseInt(count, 10);
   const isError =
     count !== "" && (isNaN(numValue) || numValue < 1 || numValue > 10);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "" || /^\d+$/.test(value)) {
