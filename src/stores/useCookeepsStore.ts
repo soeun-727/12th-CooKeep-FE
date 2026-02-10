@@ -7,6 +7,7 @@ import {
   reviveMyPlant,
   setProfileMyPlant,
   waterMyPlant,
+  type RegisterResponseData,
 } from "../api/myPlants";
 import type { MyPlant } from "../types/myPlant";
 import {
@@ -40,7 +41,9 @@ interface CookeepsState {
   justHarvestedPlant: MyPlant | null;
   setJustHarvestedPlant: (plant: MyPlant | null) => void;
   fetchMyPlants: () => Promise<void>;
-  registerPlant: (plantId: number) => Promise<ApiResponse<string>>;
+  registerPlant: (
+    plantId: number,
+  ) => Promise<ApiResponse<RegisterResponseData>>;
 
   selectedPlant: PlantType | null;
   plantStage: PlantStage;
@@ -73,7 +76,10 @@ interface CookeepsState {
 
   // addCookie: () => void;
 
+  // 프로필
   setProfilePlant: (userPlantId: number) => Promise<void>;
+  isProfileAuto: boolean;
+  setProfileAuto: (v: boolean) => void;
 
   // 수확
   hasShownHarvestModal: boolean;
@@ -92,105 +98,68 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   currentPlant: null,
   justHarvestedPlant: null,
   setJustHarvestedPlant: (plant) => set({ justHarvestedPlant: plant }),
-
   fetchMyPlants: async () => {
     try {
-      const plants: MyPlant[] = await getMyPlants();
+      const plants = await getMyPlants();
       const prevPlant = get().currentPlant;
 
-      console.log("fetchMyPlants 호출");
-      console.log(
-        "  - 이전 currentPlant:",
-        prevPlant?.plantName,
-        prevPlant?.level,
-      );
-      console.log(
-        "  - justHarvestedPlant:",
-        get().justHarvestedPlant?.plantName,
-      );
-
-      // 수확 감지
-      if (prevPlant && prevPlant.level === 3) {
+      if (prevPlant && prevPlant.level === 3 && !prevPlant.isHarvested) {
         const harvestedVersion = plants.find(
-          (p) => p.userPlantId === prevPlant.userPlantId && p.isHarvested,
+          (p: MyPlant) =>
+            p.userPlantId === prevPlant.userPlantId && p.isHarvested,
         );
 
         if (harvestedVersion) {
-          console.log("수확 감지!", harvestedVersion.plantName);
+          console.log("🌾 수확 감지!", harvestedVersion.plantName);
 
-          // 잠깐 level 4로 보여주기 위해 임시 상태 설정
-          const temp4thStage: MyPlant = {
+          // 1. 잠깐 4단계 유지
+          const temp4thStage = {
             ...harvestedVersion,
             level: 4,
-            isHarvested: false, // 임시로 false
+            isHarvested: false,
           };
+          set({ currentPlant: temp4thStage, plantStage: 4 });
 
-          set({
-            currentPlant: temp4thStage, // 4단계 이미지 보여주기
-            plantStage: 4,
-            selectedPlant: PLANT_NAME_TO_TYPE[temp4thStage.plantName],
-          });
-
-          // 2초 후에 수확 상태로 전환
+          // 2. await로 2초 대기
           await new Promise((resolve) => setTimeout(resolve, 2000));
 
-          set({ justHarvestedPlant: harvestedVersion });
+          // 3. 수확 상태 업데이트
+          // 수확 이벤트 발생 시점에 currentPlant를 null로 초기화
+          set((state) => ({
+            justHarvestedPlant: harvestedVersion,
+            currentPlant: null, // 이제 식물이 없음을 명시
+            selectedPlant: null,
+            harvestedPlantNames: Array.from(
+              new Set([
+                ...state.harvestedPlantNames,
+                harvestedVersion.plantName,
+              ]),
+            ),
+            // 수확된 식물은 더이상 프로필(현재 키우는 중)이 아니도록 초기화
+            myPlants: get().myPlants.map((p) =>
+              p.userPlantId === harvestedVersion.userPlantId
+                ? { ...p, isProfile: false, isHarvested: true }
+                : p,
+            ),
+          }));
+          return; // 아래 로직 타지 않게
         }
       }
 
-      let current: MyPlant | null = null;
-
-      if (get().justHarvestedPlant) {
-        console.log("  → 수확 직후이므로 currentPlant = null");
-        current = null;
-      } else {
-        current = plants.find((p) => p.isProfile && !p.isHarvested) || null;
-
-        if (current) {
-          console.log(
-            "  → 프로필 식물 선택:",
-            current.plantName,
-            current.level,
-          );
-        } else if (prevPlant && !prevPlant.isHarvested) {
-          const stillValid = plants.find(
-            (p) => p.userPlantId === prevPlant.userPlantId && !p.isHarvested,
-          );
-          if (stillValid) {
-            current = stillValid;
-            console.log(
-              "  → 이전 식물 유지:",
-              current.plantName,
-              current.level,
-            );
-
-            if (prevPlant.level !== stillValid.level) {
-              console.log(
-                `  레벨 변화 감지: ${prevPlant.level} → ${stillValid.level}`,
-              );
-            }
-          }
-        }
-      }
+      // 평소 로직
+      const current = plants.find((p: MyPlant) => !p.isHarvested) ?? null;
 
       set({
         myPlants: plants,
         currentPlant: current,
         harvestedPlantNames: plants
-          .filter((p) => p.isHarvested)
-          .map((p) => p.plantName),
+          .filter((p: MyPlant) => p.isHarvested)
+          .map((p: MyPlant) => p.plantName),
         plantStage: current?.level ?? 1,
         selectedPlant: current ? PLANT_NAME_TO_TYPE[current.plantName] : null,
       });
-
-      console.log("서버 식물 목록:", plants.length, "개");
-      console.log(
-        "최종 currentPlant:",
-        current?.plantName || "없음",
-        current?.level || "-",
-      );
     } catch (e) {
-      console.error("식물 조회 실패", e);
+      console.error(e);
     }
   },
 
@@ -201,31 +170,40 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       const response = await registerMyPlant(plantId);
       console.log("등록 API 응답:", response);
 
-      set({ hasShownHarvestModal: false });
+      set({ hasShownHarvestModal: false, justHarvestedPlant: null });
 
       const expectedPlantName = PLANT_ID_TO_NAME[plantId];
       await get().fetchMyPlants();
 
-      const plants = get().myPlants;
-      const candidates = plants.filter(
-        (p) => p.plantName === expectedPlantName && !p.isHarvested,
-      );
+      const { myPlants, isProfileAuto } = get();
 
-      const justRegistered = candidates.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      )[0];
+      const justRegistered = myPlants
+        .filter((p) => p.plantName === expectedPlantName && !p.isHarvested)
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )[0];
 
-      if (justRegistered) {
-        set({
-          currentPlant: justRegistered,
-          selectedPlant: PLANT_NAME_TO_TYPE[justRegistered.plantName],
-          plantStage: justRegistered.level,
-        });
-        console.log("등록된 식물 설정 완료:", justRegistered);
+      if (!justRegistered) return response;
+
+      console.log("🆕 [REGISTER 직후 새 식물]", {
+        plantName: justRegistered.plantName,
+        userPlantId: justRegistered.userPlantId,
+        isProfileAuto,
+      });
+
+      // A 시나리오일 때만 프로필 자동 변경
+      if (isProfileAuto) {
+        await setProfileMyPlant(justRegistered.userPlantId);
       }
 
-      // 핵심: 백엔드 응답을 그대로 리턴해서 페이지에서 메시지를 읽을 수 있게 함
+      // currentPlant는 항상 새 식물
+      set({
+        currentPlant: justRegistered,
+        selectedPlant: PLANT_NAME_TO_TYPE[justRegistered.plantName],
+        plantStage: justRegistered.level,
+      });
+
       return response;
     } catch (e) {
       console.error("식물 등록 실패", e);
@@ -294,6 +272,12 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       console.log("물주기 실패: currentPlant 없음");
       return;
     }
+    console.log("💧 [WATER 요청 직전]", {
+      plantName: currentPlant.plantName,
+      level: currentPlant.level,
+      userPlantId: currentPlant.userPlantId,
+      cookie,
+    });
 
     const beforeLevel = currentPlant.level;
     console.log("물주기 시작:", {
@@ -414,12 +398,29 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
 
   // addCookie: () => set((state) => ({ cookie: state.cookie + 1 })), // 쿠키 +1 함수 추가
 
+  // useCookeepsStore.ts 내부
   setProfilePlant: async (userPlantId: number) => {
-    await setProfileMyPlant(userPlantId);
+    // 1. UI 먼저 즉시 변경 (말풍선 바로 이동)
+    set((state) => ({
+      myPlants: state.myPlants.map((p) => ({
+        ...p,
+        isProfile: p.userPlantId === userPlantId,
+      })),
+    }));
 
-    // 서버 기준으로 다시 동기화
-    await get().fetchMyPlants();
+    try {
+      // 2. 그 다음 서버 통신 실행
+      await setProfileMyPlant(userPlantId);
+      // 3. 마지막으로 서버 데이터와 최종 동기화 (최신 정보 확정)
+      await get().fetchMyPlants();
+    } catch (e) {
+      console.error("프로필 변경 실패", e);
+      // (선택사항) 실패 시 다시 fetch해서 이전 상태로 롤백
+      await get().fetchMyPlants();
+    }
   },
+  isProfileAuto: true,
+  setProfileAuto: (v) => set({ isProfileAuto: v }),
 
   // 수확
   hasShownHarvestModal: false,

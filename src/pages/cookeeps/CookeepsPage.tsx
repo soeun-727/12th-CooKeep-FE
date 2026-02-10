@@ -1,5 +1,5 @@
 // CookeepsPage.tsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
@@ -60,18 +60,12 @@ export default function CookeepsPage() {
 
   const [showHarvestModal, setShowHarvestModal] = useState(false);
 
-  const harvestTriggeredRef = useRef(false);
-
   const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
-  // const setJustHarvestedPlant = useCookeepsStore((s) => s.setJustHarvestedPlant);
 
-  // 수확 감지 로직 수정
   useEffect(() => {
-    if (harvestTriggeredRef.current) return;
-
-    // justHarvestedPlant가 설정되면 즉시 모달 표시
     if (justHarvestedPlant && !hasShownHarvestModal) {
-      harvestTriggeredRef.current = true;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setShowHarvestModal(true);
     }
   }, [justHarvestedPlant, hasShownHarvestModal]);
 
@@ -80,15 +74,11 @@ export default function CookeepsPage() {
     const store = useCookeepsStore.getState();
 
     store.setHasShownHarvestModal(true);
-    store.setPrevCookie(null);
-    store.setJustHarvestedPlant(null); // 추가
+    store.setJustHarvestedPlant(null);
+
     store.resetCurrentPlant();
-
-    harvestTriggeredRef.current = false;
-    setSelectedPlantData(null);
+    await store.fetchMyPlants();
     setShowHarvestModal(false);
-
-    // 선택 모달로 전환
     setActiveModal("select");
   };
 
@@ -96,14 +86,20 @@ export default function CookeepsPage() {
   const derivedModal: ActiveModal = (() => {
     if (!hasSeenOnboarding) return "onboarding";
 
-    // 수확 모달 최우선
-    if (showHarvestModal) return null; // 수확 모달은 별도 관리
-    // 3. 식물은 있는데 무료 물주기를 안 했다면? (이 부분이 누락됨)
+    // 수확 모달은 별도 관리
+    if (showHarvestModal) return null;
+
+    // 3. 강제 지정된 모달(무료 물주기, 선택확인)을 우선적으로 체크
     if (activeModal === "free") return "free";
+    if (activeModal === "selected") return "selected";
+
+    // 4. 그 다음 식물이 없을 때 'select'
     if (!currentPlant) return "select";
 
+    // 식물 상태에 따른 모달
     if (status === "wilting") return "wilting";
     if (status === "wilted") return "wilted";
+
     return null;
   })();
 
@@ -153,12 +149,53 @@ export default function CookeepsPage() {
   const [selectedPlantData, setSelectedPlantData] =
     useState<SelectedPlant | null>(null);
 
+  // const handleFinalStart = async () => {
+  //   if (!selectedPlantData) return;
+
+  //   try {
+  //     // 1. 등록 실행 및 서버 응답 받기
+  //     const res = await registerPlant(selectedPlantData.id);
+
+  //     const store = useCookeepsStore.getState();
+  //     const current = store.currentPlant;
+
+  //     if (!current) {
+  //       setActiveModal("select");
+  //       return;
+  //     }
+
+  //     // 2. UI 데이터 업데이트
+  //     const plantData = PLANT_DATA.find((p) => p.text === current.plantName);
+  //     setSelectedPlantData({
+  //       id: current.userPlantId,
+  //       text: current.plantName,
+  //       img: plantData?.img || "",
+  //       description: plantData?.description || "",
+  //       isHarvested: current.isHarvested,
+  //     });
+
+  //     // 실제 서버 응답 body의 'data' 필드에 메시지가 담겨 오므로 이를 체크합니다.
+  //     if (res?.data === "첫 식물 등록이 완료되었습니다.") {
+  //       console.log("첫 등록 보너스 감지!");
+  //       setActiveModal("free");
+  //     } else {
+  //       console.log("일반 등록 완료");
+  //       setActiveModal(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("식물 시작 실패:", error);
+  //     setActiveModal("select");
+  //   }
+  // };
   const handleFinalStart = async () => {
     if (!selectedPlantData) return;
 
     try {
-      // 1. 등록 실행 및 서버 응답 받기
       const res = await registerPlant(selectedPlantData.id);
+
+      // [디버깅] 콘솔에서 res 객체 전체를 다시 확인해보세요.
+      // 문자열이 어디에 들어있는지 찾는게 핵심입니다.
+      console.log("전체 응답 확인:", res);
 
       const store = useCookeepsStore.getState();
       const current = store.currentPlant;
@@ -168,7 +205,7 @@ export default function CookeepsPage() {
         return;
       }
 
-      // 2. UI 데이터 업데이트
+      // 1. UI 데이터 업데이트 로직 (기존 유지)
       const plantData = PLANT_DATA.find((p) => p.text === current.plantName);
       setSelectedPlantData({
         id: current.userPlantId,
@@ -178,12 +215,16 @@ export default function CookeepsPage() {
         isHarvested: current.isHarvested,
       });
 
-      // 실제 서버 응답 body의 'data' 필드에 메시지가 담겨 오므로 이를 체크합니다.
-      if (res?.data === "첫 식물 등록이 완료되었습니다.") {
-        console.log("첫 등록 보너스 감지!");
+      // 2. 조건문 수정 (가장 중요)
+      // res.data가 객체이므로, 그 안의 message 필드나 혹은 별도의 flag를 확인해야 합니다.
+      // 만약 서버가 응답 객체에 message라는 필드를 따로 준다면 아래처럼 수정하세요.
+      const responseMsg = res.data.message;
+
+      if (responseMsg === "첫 식물 등록이 완료되었습니다.") {
+        console.log("✅ 첫 등록 보너스 감지!");
         setActiveModal("free");
       } else {
-        console.log("일반 등록 완료");
+        console.log("ℹ️ 일반 등록 완료 (메시지 불일치):", responseMsg);
         setActiveModal(null);
       }
     } catch (error) {

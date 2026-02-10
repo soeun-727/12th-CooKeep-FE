@@ -7,11 +7,22 @@ export const getMyPlants = async () => {
   return res.data.data; // MyPlant[]
 };
 
+// src/api/myPlants.ts
+
+// 1. 등록 응답 데이터 타입
+// 식물 등록 시 data 필드에 들어올 구체적인 타입
+export interface RegisterResponseData {
+  userPlantId: number;
+  message: string;
+}
+
+// 2. 등록 API 함수 수정
 export const registerMyPlant = async (plantId: number) => {
-  const res = await axios.post<ApiResponse<string>>(
+  // ApiResponse의 제네릭에 위에서 만든 인터페이스를 넣습니다.
+  const res = await axios.post<ApiResponse<RegisterResponseData>>(
     `/api/my-plants/${plantId}`,
   );
-  return res.data; // { status, timestamp, data: string }
+  return res.data;
 };
 
 export const waterMyPlant = async (userPlantId: number) => {

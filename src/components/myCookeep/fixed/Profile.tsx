@@ -33,9 +33,11 @@ export default function Profile() {
   }, [fetchProfile, location.key]);
 
   const setProfilePlant = useCookeepsStore((s) => s.setProfilePlant);
+  const setProfileAuto = useCookeepsStore((s) => s.setProfileAuto);
 
   const handleSaveProfile = async (userPlantId: number) => {
     await setProfilePlant(userPlantId);
+    setProfileAuto(false);
     await fetchProfile();
     setIsEditModalOpen(false);
   };
