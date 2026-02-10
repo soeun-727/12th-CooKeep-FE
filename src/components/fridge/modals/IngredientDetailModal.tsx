@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import type { Ingredient } from "../../../stores/useIngredientStore";
+import {
+  useIngredientStore,
+  type Ingredient,
+} from "../../../stores/useIngredientStore";
 import character from "../../../assets/character/tip_char.svg";
 import memoIcon from "../../../assets/fridge/edit_memo.svg";
 import fridgeIcon from "../../../assets/fridge/fridge.svg";
@@ -37,6 +40,9 @@ export default function IngredientDetailModal({
   const [openEditor, setOpenEditor] = useState<
     null | "storage" | "expiry" | "quantity"
   >(null);
+
+  const { changeStorage, changeExpiryDate, changeQuantity, changeMemo } =
+    useIngredientStore();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -80,9 +86,14 @@ export default function IngredientDetailModal({
     상온: pantryIcon,
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    onUpdate({ memo });
+  const handleSave = async () => {
+    try {
+      await changeMemo(ingredient.id, memo);
+      setIsEditing(false);
+      onUpdate({ memo });
+    } catch (error) {
+      console.error("메모 저장 실패:", error);
+    }
   };
 
   if (isLoading) {
@@ -310,7 +321,8 @@ export default function IngredientDetailModal({
             >
               <StorageEditor
                 value={ingredient.category}
-                onSave={(val) => {
+                onSave={async (val) => {
+                  await changeStorage(ingredient.id, val);
                   onUpdate({ category: val as Ingredient["category"] });
                   setOpenEditor(null);
                 }}
@@ -325,16 +337,16 @@ export default function IngredientDetailModal({
             >
               <ExpiryEditor
                 value={ingredient.expiryDate}
-                onSave={(val) => {
-                  onUpdate({
-                    expiryDate: val,
-                    dDay: Math.ceil(
-                      (new Date(val.replace(/\./g, "-")).getTime() -
-                        Date.now()) /
-                        (1000 * 60 * 60 * 24),
-                    ),
-                  });
-                  setOpenEditor(null);
+                onSave={async (val) => {
+                  try {
+                    await changeExpiryDate(ingredient.id, val);
+                    onUpdate({
+                      expiryDate: val,
+                    });
+                    setOpenEditor(null);
+                  } catch (error) {
+                    console.error("날짜 수정 중 오류:", error);
+                  }
                 }}
               />
             </EditModal>
@@ -347,9 +359,14 @@ export default function IngredientDetailModal({
             >
               <QuantityEditor
                 value={ingredient.quantity}
-                onSave={(val) => {
-                  onUpdate({ quantity: val });
-                  setOpenEditor(null);
+                onSave={async (val) => {
+                  try {
+                    await changeQuantity(ingredient.id, Number(val));
+                    onUpdate({ quantity: Number(val) });
+                    setOpenEditor(null);
+                  } catch (error) {
+                    console.error("수량 수정 실패:", error);
+                  }
                 }}
               />
             </EditModal>

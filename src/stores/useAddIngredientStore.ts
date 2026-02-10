@@ -91,11 +91,14 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
         name: item.name,
         image: item.image,
         categoryId: item.categoryId,
-        type: "DEFAULT",
-        storageType: "FRIDGE",
-        unit: "PIECE",
-        quantity: 1,
-        expiration: new Date().toISOString().split("T")[0],
+        type: (item as MasterItem).type || "DEFAULT",
+        storageType: (item as MasterItem).storageType || "FRIDGE",
+        unit: (item as MasterItem).unit || "PIECE",
+        quantity: (item as MasterItem).quantity || 1,
+        expiration:
+          (item as MasterItem).expiration ||
+          new Date().toISOString().split("T")[0],
+        memo: (item as MasterItem).memo || "",
       };
 
       return { selectedItems: [...state.selectedItems, newItem] };

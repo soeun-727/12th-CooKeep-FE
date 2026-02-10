@@ -40,7 +40,9 @@ export default function AddItem() {
         INGREDIENT_CATEGORIES[12];
 
       return cat.ingredients.map((ing) => {
-        const days = ing.leftDays || DEFAULT_EXPIRY_DAYS[cat.category] || 7;
+        const defaultDays = DEFAULT_EXPIRY_DAYS[cat.category] || 7;
+        const days =
+          ing.leftDays && ing.leftDays > 0 ? ing.leftDays : defaultDays;
         const formattedExpiry = calculateExpiryDate(days);
         return {
           id: ing.id,

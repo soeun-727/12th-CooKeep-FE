@@ -27,8 +27,8 @@ interface OnboardingStore {
 export const useOnboardingStore = create<OnboardingStore>((set) => ({
   foodTypes: [],
   skillLevel: "",
-  selectedGoal: { id: "cook", title: "주 n회 요리하기" },
-  goalCount: "3",
+  selectedGoal: { id: "", title: "" },
+  goalCount: "",
 
   step: 0,
   isFinished: false,
@@ -52,8 +52,8 @@ export const useOnboardingStore = create<OnboardingStore>((set) => ({
     set({
       foodTypes: [],
       skillLevel: "",
-      selectedGoal: { id: "cook", title: "주 n회 요리하기" },
-      goalCount: "3",
+      selectedGoal: { id: "", title: "" },
+      goalCount: "",
       step: 0,
       isFinished: false,
       showNotification: false,

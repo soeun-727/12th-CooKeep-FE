@@ -13,6 +13,7 @@ import UnitEditor from "./components/edit/UnitEditor";
 import StorageEditor from "./components/edit/StorageEditor";
 import ExpiryEditor from "./components/edit/ExpiryEditor";
 import MemoEditor from "./components/edit/MemoEditor";
+import { calculateExpiryDate } from "../../../utils/expiryDate";
 
 interface DetailedItemProps extends MasterItem {}
 const STORAGE_ICONS: Record<string, string> = {
@@ -141,7 +142,7 @@ const DetailedItem: React.FC<DetailedItemProps> = (item) => {
               <span className="w-[58px] h-4">
                 {item.expiration
                   ? item.expiration.replace(/-/g, ".")
-                  : "2026.01.20"}
+                  : calculateExpiryDate(0)}
               </span>
               <img
                 onClick={() => setModalType("expiry")}

@@ -14,7 +14,9 @@ interface GoalProps {
 
 export default function Goal({ selectedGoal, onSelect }: GoalProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const currentGoalTitle = selectedGoal.title;
+  const currentGoalTitle = selectedGoal.id
+    ? selectedGoal.title
+    : goals[0].title;
 
   return (
     <>

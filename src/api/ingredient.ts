@@ -133,7 +133,7 @@ export interface IngredientSearchResponse {
 
 // --- [삭제] 관련 인터페이스 ---
 export interface DeleteIngredientsRequest {
-  userIngredientsIds: number[];
+  userIngredientIds: number[];
 }
 
 export interface DeleteIngredientsResponse {
@@ -141,11 +141,29 @@ export interface DeleteIngredientsResponse {
   message: string;
   deletedCount: number;
 }
+// --- [섭취 완료] 관련 인터페이스 ---
+export interface ConsumeRewardResponse {
+  reward: {
+    granted: boolean;
+    points: number;
+    grantedTypes: (
+      | "BASIC_DAILY_FIRST_CONSUME"
+      | "BONUS_URGENT_INGREDIENT_USE"
+    )[];
+  };
+}
 
+/** [POST] 식재료 섭취 완료 (리워드 지급 및 삭제) */
+export const consumeIngredients = (userIngredientIds: number[]) => {
+  return api.post<{ status: string; data: ConsumeRewardResponse }>(
+    "/api/users/me/ingredients/consume",
+    { userIngredientIds },
+  );
+};
 /** [DELETE] 내 식재료 삭제 (벌크) */
-export const deleteIngredients = (data: DeleteIngredientsRequest) => {
+export const deleteIngredients = (userIngredientIds: number[]) => {
   return api.delete<DeleteIngredientsResponse>("/api/users/me/ingredients", {
-    data: data,
+    data: { userIngredientIds },
   });
 };
 
@@ -163,6 +181,45 @@ export const searchIngredients = (term: string, page: number = 0) => {
   );
 };
 // --- API 함수 ---
+
+/** [PATCH] 식재료 보관 장소 변경 */
+export const updateIngredientStorage = (
+  ingredientId: number,
+  storage: StorageType,
+) => {
+  return api.patch<{ status: string; data: IngredientDetailResponse }>(
+    `/api/users/me/ingredients/${ingredientId}/storage`,
+    { storage },
+  );
+};
+/** [PATCH] 식재료 유통기한 변경 */
+export const updateIngredientDate = (
+  ingredientId: number,
+  expirationDate: string,
+) => {
+  return api.patch<{ status: string; data: IngredientDetailResponse }>(
+    `/api/users/me/ingredients/${ingredientId}/date`,
+    { expirationDate },
+  );
+};
+
+/** [PATCH] 식재료 수량 변경 */
+export const updateIngredientQuantity = (
+  ingredientId: number,
+  quantity: number,
+) => {
+  return api.patch<{ status: string; data: IngredientDetailResponse }>(
+    `/api/users/me/ingredients/${ingredientId}/quantity`,
+    { quantity },
+  );
+};
+/** [PATCH] 식재료 메모 변경 */
+export const updateIngredientMemo = (ingredientId: number, memo: string) => {
+  return api.patch<{ status: string; data: IngredientDetailResponse }>(
+    `/api/users/me/ingredients/${ingredientId}/memo`,
+    { memo },
+  );
+};
 
 /** [GET] 마스터 식재료 목록 조회 (AddItem 페이지용) */
 export const getMasterIngredientList = () => {

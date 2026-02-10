@@ -43,7 +43,9 @@ export default function Profile() {
   };
 
   if (isLoading)
-    return <div className="flex justify-center pt-20">로딩 중...</div>;
+    return (
+      <div className="flex justify-center pt-20">유저 데이터 로딩 중...</div>
+    );
   if (!profile)
     return (
       <div className="flex justify-center pt-20">
@@ -52,13 +54,14 @@ export default function Profile() {
     );
 
   const currentGoalEntry = Object.entries(GOAL_TYPE_MAP).find(
-    ([, g]) => g.value === profile.weeklyGoal.goalActionType,
+    ([, g]) => g.value === profile.weeklyGoal?.goalActionType,
   );
 
   const goalLabel = currentGoalEntry
     ? currentGoalEntry[1].label
     : "목표를 설정해주세요";
   const goalId = currentGoalEntry ? currentGoalEntry[0] : "cook";
+  const targetCount = profile.weeklyGoal?.targetCount ?? 0;
 
   return (
     <>
@@ -89,9 +92,7 @@ export default function Profile() {
             <div className="flex flex-col">
               <p className="typo-h2 text-white">{profile.nickname}</p>
               <div className="typo-caption text-white">
-                <span>지금 내가 키우는 식물 </span>
-                {/* 임시로 */}
-                <span>토마토</span>
+                <span>지금은 {"토마토"} 키우는 중</span>
               </div>
               <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-3">
                 <span className="text-(--color-green)">
@@ -104,16 +105,23 @@ export default function Profile() {
 
           {/* 목표 요약 바 */}
           <div className="bg-[#1DAD64] p-3 w-[361px] h-12 flex items-center justify-between gap-3 rounded-[12px] shadow-[0px_4px_16px_-10px_rgba(0,0,0,0.25)]">
-            <span className="text-white typo-body2 truncate">
-              이번주 목표는... 주 {profile.weeklyGoal.targetCount}회 {goalLabel}
-              !
+            <span
+              className={`typo-body2 truncate ${profile.weeklyGoal ? "text-white" : "text-green-300"}`}
+            >
+              {profile.weeklyGoal ? (
+                <>
+                  이번주 목표는... 주 {targetCount}회 {goalLabel}!
+                </>
+              ) : (
+                <>이번주 목표는...</>
+              )}
             </span>
             <button
               onClick={() =>
                 navigate("/mycookeep/goals", {
                   state: {
                     currentGoalId: goalId,
-                    currentCount: profile.weeklyGoal.targetCount,
+                    currentCount: profile.weeklyGoal?.targetCount ?? 0,
                   },
                 })
               }

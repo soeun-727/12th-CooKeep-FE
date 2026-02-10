@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 // UI Components
 import Footer from "./Footer";
@@ -64,24 +63,30 @@ export default function Onboarding() {
   const handleSaveOnboarding = async () => {
     setIsLoading(true);
     try {
+      // 🚀 데이터 가공 시 매퍼 키가 정확한지 다시 한번 확인하세요.
       const requestBody = {
-        favoriteFoodTypes: foodTypes.map((type) => FOOD_TYPE_MAP[type] || type),
-        cookingLevel: SKILL_LEVEL_MAP[skillLevel] || "BEGINNER",
-        // utils/mapping에서 가져온 GOAL_TYPE_MAP 활용
-        goalActionType:
-          GOAL_TYPE_MAP[selectedGoal.id as keyof typeof GOAL_TYPE_MAP]?.value ||
-          "COOKING",
-        targetCount: parseInt(goalCount, 10) || 1,
+        favoriteFoodTypes:
+          foodTypes.length > 0
+            ? foodTypes.map((type) => FOOD_TYPE_MAP[type])
+            : null,
+        cookingLevel: skillLevel ? SKILL_LEVEL_MAP[skillLevel] : null,
+        goalActionType: selectedGoal.id
+          ? (GOAL_TYPE_MAP as Record<string, any>)[selectedGoal.id]?.value
+          : null,
+        targetCount:
+          goalCount && parseInt(goalCount, 10) > 0
+            ? parseInt(goalCount, 10)
+            : null,
       };
 
       const response = await saveOnboardingInfo(requestBody);
-      if (response.data.status === "OK" || response.status === 200) {
+
+      // 서버 응답 규격이 { status: "OK", data: ... } 라면 아래 조건이 맞습니다.
+      if (response.status === 200 || response.data?.status === "OK") {
         setIsFinished(true);
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("서버 응답 상세:", error.response?.data);
-      }
+      console.error("저장 실패:", error);
       alert("입력 정보를 저장하는 데 실패했습니다.");
     } finally {
       setIsLoading(false);
