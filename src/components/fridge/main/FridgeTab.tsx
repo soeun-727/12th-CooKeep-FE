@@ -54,20 +54,11 @@ export default function FridgeTab() {
     const fetchFridgeData = async () => {
       try {
         const response = await getRefrigeratorHome();
-
-        // 🚀 [디버깅] 서버에서 오는 순수 응답 전체를 찍어봅니다.
-        console.log("1. API 전체 응답(Axios Response):", response);
-
         // response 자체가 없거나 status가 성공이 아닌 경우 체크
         if (!response || !response.data) {
           console.error("서버 응답이 없거나 data 필드가 없습니다.");
           return;
         }
-
-        // 🚀 [디버깅] data 필드 내부를 확인합니다.
-        console.log("2. 서버 데이터(response.data):", response.data);
-
-        // 서버 응답 구조에 따라 response.data를 보낼지, response.data.data를 보낼지 결정
         const targetData = response.data.data || response.data;
 
         if (targetData) {
@@ -75,8 +66,7 @@ export default function FridgeTab() {
           setIngredients(parsed);
         }
       } catch (error: any) {
-        // 🚀 [에러 상세 로그] 빨간 에러 메시지의 정체를 확인합니다.
-        console.error("3. 냉장고 데이터 로드 실패 상세:", {
+        console.error("냉장고 데이터 로드 실패 상세:", {
           message: error.message,
           response: error.response?.data,
           status: error.response?.status,

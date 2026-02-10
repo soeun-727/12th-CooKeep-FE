@@ -60,12 +60,17 @@ export default function Onboarding() {
     setIsLoading(true);
     try {
       const requestBody = {
-        favoriteFoodTypes: foodTypes.map((type) => FOOD_TYPE_MAP[type]),
-        cookingLevel: SKILL_LEVEL_MAP[skillLevel] || "BEGINNER",
-        goalActionType: GOAL_TYPE_MAP[selectedGoal.id] || "COOKING",
-        targetCount: parseInt(goalCount, 10) || 1,
+        favoriteFoodTypes:
+          foodTypes.length > 0
+            ? foodTypes.map((type) => FOOD_TYPE_MAP[type])
+            : null,
+        cookingLevel: skillLevel ? SKILL_LEVEL_MAP[skillLevel] : null,
+        goalActionType: selectedGoal.id ? GOAL_TYPE_MAP[selectedGoal.id] : null,
+        targetCount:
+          goalCount && parseInt(goalCount, 10) > 0
+            ? parseInt(goalCount, 10)
+            : null,
       };
-      console.log("최종 전송 데이터:", requestBody);
       const response = await saveOnboardingInfo(requestBody);
 
       if (response.status === 200) {

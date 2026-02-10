@@ -2,10 +2,10 @@
 import api from "./axios";
 
 export interface OnboardingData {
-  favoriteFoodTypes: string[];
-  cookingLevel: string;
-  goalActionType: string;
-  targetCount: number;
+  favoriteFoodTypes: string[] | null;
+  cookingLevel: string | null;
+  goalActionType: string | null;
+  targetCount: number | null;
 }
 
 export const saveOnboardingInfo = (data: OnboardingData) => {
