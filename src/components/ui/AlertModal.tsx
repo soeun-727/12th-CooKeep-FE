@@ -26,12 +26,8 @@ const AlertModal: React.FC<AlertModalProps> = ({
           <br />
           냉장고가 가벼워졌어요!
           {rewardPoints !== undefined && rewardPoints !== null && (
-            <div className="typo-caption text-zinc-400">
-              쿠키{" "}
-              <span className="text-(--color-green) font-bold">
-                {rewardPoints}
-              </span>
-              개를 획득하셨어요
+            <div className="typo-body text-(--color-green-deep) !font-bold">
+              쿠키 +{rewardPoints} 🍪
             </div>
           )}
         </div>
