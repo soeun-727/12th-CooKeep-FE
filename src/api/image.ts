@@ -23,3 +23,11 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
 
   return res.data;
 };
+
+/** [DELETE] 이미지 삭제 API */
+export const deleteImage = async (imageUrl: string) => {
+  const res = await api.delete(
+    `/api/images?imageUrl=${encodeURIComponent(imageUrl)}`,
+  );
+  return res.data;
+};
