@@ -24,7 +24,9 @@ export default function RecipeIngredientSection({
       <div className="flex flex-col items-start gap-4 w-full">
         {/* 내 재료 섹션 */}
         <div className="flex flex-col items-start gap-2 w-full">
-          <span className="typo-body-sm text-[#202020]">내 재료:</span>
+          <span className="typo-body-sm text-[#202020]">
+            내가 가지고 있는 재료
+          </span>
           <div className="flex flex-wrap items-start gap-[5px]">
             {selectedIngredients.map((item, idx) => (
               <span
@@ -40,7 +42,9 @@ export default function RecipeIngredientSection({
         {/* 추가로 필요한 재료 섹션 */}
         {requiredIngredients.length > 0 && (
           <div className="flex flex-col items-start gap-2 w-full">
-            <span className="typo-body-sm text-[#202020]">추가 재료:</span>
+            <span className="typo-body-sm text-[#202020]">
+              추가로 필요한 재료
+            </span>
             <div className="flex flex-wrap items-start gap-[5px]">
               {requiredIngredients.map((item, idx) => (
                 <span
@@ -68,19 +72,21 @@ export default function RecipeIngredientSection({
             {substitutions.map((item, idx) => (
               <div
                 key={idx}
-                className="flex justify-between items-start self-stretch w-full"
+                className="flex justify-between items-start self-stretch w-full gap-2"
               >
                 {/* original pill */}
                 <div className="flex px-3 py-[2px] justify-center items-center gap-2 rounded-[100px] bg-[#EBEBEB]">
-                  <span className="text-[#7D7D7D] text-center text-[12px] font-semibold leading-[16px]">
-                    {item.name}
+                  <span className="text-[#7D7D7D] text-center text-[12px] font-semibold leading-[16px] whitespace-nowrap">
+                    {formatIngredient(item)}
                   </span>
                 </div>
 
                 {/* replacement text */}
-                {/* <span className="w-[255px] text-[#202020] typo-body-sm">
-                  {item.replacement}
-                </span> */}
+                {item.description && (
+                  <span className="w-[255px] text-[#202020] typo-body-sm ">
+                    {item.description}
+                  </span>
+                )}
               </div>
             ))}
           </div>
