@@ -1,22 +1,14 @@
 import { create } from "zustand";
-import type { CookeepRecord, ImageWithUrl } from "../types/record";
+import type { CookeepRecord } from "../types/record";
 import { MOCK_RECORDS } from "../constants/recordMock";
-
 export interface RecordImage {
-  file: File;
   url: string;
-}
-
-export interface RecordImage extends ImageWithUrl {
-  file: File;
+  file?: File;
 }
 
 interface RecordState {
   selectedRecipeId: number | null;
-
-  // 추가
   editingRecordId: string | null;
-
   title: string;
   memo: string;
   isPublic: boolean | null;
@@ -24,14 +16,12 @@ interface RecordState {
 
   setSelectedRecipeId: (id: number) => void;
   setEditingRecordId: (id: string | null) => void;
-
   setTitle: (title: string) => void;
   setMemo: (memo: string) => void;
   setIsPublic: (value: boolean) => void;
 
-  addImages: (files: File[]) => void;
+  addImages: (newImages: RecordImage[]) => void;
   removeImage: (index: number) => void;
-
   resetRecord: () => void;
 
   records: CookeepRecord[];
@@ -41,7 +31,6 @@ interface RecordState {
     recipeId: number;
     recipeTitle: string;
   }) => void;
-
   updateRecordContent: (args: {
     recordId: string;
     memo: string;
@@ -54,57 +43,28 @@ interface RecordState {
 export const useCookeepRecordStore = create<RecordState>((set) => ({
   selectedRecipeId: null,
   editingRecordId: null,
-
   title: "",
   memo: "",
   isPublic: null,
   images: [],
   records: MOCK_RECORDS,
-  // records: [], 우선 임시데이터로
 
   setSelectedRecipeId: (id) => set({ selectedRecipeId: id }),
   setEditingRecordId: (id) => set({ editingRecordId: id }),
-
   setTitle: (title) => set({ title }),
   setMemo: (memo) => set({ memo }),
   setIsPublic: (value) => set({ isPublic: value }),
 
-  addImages: (files) =>
+  addImages: (newImages) =>
     set((state) => ({
-      images: [
-        ...state.images,
-        ...files.map((file) => ({
-          file,
-          url: URL.createObjectURL(file),
-        })),
-      ].slice(0, 2),
+      images: [...state.images, ...newImages].slice(0, 2),
     })),
 
   removeImage: (index) =>
-    set((state) => {
-      const target = state.images[index];
-      if (target) URL.revokeObjectURL(target.url);
+    set((state) => ({
+      images: state.images.filter((_, i) => i !== index),
+    })),
 
-      return {
-        images: state.images.filter((_, i) => i !== index),
-      };
-    }),
-
-  // resetRecord: () =>
-  //   set((state) => {
-  //     state.images.forEach((img) => URL.revokeObjectURL(img.url));
-
-  //     return {
-  //       selectedRecipeId: null,
-  //       editingRecordId: null,
-  //       title: "",
-  //       memo: "",
-  //       isPublic: null,
-  //       images: [],
-  //     };
-  //   }),
-
-  // store 내 수정
   resetRecord: () =>
     set({
       selectedRecipeId: null,
@@ -112,7 +72,7 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
       title: "",
       memo: "",
       isPublic: null,
-      images: [], // 일단 URL 해제 로직을 주석 처리하고 테스트해보세요.
+      images: [],
     }),
 
   addRecord: (record) =>
@@ -120,7 +80,6 @@ export const useCookeepRecordStore = create<RecordState>((set) => ({
       records: [record, ...state.records],
     })),
 
-  // 핵심
   updateRecordRecipe: ({ recordId, recipeId, recipeTitle }) =>
     set((state) => ({
       records: state.records.map((r) =>
