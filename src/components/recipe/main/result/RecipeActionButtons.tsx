@@ -24,8 +24,8 @@ export default function RecipeActionButtons({
 
   const latestRecipe = recipeHistory.at(-1);
 
-  const isMaxed = retryCount >= maxRetry - 1;
-  const retryBtnText = `다른 레시피 받기 (${retryCount + 1}/${maxRetry})`;
+  const isMaxed = retryCount >= maxRetry;
+  const retryBtnText = `다른 레시피 받기 (${retryCount}/${maxRetry})`;
 
   // const handleRetry = () => {
   //   increaseRetry();

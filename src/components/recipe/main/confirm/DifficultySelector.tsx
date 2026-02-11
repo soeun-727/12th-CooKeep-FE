@@ -6,21 +6,21 @@ import hardImg from "../../../../assets/recipe/main/hardImg.svg";
 
 const options = [
   {
-    key: "easy",
+    key: "EASY",
     title: "Easy",
     time: "10분 이내",
     desc: "빠르고 간편하게",
     image: easyImg,
   },
   {
-    key: "normal",
+    key: "NORMAL",
     title: "Normal",
     time: "30분 이내",
     desc: "적당히 차려먹기",
     image: normalImg,
   },
   {
-    key: "hard",
+    key: "HARD",
     title: "Hard",
     time: "30분 이상",
     desc: "제대로 요리하기",

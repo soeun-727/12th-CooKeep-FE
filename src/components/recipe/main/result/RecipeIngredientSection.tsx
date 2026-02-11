@@ -1,10 +1,9 @@
+import { IngredientItem } from "../../../../types/aiRecipe";
+
 interface Props {
-  selectedIngredients: string[];
-  requiredIngredients?: string[];
-  substitutions?: {
-    original: string;
-    replacement: string;
-  }[];
+  selectedIngredients: IngredientItem[];
+  requiredIngredients?: IngredientItem[];
+  substitutions?: IngredientItem[];
 }
 
 export default function RecipeIngredientSection({
@@ -12,6 +11,14 @@ export default function RecipeIngredientSection({
   requiredIngredients = [],
   substitutions = [],
 }: Props) {
+  const formatIngredient = (item: IngredientItem) => {
+    if (!item.quantity) return item.name;
+
+    if (!item.unit) return `${item.name} ${item.quantity}`;
+
+    return `${item.name} ${item.quantity}${item.unit}`;
+  };
+
   return (
     <div className="flex flex-col items-start gap-[36px] w-full">
       <div className="flex flex-col items-start gap-4 w-full">
@@ -24,7 +31,7 @@ export default function RecipeIngredientSection({
                 key={idx}
                 className="flex items-center justify-center h-[20px] px-[12px] rounded-full bg-[#1FC16F] text-white text-[12px] leading-[16px]"
               >
-                {item}
+                {formatIngredient(item)}
               </span>
             ))}
           </div>
@@ -40,7 +47,7 @@ export default function RecipeIngredientSection({
                   key={idx}
                   className="flex items-center justify-center h-[20px] px-[12px] rounded-full bg-[#EBEBEB] text-[#7D7D7D] text-[12px] leading-[16px]"
                 >
-                  {item}
+                  {formatIngredient(item)}
                 </span>
               ))}
             </div>
@@ -66,14 +73,14 @@ export default function RecipeIngredientSection({
                 {/* original pill */}
                 <div className="flex px-3 py-[2px] justify-center items-center gap-2 rounded-[100px] bg-[#EBEBEB]">
                   <span className="text-[#7D7D7D] text-center text-[12px] font-semibold leading-[16px]">
-                    {item.original}
+                    {item.name}
                   </span>
                 </div>
 
                 {/* replacement text */}
-                <span className="w-[255px] text-[#202020] typo-body-sm">
+                {/* <span className="w-[255px] text-[#202020] typo-body-sm">
                   {item.replacement}
-                </span>
+                </span> */}
               </div>
             ))}
           </div>

@@ -1,3 +1,4 @@
+import { IngredientItem } from "../../../../types/aiRecipe";
 import RecipeIngredientSection from "./RecipeIngredientSection";
 import RecipeStepSection from "./RecipeStepSection";
 
@@ -7,12 +8,9 @@ interface Step {
 }
 
 interface Props {
-  selectedIngredients: string[];
-  requiredIngredients?: string[];
-  substitutions?: {
-    original: string;
-    replacement: string;
-  }[];
+  selectedIngredients: IngredientItem[];
+  requiredIngredients?: IngredientItem[];
+  substitutions?: IngredientItem[];
   steps: Step[];
   difficulty: string;
 }
