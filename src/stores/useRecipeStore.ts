@@ -4,6 +4,7 @@ import {
   AiRecipeSessionItem,
   toggleFavoriteSession,
   updateAiSessionTitle,
+  deleteAiRecipeSession,
 } from "../api/aiSession";
 
 interface RecipeState {
@@ -15,8 +16,7 @@ interface RecipeState {
   fetchSessions: () => Promise<void>;
   toggleLike: (sessionId: number) => Promise<void>;
   renameRecipe: (sessionId: number, newTitle: string) => Promise<void>;
-
-  // deleteRecipe: (id: number) => void;
+  deleteSession: (sessionId: number) => Promise<void>;
 }
 
 export const useRecipeStore = create<RecipeState>((set) => ({
@@ -81,8 +81,26 @@ export const useRecipeStore = create<RecipeState>((set) => ({
     }
   },
 
-  // deleteRecipe: (id) =>
-  //   set((state) => ({
-  //     recipes: state.recipes.filter((r) => r.id !== id),
-  //   })),
+  deleteSession: async (sessionId: number) => {
+    try {
+      set({ isLoading: true });
+      await deleteAiRecipeSession(sessionId);
+
+      // 서버에서 성공하면 로컬 상태를 최신화 (두 가지 방법 중 선택)
+
+      // 방법 1: API 다시 찌르기 (가장 확실함)
+      // await get().fetchSessions();
+
+      // 방법 2: 로컬 상태에서 직접 필터링 (네트워크 비용 아끼기)
+      set((state) => ({
+        pinned: state.pinned.filter((s) => s.sessionId !== sessionId),
+        sessions: state.sessions.filter((s) => s.sessionId !== sessionId),
+        isLoading: false,
+      }));
+    } catch (error) {
+      console.error("세션 삭제 실패:", error);
+      set({ isLoading: false });
+      alert("레시피 삭제에 실패했습니다.");
+    }
+  },
 }));

@@ -67,3 +67,11 @@ export const updateAiSessionTitle = async (
   );
   return response.data;
 };
+
+// 레시피 삭제
+export const deleteAiRecipeSession = async (sessionId: number) => {
+  const response = await api.delete(
+    `/api/users/me/ai/recipes/sessions/${sessionId}`,
+  );
+  return response.data;
+};
