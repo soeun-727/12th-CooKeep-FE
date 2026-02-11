@@ -1,4 +1,5 @@
 import api from "./axios";
+import { IngredientsJson, YoutubeVideo } from "./dailyAiRecipe";
 
 // 서버에서 내려주는 데이터의 타입 정의
 export interface CalendarRecipe {
@@ -45,6 +46,50 @@ export interface CreateDailyRecipeResponse {
   };
 }
 
+export interface MyRecipeDetail {
+  dailyRecipeId: number;
+  title: string;
+  description: string;
+  recipeImageUrl: string;
+  isPublic: boolean;
+  createdAt: string;
+  content: {
+    ingredients: IngredientsJson;
+    steps: string[];
+    youtubeReferences: YoutubeVideo[];
+  };
+}
+
+export interface MyRecipeDetailResponse {
+  status: string;
+  data: MyRecipeDetail;
+}
+
+export interface UpdateDailyRecipeRequest {
+  title?: string;
+  description?: string;
+}
+
+/** [PATCH] 데일리 레시피 수정 (제목, 한줄평) */
+export const updateDailyRecipe = async (
+  dailyRecipeId: number,
+  data: UpdateDailyRecipeRequest,
+) => {
+  const res = await api.patch<MyRecipeDetailResponse>(
+    `/api/users/me/daily-recipes/${dailyRecipeId}`,
+    data,
+  );
+  return res.data;
+};
+
+/** [GET] 내 데일리 레시피 상세 조회 */
+export const getMyRecipeDetail = async (dailyRecipeId: number) => {
+  const res = await api.get<MyRecipeDetailResponse>(
+    `/api/users/me/daily-recipes/${dailyRecipeId}`,
+  );
+  return res.data;
+};
+
 /** [POST] 데일리 레시피 등록 */
 export const createDailyRecipe = async (data: CreateDailyRecipeRequest) => {
   const res = await api.post<CreateDailyRecipeResponse>(
@@ -61,6 +106,18 @@ export const getDailyRecipesByDate = async (date: string) => {
     {
       params: { date }, // date=YYYY-MM-DD
     },
+  );
+  return res.data;
+};
+
+/** [PATCH] 데일리 레시피 공개 범위 수정 */
+export const updateRecipeVisibility = async (
+  dailyRecipeId: number,
+  isPublic: boolean,
+) => {
+  const res = await api.patch<{ status: string }>(
+    `/api/users/me/daily-recipes/${dailyRecipeId}/visibility`,
+    { isPublic },
   );
   return res.data;
 };

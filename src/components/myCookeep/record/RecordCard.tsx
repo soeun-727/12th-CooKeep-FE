@@ -4,7 +4,6 @@ import privateIcon from "../../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../../assets/mycookeep/record/public_icon.svg";
 import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 import SelectViewTypeModal from "./SelectViewTypeModal";
-import { getRecordImageSrc } from "../../../utils/recordImage";
 import { DailyRecipe } from "../../../api/myRecipe";
 
 interface Props {

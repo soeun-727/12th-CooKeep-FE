@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
-import RecipeDetailYoutube from "../../components/cookeeps/recipedetail/RecipeDetailYoutubeCard";
 import RecordWriteImageCard from "../../components/myCookeep/record/RecordWriteImageCard";
 import RecipeRecordContentSection from "../../components/myCookeep/record/RecipeRecordContentSection";
 import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
@@ -12,12 +11,18 @@ import UploadCompleteModal from "../../components/myCookeep/record/UploadComplet
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { uploadImage } from "../../api/image";
 import { createDailyRecipe } from "../../api/myRecipe";
-import { DailyAiRecipe, getDailyAiRecipes } from "../../api/dailyAiRecipe";
+import {
+  AiRecipeDetail,
+  DailyAiRecipe,
+  getAiRecipeDetail,
+  getDailyAiRecipes,
+} from "../../api/dailyAiRecipe";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const [recipeDetail, setRecipeDetail] = useState<AiRecipeDetail | null>(null);
   const [aiRecipes, setAiRecipes] = useState<DailyAiRecipe[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -34,10 +39,9 @@ export default function RecordWritePage() {
     setIsPublic,
     addImages,
     resetRecord,
-    updateRecordContent, // 수정 모드 시 필요
   } = useCookeepRecordStore();
 
-  // 1. AI 레시피 목록 가져오기
+  // 1. AI 레시피 목록 가져오기 (가드 및 기본 정보용)
   useEffect(() => {
     const fetchAiRecipes = async () => {
       try {
@@ -50,20 +54,36 @@ export default function RecordWritePage() {
     fetchAiRecipes();
   }, []);
 
-  // 2. 선택된 레시피 찾기 (MOCK 제거, aiRecipes에서 검색)
+  // 2. 상세 데이터 가져오기 (재료, 단계, 유튜브)
+  useEffect(() => {
+    if (!selectedRecipeId) return;
+
+    const fetchDetail = async () => {
+      try {
+        const response = await getAiRecipeDetail(selectedRecipeId);
+        if (response.status === "OK") {
+          setRecipeDetail(response.data);
+
+          // 신규 진입 시 서버에서 온 제목으로 초기화
+          if (!title) {
+            setTitle(response.data.title);
+          }
+        }
+      } catch (error) {
+        console.error("레시피 상세 로드 실패", error);
+      }
+    };
+
+    fetchDetail();
+  }, [selectedRecipeId, setTitle, title]);
+
+  // 목록에서 현재 선택된 레시피 찾기
   const recipe = useMemo(
     () => aiRecipes.find((r) => r.aiRecipeId === selectedRecipeId),
     [selectedRecipeId, aiRecipes],
   );
 
-  // 3. 신규 진입 시 기본 제목 설정
-  useEffect(() => {
-    if (!editingRecordId && recipe && !title) {
-      setTitle(recipe.title);
-    }
-  }, [editingRecordId, recipe, setTitle, title]);
-
-  // 4. 가드 로직
+  // 가드 로직
   useEffect(() => {
     if (showUploadModal) return;
     if (!selectedRecipeId && !editingRecordId) {
@@ -107,29 +127,25 @@ export default function RecordWritePage() {
 
   /* ---------- 업로드 로직 ---------- */
   const handleUpload = async () => {
-    if (!recipe || selectedRecipeId === null || isPublic === null) {
-      alert("레시피 정보가 올바르지 않습니다.");
+    if (!recipeDetail || selectedRecipeId === null || isPublic === null) {
+      alert("레시피 정보가 로드되지 않았습니다.");
       return;
     }
-
     try {
-      // 신규 등록 API 호출
       if (!editingRecordId) {
         const requestData = {
           aiRecipeId: selectedRecipeId,
           isPublic: isPublic,
-          title: title || recipe.title, // 유저 입력 제목 또는 기본 제목
-          description: memo, // 한줄평 매핑
-          recipeImageUrl: images[0]?.url || "", // 업로드된 첫 번째 이미지 URL
+          title: title || recipeDetail.title,
+          description: memo,
+          recipeImageUrl: images[0]?.url || "",
         };
 
         const response = await createDailyRecipe(requestData);
-
         if (response.status === "OK") {
           setShowUploadModal(true);
         }
       } else {
-        // 수정 모드 로직 (필요 시 구현)
         setShowUploadModal(true);
       }
     } catch (error) {
@@ -138,8 +154,14 @@ export default function RecordWritePage() {
     }
   };
 
-  if (!recipe || selectedRecipeId === null) return null;
-
+  if (!recipeDetail) {
+    return (
+      // 임시로 넣은 로딩 화면
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#32E389]"></div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="min-h-screen w-full flex flex-col ">
@@ -153,7 +175,6 @@ export default function RecordWritePage() {
               onClickAddImage={() => fileInputRef.current?.click()}
               onChangeTitle={setTitle}
             />
-
             <input
               type="file"
               accept="image/*"
@@ -162,10 +183,12 @@ export default function RecordWritePage() {
               hidden
               onChange={handleImageChange}
             />
-
-            {/* API 상세 데이터가 있다면 RecipeRecordContentSection에 전달 */}
-            {/* 현재 DailyAiRecipe 스펙엔 상세 내용이 없으므로 필요시 추가 API 호출 필요 */}
-            <RecipeRecordContentSection recipe={recipe as any} />
+            <RecipeRecordContentSection
+              recipe={{
+                ingredients: recipeDetail.ingredientsJson,
+                steps: recipeDetail.stepsJson,
+              }}
+            />
           </div>
 
           <div className="flex w-full flex-col items-center pt-4">
