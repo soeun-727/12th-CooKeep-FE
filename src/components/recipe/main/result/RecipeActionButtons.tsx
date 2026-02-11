@@ -5,12 +5,14 @@ interface Props {
   retryCount: number;
   maxRetry?: number;
   onRetry: () => void;
+  showRetryButton?: boolean;
 }
 
 export default function RecipeActionButtons({
   retryCount,
   maxRetry = 5,
   onRetry,
+  showRetryButton = true, // 기본값은 true
 }: Props) {
   const navigate = useNavigate();
 
@@ -20,6 +22,7 @@ export default function RecipeActionButtons({
     selectedIngredients,
     difficulty,
     recipeHistory,
+    completeSession,
   } = useRecipeFlowStore();
 
   const latestRecipe = recipeHistory.at(-1);
@@ -32,16 +35,26 @@ export default function RecipeActionButtons({
   //   generateRecipe();
   // };
 
-  const handleCookClick = () => {
+  const handleCookClick = async () => {
+    // async 추가
     if (!latestRecipe) return;
 
-    navigate("/mycookeep", {
-      state: {
-        selectedIngredients,
-        difficulty,
-        recipeData: latestRecipe,
-      },
-    });
+    try {
+      // 1. API 호출 (채택 완료 처리)
+      await completeSession();
+
+      // 2. 페이지 이동
+      navigate("/mycookeep", {
+        state: {
+          selectedIngredients,
+          difficulty,
+          recipeData: latestRecipe,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      alert("레시피 채택 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -55,16 +68,18 @@ export default function RecipeActionButtons({
         이 레시피대로 요리할래요
       </button>
 
-      {/* 다른 레시피 버튼 */}
-      <button
-        onClick={onRetry}
-        disabled={isMaxed}
-        className={`w-full rounded-[10px] h-[38px] typo-button ${
-          isMaxed ? "bg-gray-300 text-[#7D7D7D]" : "bg-[#202020] text-white"
-        }`}
-      >
-        {retryBtnText}
-      </button>
+      {/* 히스토리 조회 모드가 아닐 때만 '다른 레시피' 버튼 표시 */}
+      {showRetryButton && (
+        <button
+          onClick={onRetry}
+          disabled={isMaxed}
+          className={`w-full rounded-[10px] h-[38px] typo-button ${
+            isMaxed ? "bg-gray-300 text-[#7D7D7D]" : "bg-[#202020] text-white"
+          }`}
+        >
+          {retryBtnText}
+        </button>
+      )}
     </div>
   );
 }

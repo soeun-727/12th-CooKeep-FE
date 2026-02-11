@@ -4,7 +4,8 @@ import RecipeHeader from "../../components/recipe/main/RecipeHeader";
 import RecipeTitle from "../../components/recipe/main/result/RecipeTitle";
 import RecipeYoutubeCard from "../../components/recipe/main/result/RecipeYoutubeCard";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export default function RecipeResultPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -36,6 +37,20 @@ export default function RecipeResultPage() {
     }
   };
 
+  const { sessionId } = useParams();
+  // const location = useLocation();
+  const { fetchSessionDetail } = useRecipeFlowStore();
+
+  // URL에 sessionId가 포함되어 들어왔다면 '상세보기 모드'로 간주
+  // (만약 생성 직후에도 URL에 sessionId가 붙는 구조라면, location.state 등을 활용해 구분 가능)
+  const isHistoryMode = !!sessionId;
+
+  useEffect(() => {
+    if (sessionId) {
+      fetchSessionDetail(Number(sessionId));
+    }
+  }, [sessionId]);
+
   if (!recipeHistory.length) {
     return (
       <div className="flex items-center justify-center h-full text-gray-400">
@@ -54,12 +69,16 @@ export default function RecipeResultPage() {
       >
         {recipeHistory.map((data, index) => {
           const recipe = data.recipe;
+          if (!recipe || !recipe.ingredients) return null;
+
           const isLastRecipe = index === recipeHistory.length - 1;
 
-          const userIngredients = recipe.ingredients.user_ingredients;
+          // 안전하게 데이터 추출
+          const userIngredients = recipe.ingredients.user_ingredients || [];
           const additionalIngredients =
-            recipe.ingredients.additional_ingredients;
-          const optionalIngredients = recipe.ingredients.optional_ingredients;
+            recipe.ingredients.additional_ingredients || [];
+          const optionalIngredients =
+            recipe.ingredients.optional_ingredients || [];
 
           return (
             <div
@@ -80,8 +99,8 @@ export default function RecipeResultPage() {
               />
 
               <RecipeYoutubeCard
-                videos={data.youtubeReferences}
-                tags={recipe.youtube_search_queries}
+                videos={data.youtubeReferences || []}
+                tags={recipe.youtube_search_queries || []}
               />
 
               {isLastRecipe && (
@@ -107,7 +126,11 @@ export default function RecipeResultPage() {
 
         {/* 버튼 영역 */}
         <div className="p-4 w-full max-w-[450px] mx-auto">
-          <RecipeActionButtons retryCount={retryCount} onRetry={handleRetry} />
+          <RecipeActionButtons
+            retryCount={retryCount}
+            onRetry={handleRetry}
+            showRetryButton={!isHistoryMode} // 히스토리 모드일 때는 false
+          />
         </div>
       </div>
     </div>
