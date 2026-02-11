@@ -56,23 +56,22 @@ export default function RecipeResultPage() {
           const recipe = data.recipe;
           const isLastRecipe = index === recipeHistory.length - 1;
 
-          const requiredIngredients = recipe.ingredients.user_ingredients.map(
-            (i) => i.name,
-          );
+          const userIngredients = recipe.ingredients.user_ingredients;
+          const additionalIngredients =
+            recipe.ingredients.additional_ingredients;
+          const optionalIngredients = recipe.ingredients.optional_ingredients;
 
           return (
-            <div key={index}>
+            <div
+              key={index}
+              className="flex flex-col gap-2 w-full max-w-[361px] mx-auto"
+            >
               <RecipeTitle name={recipe.title} />
 
               <RecipeContentSection
-                selectedIngredients={requiredIngredients}
-                requiredIngredients={requiredIngredients}
-                substitutions={recipe.ingredients.optional_ingredients.map(
-                  (i) => ({
-                    original: i.name,
-                    replacement: "생략 가능",
-                  }),
-                )}
+                selectedIngredients={userIngredients}
+                requiredIngredients={additionalIngredients}
+                substitutions={optionalIngredients}
                 steps={recipe.steps.map((step, idx) => ({
                   order: idx + 1,
                   description: step,
