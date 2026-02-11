@@ -1,47 +1,64 @@
 import { create } from "zustand";
-
-export interface RecipeItem {
-  id: number;
-  name: string;
-  isLiked: boolean;
-}
+import { getAiRecipeSessions, AiRecipeSessionItem } from "../api/aiSession";
 
 interface RecipeState {
-  recipes: RecipeItem[];
-  toggleLike: (id: number) => void;
-  renameRecipe: (id: number, newName: string) => void;
-  deleteRecipe: (id: number) => void;
-  setRecipes: (recipes: RecipeItem[]) => void;
+  pinned: AiRecipeSessionItem[];
+  sessions: AiRecipeSessionItem[];
+  isLoading: boolean;
+  error: string | null;
+
+  fetchSessions: () => Promise<void>;
+
+  // toggleLike: (id: number) => void;
+  // renameRecipe: (id: number, newName: string) => void;
+  // deleteRecipe: (id: number) => void;
+  // setRecipes: (recipes: RecipeItem[]) => void;
 }
 
 export const useRecipeStore = create<RecipeState>((set) => ({
-  recipes: [
-    { id: 1, name: "참치마요 덮밥", isLiked: true },
-    { id: 2, name: "남은 야채 비빔밥", isLiked: false },
-    { id: 3, name: "토마토 달걀 볶음 (토달볶)", isLiked: true },
-    { id: 4, name: "스팸 김치찌개 레시피", isLiked: false },
-    { id: 5, name: "베이컨 크림 파스타", isLiked: false },
-    { id: 6, name: "계란 간장 버터밥", isLiked: true },
-  ],
+  pinned: [],
+  sessions: [],
+  isLoading: false,
+  error: null,
 
-  setRecipes: (newRecipes) => set({ recipes: newRecipes }),
+  fetchSessions: async () => {
+    try {
+      set({ isLoading: true, error: null });
 
-  toggleLike: (id) =>
-    set((state) => ({
-      recipes: state.recipes.map((r) =>
-        r.id === id ? { ...r, isLiked: !r.isLiked } : r,
-      ),
-    })),
+      const data = await getAiRecipeSessions();
 
-  renameRecipe: (id, newName) =>
-    set((state) => ({
-      recipes: state.recipes.map((r) =>
-        r.id === id ? { ...r, name: newName } : r,
-      ),
-    })),
+      set({
+        pinned: data.pinned,
+        sessions: data.sessions,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error("세션 목록 조회 실패:", error);
+      set({
+        error: "세션 목록을 불러오지 못했습니다.",
+        isLoading: false,
+      });
+    }
+  },
 
-  deleteRecipe: (id) =>
-    set((state) => ({
-      recipes: state.recipes.filter((r) => r.id !== id),
-    })),
+  // setRecipes: (newRecipes) => set({ recipes: newRecipes }),
+
+  // toggleLike: (id) =>
+  //   set((state) => ({
+  //     recipes: state.recipes.map((r) =>
+  //       r.id === id ? { ...r, isLiked: !r.isLiked } : r,
+  //     ),
+  //   })),
+
+  // renameRecipe: (id, newName) =>
+  //   set((state) => ({
+  //     recipes: state.recipes.map((r) =>
+  //       r.id === id ? { ...r, name: newName } : r,
+  //     ),
+  //   })),
+
+  // deleteRecipe: (id) =>
+  //   set((state) => ({
+  //     recipes: state.recipes.filter((r) => r.id !== id),
+  //   })),
 }));
