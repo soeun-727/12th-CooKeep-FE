@@ -13,12 +13,12 @@ const Item: React.FC<ItemProps> = React.memo(
       <button
         type="button"
         onClick={onSelect}
-        className={`flex flex-col w-[90px] h-[90px] rounded-[6px] border items-center justify-center px-4
+        className={`flex flex-col w-[90px] h-[90px] rounded-[6px] border items-center justify-center px-4 py-[13px]
         ${isSelected ? "bg-[var(--color-green-light)] border-[var(--color-green-deep)]" : "bg-white border-[#D1D1D1]"}`}
       >
         <div className="flex flex-col gap-[2px] items-center justify-center">
           <img src={image} className="w-12 h-12" />
-          <span className="typo-caption !font-bold whitespace-nowrap w-[58px]">
+          <span className="typo-caption !font-bold truncate whitespace-nowrap w-[58px]">
             {name}
           </span>
         </div>
