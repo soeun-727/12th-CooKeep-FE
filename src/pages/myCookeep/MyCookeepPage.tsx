@@ -23,6 +23,12 @@ export default function MyCookeepPage() {
     location.state?.fromTab === true,
   );
 
+  const getKstToday = () => {
+    return new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0];
+  };
+
   const fetchDailyData = async (dateStr: string) => {
     try {
       const response = await getDailyRecipesByDate(dateStr);
@@ -31,17 +37,20 @@ export default function MyCookeepPage() {
       }
     } catch (error) {
       console.error("레시피 조회 실패:", error);
+      setSelectedRecords([]);
     }
   };
 
   useEffect(() => {
     if (activeTab === "record") {
-      const kstToday = new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0];
-      fetchDailyData(kstToday);
+      fetchDailyData(getKstToday());
     }
-  }, [activeTab]);
+  }, [activeTab]); // 여기서 fetchDailyData 의존성 에러가 나면 useCallback으로 감싸거나 일단 이대로 진행하세요.
+
+  const handleDateClick = (dateStr: string) => {
+    const requestDate = dateStr.replaceAll(".", "-");
+    fetchDailyData(requestDate);
+  };
 
   const handleTabChange = (tab: string) => {
     if (tab === "record" || tab === "calendar" || tab === "statistics") {
@@ -50,11 +59,6 @@ export default function MyCookeepPage() {
       setDismissed(false);
       setEnteredByBottomTab(false);
     }
-  };
-
-  const handleDateClick = (dateStr: string) => {
-    const requestDate = dateStr.replaceAll(".", "-");
-    fetchDailyData(requestDate);
   };
 
   const shouldShowAddMoreModal =
@@ -71,7 +75,9 @@ export default function MyCookeepPage() {
             <div className="flex flex-col items-center gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div className="flex w-full items-center justify-between px-2">
                 <span className="typo-h3 text-neutral-800">
-                  {selectedRecords[0].createdAt.replaceAll("-", ".")}
+                  {selectedRecords[0].createdAt
+                    .split("T")[0]
+                    .replaceAll("-", ".")}
                 </span>
                 <button
                   onClick={() => setSelectedRecords([])}
@@ -80,30 +86,33 @@ export default function MyCookeepPage() {
                   달력으로 돌아가기
                 </button>
               </div>
-
               {selectedRecords.map((record) => (
                 <RecordCard key={record.dailyRecipeId} record={record} />
               ))}
             </div>
           );
         }
-
         return <Calendar onDateClick={handleDateClick} />;
 
       case "statistics":
         return <Statistics />;
+
       case "record":
       default:
-        return <RecordEntry />;
+        // 🚀 여기를 수정합니다!
+        // 오늘 날짜 데이터(selectedRecords)가 있다면 카드를, 없다면 안내 문구(RecordEntry)를 보여줍니다.
+        if (selectedRecords.length > 0) {
+          return (
+            <div className="flex flex-col items-center gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+              {selectedRecords.map((record) => (
+                <RecordCard key={record.dailyRecipeId} record={record} />
+              ))}
+            </div>
+          );
+        }
+        return <RecordEntry records={selectedRecords} />;
     }
   };
-
-  useEffect(() => {
-    if (activeTab === "record") {
-      const today = new Date().toISOString().split("T")[0]; // "2026-02-11"
-      fetchDailyData(today);
-    }
-  }, [activeTab]);
 
   return (
     <>

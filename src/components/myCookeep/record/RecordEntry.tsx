@@ -5,19 +5,19 @@ import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 import RecordCard from "./RecordCard";
 import AddRecordButton from "./AddRecordButton";
 import { getKoreaToday } from "../../../utils/date";
+import { DailyRecipe } from "../../../api/myRecipe";
 
-export default function RecordEntry() {
+interface Props {
+  records: DailyRecipe[];
+}
+export default function RecordEntry({ records }: Props) {
   const navigate = useNavigate();
-
-  const { records, resetRecord } = useCookeepRecordStore(); // resetRecord 추가
+  const { resetRecord } = useCookeepRecordStore();
 
   const handleRecordClick = () => {
     resetRecord(); // 신규만 초기화
     navigate("/mycookeep/record/select");
   };
-
-  const today = getKoreaToday();
-  const todayRecords = records.filter((r) => r.createdAt === today);
 
   return (
     <div>
@@ -40,7 +40,7 @@ export default function RecordEntry() {
             gap-4
           "
         >
-          {todayRecords.length === 0 ? (
+          {records.length === 0 ? (
             <>
               {/* 사진 */}
               <img
@@ -68,8 +68,8 @@ export default function RecordEntry() {
             </>
           ) : (
             <>
-              {todayRecords.map((record) => (
-                <RecordCard key={record.id} record={record} />
+              {records.map((record) => (
+                <RecordCard key={record.dailyRecipeId} record={record} />
               ))}
 
               {/* Floating Button Wrapper */}

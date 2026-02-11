@@ -5,15 +5,14 @@ import publicIcon from "../../../assets/mycookeep/record/public_icon.svg";
 import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 import SelectViewTypeModal from "./SelectViewTypeModal";
 import { DailyRecipe } from "../../../api/myRecipe";
-
+import tempFoodPhoto from "../../../assets/mycookeep/record/temp_food_photo.svg";
 interface Props {
   record: DailyRecipe;
 }
 
 export default function RecordCard({ record }: Props) {
   const navigate = useNavigate();
-  const { updateRecordVisibility, setEditingRecordId, setSelectedRecipeId } =
-    useCookeepRecordStore();
+  const { updateRecordVisibility } = useCookeepRecordStore();
 
   const [isOptionOpen, setIsOptionOpen] = useState(false);
 
@@ -65,7 +64,7 @@ export default function RecordCard({ record }: Props) {
           onClick={() => navigate(`/mycookeep/record/${record.dailyRecipeId}`)}
         >
           <img
-            src={record.recipeImageUrl}
+            src={record.recipeImageUrl || tempFoodPhoto}
             alt="요리 이미지"
             className="w-full h-full object-cover"
           />
@@ -150,16 +149,14 @@ export default function RecordCard({ record }: Props) {
             </span>
           </div>
 
-          <button
+          {/* <button
             className="w-[77px] h-[30px] text-[#7D7D7D] text-[14px] font-medium"
-            onClick={() => {
-              setEditingRecordId(String(record.dailyRecipeId));
-              setSelectedRecipeId(record.dailyRecipeId); // 서버 ID 그대로 사용
-              navigate("/mycookeep/record/select");
-            }}
+            onClick={() =>
+              navigate(`/mycookeep/record/${record.dailyRecipeId}`)
+            }
           >
             메뉴 변경하기
-          </button>
+          </button> */}
         </div>
       </div>
       {isConfirmOpen && (

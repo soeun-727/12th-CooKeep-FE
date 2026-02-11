@@ -24,13 +24,13 @@ export default function Calendar({ onDateClick }: Props) {
         const response = await getCalendarRecipes(year, month + 1);
         if (response && response.status === "OK") {
           const formatted: Record<string, string> = {};
-
           response.data.forEach((item: CalendarRecipe) => {
-            const dotDate = item.date.replace(/-/g, ".");
+            const dotDate = item.date.replaceAll("-", ".");
             formatted[dotDate] = item.recipeImageUrl;
           });
 
           setApiRecords(formatted);
+          console.log("매핑된 데이터:", formatted);
         }
       } catch (error) {
         console.error("캘린더 데이터 로드 실패:", error);
@@ -51,10 +51,7 @@ export default function Calendar({ onDateClick }: Props) {
   const monthName = viewDate.toLocaleString("en-US", { month: "long" });
 
   const getFormattedDate = (d: number) =>
-    `${year}.${String(month + 1).padStart(2, "0")}.${String(d).padStart(
-      2,
-      "0",
-    )}`;
+    `${year}.${String(month + 1).padStart(2, "0")}.${String(d).padStart(2, "0")}`;
 
   return (
     <div
@@ -98,37 +95,43 @@ export default function Calendar({ onDateClick }: Props) {
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
           const dateStr = getFormattedDate(day);
-          const photo = apiRecords[dateStr];
+
+          // 🚀 데이터 존재 여부 확인
+          const hasRecord = Object.prototype.hasOwnProperty.call(
+            apiRecords,
+            dateStr,
+          );
+          const photoUrl = apiRecords[dateStr];
 
           const isToday =
             nowDate.getFullYear() === year &&
             nowDate.getMonth() === month &&
             nowDate.getDate() === day;
 
+          // 연속 배경 계산
           const prevDate = new Date(year, month, day - 1);
           const nextDate = new Date(year, month, day + 1);
           const prevKey = `${prevDate.getFullYear()}.${String(prevDate.getMonth() + 1).padStart(2, "0")}.${String(prevDate.getDate()).padStart(2, "0")}`;
           const nextKey = `${nextDate.getFullYear()}.${String(nextDate.getMonth() + 1).padStart(2, "0")}.${String(nextDate.getDate()).padStart(2, "0")}`;
 
-          const hasPrev = !!apiRecords[prevKey];
-          const hasNext = !!apiRecords[nextKey];
-          const isContinuous = photo && (hasPrev || hasNext);
+          const hasPrev = Object.prototype.hasOwnProperty.call(
+            apiRecords,
+            prevKey,
+          );
+          const hasNext = Object.prototype.hasOwnProperty.call(
+            apiRecords,
+            nextKey,
+          );
+          const isContinuous = hasRecord && (hasPrev || hasNext);
 
           return (
             <div key={dateStr} className="relative flex justify-center">
+              {/* 오늘 표시 (생략) */}
               {isToday && (
                 <img
                   src={todaySign}
                   alt="today"
-                  className="
-                    absolute
-                    -top-3
-                    z-40
-                    w-18
-                    max-w-none
-                    pointer-events-none
-                    drop-shadow-md
-                  "
+                  className="absolute -top-3 z-40 w-18 max-w-none pointer-events-none drop-shadow-md"
                 />
               )}
 
@@ -136,17 +139,11 @@ export default function Calendar({ onDateClick }: Props) {
               {isContinuous && (
                 <div
                   className={`
-      absolute
-      top-1/2
-      -translate-y-1/2
-      h-12
-      bg-[#96E8BE]
-      z-0
-      ${hasPrev && hasNext ? "left-[-60%] right-[-60%] rounded-none" : ""}
-      ${hasPrev && !hasNext ? "left-[-60%] right-[-2px] rounded-r-full" : ""}
-      ${!hasPrev && hasNext ? "left-[-2px] right-[-60%] rounded-l-full" : ""}
-      ${!hasPrev && !hasNext ? "w-10 rounded-full" : ""}
-    `}
+            absolute top-1/2 -translate-y-1/2 h-12 bg-[#96E8BE] z-0
+            ${hasPrev && hasNext ? "left-[-60%] right-[-60%] rounded-none" : ""}
+            ${hasPrev && !hasNext ? "left-[-60%] right-[-2px] rounded-r-full" : ""}
+            ${!hasPrev && hasNext ? "left-[-2px] right-[-60%] rounded-l-full" : ""}
+          `}
                 />
               )}
 
@@ -154,22 +151,16 @@ export default function Calendar({ onDateClick }: Props) {
               <button
                 onClick={() => onDateClick(dateStr)}
                 className={`
-    relative
-    z-10
-    w-10
-    h-10
-    rounded-full
-    flex
-    items-center
-    justify-center
-    transition-all
-    ${photo ? "shadow-md scale-105" : "hover:bg-zinc-50"}
-  `}
+          relative z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all
+          ${hasRecord ? "shadow-md scale-105" : "hover:bg-zinc-50"}
+          ${hasRecord && !photoUrl ? "bg-[#96E8BE]" : ""} 
+        `}
               >
-                {photo && (
+                {/* 🚀 사진이 있을 때만 이미지를 보여줌 */}
+                {photoUrl && (
                   <div className="absolute inset-0 rounded-full overflow-hidden">
                     <img
-                      src={photo}
+                      src={photoUrl}
                       alt="record"
                       className="w-full h-full object-cover brightness-75"
                     />
@@ -178,7 +169,7 @@ export default function Calendar({ onDateClick }: Props) {
 
                 <span
                   className={`relative z-20 typo-h2 !font-normal ${
-                    photo ? "text-white" : "text-neutral-800"
+                    hasRecord ? "text-white" : "text-neutral-800"
                   }`}
                 >
                   {day}

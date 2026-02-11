@@ -131,29 +131,32 @@ export default function RecordWritePage() {
       alert("레시피 정보가 로드되지 않았습니다.");
       return;
     }
+    setIsUploading(true); // 로딩 시작
     try {
-      if (!editingRecordId) {
-        const requestData = {
-          aiRecipeId: selectedRecipeId,
-          isPublic: isPublic,
-          title: title || recipeDetail.title,
-          description: memo,
-          recipeImageUrl: images[0]?.url || "",
-        };
-
-        const response = await createDailyRecipe(requestData);
-        if (response.status === "OK") {
-          setShowUploadModal(true);
-        }
-      } else {
+      const requestData = {
+        aiRecipeId: selectedRecipeId,
+        isPublic: isPublic,
+        title: title || recipeDetail.title,
+        description: memo,
+        recipeImageUrl: images[0]?.url || "",
+      };
+      console.log("전송 데이터:", requestData); // 데이터 확인용
+      const response = await createDailyRecipe(requestData);
+      console.log("서버 응답:", response); // 응답 구조 확인용
+      if (response && (response.status === "OK" || response.data)) {
         setShowUploadModal(true);
+      } else {
+        throw new Error("응답 형식이 올바르지 않습니다.");
       }
-    } catch (error) {
-      console.error("업로드 실패:", error);
-      alert("레시피 등록에 실패했습니다.");
+    } catch (error: any) {
+      console.error("업로드 상세 에러:", error);
+      const errorMsg =
+        error.response?.data?.message || "레시피 등록에 실패했습니다.";
+      alert(errorMsg);
+    } finally {
+      setIsUploading(false); // 로딩 종료
     }
   };
-
   if (!recipeDetail) {
     return (
       // 임시로 넣은 로딩 화면

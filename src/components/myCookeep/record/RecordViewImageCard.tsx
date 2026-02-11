@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import editIcon from "../../../assets/fridge/edit_memo.svg";
 import foodIcon from "../../../assets/mycookeep/record/fork_knife_plate.svg";
+import temp from "../../../assets/mycookeep/record/temp_food_photo.svg";
 
 interface RecordViewImageCardProps {
   title: string;
@@ -37,7 +38,7 @@ export default function RecordViewImageCard({
         "
       >
         <img
-          src={imageSrc}
+          src={imageSrc || temp}
           alt="요리 이미지"
           className="w-full h-full object-cover"
         />
