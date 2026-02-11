@@ -3,7 +3,7 @@ import { create } from "zustand";
 import type { Ingredient } from "./useIngredientStore";
 import type { AiRecipeResponse, Difficulty } from "../types/aiRecipe";
 import { generateAiRecipe } from "../api/aiRecipe";
-import { getAiSessionDetail } from "../api/aiSessionDetail";
+import { getAiSessionDetail } from "../api/aiSession";
 
 type RecipeFlowState = {
   selectedIngredients: Ingredient[];

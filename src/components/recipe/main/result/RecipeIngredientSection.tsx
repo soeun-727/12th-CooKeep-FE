@@ -72,19 +72,21 @@ export default function RecipeIngredientSection({
             {substitutions.map((item, idx) => (
               <div
                 key={idx}
-                className="flex justify-between items-start self-stretch w-full"
+                className="flex justify-between items-start self-stretch w-full gap-2"
               >
                 {/* original pill */}
                 <div className="flex px-3 py-[2px] justify-center items-center gap-2 rounded-[100px] bg-[#EBEBEB]">
-                  <span className="text-[#7D7D7D] text-center text-[12px] font-semibold leading-[16px]">
+                  <span className="text-[#7D7D7D] text-center text-[12px] font-semibold leading-[16px] whitespace-nowrap">
                     {formatIngredient(item)}
                   </span>
                 </div>
 
                 {/* replacement text */}
-                {/* <span className="w-[255px] text-[#202020] typo-body-sm">
-                  {item.replacement}
-                </span> */}
+                {item.description && (
+                  <span className="w-[255px] text-[#202020] typo-body-sm ">
+                    {item.description}
+                  </span>
+                )}
               </div>
             ))}
           </div>
