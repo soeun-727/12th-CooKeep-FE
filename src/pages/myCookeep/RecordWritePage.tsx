@@ -13,6 +13,8 @@ import UploadCompleteModal from "../../components/myCookeep/record/UploadComplet
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { getKoreaToday } from "../../utils/date";
 import { setTodayRecord } from "../../utils/record";
+import { uploadImage } from "../../api/image";
+import { createDailyRecipe } from "../../api/myRecipe";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -79,30 +81,45 @@ export default function RecordWritePage() {
   }, [selectedRecipeId, editingRecordId, showUploadModal, navigate]);
 
   /* ---------- 업로드 ---------- */
-  const handleUpload = () => {
-    if (selectedRecipeId === null || isPublic === null) return;
-
-    if (!editingRecordId && recipe) {
-      addRecord({
-        id: crypto.randomUUID(),
-        recipeId: recipe.id,
-        recipeTitle: title || recipe.recipeName,
-        memo,
-        images,
-        createdAt: getKoreaToday(), // 오늘날짜 핵심
-        isPublic,
-        recipeContent: {
-          ingredients: recipe.ingredients,
-          substitutions: recipe.substitutions,
-          steps: recipe.steps,
-        },
-        tags: recipe.tags,
-        relatedVideos: recipe.relatedVideos,
-      });
-      setTodayRecord();
+  const handleUpload = async () => {
+    if (!recipe || selectedRecipeId === null || isPublic === null) {
+      alert("레시피 정보가 없습니다.");
+      return;
     }
+    try {
+      let finalImageUrl = "";
 
-    setShowUploadModal(true);
+      // 1. 이미지가 있다면 먼저 S3에 업로드하여 URL 획득
+      if (images.length > 0 && images[0].file) {
+        const uploadRes = await uploadImage(images[0].file);
+        finalImageUrl = uploadRes.data.imageUrl; // 서버에서 준 S3 URL
+      }
+
+      // 2. 신규 등록일 경우 데일리 레시피 POST API 호출
+      if (!editingRecordId) {
+        const requestData = {
+          aiRecipeId: selectedRecipeId,
+          isPublic: isPublic,
+          title: title || recipe.recipeName, // 유저 입력 없으면 기본 제목
+          description: memo, // 한줄평
+          recipeImageUrl: finalImageUrl,
+        };
+
+        const response = await createDailyRecipe(requestData);
+
+        if (response.status === "OK") {
+          // 등록 성공 시에만 모달 띄우기
+          setShowUploadModal(true);
+        }
+      } else {
+        // 3. 수정 모드일 경우 (나중에 수정 API 연동)
+        // updateDailyRecipe(...) 호출
+        setShowUploadModal(true);
+      }
+    } catch (error) {
+      console.error("업로드 실패:", error);
+      alert("레시피 등록에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   // 쿠키추가
@@ -293,19 +310,10 @@ export default function RecordWritePage() {
         // />
         <UploadCompleteModal
           onConfirm={async () => {
-            if (editingRecordId) {
-              updateRecordContent({
-                recordId: editingRecordId,
-                memo,
-                images,
-                isPublic,
-              });
-            } else {
-              await useCookeepsStore.getState().fetchCookies();
-            }
-
-            navigate("/mycookeep");
-            resetRecord();
+            // 성공 후 이동 전처리
+            await useCookeepsStore.getState().fetchCookies(); // 쿠키(식물) 데이터 갱신
+            resetRecord(); // 작성 중이던 상태값 리셋
+            navigate("/mycookeep"); // 메인으로 이동
           }}
           onCancel={() => setShowUploadModal(false)}
         />

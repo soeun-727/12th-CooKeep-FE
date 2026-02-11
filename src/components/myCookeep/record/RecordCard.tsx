@@ -2,13 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import privateIcon from "../../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../../assets/mycookeep/record/public_icon.svg";
-import type { CookeepRecord } from "../../../types/record";
 import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
 import SelectViewTypeModal from "./SelectViewTypeModal";
 import { getRecordImageSrc } from "../../../utils/recordImage";
+import { DailyRecipe } from "../../../api/myRecipe";
 
 interface Props {
-  record: CookeepRecord;
+  record: DailyRecipe;
 }
 
 export default function RecordCard({ record }: Props) {
@@ -20,9 +20,9 @@ export default function RecordCard({ record }: Props) {
 
   const isPublic = record.isPublic;
 
-  const formatDateDot = (date: string) => date.replaceAll("-", ".");
-
-  const imageSrc = getRecordImageSrc(record.images[0]);
+  const formatDateDot = (dateStr: string) => {
+    return dateStr.split("T")[0].replaceAll("-", ".");
+  };
 
   const toggleOption = () => {
     setIsOptionOpen((prev) => !prev);
@@ -40,7 +40,7 @@ export default function RecordCard({ record }: Props) {
 
   const handleConfirmChange = () => {
     if (nextVisibility !== null) {
-      updateRecordVisibility(record.id, nextVisibility);
+      updateRecordVisibility(String(record.dailyRecipeId), nextVisibility);
     }
     setIsConfirmOpen(false);
     setNextVisibility(null);
@@ -63,10 +63,10 @@ export default function RecordCard({ record }: Props) {
           rounded-[6px] overflow-hidden
           shadow-[0_1px_8.2px_-2px_rgba(17,17,17,0.25),0_4px_16px_-10px_rgba(0,0,0,0.25)]
         "
-          onClick={() => navigate(`/mycookeep/record/${record.id}`)}
+          onClick={() => navigate(`/mycookeep/record/${record.dailyRecipeId}`)}
         >
           <img
-            src={imageSrc}
+            src={record.recipeImageUrl}
             alt="요리 이미지"
             className="w-full h-full object-cover"
           />
@@ -142,18 +142,20 @@ export default function RecordCard({ record }: Props) {
             bg-[#EBEBEB]
             cursor-pointer
           "
-            onClick={() => navigate(`/mycookeep/record/${record.id}`)}
+            onClick={() =>
+              navigate(`/mycookeep/record/${record.dailyRecipeId}`)
+            }
           >
             <span className="text-[#202020] text-[16px] font-bold leading-[24px] text-center line-clamp-2">
-              {record.recipeTitle}
+              {record.title}
             </span>
           </div>
 
           <button
             className="w-[77px] h-[30px] text-[#7D7D7D] text-[14px] font-medium"
             onClick={() => {
-              setEditingRecordId(record.id);
-              setSelectedRecipeId(record.recipeId); // 기존 선택 표시
+              setEditingRecordId(String(record.dailyRecipeId));
+              setSelectedRecipeId(record.dailyRecipeId); // 서버 ID 그대로 사용
               navigate("/mycookeep/record/select");
             }}
           >

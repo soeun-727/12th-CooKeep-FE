@@ -1,19 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import nextIcon from "../../../assets/fridge/addItem/forward.svg";
 import prevIcon from "../../../assets/fridge/addItem/backward.svg";
 import todaySign from "../../../assets/mycookeep/today.svg";
+import { CalendarRecipe, getCalendarRecipes } from "../../../api/myRecipe";
 
 interface Props {
-  records?: Record<string, string>;
   onDateClick: (date: string) => void;
 }
 
-export default function Calendar({ records = {}, onDateClick }: Props) {
+export default function Calendar({ onDateClick }: Props) {
   const [viewDate, setViewDate] = useState(new Date());
+  const [apiRecords, setApiRecords] = useState<Record<string, string>>({}); // 🚀 서버 데이터를 담을 상태
+  const [isLoading, setIsLoading] = useState(false);
+
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
-
   const nowDate = new Date();
+
+  useEffect(() => {
+    const fetchRecords = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getCalendarRecipes(year, month + 1);
+        if (response && response.status === "OK") {
+          const formatted: Record<string, string> = {};
+
+          response.data.forEach((item: CalendarRecipe) => {
+            const dotDate = item.date.replace(/-/g, ".");
+            formatted[dotDate] = item.recipeImageUrl;
+          });
+
+          setApiRecords(formatted);
+        }
+      } catch (error) {
+        console.error("캘린더 데이터 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRecords();
+  }, [year, month]);
 
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -30,7 +57,13 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
     )}`;
 
   return (
-    <div className="flex flex-col w-[357px] mx-auto items-center justify-center rounded-[6px] p-4 shadow-[0px_10px_60px_0px_rgba(0,0,0,0.1)] bg-white/10">
+    <div
+      className={`
+    flex flex-col w-[357px] mx-auto items-center justify-center rounded-[6px] p-4 
+    shadow-[0px_10px_60px_0px_rgba(0,0,0,0.1)] bg-white/10 transition-opacity duration-200
+    ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}
+  `}
+    >
       {/* 1. 헤더 */}
       <div className="flex items-center justify-between w-full px-2 mt-[13px] mb-2">
         <h2 className="typo-h3 text-neutral-900">
@@ -45,7 +78,6 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
           </button>
         </div>
       </div>
-
       {/* 2. 요일 */}
       <div className="grid grid-cols-7 w-full mb-2">
         {daysOfWeek.map((day) => (
@@ -57,7 +89,6 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
           </div>
         ))}
       </div>
-
       {/* 3. 날짜 그리드 */}
       <div className="grid grid-cols-7 w-full relative gap-y-[6px] mb-[13px]">
         {Array.from({ length: firstDayOfMonth }).map((_, i) => (
@@ -67,7 +98,7 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
           const dateStr = getFormattedDate(day);
-          const photo = records[dateStr];
+          const photo = apiRecords[dateStr];
 
           const isToday =
             nowDate.getFullYear() === year &&
@@ -76,17 +107,11 @@ export default function Calendar({ records = {}, onDateClick }: Props) {
 
           const prevDate = new Date(year, month, day - 1);
           const nextDate = new Date(year, month, day + 1);
+          const prevKey = `${prevDate.getFullYear()}.${String(prevDate.getMonth() + 1).padStart(2, "0")}.${String(prevDate.getDate()).padStart(2, "0")}`;
+          const nextKey = `${nextDate.getFullYear()}.${String(nextDate.getMonth() + 1).padStart(2, "0")}.${String(nextDate.getDate()).padStart(2, "0")}`;
 
-          const prevKey = `${prevDate.getFullYear()}.${String(
-            prevDate.getMonth() + 1,
-          ).padStart(2, "0")}.${String(prevDate.getDate()).padStart(2, "0")}`;
-
-          const nextKey = `${nextDate.getFullYear()}.${String(
-            nextDate.getMonth() + 1,
-          ).padStart(2, "0")}.${String(nextDate.getDate()).padStart(2, "0")}`;
-
-          const hasPrev = !!records[prevKey];
-          const hasNext = !!records[nextKey];
+          const hasPrev = !!apiRecords[prevKey];
+          const hasNext = !!apiRecords[nextKey];
           const isContinuous = photo && (hasPrev || hasNext);
 
           return (
