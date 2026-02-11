@@ -20,6 +20,9 @@ type RecipeFlowState = {
   setDifficulty: (d: Difficulty) => void;
   generateRecipe: () => Promise<void>;
   reset: () => void;
+
+  // 작동안해서 넣어놓음
+  // clearSelection: () => void;
 };
 
 export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
@@ -76,4 +79,8 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
       recipeHistory: [],
       error: null,
     }),
+  // clearSelection: () =>
+  //   set({
+  //     selectedIngredients: [],
+  //   }),
 }));

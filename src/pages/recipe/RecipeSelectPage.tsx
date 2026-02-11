@@ -31,9 +31,13 @@ export default function RecipeSelectPage() {
 
   const { sortedIngredients } = useSortedIngredients();
 
-  const filteredIngredients = searchTerm
-    ? sortedIngredients.filter((item) => item.name.includes(searchTerm))
-    : sortedIngredients;
+  const filteredIngredients = sortedIngredients
+    .filter((item) => (viewCategory ? item.category === viewCategory : true))
+    .filter((item) =>
+      searchTerm
+        ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        : true,
+    );
 
   // snapshot 저장
   const { setSelectedIngredients } = useRecipeFlowStore();
@@ -70,12 +74,14 @@ export default function RecipeSelectPage() {
       <div className="mt-[102px]">
         <Search />
 
-        {viewCategory ? (
+        {viewCategory || searchTerm ? (
           <>
-            <Sort
-              categoryIcon={getIcon(viewCategory)}
-              viewCategory={viewCategory}
-            />
+            {viewCategory && (
+              <Sort
+                categoryIcon={getIcon(viewCategory)}
+                viewCategory={viewCategory}
+              />
+            )}
             <IngredientGrid items={filteredIngredients} />
           </>
         ) : (

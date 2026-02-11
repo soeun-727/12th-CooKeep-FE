@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./axios";
 import type { AiRecipeResponse, Difficulty } from "../types/aiRecipe";
 
 interface GenerateAiRecipeRequest {
@@ -10,7 +10,11 @@ interface GenerateAiRecipeRequest {
 export const generateAiRecipe = async (
   body: GenerateAiRecipeRequest,
 ): Promise<AiRecipeResponse> => {
-  const response = await axios.post("/api/users/me/ai/recipes", body);
+  const response = await api.post(
+    "/api/users/me/ai/recipes",
+    body,
+    { timeout: 60000 }, // 여기만 60초
+  );
 
   return response.data;
 };
