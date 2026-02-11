@@ -6,6 +6,7 @@ interface Props {
   maxRetry?: number;
   onRetry: () => void;
   showRetryButton?: boolean;
+  isLoading?: boolean;
 }
 
 export default function RecipeActionButtons({
@@ -13,6 +14,7 @@ export default function RecipeActionButtons({
   maxRetry = 5,
   onRetry,
   showRetryButton = true, // 기본값은 true
+  isLoading = false,
 }: Props) {
   const navigate = useNavigate();
 
@@ -28,7 +30,12 @@ export default function RecipeActionButtons({
   const latestRecipe = recipeHistory.at(-1);
 
   const isMaxed = retryCount >= maxRetry;
-  const retryBtnText = `다른 레시피 받기 (${retryCount}/${maxRetry})`;
+
+  // 로딩 중이거나 횟수 초과 시 비활성화 로직
+  const isRetryDisabled = isMaxed || isLoading;
+  const retryBtnText = isLoading
+    ? "레시피 생성 중..."
+    : `다른 레시피 받기 (${retryCount}/${maxRetry})`;
 
   // const handleRetry = () => {
   //   increaseRetry();
@@ -62,8 +69,10 @@ export default function RecipeActionButtons({
       {/* 요리할래요 버튼 */}
       <button
         onClick={handleCookClick}
-        disabled={!latestRecipe}
-        className="w-full rounded-[10px] h-[38px] typo-button text-white bg-[#32E389]"
+        disabled={!latestRecipe || isLoading}
+        className={`w-full rounded-[10px] h-[38px] typo-button text-white ${
+          !latestRecipe || isLoading ? "bg-gray-300" : "bg-[#32E389]"
+        }`}
       >
         이 레시피대로 요리할래요
       </button>
@@ -72,9 +81,11 @@ export default function RecipeActionButtons({
       {showRetryButton && (
         <button
           onClick={onRetry}
-          disabled={isMaxed}
-          className={`w-full rounded-[10px] h-[38px] typo-button ${
-            isMaxed ? "bg-gray-300 text-[#7D7D7D]" : "bg-[#202020] text-white"
+          disabled={isRetryDisabled}
+          className={`w-full rounded-[10px] h-[38px] typo-button transition-colors ${
+            isRetryDisabled
+              ? "bg-gray-300 text-[#7D7D7D] cursor-not-allowed"
+              : "bg-[#202020] text-white"
           }`}
         >
           {retryBtnText}

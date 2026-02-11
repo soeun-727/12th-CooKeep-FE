@@ -2,7 +2,11 @@
 import { create } from "zustand";
 import type { Ingredient } from "./useIngredientStore";
 import type { AiRecipeResponse, Difficulty } from "../types/aiRecipe";
-import { completeAiRecipe, generateAiRecipe } from "../api/aiRecipe";
+import {
+  completeAiRecipe,
+  generateAiRecipe,
+  retryAiRecipe,
+} from "../api/aiRecipe";
 import { getAiSessionDetail } from "../api/aiSession";
 
 type RecipeFlowState = {
@@ -45,31 +49,68 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
   setDifficulty: (difficulty) => set({ difficulty }),
 
+  // generateRecipe: async () => {
+  //   const { selectedIngredients, difficulty, sessionId, recipeHistory } = get();
+
+  //   if (!difficulty) return;
+
+  //   try {
+  //     const body =
+  //       sessionId === null
+  //         ? {
+  //             ingredientIds: selectedIngredients.map((i) => i.id),
+  //             difficulty,
+  //           }
+  //         : {
+  //             sessionId,
+  //           };
+
+  //     const response = await generateAiRecipe(body);
+
+  //     set({
+  //       sessionId: response.sessionId,
+  //       retryCount: response.changeCount,
+  //       recipeHistory: [...recipeHistory, response],
+  //     });
+  //   } catch (error) {
+  //     console.error("AI 레시피 생성 실패:", error);
+  //     throw error;
+  //   }
+  // },
   generateRecipe: async () => {
     const { selectedIngredients, difficulty, sessionId, recipeHistory } = get();
 
     if (!difficulty) return;
 
     try {
-      const body =
-        sessionId === null
-          ? {
-              ingredientIds: selectedIngredients.map((i) => i.id),
-              difficulty,
-            }
-          : {
-              sessionId,
-            };
+      set({ isLoading: true, error: null }); // 로딩 시작
 
-      const response = await generateAiRecipe(body);
+      let response: AiRecipeResponse;
+
+      if (sessionId === null) {
+        // 처음 생성 시
+        response = await generateAiRecipe({
+          ingredientIds: selectedIngredients.map((i) => i.id),
+          difficulty,
+        });
+      } else {
+        // 재요청(Retry) 시
+        response = await retryAiRecipe({
+          sessionId,
+          difficulty,
+          ingredientIds: selectedIngredients.map((i) => i.id),
+        });
+      }
 
       set({
         sessionId: response.sessionId,
         retryCount: response.changeCount,
         recipeHistory: [...recipeHistory, response],
+        isLoading: false, // 로딩 종료
       });
     } catch (error) {
       console.error("AI 레시피 생성 실패:", error);
+      set({ isLoading: false });
       throw error;
     }
   },

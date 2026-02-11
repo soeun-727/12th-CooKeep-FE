@@ -38,8 +38,7 @@ export default function RecipeStepSection({ steps }: Props) {
             </p>
           </div>
         ))} */}
-            {/* h-5(20px) 대신 텍스트 line-height와 같은 h-[22px] 사용 */}
-            <div className="flex items-center justify-center w-[30px] h-[22px] px-3 rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-none shrink-0 mt-[3px]">
+            <div className="flex items-center justify-center w-[30px] h-[22px] px-3 rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0 mt-[3px]">
               {step.order}
             </div>
 
