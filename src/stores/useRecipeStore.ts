@@ -3,6 +3,7 @@ import {
   getAiRecipeSessions,
   AiRecipeSessionItem,
   toggleFavoriteSession,
+  updateAiSessionTitle,
 } from "../api/aiSession";
 
 interface RecipeState {
@@ -13,10 +14,9 @@ interface RecipeState {
 
   fetchSessions: () => Promise<void>;
   toggleLike: (sessionId: number) => Promise<void>;
-  // toggleLike: (id: number) => void;
-  // renameRecipe: (id: number, newName: string) => void;
+  renameRecipe: (sessionId: number, newTitle: string) => Promise<void>;
+
   // deleteRecipe: (id: number) => void;
-  // setRecipes: (recipes: RecipeItem[]) => void;
 }
 
 export const useRecipeStore = create<RecipeState>((set) => ({
@@ -62,21 +62,24 @@ export const useRecipeStore = create<RecipeState>((set) => ({
     }
   },
 
-  // setRecipes: (newRecipes) => set({ recipes: newRecipes }),
+  renameRecipe: async (sessionId: number, newTitle: string) => {
+    try {
+      set({ isLoading: true });
+      await updateAiSessionTitle(sessionId, newTitle);
 
-  // toggleLike: (id) =>
-  //   set((state) => ({
-  //     recipes: state.recipes.map((r) =>
-  //       r.id === id ? { ...r, isLiked: !r.isLiked } : r,
-  //     ),
-  //   })),
-
-  // renameRecipe: (id, newName) =>
-  //   set((state) => ({
-  //     recipes: state.recipes.map((r) =>
-  //       r.id === id ? { ...r, name: newName } : r,
-  //     ),
-  //   })),
+      // 최신 목록을 다시 불러와서 UI를 동기화합니다.
+      const data = await getAiRecipeSessions();
+      set({
+        pinned: data.pinned,
+        sessions: data.sessions,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error("제목 수정 실패:", error);
+      set({ isLoading: false });
+      alert("제목 수정에 실패했습니다.");
+    }
+  },
 
   // deleteRecipe: (id) =>
   //   set((state) => ({
