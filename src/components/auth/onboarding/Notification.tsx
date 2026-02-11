@@ -34,21 +34,19 @@ export default function Notification({ onNext }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const INFINITE_DATA = [...EXAMPLE_DATA, ...EXAMPLE_DATA];
 
-  const handleAgreePush = async () => {
+  const handlePushConsent = async (isAgreed: boolean) => {
     setIsLoading(true);
     try {
-      await updatePushConsent(true);
-      console.log("알림 설정 업데이트 성공 (PATCH)");
+      // isAgreed에 따라 true 또는 false가 전송됩니다.
+      await updatePushConsent(isAgreed);
+      console.log(`알림 설정 업데이트 성공 (${isAgreed ? "동의" : "거절"})`);
     } catch (error) {
       console.error("알림 설정 실패:", error);
+      // 에러가 나더라도 다음 단계로 보내줄지, 아니면 멈출지 결정할 수 있습니다.
     } finally {
       setIsLoading(false);
-      onNext();
+      onNext(); // 성공/실패 여부와 상관없이 다음 단계(설치 안내 등)로 이동
     }
-  };
-
-  const handleSkip = () => {
-    onNext();
   };
 
   return (
@@ -85,7 +83,7 @@ export default function Notification({ onNext }: Props) {
           <Button
             size="S"
             variant="black"
-            onClick={handleAgreePush}
+            onClick={() => handlePushConsent(true)}
             disabled={isLoading}
           >
             알림을 켤게요
@@ -93,7 +91,7 @@ export default function Notification({ onNext }: Props) {
           <Button
             size="S"
             className="!bg-gray-300"
-            onClick={handleSkip}
+            onClick={() => handlePushConsent(false)}
             disabled={isLoading}
           >
             괜찮아요

@@ -45,8 +45,7 @@ const AllItem = ({
         {rank}
       </div>
 
-      {/* 제목: 너비 고정보다 flex-1과 margin을 활용하면 더 유연합니다 */}
-      <span className="flex-1 px-[14px] truncate typo-body2 text-left">
+      <span className="flex-1 px-[14px] truncate typo-body text-left">
         {title}
       </span>
 

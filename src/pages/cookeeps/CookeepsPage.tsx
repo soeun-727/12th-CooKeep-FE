@@ -37,7 +37,7 @@ interface SelectedPlant {
 
 export default function CookeepsPage() {
   const [toastVisible, setToastVisible] = useState(false);
-  const [activeModal, setActiveModal] = useState<ActiveModal>("onboarding");
+  const [activeModal, setActiveModal] = useState<ActiveModal>(null);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(() => {
     return localStorage.getItem("hasSeenOnboarding") === "true";
   }); // 온보딩 모달 뜨게 하기 처음 접속 시 한번만 보이도록
@@ -237,7 +237,7 @@ export default function CookeepsPage() {
     <div className="h-[100dvh] flex flex-col overflow-hidden relative">
       {/* 1. 온보딩 */}
       <OnboardingModal
-        isOpen={activeModal === "onboarding" && !hasSeenOnboarding}
+        isOpen={derivedModal === "onboarding"}
         onClose={() => {
           localStorage.setItem("hasSeenOnboarding", "true"); // localStorage 저장
           setHasSeenOnboarding(true); // 상태 변경

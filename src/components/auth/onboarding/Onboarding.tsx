@@ -60,67 +60,80 @@ export default function Onboarding() {
 
   // --- 비즈니스 로직 ---
 
-  const handleSaveOnboarding = async () => {
+  // Onboarding.tsx
+
+  // 1. 건너뛰기 클릭 시 처리 로직
+  const skipStep = () => {
+    if (step === 2) {
+      // 🚀 Goal에서 건너뛰기를 누르면 Goal과 SpecificGoal 모두 null 처리
+      setSelectedGoal({ id: "", title: "" });
+      setGoalCount("");
+      handleSaveOnboarding(true); // 즉시 저장 혹은 마지막 단계로 점프
+      return;
+    }
+
+    if (step === 0) setFoodTypes([]);
+    if (step === 1) setSkillLevel("");
+
+    nextStep();
+  };
+
+  // 2. 데이터 가공 로직 (가장 중요)
+  const handleSaveOnboarding = async (isForcedSkip: boolean = false) => {
     setIsLoading(true);
     try {
-      // 🚀 데이터 가공 시 매퍼 키가 정확한지 다시 한번 확인하세요.
       const requestBody = {
         favoriteFoodTypes:
-          foodTypes.length > 0
-            ? foodTypes.map((type) => FOOD_TYPE_MAP[type])
-            : null,
+          foodTypes.length > 0 ? foodTypes.map((t) => FOOD_TYPE_MAP[t]) : null,
         cookingLevel: skillLevel ? SKILL_LEVEL_MAP[skillLevel] : null,
-        goalActionType: selectedGoal.id
-          ? (GOAL_TYPE_MAP as Record<string, any>)[selectedGoal.id]?.value
-          : null,
+
+        // 🚀 포인트: isForcedSkip이거나 id가 없으면 null, 그 외엔 선택값 혹은 기본값("cook")
+        goalActionType:
+          isForcedSkip || (!selectedGoal.id && step < 2)
+            ? null
+            : (GOAL_TYPE_MAP as any)[selectedGoal.id || "cook"]?.value,
+
         targetCount:
-          goalCount && parseInt(goalCount, 10) > 0
-            ? parseInt(goalCount, 10)
-            : null,
+          isForcedSkip || (!goalCount && step < 3)
+            ? null
+            : parseInt(goalCount || "3", 10),
       };
 
       const response = await saveOnboardingInfo(requestBody);
-
-      // 서버 응답 규격이 { status: "OK", data: ... } 라면 아래 조건이 맞습니다.
       if (response.status === 200 || response.data?.status === "OK") {
         setIsFinished(true);
       }
     } catch (error) {
       console.error("저장 실패:", error);
-      alert("입력 정보를 저장하는 데 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // 3. 버튼 활성화 로직
+  const getIsValid = () => {
+    switch (step) {
+      case 0:
+        return foodTypes.length > 0; // 응답 없으면 disable
+      case 1:
+        return skillLevel !== ""; // 응답 없으면 disable
+      case 2:
+        return true; // 기본값(cook)이 있으므로 항상 enable
+      case 3:
+        return true; // 기본값(3)이 있으므로 항상 enable
+      default:
+        return false;
+    }
+  };
+
+  // 2. 호출부 수정
   const nextStep = () => {
     if (step < 3) setStep(step + 1);
-    else handleSaveOnboarding();
+    else handleSaveOnboarding(false); // 일반 '다음' 클릭 시 false 전송
   };
 
   const prevStep = () => {
     if (step > 0) setStep(step - 1);
-  };
-
-  const skipStep = () => {
-    if (step >= 2) handleSaveOnboarding();
-    else nextStep();
-  };
-
-  const getIsValid = () => {
-    switch (step) {
-      case 0:
-        return foodTypes.length > 0;
-      case 1:
-        return skillLevel !== "";
-      case 2:
-        return !!selectedGoal.id;
-      case 3:
-        const count = parseInt(goalCount, 10);
-        return !isNaN(count) && count >= 1 && count <= 10;
-      default:
-        return false;
-    }
   };
 
   // --- 조건부 렌더링 (순서 중요!) ---

@@ -44,7 +44,7 @@ export default function ViewAllHeader({
 
       {/* 날짜 + 정렬 */}
       <div className="w-[361px] relative flex items-center justify-center mt-[29px]">
-        <div className="w-[133px] h-8 rounded-[6px] py-[2px] px-2 flex gap-1 bg-black items-center justify-center">
+        <div className="h-8 rounded-[6px] py-[2px] px-2 flex gap-1 bg-black items-center justify-center">
           <span className="typo-caption text-(--color-green)">{dateText}</span>
           <span className="typo-caption text-white">쿠킵이 레시피</span>
         </div>
