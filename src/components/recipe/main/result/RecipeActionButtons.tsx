@@ -22,6 +22,7 @@ export default function RecipeActionButtons({
     selectedIngredients,
     difficulty,
     recipeHistory,
+    completeSession,
   } = useRecipeFlowStore();
 
   const latestRecipe = recipeHistory.at(-1);
@@ -34,16 +35,26 @@ export default function RecipeActionButtons({
   //   generateRecipe();
   // };
 
-  const handleCookClick = () => {
+  const handleCookClick = async () => {
+    // async 추가
     if (!latestRecipe) return;
 
-    navigate("/mycookeep", {
-      state: {
-        selectedIngredients,
-        difficulty,
-        recipeData: latestRecipe,
-      },
-    });
+    try {
+      // 1. API 호출 (채택 완료 처리)
+      await completeSession();
+
+      // 2. 페이지 이동
+      navigate("/mycookeep", {
+        state: {
+          selectedIngredients,
+          difficulty,
+          recipeData: latestRecipe,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      alert("레시피 채택 중 오류가 발생했습니다.");
+    }
   };
 
   return (

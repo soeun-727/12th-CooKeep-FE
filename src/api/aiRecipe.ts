@@ -18,3 +18,11 @@ export const generateAiRecipe = async (
 
   return response.data;
 };
+
+// src/api/aiRecipe.ts 또는 적절한 위치
+export const completeAiRecipe = async (sessionId: number) => {
+  const response = await api.post(
+    `/api/users/me/ai/recipes/${sessionId}/complete`,
+  );
+  return response.data;
+};
