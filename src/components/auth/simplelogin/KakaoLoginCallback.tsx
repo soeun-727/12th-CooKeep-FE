@@ -8,9 +8,11 @@ export default function KakaoLoginCallback() {
   const hasCalledAPI = useRef(false);
 
   useEffect(() => {
+    alert(`현재 URL: ${window.location.href}`);
     const handleLogin = async () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
+      alert(`추출된 code: ${code}`);
       const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI || "";
 
       if (!code || hasCalledAPI.current) return;
