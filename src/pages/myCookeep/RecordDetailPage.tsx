@@ -70,20 +70,20 @@ export default function RecordDetailPage() {
     }
   };
 
-  const handleDescriptionChange = async (newDesc: string) => {
-    if (!record || !recordId || newDesc === record.description) return;
+  // const handleDescriptionChange = async (newDesc: string) => {
+  //   if (!record || !recordId || newDesc === record.description) return;
 
-    try {
-      const response = await updateDailyRecipe(Number(recordId), {
-        description: newDesc,
-      });
-      if (response.status === "OK") {
-        setRecord(response.data);
-      }
-    } catch (error: any) {
-      alert("한줄평 수정에 실패했습니다.");
-    }
-  };
+  //   try {
+  //     const response = await updateDailyRecipe(Number(recordId), {
+  //       description: newDesc,
+  //     });
+  //     if (response.status === "OK") {
+  //       setRecord(response.data);
+  //     }
+  //   } catch (error: any) {
+  //     alert("한줄평 수정에 실패했습니다.");
+  //   }
+  // };
 
   if (!record) return null;
 

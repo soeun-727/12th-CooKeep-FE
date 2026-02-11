@@ -77,11 +77,11 @@ export default function RecordWritePage() {
     fetchDetail();
   }, [selectedRecipeId, setTitle, title]);
 
-  // 목록에서 현재 선택된 레시피 찾기
-  const recipe = useMemo(
-    () => aiRecipes.find((r) => r.aiRecipeId === selectedRecipeId),
-    [selectedRecipeId, aiRecipes],
-  );
+  // // 목록에서 현재 선택된 레시피 찾기
+  // const recipe = useMemo(
+  //   () => aiRecipes.find((r) => r.aiRecipeId === selectedRecipeId),
+  //   [selectedRecipeId, aiRecipes],
+  // );
 
   // 가드 로직
   useEffect(() => {
