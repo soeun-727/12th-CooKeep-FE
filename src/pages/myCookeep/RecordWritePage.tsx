@@ -5,7 +5,6 @@ import Button from "../../components/ui/Button";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
 import RecipeDetailYoutube from "../../components/cookeeps/recipedetail/RecipeDetailYoutubeCard";
 import RecordWriteImageCard from "../../components/myCookeep/record/RecordWriteImageCard";
-import { MOCK_RECIPES } from "../../constants/mockRecipes";
 import RecipeRecordContentSection from "../../components/myCookeep/record/RecipeRecordContentSection";
 import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
@@ -13,9 +12,15 @@ import UploadCompleteModal from "../../components/myCookeep/record/UploadComplet
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { uploadImage } from "../../api/image";
 import { createDailyRecipe } from "../../api/myRecipe";
+import { DailyAiRecipe, getDailyAiRecipes } from "../../api/dailyAiRecipe";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [aiRecipes, setAiRecipes] = useState<DailyAiRecipe[]>([]);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     selectedRecipeId,
@@ -24,103 +29,53 @@ export default function RecordWritePage() {
     memo,
     images,
     isPublic,
-    records,
     setTitle,
     setMemo,
     setIsPublic,
     addImages,
-    addRecord,
-    updateRecordContent,
     resetRecord,
+    updateRecordContent, // 수정 모드 시 필요
   } = useCookeepRecordStore();
 
+  // 1. AI 레시피 목록 가져오기
+  useEffect(() => {
+    const fetchAiRecipes = async () => {
+      try {
+        const data = await getDailyAiRecipes();
+        setAiRecipes(data);
+      } catch (error) {
+        console.error("AI 레시피 목록 로드 실패", error);
+      }
+    };
+    fetchAiRecipes();
+  }, []);
+
+  // 2. 선택된 레시피 찾기 (MOCK 제거, aiRecipes에서 검색)
   const recipe = useMemo(
-    () => MOCK_RECIPES.find((r) => r.id === selectedRecipeId),
-    [selectedRecipeId],
+    () => aiRecipes.find((r) => r.aiRecipeId === selectedRecipeId),
+    [selectedRecipeId, aiRecipes],
   );
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const [showUploadModal, setShowUploadModal] = useState(false);
-
-  /* ---------- 수정 모드 초기화 ---------- */
+  // 3. 신규 진입 시 기본 제목 설정
   useEffect(() => {
-    if (!editingRecordId) return;
-
-    const record = records.find((r) => r.id === editingRecordId);
-    if (!record) return;
-
-    setTitle(record.recipeTitle);
-    setMemo(record.memo);
-    setIsPublic(record.isPublic);
-  }, [editingRecordId, records, setTitle, setMemo, setIsPublic]);
-
-  // 메모
-  const handleMemoInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    const el = e.currentTarget;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  };
-
-  // 신규 진입 시
-  useEffect(() => {
-    if (!editingRecordId && recipe) {
-      setTitle(recipe.recipeName);
+    if (!editingRecordId && recipe && !title) {
+      setTitle(recipe.title);
     }
-  }, [editingRecordId, recipe, setTitle]);
+  }, [editingRecordId, recipe, setTitle, title]);
 
-  /* ---------- 가드 ---------- */
+  // 4. 가드 로직
   useEffect(() => {
-    if (showUploadModal) return; // 업로드 완료 후엔 가드 비활성
-
+    if (showUploadModal) return;
     if (!selectedRecipeId && !editingRecordId) {
       navigate("/mycookeep/record/select", { replace: true });
     }
   }, [selectedRecipeId, editingRecordId, showUploadModal, navigate]);
 
-  /* ---------- 업로드 ---------- */
-  const handleUpload = async () => {
-    if (!recipe || selectedRecipeId === null || isPublic === null) {
-      alert("레시피 정보가 없습니다.");
-      return;
-    }
-    try {
-      let finalImageUrl = "";
-
-      // 1. 이미지가 있다면 먼저 S3에 업로드하여 URL 획득
-      if (images.length > 0 && images[0].file) {
-        const uploadRes = await uploadImage(images[0].file);
-        finalImageUrl = uploadRes.data.imageUrl; // 서버에서 준 S3 URL
-      }
-
-      // 2. 신규 등록일 경우 데일리 레시피 POST API 호출
-      if (!editingRecordId) {
-        const requestData = {
-          aiRecipeId: selectedRecipeId,
-          isPublic: isPublic,
-          title: title || recipe.recipeName, // 유저 입력 없으면 기본 제목
-          description: memo, // 한줄평
-          recipeImageUrl: finalImageUrl,
-        };
-
-        const response = await createDailyRecipe(requestData);
-
-        if (response.status === "OK") {
-          // 등록 성공 시에만 모달 띄우기
-          setShowUploadModal(true);
-        }
-      } else {
-        // 3. 수정 모드일 경우 (나중에 수정 API 연동)
-        // updateDailyRecipe(...) 호출
-        setShowUploadModal(true);
-      }
-    } catch (error) {
-      console.error("업로드 실패:", error);
-      alert("레시피 등록에 실패했습니다. 다시 시도해주세요.");
-    }
+  const handleMemoInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const el = e.currentTarget;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
   };
-
-  const [isUploading, setIsUploading] = useState(false);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -150,11 +105,40 @@ export default function RecordWritePage() {
     }
   };
 
-  // 쿠키추가
-  // const addCookie = useCookeepsStore((state) => state.addCookie);
+  /* ---------- 업로드 로직 ---------- */
+  const handleUpload = async () => {
+    if (!recipe || selectedRecipeId === null || isPublic === null) {
+      alert("레시피 정보가 올바르지 않습니다.");
+      return;
+    }
 
-  if (!recipe) return null;
-  if (selectedRecipeId === null) return null;
+    try {
+      // 신규 등록 API 호출
+      if (!editingRecordId) {
+        const requestData = {
+          aiRecipeId: selectedRecipeId,
+          isPublic: isPublic,
+          title: title || recipe.title, // 유저 입력 제목 또는 기본 제목
+          description: memo, // 한줄평 매핑
+          recipeImageUrl: images[0]?.url || "", // 업로드된 첫 번째 이미지 URL
+        };
+
+        const response = await createDailyRecipe(requestData);
+
+        if (response.status === "OK") {
+          setShowUploadModal(true);
+        }
+      } else {
+        // 수정 모드 로직 (필요 시 구현)
+        setShowUploadModal(true);
+      }
+    } catch (error) {
+      console.error("업로드 실패:", error);
+      alert("레시피 등록에 실패했습니다.");
+    }
+  };
+
+  if (!recipe || selectedRecipeId === null) return null;
 
   return (
     <>
@@ -163,7 +147,6 @@ export default function RecordWritePage() {
 
         <div className="flex-1 mx-auto w-full max-w-[450px] px-4 flex flex-col">
           <div className="pt-[51px] flex flex-col gap-[10px]">
-            {/* 이미지 (업로드 모드로 나중에 확장) */}
             <RecordWriteImageCard
               title={title}
               imageSrc={images[0]?.url}
@@ -180,94 +163,40 @@ export default function RecordWritePage() {
               onChange={handleImageChange}
             />
 
-            {/* 레시피 내용 (읽기 전용) */}
-            <RecipeRecordContentSection recipe={recipe} />
-
-            {/* 유튜브 영상 (읽기 전용) */}
-            {recipe.relatedVideos && (
-              <RecipeDetailYoutube
-                videos={recipe.relatedVideos}
-                tags={recipe.tags}
-              />
-            )}
+            {/* API 상세 데이터가 있다면 RecipeRecordContentSection에 전달 */}
+            {/* 현재 DailyAiRecipe 스펙엔 상세 내용이 없으므로 필요시 추가 API 호출 필요 */}
+            <RecipeRecordContentSection recipe={recipe as any} />
           </div>
 
-          {/* 메모 */}
           <div className="flex w-full flex-col items-center pt-4">
             <textarea
               value={memo}
               onChange={(e) => setMemo(e.target.value.slice(0, 500))}
               onInput={handleMemoInput}
               placeholder="글자 수 최대 500자"
-              className="
-    w-full
-    rounded-[10px]
-    bg-white
-    px-[10px]
-    py-3
-    text-center
-    typo-body
-    text-[#202020]
-    placeholder:text-[#7D7D7D]
-    resize-none
-    outline-none
-    overflow-hidden
-  "
+              className="w-full rounded-[10px] bg-white px-[10px] py-3 text-center typo-body text-[#202020] placeholder:text-[#7D7D7D] resize-none outline-none overflow-hidden"
               rows={1}
             />
           </div>
 
           <div className="relative mt-[15px] flex justify-center animate-float-bubble">
-            {/* 말풍선 본체 */}
             <div
-              className="
-      relative
-      z-10
-      inline-flex
-      items-center
-      px-[16px]
-      py-[9px]
-      rounded-[3px]
-      bg-white
-      text-[#32E389]
-      text-[12px]
-      font-medium
-      shadow-[0_4px_16px_rgba(0,0,0,0.13)]
-    "
+              className="relative z-10 inline-flex items-center px-[16px] py-[9px] rounded-[3px] bg-white text-[#32E389] text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
               style={{ width: 206, height: 36 }}
             >
               AI 레시피에서 달라진 부분이 있나요?
             </div>
-
-            {/* 삼각형 (본체 뒤에 깔림) */}
             <div
-              className="
-      absolute
-      top-0
-      translate-y-[-50%]
-      w-[12px]
-      h-[12px]
-      bg-white
-      rotate-45
-      z-0
-    "
-              style={{
-                boxShadow: "0 4px 16px rgba(0,0,0,0.13)",
-              }}
+              className="absolute top-0 translate-y-[-50%] w-[12px] h-[12px] bg-white rotate-45 z-0"
+              style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.13)" }}
             />
           </div>
 
-          {/* 하단 고정 영역 */}
           <div className="mt-auto pt-[64px] pb-[34px] flex flex-col gap-4 items-center">
-            {/* 공개 여부 */}
             <div className="flex justify-center gap-[9px] w-full">
-              {/* 나만 보기 */}
               <button
                 onClick={() => setIsPublic(false)}
-                className={`
-          flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1
-          ${isPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}
-        `}
+                className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 ${isPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
               >
                 <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white">
                   <img
@@ -279,13 +208,9 @@ export default function RecordWritePage() {
                 <span className="typo-label text-[#202020]">나만 보기</span>
               </button>
 
-              {/* 공개 */}
               <button
                 onClick={() => setIsPublic(true)}
-                className={`
-          flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1
-          ${isPublic === true ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}
-        `}
+                className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 ${isPublic === true ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
               >
                 <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white">
                   <img
@@ -300,7 +225,6 @@ export default function RecordWritePage() {
               </button>
             </div>
 
-            {/* 업로드 버튼 */}
             <Button
               size="L"
               variant="black"
@@ -314,31 +238,11 @@ export default function RecordWritePage() {
         </div>
       </div>
       {showUploadModal && (
-        // <UploadCompleteModal
-        //   onConfirm={() => {
-        //     if (editingRecordId) {
-        //       updateRecordContent({
-        //         recordId: editingRecordId,
-        //         memo,
-        //         images,
-        //         isPublic,
-        //       });
-        //     } else {
-        //       // 신규 등록일 때만 쿠키 증가
-        //       addCookie();
-        //     }
-
-        //     navigate("/mycookeep");
-        //     resetRecord(); // setTimeout 필요 없음
-        //   }}
-        //   onCancel={() => setShowUploadModal(false)}
-        // />
         <UploadCompleteModal
           onConfirm={async () => {
-            // 성공 후 이동 전처리
-            await useCookeepsStore.getState().fetchCookies(); // 쿠키(식물) 데이터 갱신
-            resetRecord(); // 작성 중이던 상태값 리셋
-            navigate("/mycookeep"); // 메인으로 이동
+            await useCookeepsStore.getState().fetchCookies();
+            resetRecord();
+            navigate("/mycookeep");
           }}
           onCancel={() => setShowUploadModal(false)}
         />
