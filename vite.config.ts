@@ -19,6 +19,8 @@ export default defineConfig({
         background_color: "#FAFAFA",
         display: "standalone",
         orientation: "portrait",
+        scope: "/",
+        start_url: "/",
         icons: [
           {
             src: "icons/icon-192.png",
@@ -37,6 +39,10 @@ export default defineConfig({
             purpose: "any maskable",
           },
         ],
+      },
+      workbox: {
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/auth/],
       },
       devOptions: {
         enabled: true,
