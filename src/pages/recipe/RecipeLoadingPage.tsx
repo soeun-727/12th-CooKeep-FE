@@ -27,12 +27,16 @@ export default function RecipeLoadingPage() {
     }
 
     if (step === messages.length) {
-      generateRecipe();
-
-      const timer = setTimeout(() => navigate("/recipe/result"), 1000);
-      return () => clearTimeout(timer);
+      (async () => {
+        try {
+          await generateRecipe(); // 끝날 때까지 기다림
+          navigate("/recipe/result");
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     }
-  }, [step]);
+  }, [step, generateRecipe, navigate]);
 
   useEffect(() => {
     if (selectedIngredients.length === 0 || !difficulty) {

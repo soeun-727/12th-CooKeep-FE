@@ -27,7 +27,7 @@ export default function Layout() {
   useEffect(() => {
     if (!location.pathname.startsWith("/recipe")) {
       useIngredientStore.getState().clearSelection();
-      useRecipeFlowStore.getState().clearSelection();
+      useRecipeFlowStore.getState().reset();
     }
   }, [location.pathname]);
 

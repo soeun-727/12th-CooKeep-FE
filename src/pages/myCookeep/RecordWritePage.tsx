@@ -11,8 +11,6 @@ import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
 import UploadCompleteModal from "../../components/myCookeep/record/UploadCompleteModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
-import { getKoreaToday } from "../../utils/date";
-import { setTodayRecord } from "../../utils/record";
 import { uploadImage } from "../../api/image";
 import { createDailyRecipe } from "../../api/myRecipe";
 
@@ -122,6 +120,36 @@ export default function RecordWritePage() {
     }
   };
 
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || isUploading) return;
+
+    if (images.length + files.length > 2) {
+      alert("이미지는 최대 2장까지 업로드 가능합니다.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileList = Array.from(files);
+      const uploadPromises = fileList.map((file) => uploadImage(file));
+      const responses = await Promise.all(uploadPromises);
+
+      const newImages = responses.map((res) => ({
+        url: res.data.imageUrl,
+      }));
+
+      addImages(newImages);
+    } catch (error) {
+      alert("이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setIsUploading(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
   // 쿠키추가
   // const addCookie = useCookeepsStore((state) => state.addCookie);
 
@@ -149,10 +177,7 @@ export default function RecordWritePage() {
               multiple
               ref={fileInputRef}
               hidden
-              onChange={(e) => {
-                if (!e.target.files) return;
-                addImages(Array.from(e.target.files));
-              }}
+              onChange={handleImageChange}
             />
 
             {/* 레시피 내용 (읽기 전용) */}
@@ -279,7 +304,7 @@ export default function RecordWritePage() {
             <Button
               size="L"
               variant="black"
-              disabled={isPublic === null}
+              disabled={isPublic === null || isUploading}
               className={`${isPublic === null ? "text-white" : "!text-[#32E389]"}`}
               onClick={handleUpload}
             >
