@@ -42,7 +42,7 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/auth/],
+        navigateFallbackDenylist: [/^\/auth\/kakao/, /^\/api/],
       },
       devOptions: {
         enabled: true,
