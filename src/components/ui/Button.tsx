@@ -50,7 +50,7 @@ const Button: React.FC<ButtonProps> = ({
         ${baseStyle}
         ${sizeStyles[size]}
         ${disabled ? disabledStyle : variantStyles[variant]}
-        button-text
+        button-text typo-button
         ${className}
       `}
     >
