@@ -31,14 +31,14 @@ export default function Initial() {
       </div>
 
       {/* 애니메이션 */}
-      <div className="relative flex mt-13 w-full overflow-hidden">
-        <div className="flex h-50 items-end animate-roll-left">
+      <div className="relative mt-13 w-full overflow-hidden">
+        <div className="flex h-50 items-end animate-roll-left w-max flex-nowrap">
           {INFINITE_CHAR.map((char, index) => (
             <img
               key={index}
               src={char}
               alt={`character-${index}`}
-              className="w-[791.5px] flex-shrink-0 px-4"
+              className="mr-8 w-[791.5px] min-w-[791.5px] object-contain flex-shrink-0"
             />
           ))}
         </div>
