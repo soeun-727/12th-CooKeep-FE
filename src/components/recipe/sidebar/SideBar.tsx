@@ -15,7 +15,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
-  const { pinned, sessions, fetchSessions, isLoading, error } =
+  const { pinned, sessions, fetchSessions, isLoading, error, toggleLike } =
     useRecipeStore();
   const [isVisible, setIsVisible] = useState(isOpen);
   const [shouldAnimateOpen, setShouldAnimateOpen] = useState(false);
@@ -83,6 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             isLiked={isLiked}
             name={item.title}
             searchTerm={searchTerm}
+            onLike={() => toggleLike(item.sessionId)}
             onSelect={() => {
               onClose();
               navigate(`/recipe/result/${item.sessionId}`);

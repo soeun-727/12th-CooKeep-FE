@@ -49,34 +49,6 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
   setDifficulty: (difficulty) => set({ difficulty }),
 
-  // generateRecipe: async () => {
-  //   const { selectedIngredients, difficulty, sessionId, recipeHistory } = get();
-
-  //   if (!difficulty) return;
-
-  //   try {
-  //     const body =
-  //       sessionId === null
-  //         ? {
-  //             ingredientIds: selectedIngredients.map((i) => i.id),
-  //             difficulty,
-  //           }
-  //         : {
-  //             sessionId,
-  //           };
-
-  //     const response = await generateAiRecipe(body);
-
-  //     set({
-  //       sessionId: response.sessionId,
-  //       retryCount: response.changeCount,
-  //       recipeHistory: [...recipeHistory, response],
-  //     });
-  //   } catch (error) {
-  //     console.error("AI 레시피 생성 실패:", error);
-  //     throw error;
-  //   }
-  // },
   generateRecipe: async () => {
     const { selectedIngredients, difficulty, sessionId, recipeHistory } = get();
 

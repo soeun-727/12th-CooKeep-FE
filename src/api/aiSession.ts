@@ -47,3 +47,11 @@ export const getAiSessionDetail = async (sessionId: number) => {
 
   return res.data.data;
 };
+
+// 즐겨찾기
+export const toggleFavoriteSession = async (sessionId: number) => {
+  const response = await api.patch(
+    `/api/users/me/ai/recipes/sessions/${sessionId}`,
+  );
+  return response.data;
+};
