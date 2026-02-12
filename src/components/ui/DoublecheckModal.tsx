@@ -8,7 +8,7 @@ interface DoublecheckModalProps {
   onConfirm: () => void;
   confirmText?: string;
   cancelText?: string;
-  variant?: "black" | "green";
+  variant?: "black" | "green" | "singular";
 }
 
 const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
@@ -22,8 +22,10 @@ const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
   variant = "black",
 }) => {
   if (!isOpen) return null;
+  const isSingular = variant === "singular";
   const confirmBtnColor =
     variant === "green" ? "bg-(--color-green)" : "bg-black";
+  const buttonWidth = isSingular ? "w-[184px]" : "w-[95px]";
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-[#11111180]">
       <div className="absolute inset-0" onClick={onClose}></div>
@@ -40,16 +42,18 @@ const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
               onConfirm();
               onClose();
             }}
-            className={`typo-label w-[95px] h-11 text-white rounded-[10px] transition-colors active:opacity-80 ${confirmBtnColor}`}
+            className={`typo-label h-11 text-white rounded-[10px] transition-colors active:opacity-80 ${confirmBtnColor} ${buttonWidth}`}
           >
             {confirmText}
           </button>
-          <button
-            onClick={onClose}
-            className="typo-label w-[95px] h-11 text-white bg-stone-300 rounded-[10px]"
-          >
-            {cancelText}
-          </button>
+          {!isSingular && (
+            <button
+              onClick={onClose}
+              className="typo-label w-[95px] h-11 text-white bg-stone-300 rounded-[10px] active:opacity-80"
+            >
+              {cancelText}
+            </button>
+          )}
         </div>
       </div>
     </div>
