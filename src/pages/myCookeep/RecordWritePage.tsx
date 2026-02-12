@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
@@ -11,19 +11,13 @@ import UploadCompleteModal from "../../components/myCookeep/record/UploadComplet
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { uploadImage } from "../../api/image";
 import { createDailyRecipe } from "../../api/myRecipe";
-import {
-  AiRecipeDetail,
-  DailyAiRecipe,
-  getAiRecipeDetail,
-  getDailyAiRecipes,
-} from "../../api/dailyAiRecipe";
+import { AiRecipeDetail, getAiRecipeDetail } from "../../api/dailyAiRecipe";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [recipeDetail, setRecipeDetail] = useState<AiRecipeDetail | null>(null);
-  const [aiRecipes, setAiRecipes] = useState<DailyAiRecipe[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -41,20 +35,6 @@ export default function RecordWritePage() {
     resetRecord,
   } = useCookeepRecordStore();
 
-  // 1. AI 레시피 목록 가져오기 (가드 및 기본 정보용)
-  useEffect(() => {
-    const fetchAiRecipes = async () => {
-      try {
-        const data = await getDailyAiRecipes();
-        setAiRecipes(data);
-      } catch (error) {
-        console.error("AI 레시피 목록 로드 실패", error);
-      }
-    };
-    fetchAiRecipes();
-  }, []);
-
-  // 2. 상세 데이터 가져오기 (재료, 단계, 유튜브)
   useEffect(() => {
     if (!selectedRecipeId) return;
 
