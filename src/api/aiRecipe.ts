@@ -19,7 +19,19 @@ export const generateAiRecipe = async (
   return response.data;
 };
 
-// src/api/aiRecipe.ts 또는 적절한 위치
+// 재생성
+export const retryAiRecipe = async (body: {
+  sessionId: number;
+  difficulty: Difficulty;
+  ingredientIds: number[];
+}): Promise<AiRecipeResponse> => {
+  const response = await api.post("/api/users/me/ai/recipes/retry", body, {
+    timeout: 60000,
+  });
+  return response.data;
+};
+
+// 채택
 export const completeAiRecipe = async (sessionId: number) => {
   const response = await api.post(
     `/api/users/me/ai/recipes/${sessionId}/complete`,

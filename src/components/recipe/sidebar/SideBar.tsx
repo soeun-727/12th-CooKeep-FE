@@ -15,8 +15,16 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
-  const { pinned, sessions, fetchSessions, isLoading, error } =
-    useRecipeStore();
+  const {
+    pinned,
+    sessions,
+    fetchSessions,
+    isLoading,
+    error,
+    toggleLike,
+    renameRecipe,
+    deleteSession,
+  } = useRecipeStore();
   const [isVisible, setIsVisible] = useState(isOpen);
   const [shouldAnimateOpen, setShouldAnimateOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,9 +38,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     ? "translate-x-0"
     : "-translate-x-full";
 
-  const handleConfirmDelete = () => {
+  // 삭제 확인 모달의 Confirm 핸들러 수정
+  const handleConfirmDelete = async () => {
     if (selectedRecipe) {
-      // deleteRecipe(selectedRecipe.id);
+      await deleteSession(selectedRecipe.id); // API 호출
+      // 현재 URL에 삭제한 sessionId가 포함되어 있다면 메인으로 리다이렉트
+      if (window.location.pathname.includes(String(selectedRecipe.id))) {
+        navigate("/recipe"); // 또는 레시피 목록 메인 페이지로
+      }
       setIsDeleteModalOpen(false);
       setSelectedRecipe(null);
     }
@@ -63,14 +76,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  // const recipes = [...pinned, ...sessions];
-
-  //  const filteredRecipes = useMemo(() => {
-  //   return recipes.filter((r) =>
-  //     r.title.toLowerCase().includes(searchTerm.toLowerCase()),
-  //   );
-  // }, [recipes, searchTerm]);
-
   const renderRecipeList = (list: AiRecipeSessionItem[], isLiked: boolean) => (
     <div className="flex flex-col items-center w-full">
       {list
@@ -83,6 +88,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             isLiked={isLiked}
             name={item.title}
             searchTerm={searchTerm}
+            onLike={() => toggleLike(item.sessionId)}
+            onRename={(newTitle) => renameRecipe(item.sessionId, newTitle)}
+            onDelete={() => {
+              // 삭제 버튼 클릭 시 모달 오픈 및 데이터 세팅
+              setSelectedRecipe({ id: item.sessionId, name: item.title });
+              setIsDeleteModalOpen(true);
+            }}
             onSelect={() => {
               onClose();
               navigate(`/recipe/result/${item.sessionId}`);

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useRecipeStore } from "../../../../stores/useRecipeStore";
 import tempIcon from "../../../../assets/mycookeep/record/fork_knife_plate.svg";
 import unlikedIcon from "../../../../assets/recipe/unliked.svg";
 import likedIcon from "../../../../assets/recipe/liked.svg";
@@ -8,9 +9,17 @@ interface Props {
 }
 
 export default function RecipeTitle({ name }: Props) {
-  const [liked, setLiked] = useState(false);
+  const { sessionId } = useParams();
+  const { pinned, toggleLike } = useRecipeStore();
 
-  const toggleLike = () => setLiked((prev) => !prev);
+  // 현재 세션이 pinned 배열에 있는지 확인하여 하트 색상 결정
+  const isLiked = pinned.some((p) => p.sessionId === Number(sessionId));
+
+  const handleToggleLike = async () => {
+    if (sessionId) {
+      await toggleLike(Number(sessionId));
+    }
+  };
 
   return (
     <div
@@ -42,12 +51,12 @@ export default function RecipeTitle({ name }: Props) {
 
       {/* 즐겨찾기 버튼 */}
       <button
-        onClick={toggleLike}
+        onClick={handleToggleLike}
         className="flex-shrink-0 w-[22px] h-[18px] aspect-square"
       >
         <img
-          src={liked ? likedIcon : unlikedIcon}
-          alt={liked ? "즐겨찾기됨" : "즐겨찾기 안됨"}
+          src={isLiked ? likedIcon : unlikedIcon}
+          alt={isLiked ? "즐겨찾기됨" : "즐겨찾기 안됨"}
           className="object-contain w-full h-full"
         />
       </button>
