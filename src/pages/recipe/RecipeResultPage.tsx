@@ -4,36 +4,32 @@ import RecipeHeader from "../../components/recipe/main/RecipeHeader";
 import RecipeTitle from "../../components/recipe/main/result/RecipeTitle";
 import RecipeYoutubeCard from "../../components/recipe/main/result/RecipeYoutubeCard";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
 export default function RecipeResultPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { recipeHistory, difficulty, retryCount, generateRecipe } =
+  const { recipeHistory, difficulty, retryCount, generateRecipe, isLoading } =
     useRecipeFlowStore();
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleRetry = async () => {
     if (isLoading) return;
-    if (retryCount >= 5) return; // 5회 제한
-
-    setIsLoading(true);
+    if (retryCount >= 5) return;
 
     try {
       await generateRecipe();
-    } catch (error) {
-      console.error("레시피 생성 실패:", error);
-    } finally {
-      setIsLoading(false);
 
+      // 생성이 완료된 후 스크롤 이동
       setTimeout(() => {
         scrollRef.current?.scrollTo({
           top: scrollRef.current.scrollHeight,
           behavior: "smooth",
         });
       }, 100);
+    } catch (error) {
+      console.error("레시피 채택 실패:", error);
+      alert("레시피 재 생성 중 오류가 발생했습니다.");
     }
   };
 
@@ -130,6 +126,7 @@ export default function RecipeResultPage() {
             retryCount={retryCount}
             onRetry={handleRetry}
             showRetryButton={!isHistoryMode} // 히스토리 모드일 때는 false
+            isLoading={isLoading}
           />
         </div>
       </div>

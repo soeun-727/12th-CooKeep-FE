@@ -47,3 +47,31 @@ export const getAiSessionDetail = async (sessionId: number) => {
 
   return res.data.data;
 };
+
+// 즐겨찾기
+export const toggleFavoriteSession = async (sessionId: number) => {
+  const response = await api.patch(
+    `/api/users/me/ai/recipes/sessions/${sessionId}`,
+  );
+  return response.data;
+};
+
+// 제목 이름 수정
+export const updateAiSessionTitle = async (
+  sessionId: number,
+  title: string,
+) => {
+  const response = await api.patch(
+    `/api/users/me/ai/recipes/sessions/title/${sessionId}`,
+    { title }, // Request Body
+  );
+  return response.data;
+};
+
+// 레시피 삭제
+export const deleteAiRecipeSession = async (sessionId: number) => {
+  const response = await api.delete(
+    `/api/users/me/ai/recipes/sessions/${sessionId}`,
+  );
+  return response.data;
+};
