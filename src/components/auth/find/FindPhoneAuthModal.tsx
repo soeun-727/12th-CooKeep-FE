@@ -81,7 +81,7 @@ const FindPhoneAuthModal = ({
           size="S"
           onClick={isNotRegistered ? onSignup : onConfirm}
           className={`!h-[38px] ${
-            isHelp ? "!w-[200px] !bg-[#202020]" : "!w-[184px] !bg-[#1FC16F]"
+            isHelp ? "!w-[200px] !bg-[#202020]" : "!w-[184px] !bg-[#32E389]"
           }`}
         >
           {isHelp ? "닫기" : isNotRegistered ? "회원가입하기" : "확인"}

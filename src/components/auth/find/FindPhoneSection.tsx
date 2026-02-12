@@ -4,7 +4,7 @@ import TextField from "../../ui/TextField";
 import FindPhoneAuthModal from "./FindPhoneAuthModal";
 import { useNavigate } from "react-router-dom";
 import { useFindPasswordStore } from "../../../stores/useFindPasswordStore";
-import axios from "axios";
+// import axios from "axios";
 
 export default function FindPhoneSection() {
   const { phone, setPhone, isCodeSent, sendCode, verifyCode } =
@@ -49,21 +49,20 @@ export default function FindPhoneSection() {
     try {
       setCode("");
       setCodeError(undefined);
-      setTimeLeft(300);
-      setTimerActive(true);
 
       await sendCode();
+
+      setTimeLeft(300);
+      setTimerActive(true);
       setModalType("send");
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = error.message;
-
-        if (message === "가입된 번호가 없습니다.") {
+      if (error instanceof Error) {
+        if (error.message === "가입된 번호가 없습니다.") {
           setModalType("notRegistered");
           return;
         }
 
-        alert(message);
+        alert(error.message);
         return;
       }
 
