@@ -49,6 +49,7 @@ export default function CookeepsPage() {
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
 
   const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
+  const isPlantLoading = useCookeepsStore((s) => s.isPlantLoading);
 
   /* =========================
     수확 감지
@@ -94,6 +95,8 @@ export default function CookeepsPage() {
     if (activeModal === "selected") return "selected";
 
     // 4. 그 다음 식물이 없을 때 'select'
+    if (isPlantLoading) return null;
+
     if (!currentPlant) return "select";
 
     // 식물 상태에 따른 모달
@@ -105,18 +108,12 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    const { fetchMyPlants, fetchCookies, checkStatusByTime } =
+    const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
       useCookeepsStore.getState();
 
+    fetchGrowingPlant();
+    fetchCookies();
     fetchMyPlants();
-    fetchCookies(); //  필수
-    checkStatusByTime();
-
-    const interval = setInterval(() => {
-      checkStatusByTime();
-    }, 60 * 1000);
-
-    return () => clearInterval(interval);
   }, []);
 
   /* =========================
@@ -149,44 +146,6 @@ export default function CookeepsPage() {
   const [selectedPlantData, setSelectedPlantData] =
     useState<SelectedPlant | null>(null);
 
-  // const handleFinalStart = async () => {
-  //   if (!selectedPlantData) return;
-
-  //   try {
-  //     // 1. 등록 실행 및 서버 응답 받기
-  //     const res = await registerPlant(selectedPlantData.id);
-
-  //     const store = useCookeepsStore.getState();
-  //     const current = store.currentPlant;
-
-  //     if (!current) {
-  //       setActiveModal("select");
-  //       return;
-  //     }
-
-  //     // 2. UI 데이터 업데이트
-  //     const plantData = PLANT_DATA.find((p) => p.text === current.plantName);
-  //     setSelectedPlantData({
-  //       id: current.userPlantId,
-  //       text: current.plantName,
-  //       img: plantData?.img || "",
-  //       description: plantData?.description || "",
-  //       isHarvested: current.isHarvested,
-  //     });
-
-  //     // 실제 서버 응답 body의 'data' 필드에 메시지가 담겨 오므로 이를 체크합니다.
-  //     if (res?.data === "첫 식물 등록이 완료되었습니다.") {
-  //       console.log("첫 등록 보너스 감지!");
-  //       setActiveModal("free");
-  //     } else {
-  //       console.log("일반 등록 완료");
-  //       setActiveModal(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("식물 시작 실패:", error);
-  //     setActiveModal("select");
-  //   }
-  // };
   const handleFinalStart = async () => {
     if (!selectedPlantData) return;
 
