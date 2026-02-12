@@ -243,3 +243,17 @@ body,
 .delay-400 {
   animation-delay: 0.8s;
 }
+
+/* 8개 점 로딩 애니메이션: 회색 -> 초록색 -> 회색 */
+  @keyframes dot-chase {
+    0%, 100% {
+      background-color: #D9D9D9;
+    }
+    50% {
+      background-color: #1FC16F; /* Deep Green */
+    }
+  }
+
+  .animate-dot-chase {
+    animation: dot-chase 1.2s infinite ease-in-out;
+  }

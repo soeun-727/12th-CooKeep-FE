@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import searchIcon from "../../assets/recipe/search.svg";
 import liked from "../../assets/recipe/liked.svg";
@@ -6,14 +6,20 @@ import unliked from "../../assets/recipe/unliked.svg";
 import deleteIcon from "../../assets/recipe/delete.svg";
 import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
-import { useRecipeStore, type RecipeItem } from "../../stores/useRecipeStore";
+// import { useRecipeStore, type RecipeItem } from "../../stores/useRecipeStore";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
+import { useDailyAiRecipeStore } from "../../stores/useDailyAiRecipeStore";
+import type { DailyAiRecipe } from "../../api/dailyAiRecipe";
 
 export default function RecordSelectPage() {
   const navigate = useNavigate();
 
   // 임시: 기존 레시피 store 재사용
-  const { recipes } = useRecipeStore();
+  const { recipes, fetchRecipes } = useDailyAiRecipeStore();
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
 
   // 기록용 store
   const { selectedRecipeId, setSelectedRecipeId } = useCookeepRecordStore();
@@ -25,21 +31,20 @@ export default function RecordSelectPage() {
   // 검색 필터
   const filteredRecipes = useMemo(() => {
     return recipes.filter((recipe) =>
-      recipe.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      recipe.title.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [recipes, searchTerm]);
 
-  // 레시피 순서
-  const likedRecipes = filteredRecipes.filter((recipe) => recipe.isLiked);
-  const normalRecipes = filteredRecipes.filter((recipe) => !recipe.isLiked);
+  const likedRecipes = filteredRecipes.filter((r) => r.isPinned);
+  const normalRecipes = filteredRecipes.filter((r) => !r.isPinned);
 
-  const renderRecipeItem = (recipe: RecipeItem) => {
-    const isSelected = selectedRecipeId === recipe.id;
+  const renderRecipeItem = (recipe: DailyAiRecipe) => {
+    const isSelected = selectedRecipeId === recipe.aiRecipeId;
 
     return (
       <div
-        key={recipe.id}
-        onClick={() => setSelectedRecipeId(recipe.id)}
+        key={recipe.aiRecipeId}
+        onClick={() => setSelectedRecipeId(recipe.aiRecipeId)}
         className={`
         flex justify-between items-center
         w-full
@@ -53,7 +58,7 @@ export default function RecordSelectPage() {
         {/* 왼쪽: 좋아요 + 제목 */}
         <div className="flex items-center gap-3">
           <img
-            src={recipe.isLiked ? liked : unliked}
+            src={recipe.isPinned ? liked : unliked}
             alt="like"
             className="w-[18px] h-[15px] shrink-0"
           />
@@ -65,7 +70,7 @@ export default function RecordSelectPage() {
     ${isSelected ? "text-[#1FC16F]" : "text-[#202020]"}
   `}
           >
-            {recipe.name}
+            {recipe.title}
           </span>
         </div>
 
@@ -149,15 +154,17 @@ export default function RecordSelectPage() {
             size="L"
             disabled={!selectedRecipeId}
             onClick={() => {
-              const recipe = recipes.find((r) => r.id === selectedRecipeId);
+              const recipe = recipes.find(
+                (r) => r.aiRecipeId === selectedRecipeId,
+              );
               if (!recipe) return;
 
               //  수정 모드 → 여기서만 레시피 교체
               if (editingRecordId) {
                 updateRecordRecipe({
                   recordId: editingRecordId,
-                  recipeId: recipe.id,
-                  recipeTitle: recipe.name,
+                  recipeId: recipe.aiRecipeId,
+                  recipeTitle: recipe.title,
                 });
               }
 

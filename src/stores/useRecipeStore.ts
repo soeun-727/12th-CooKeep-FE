@@ -1,47 +1,106 @@
 import { create } from "zustand";
-
-export interface RecipeItem {
-  id: number;
-  name: string;
-  isLiked: boolean;
-}
+import {
+  getAiRecipeSessions,
+  AiRecipeSessionItem,
+  toggleFavoriteSession,
+  updateAiSessionTitle,
+  deleteAiRecipeSession,
+} from "../api/aiSession";
 
 interface RecipeState {
-  recipes: RecipeItem[];
-  toggleLike: (id: number) => void;
-  renameRecipe: (id: number, newName: string) => void;
-  deleteRecipe: (id: number) => void;
-  setRecipes: (recipes: RecipeItem[]) => void;
+  pinned: AiRecipeSessionItem[];
+  sessions: AiRecipeSessionItem[];
+  isLoading: boolean;
+  error: string | null;
+
+  fetchSessions: () => Promise<void>;
+  toggleLike: (sessionId: number) => Promise<void>;
+  renameRecipe: (sessionId: number, newTitle: string) => Promise<void>;
+  deleteSession: (sessionId: number) => Promise<void>;
 }
 
 export const useRecipeStore = create<RecipeState>((set) => ({
-  recipes: [
-    { id: 1, name: "참치마요 덮밥", isLiked: true },
-    { id: 2, name: "남은 야채 비빔밥", isLiked: false },
-    { id: 3, name: "토마토 달걀 볶음 (토달볶)", isLiked: true },
-    { id: 4, name: "스팸 김치찌개 레시피", isLiked: false },
-    { id: 5, name: "베이컨 크림 파스타", isLiked: false },
-    { id: 6, name: "계란 간장 버터밥", isLiked: true },
-  ],
+  pinned: [],
+  sessions: [],
+  isLoading: false,
+  error: null,
 
-  setRecipes: (newRecipes) => set({ recipes: newRecipes }),
+  fetchSessions: async () => {
+    try {
+      set({ isLoading: true, error: null });
 
-  toggleLike: (id) =>
-    set((state) => ({
-      recipes: state.recipes.map((r) =>
-        r.id === id ? { ...r, isLiked: !r.isLiked } : r,
-      ),
-    })),
+      const data = await getAiRecipeSessions();
 
-  renameRecipe: (id, newName) =>
-    set((state) => ({
-      recipes: state.recipes.map((r) =>
-        r.id === id ? { ...r, name: newName } : r,
-      ),
-    })),
+      set({
+        pinned: data.pinned,
+        sessions: data.sessions,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error("세션 목록 조회 실패:", error);
+      set({
+        error: "세션 목록을 불러오지 못했습니다.",
+        isLoading: false,
+      });
+    }
+  },
 
-  deleteRecipe: (id) =>
-    set((state) => ({
-      recipes: state.recipes.filter((r) => r.id !== id),
-    })),
+  toggleLike: async (sessionId: number) => {
+    try {
+      await toggleFavoriteSession(sessionId);
+
+      // 서버에서 다시 데이터를 가져오거나 로컬에서 위치를 옮겨줍니다.
+      // 여기서는 가장 정확한 방법인 재조회(fetch) 방식을 권장합니다.
+      const data = await getAiRecipeSessions();
+      set({
+        pinned: data.pinned,
+        sessions: data.sessions,
+      });
+    } catch (error) {
+      console.error("즐겨찾기 변경 실패:", error);
+      alert("즐겨찾기 상태를 변경하지 못했습니다.");
+    }
+  },
+
+  renameRecipe: async (sessionId: number, newTitle: string) => {
+    try {
+      set({ isLoading: true });
+      await updateAiSessionTitle(sessionId, newTitle);
+
+      // 최신 목록을 다시 불러와서 UI를 동기화합니다.
+      const data = await getAiRecipeSessions();
+      set({
+        pinned: data.pinned,
+        sessions: data.sessions,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error("제목 수정 실패:", error);
+      set({ isLoading: false });
+      alert("제목 수정에 실패했습니다.");
+    }
+  },
+
+  deleteSession: async (sessionId: number) => {
+    try {
+      set({ isLoading: true });
+      await deleteAiRecipeSession(sessionId);
+
+      // 서버에서 성공하면 로컬 상태를 최신화 (두 가지 방법 중 선택)
+
+      // 방법 1: API 다시 찌르기 (가장 확실함)
+      // await get().fetchSessions();
+
+      // 방법 2: 로컬 상태에서 직접 필터링 (네트워크 비용 아끼기)
+      set((state) => ({
+        pinned: state.pinned.filter((s) => s.sessionId !== sessionId),
+        sessions: state.sessions.filter((s) => s.sessionId !== sessionId),
+        isLoading: false,
+      }));
+    } catch (error) {
+      console.error("세션 삭제 실패:", error);
+      set({ isLoading: false });
+      alert("레시피 삭제에 실패했습니다.");
+    }
+  },
 }));

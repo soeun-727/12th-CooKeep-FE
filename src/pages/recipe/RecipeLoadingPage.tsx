@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import LoadingIcon from "../../assets/recipe/main/LoadingIcon.svg";
+// import LoadingIcon from "../../assets/recipe/main/LoadingIcon.svg";
 import CheckIcon from "../../assets/signup/check.svg";
 import StepMessage from "../../components/recipe/main/loading/StepMessage";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
+import RecipeLoadingSpinner from "../../components/recipe/main/loading/RecipeLoadingSpinner";
 
 export default function RecipeLoadingPage() {
   const navigate = useNavigate();
@@ -27,12 +28,16 @@ export default function RecipeLoadingPage() {
     }
 
     if (step === messages.length) {
-      generateRecipe();
-
-      const timer = setTimeout(() => navigate("/recipe/result"), 1000);
-      return () => clearTimeout(timer);
+      (async () => {
+        try {
+          await generateRecipe(); // 끝날 때까지 기다림
+          navigate("/recipe/result");
+        } catch (error) {
+          console.error(error);
+        }
+      })();
     }
-  }, [step]);
+  }, [step, generateRecipe, navigate]);
 
   useEffect(() => {
     if (selectedIngredients.length === 0 || !difficulty) {
@@ -43,12 +48,12 @@ export default function RecipeLoadingPage() {
   return (
     <div className="flex flex-col items-center h-screen pt-[139px] text-center">
       {/* 로딩 아이콘 */}
-      <img
+      {/* <img
         src={LoadingIcon}
         className="w-20 h-20 animate-spin mb-10"
         alt="loading"
-      />
-      {/* <RecipeLoadingSpinner /> */}
+      /> */}
+      <RecipeLoadingSpinner />
 
       {/* 타이틀 / 서브타이틀 */}
       <div className="flex flex-col items-center w-[361px] gap-2 mb-[49px]">

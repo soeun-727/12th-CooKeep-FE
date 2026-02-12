@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useLayoutEffect, useMemo } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import Recipe from "./Recipe";
 import DoublecheckModal from "../../ui/DoublecheckModal";
 import TextField from "../../ui/TextField";
 import searchIcon from "../../../assets/recipe/search.svg";
 import { useRecipeStore } from "../../../stores/useRecipeStore";
 import { useNavigate } from "react-router-dom";
+import { AiRecipeSessionItem } from "../../../api/aiSession";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -14,7 +15,16 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
-  const { recipes, toggleLike, renameRecipe, deleteRecipe } = useRecipeStore();
+  const {
+    pinned,
+    sessions,
+    fetchSessions,
+    isLoading,
+    error,
+    toggleLike,
+    renameRecipe,
+    deleteSession,
+  } = useRecipeStore();
   const [isVisible, setIsVisible] = useState(isOpen);
   const [shouldAnimateOpen, setShouldAnimateOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,16 +38,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     ? "translate-x-0"
     : "-translate-x-full";
 
-  const handleConfirmDelete = () => {
+  // 삭제 확인 모달의 Confirm 핸들러 수정
+  const handleConfirmDelete = async () => {
     if (selectedRecipe) {
-      deleteRecipe(selectedRecipe.id);
+      await deleteSession(selectedRecipe.id); // API 호출
+      // 현재 URL에 삭제한 sessionId가 포함되어 있다면 메인으로 리다이렉트
+      if (window.location.pathname.includes(String(selectedRecipe.id))) {
+        navigate("/recipe"); // 또는 레시피 목록 메인 페이지로
+      }
       setIsDeleteModalOpen(false);
       setSelectedRecipe(null);
     }
   };
 
   useEffect(() => {
+    fetchSessions();
+  }, [fetchSessions]);
+
+  useEffect(() => {
     if (!isOpen) {
+      /* eslint-disable react-hooks/set-state-in-effect */
       setShouldAnimateOpen(false);
       const timer = setTimeout(() => {
         setIsVisible(false);
@@ -56,30 +76,28 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
-  const filteredRecipes = useMemo(() => {
-    return recipes.filter((r) =>
-      r.name.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  }, [recipes, searchTerm]);
-
-  const renderRecipeList = (isLiked: boolean) => (
+  const renderRecipeList = (list: AiRecipeSessionItem[], isLiked: boolean) => (
     <div className="flex flex-col items-center w-full">
-      {filteredRecipes
-        .filter((item) => item.isLiked === isLiked)
+      {list
+        .filter((item) =>
+          item.title.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
         .map((item) => (
           <Recipe
-            key={item.id}
-            {...item}
+            key={item.sessionId}
+            isLiked={isLiked}
+            name={item.title}
             searchTerm={searchTerm}
-            onLike={() => toggleLike(item.id)}
-            onRename={(newName) => renameRecipe(item.id, newName)}
+            onLike={() => toggleLike(item.sessionId)}
+            onRename={(newTitle) => renameRecipe(item.sessionId, newTitle)}
             onDelete={() => {
-              setSelectedRecipe(item);
+              // 삭제 버튼 클릭 시 모달 오픈 및 데이터 세팅
+              setSelectedRecipe({ id: item.sessionId, name: item.title });
               setIsDeleteModalOpen(true);
             }}
             onSelect={() => {
-              onClose(); // 사이드바 닫고
-              navigate(`/recipe/result/${item.id}`);
+              onClose();
+              navigate(`/recipe/result/${item.sessionId}`);
             }}
           />
         ))}
@@ -124,14 +142,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
             <div className="flex flex-col items-center w-full mt-2">
-              {recipes.length > 0 ? (
+              {isLoading && (
+                <div className="text-center py-4 text-sm text-gray-400">
+                  불러오는 중...
+                </div>
+              )}
+
+              {error && (
+                <div className="text-center py-4 text-sm text-red-400">
+                  {error}
+                </div>
+              )}
+
+              {pinned.length + sessions.length > 0 ? (
                 <>
-                  {renderRecipeList(true)}
-                  {filteredRecipes.some((r) => r.isLiked) &&
-                    filteredRecipes.some((r) => !r.isLiked) && (
-                      <div className="h-6" />
-                    )}
-                  {renderRecipeList(false)}
+                  {pinned.length > 0 && renderRecipeList(pinned, true)}
+
+                  {pinned.length > 0 && sessions.length > 0 && (
+                    <div className="h-6" />
+                  )}
+
+                  {sessions.length > 0 && renderRecipeList(sessions, false)}
                 </>
               ) : (
                 <div className="text-center py-20 text-gray-400 text-sm">
@@ -148,7 +179,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title={selectedRecipe?.name!}
+        title={selectedRecipe?.name ?? ""}
         description="이 레시피를 삭제할까요?"
       />
     </>
