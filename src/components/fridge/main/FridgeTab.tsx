@@ -18,6 +18,7 @@ import {
   getRefrigeratorHome,
   type RefrigeratorHomeResponse,
 } from "../../../api/ingredient";
+import { checkPushEligibility } from "../../../api/push";
 
 export default function FridgeTab() {
   const {
@@ -50,6 +51,7 @@ export default function FridgeTab() {
 
     return [...fridge, ...freezer, ...pantry];
   };
+
   useEffect(() => {
     const fetchFridgeData = async () => {
       try {
@@ -86,14 +88,24 @@ export default function FridgeTab() {
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
 
   useEffect(() => {
-    if (todayIngredients.length === 0) return;
-    const today = new Date().toISOString().slice(0, 10);
-    const lastShown = localStorage.getItem(EXPIRY_MODAL_KEY);
-    if (lastShown !== today) {
-      setIsExpiryModalOpen(true);
-      localStorage.setItem(EXPIRY_MODAL_KEY, today);
-    }
-  }, [todayIngredients]);
+    const checkEligibility = async () => {
+      const today = new Date().toISOString().slice(0, 10);
+      const lastShown = localStorage.getItem(EXPIRY_MODAL_KEY);
+      if (lastShown === today) return;
+
+      try {
+        const response = await checkPushEligibility();
+        if (response.eligible) {
+          setIsExpiryModalOpen(true);
+          localStorage.setItem(EXPIRY_MODAL_KEY, today);
+        }
+      } catch (error) {
+        console.error("푸시 알림 자격 확인 실패:", error);
+      }
+    };
+
+    checkEligibility();
+  }, []);
 
   const { selectedIngredientId, closeDetail } = useIngredientStore();
   const selectedIngredient = ingredients.find(
