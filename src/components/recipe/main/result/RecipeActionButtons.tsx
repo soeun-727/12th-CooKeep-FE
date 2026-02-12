@@ -51,7 +51,7 @@ export default function RecipeActionButtons({
       await completeSession();
 
       // 2. 페이지 이동
-      navigate("/mycookeep", {
+      navigate("/mycookeep/record/select", {
         state: {
           selectedIngredients,
           difficulty,

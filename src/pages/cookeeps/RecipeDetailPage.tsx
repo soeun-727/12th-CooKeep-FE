@@ -33,8 +33,21 @@ export default function RecipeDetailPage() {
                 />
               </div>
 
-              <RecipeDetailContentSection recipe={recipe} />
-
+              {/* 레시피 내용 섹션 */}
+              <RecipeDetailContentSection
+                recipe={{
+                  ingredients: {
+                    user_ingredients: recipe.ingredients
+                      .filter((ing: any) => ing.isRequired)
+                      .map((ing: any) => ing.name),
+                    additional_ingredients: recipe.ingredients
+                      .filter((ing: any) => !ing.isRequired)
+                      .map((ing: any) => ing.name),
+                    optional_ingredients: [],
+                  },
+                  steps: recipe.steps.map((step: any) => step.description),
+                }}
+              />
               {recipe.relatedVideos && (
                 <RecipeDetailYoutube
                   videos={recipe.relatedVideos}

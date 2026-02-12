@@ -1,30 +1,19 @@
-import { useEffect, useState } from "react";
-import editIcon from "../../../assets/fridge/edit_memo.svg";
 import foodIcon from "../../../assets/mycookeep/record/fork_knife_plate.svg";
+import temp from "../../../assets/mycookeep/record/temp_food_photo.svg";
 
 interface RecordViewImageCardProps {
   title: string;
   imageSrc?: string;
+  isEditing: boolean;
   onChangeTitle: (title: string) => void;
 }
 
 export default function RecordViewImageCard({
   title,
   imageSrc,
+  isEditing,
   onChangeTitle,
 }: RecordViewImageCardProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [localTitle, setLocalTitle] = useState(title);
-
-  const handleBlur = () => {
-    setIsEditing(false);
-    onChangeTitle(localTitle.trim() || title);
-  };
-
-  useEffect(() => {
-    setLocalTitle(title);
-  }, [title]);
-
   return (
     <div className="flex flex-col w-full max-w-[450px] mx-auto">
       {/* 이미지 */}
@@ -37,7 +26,7 @@ export default function RecordViewImageCard({
         "
       >
         <img
-          src={imageSrc}
+          src={imageSrc || temp}
           alt="요리 이미지"
           className="w-full h-full object-cover"
         />
@@ -67,40 +56,17 @@ export default function RecordViewImageCard({
           {isEditing ? (
             <input
               autoFocus
-              value={localTitle}
-              onChange={(e) => setLocalTitle(e.target.value)}
-              onBlur={handleBlur}
-              onKeyDown={(e) => e.key === "Enter" && handleBlur()}
-              className="
-                flex-1
-                text-[18px]
-                font-semibold
-                leading-[26px]
-                outline-none
-              "
+              value={title}
+              onChange={(e) => onChangeTitle(e.target.value)}
+              className="flex-1 text-[18px] font-semibold leading-[26px] outline-none border-b-2 border-primary"
+              placeholder={title}
             />
           ) : (
-            <h2
-              className="
-                flex-1
-                text-[#202020]
-                text-[18px]
-                font-semibold
-                leading-[26px]
-              "
-            >
+            <h2 className="flex-1 text-[#202020] text-[18px] font-semibold leading-[26px]">
               {title}
             </h2>
           )}
         </div>
-
-        {/* 수정 아이콘 */}
-        <img
-          src={editIcon}
-          alt="제목 수정"
-          className="w-[18px] h-[18px] flex-shrink-0 cursor-pointer"
-          onClick={() => setIsEditing(true)}
-        />
       </div>
     </div>
   );
