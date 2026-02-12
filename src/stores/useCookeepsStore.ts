@@ -66,9 +66,6 @@ interface CookeepsState {
   abandonPlant: () => Promise<void>;
   recoverPlant: () => void;
 
-  hasShownWilting: boolean;
-  checkStatusByTime: () => void;
-
   // 물주는거 버튼 전달때문
   wantsToWater: boolean;
   setWantsToWater: (v: boolean) => void;
@@ -90,9 +87,6 @@ interface CookeepsState {
 
   isPlantLoading: boolean;
   fetchGrowingPlant: () => Promise<void>;
-
-  // ✅ 테스트용
-  // setLastWateredAtDaysAgo: (daysAgo: number) => void;
 }
 
 export const useCookeepsStore = create<CookeepsState>((set, get) => ({
@@ -237,8 +231,6 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   lastWateredAt: null,
   lastRefreshedAt: null,
 
-  hasShownWilting: false,
-
   refreshGrowth: () => {
     const { lastRefreshedAt } = get();
 
@@ -350,7 +342,6 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
         plantStage: 1,
         status: "normal",
         lastWateredAt: null,
-        hasShownWilting: false,
       });
     } catch (e) {
       console.error("포기 실패", e);
@@ -368,37 +359,9 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       set({
         status: "normal",
         lastWateredAt: new Date(),
-        hasShownWilting: false,
       });
     } catch (e) {
       console.error("회복 실패", e);
-    }
-  },
-
-  checkStatusByTime: () => {
-    const { lastWateredAt, status } = get();
-    if (!lastWateredAt) return;
-
-    const diffDays =
-      (Date.now() - new Date(lastWateredAt).getTime()) / (1000 * 60 * 60 * 24);
-
-    if (diffDays >= 14) {
-      if (status !== "wilted") {
-        set({ status: "wilted" });
-      }
-      return;
-    }
-
-    if (diffDays >= 7 && diffDays < 14) {
-      if (status !== "wilting") {
-        set({ status: "wilting" });
-      }
-      return;
-    }
-
-    // 정상 상태로 돌아갈 수도 있게
-    if (diffDays < 7 && status !== "normal") {
-      set({ status: "normal" });
     }
   },
 
@@ -449,10 +412,21 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     try {
       const plant = await getGrowingPlant();
 
+      let mappedStatus: PlantStatus = "normal";
+
+      if (plant?.plantStatus === "WILTING") {
+        mappedStatus = "wilting";
+      }
+
+      if (plant?.plantStatus === "FROZEN") {
+        mappedStatus = "wilted";
+      }
+
       set({
         currentPlant: plant,
         plantStage: plant?.level ?? 1,
         selectedPlant: plant ? PLANT_NAME_TO_TYPE[plant.plantName] : null,
+        status: mappedStatus, // 이게 핵심
         isPlantLoading: false,
       });
     } catch (e) {
@@ -460,16 +434,4 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       set({ isPlantLoading: false });
     }
   },
-
-  /* =========================
-     테스트용: lastWateredAt 조작
-     daysAgo: 7 → Wilting
-     daysAgo: 14 → Wilted
-  ========================= */
-  // setLastWateredAtDaysAgo: (daysAgo: number) => {
-  //   const newDate = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
-  //   set({ lastWateredAt: newDate });
-  //   // 상태 체크 바로 실행
-  //   get().checkStatusByTime();
-  // },
 }));

@@ -108,18 +108,10 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    const { fetchGrowingPlant, fetchCookies, checkStatusByTime } =
-      useCookeepsStore.getState();
+    const { fetchGrowingPlant, fetchCookies } = useCookeepsStore.getState();
 
     fetchGrowingPlant();
-    fetchCookies(); //  필수
-    checkStatusByTime();
-
-    const interval = setInterval(() => {
-      checkStatusByTime();
-    }, 60 * 1000);
-
-    return () => clearInterval(interval);
+    fetchCookies();
   }, []);
 
   /* =========================
