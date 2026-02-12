@@ -73,19 +73,6 @@ export default function MyCookeepPage() {
         if (selectedRecords.length > 0) {
           return (
             <div className="flex flex-col items-center gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-              <div className="flex w-full items-center justify-between px-2">
-                <span className="typo-h3 text-neutral-800">
-                  {selectedRecords[0].createdAt
-                    .split("T")[0]
-                    .replaceAll("-", ".")}
-                </span>
-                <button
-                  onClick={() => setSelectedRecords([])}
-                  className="typo-body2 text-gray-400 underline"
-                >
-                  달력으로 돌아가기
-                </button>
-              </div>
               {selectedRecords.map((record) => (
                 <RecordCard key={record.dailyRecipeId} record={record} />
               ))}
@@ -99,17 +86,6 @@ export default function MyCookeepPage() {
 
       case "record":
       default:
-        // 🚀 여기를 수정합니다!
-        // 오늘 날짜 데이터(selectedRecords)가 있다면 카드를, 없다면 안내 문구(RecordEntry)를 보여줍니다.
-        if (selectedRecords.length > 0) {
-          return (
-            <div className="flex flex-col items-center gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-              {selectedRecords.map((record) => (
-                <RecordCard key={record.dailyRecipeId} record={record} />
-              ))}
-            </div>
-          );
-        }
         return <RecordEntry records={selectedRecords} />;
     }
   };
