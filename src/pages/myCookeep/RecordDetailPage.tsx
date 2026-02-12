@@ -8,12 +8,14 @@ import optionIcon from "../../assets/mycookeep/record/options.svg";
 import RecordViewImageCard from "../../components/myCookeep/record/RecordViewImageCard";
 import { useEffect, useState } from "react";
 import {
+  deleteDailyRecipe,
   getMyRecipeDetail,
   MyRecipeDetail,
   updateDailyRecipe,
   updateRecipeVisibility,
 } from "../../api/myRecipe";
 import Button from "../../components/ui/Button";
+import DoublecheckModal from "../../components/ui/DoublecheckModal";
 
 export default function RecordDetailPage() {
   const navigate = useNavigate();
@@ -23,9 +25,10 @@ export default function RecordDetailPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [tempTitle, setTempTitle] = useState("");
   const [tempDescription, setTempDescription] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (!recordId) return;
@@ -67,14 +70,62 @@ export default function RecordDetailPage() {
     setIsMenuOpen(false);
   };
 
-  // 4. 삭제 로직 (필요 시 API 추가 연동)
-  const handleDelete = () => {
-    if (window.confirm("정말로 이 기록을 삭제하시겠습니까?")) {
-      // TODO: deleteDailyRecipe API 호출 후 navigate("/mycookeep")
-      setIsMenuOpen(false);
+  // 1. 드롭다운 메뉴에서 삭제 버튼 클릭 시
+  const handleDeleteClick = () => {
+    setIsMenuOpen(false);
+    setIsDeleteModalOpen(true); // 🚀 삭제 확인 모달 열기
+  };
+
+  // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 삭제 로직
+  const handleConfirmDelete = async () => {
+    if (!recordId || isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await deleteDailyRecipe(Number(recordId));
+      if (response.status === "OK") {
+        navigate("/mycookeep", { replace: true });
+      }
+    } catch (error) {
+      console.error("삭제 실패:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // 1. [수정 완료] 버튼 클릭 시 모달만 먼저 띄움
+  const handleUpdateClick = () => {
+    // 변경사항이 아예 없으면 모달 안 띄우고 바로 종료 처리 가능
+    if (
+      tempTitle === record?.title &&
+      tempDescription === (record?.description || "")
+    ) {
+      setIsEditing(false);
+      return;
+    }
+    setIsUpdateModalOpen(true);
+  };
+
+  // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 수정 API 로직
+  const handleConfirmUpdate = async () => {
+    if (!record || !recordId) return;
+
+    try {
+      const response = await updateDailyRecipe(Number(recordId), {
+        title: tempTitle,
+        description: tempDescription,
+      });
+
+      if (response.status === "OK") {
+        setRecord(response.data);
+        setIsEditing(false);
+      }
+    } catch (error: any) {
+      console.error("수정 실패:", error);
+      alert(error.response?.data?.message || "수정에 실패했습니다.");
+    }
+  };
   const handleUpdate = async () => {
     if (!record || !recordId) return;
 
@@ -126,7 +177,7 @@ export default function RecordDetailPage() {
 
               {/* 삭제하기 버튼 */}
               <button
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
                 className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
               >
                 삭제하기
@@ -216,11 +267,27 @@ export default function RecordDetailPage() {
         </div>
         {isEditing && (
           <div className=" flex mt-2 mb-2">
-            <Button size="L" variant="black" onClick={handleUpdate}>
+            <Button size="L" variant="black" onClick={handleUpdateClick}>
               수정 완료
             </Button>
           </div>
         )}
+        <DoublecheckModal
+          isOpen={isUpdateModalOpen}
+          onClose={() => setIsUpdateModalOpen(false)}
+          title="수정이 완료되었어요"
+          onConfirm={handleConfirmUpdate}
+          confirmText="확인"
+          variant="singular"
+        />
+        <DoublecheckModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          title={tempTitle}
+          description="이 레시피를 삭제할까요?"
+          onConfirm={handleConfirmDelete}
+          variant="black"
+        />
       </div>
     </div>
   );

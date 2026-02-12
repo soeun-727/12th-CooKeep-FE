@@ -130,3 +130,11 @@ export const getCalendarRecipes = async (year: number, month: number) => {
   );
   return res.data;
 };
+
+/** [DELETE] 데일리 레시피 삭제 */
+export const deleteDailyRecipe = async (dailyRecipeId: number) => {
+  const res = await api.delete<{ status: string }>(
+    `/api/users/me/daily-recipes/${dailyRecipeId}`,
+  );
+  return res.data;
+};
