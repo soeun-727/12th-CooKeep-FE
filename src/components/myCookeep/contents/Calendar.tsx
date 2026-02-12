@@ -57,7 +57,7 @@ export default function Calendar({ onDateClick }: Props) {
     <div
       className={`
     flex flex-col w-[357px] mx-auto items-center justify-center rounded-[6px] p-4 
-    shadow-[0px_10px_60px_0px_rgba(0,0,0,0.1)] bg-white/10 transition-opacity duration-200
+    bg-white/10 transition-opacity duration-200
     ${isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}
   `}
     >
@@ -152,7 +152,7 @@ export default function Calendar({ onDateClick }: Props) {
                 onClick={() => onDateClick(dateStr)}
                 className={`
           relative z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all
-          ${hasRecord ? "shadow-md scale-105" : "hover:bg-zinc-50"}
+          ${hasRecord ? "scale-105" : "hover:bg-zinc-50"}
           ${hasRecord && !photoUrl ? "bg-[#96E8BE]" : ""} 
         `}
               >
