@@ -7,6 +7,7 @@ import { signup } from "../../../api/auth";
 import { saveTokens } from "../../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import PhoneAuthModal from "./PhoneAuthModal";
 
 interface Agreements {
   terms: boolean;
@@ -56,6 +57,8 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
   const phoneNumber = useSignupStore((s) => s.phone);
   const [loading, setLoading] = useState(false);
 
+  const [emailAlreadyModal, setEmailAlreadyModal] = useState(false);
+
   const handleSubmit = async () => {
     // 중복 클릭 + 조건 체크
     if (!isSignupEnabled || loading) {
@@ -85,9 +88,9 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
       setIsFinished(true);
 
       // 명세: 회원가입 성공 → 무조건 온보딩
-      setTimeout(() => {
-        navigate("/onboarding");
-      }, 500);
+      // setTimeout(() => {
+      //   navigate("/onboarding");
+      // }, 500);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const code = err.response?.data?.code;
@@ -95,7 +98,8 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
         if (code === "USER-002") {
           setServerError("이미 사용 중인 전화번호입니다.");
         } else if (code === "USER-003") {
-          setServerError("이미 사용 중인 이메일입니다.");
+          setServerError(undefined);
+          setEmailAlreadyModal(true);
         } else {
           setServerError(
             err.response?.data?.message ?? "회원가입 중 오류가 발생했습니다.",
@@ -140,6 +144,15 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
             <p className="text-red-500 text-sm text-center mt-2">
               {serverError}
             </p>
+          )}
+          {emailAlreadyModal && (
+            <PhoneAuthModal
+              type="already"
+              email={email}
+              authType="email"
+              onConfirm={() => setEmailAlreadyModal(false)}
+              onLogin={() => navigate("/login")}
+            />
           )}
         </>
       )}
