@@ -126,33 +126,6 @@ export default function RecordDetailPage() {
       alert(error.response?.data?.message || "수정에 실패했습니다.");
     }
   };
-  const handleUpdate = async () => {
-    if (!record || !recordId) return;
-
-    // 변경사항이 없는 경우 서버 요청 없이 모드만 종료
-    if (
-      tempTitle === record.title &&
-      tempDescription === (record.description || "")
-    ) {
-      setIsEditing(false);
-      return;
-    }
-
-    try {
-      const response = await updateDailyRecipe(Number(recordId), {
-        title: tempTitle,
-        description: tempDescription,
-      });
-
-      if (response.status === "OK") {
-        setRecord(response.data); // 서버에서 온 최신 데이터로 UI 갱신
-        setIsEditing(false); // 수정 모드 종료
-      }
-    } catch (error: any) {
-      console.error("수정 실패:", error);
-      alert(error.response?.data?.message || "수정에 실패했습니다.");
-    }
-  };
 
   if (!record) return null;
 

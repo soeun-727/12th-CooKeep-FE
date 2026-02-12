@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import foodIcon from "../../../assets/mycookeep/record/fork_knife_plate.svg";
 import temp from "../../../assets/mycookeep/record/temp_food_photo.svg";
 
