@@ -53,7 +53,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   nextStep: null,
 
   setPhoneNumber: (phoneNumber) => {
-    const isValidPhone = /^01[0-9]{8,9}$/.test(phoneNumber);
+    const isValidPhone = /^010-\d{3,4}-\d{4}$/.test(phoneNumber);
+
     set((state) => ({
       phoneNumber,
       isValidPhone,
@@ -77,8 +78,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isSubmitting: true });
 
+      const purePhoneNumber = phoneNumber.replace(/-/g, "");
+
       const data = await loginApi({
-        phoneNumber,
+        phoneNumber: purePhoneNumber, // 정제된 번호 전송
         password,
       });
 
