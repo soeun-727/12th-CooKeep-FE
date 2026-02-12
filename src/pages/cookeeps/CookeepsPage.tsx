@@ -49,6 +49,7 @@ export default function CookeepsPage() {
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
 
   const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
+  const isPlantLoading = useCookeepsStore((s) => s.isPlantLoading);
 
   /* =========================
     수확 감지
@@ -94,6 +95,8 @@ export default function CookeepsPage() {
     if (activeModal === "selected") return "selected";
 
     // 4. 그 다음 식물이 없을 때 'select'
+    if (isPlantLoading) return null;
+
     if (!currentPlant) return "select";
 
     // 식물 상태에 따른 모달
@@ -105,10 +108,10 @@ export default function CookeepsPage() {
 
   // 시간계산
   useEffect(() => {
-    const { fetchMyPlants, fetchCookies, checkStatusByTime } =
+    const { fetchGrowingPlant, fetchCookies, checkStatusByTime } =
       useCookeepsStore.getState();
 
-    fetchMyPlants();
+    fetchGrowingPlant();
     fetchCookies(); //  필수
     checkStatusByTime();
 

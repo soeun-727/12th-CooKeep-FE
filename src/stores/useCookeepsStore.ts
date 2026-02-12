@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import {
   deleteMyPlant,
+  getGrowingPlant,
   getMyPlants,
   registerMyPlant,
   reviveMyPlant,
@@ -86,6 +87,9 @@ interface CookeepsState {
   setHasShownHarvestModal: (v: boolean) => void;
 
   resetCurrentPlant: () => void;
+
+  isPlantLoading: boolean;
+  fetchGrowingPlant: () => Promise<void>;
 
   // ✅ 테스트용
   // setLastWateredAtDaysAgo: (daysAgo: number) => void;
@@ -173,7 +177,8 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       set({ hasShownHarvestModal: false, justHarvestedPlant: null });
 
       const expectedPlantName = PLANT_ID_TO_NAME[plantId];
-      await get().fetchMyPlants();
+      await get().fetchGrowingPlant();
+      await get().fetchMyPlants(); // 도감용이면 유지
 
       const { myPlants, isProfileAuto } = get();
 
@@ -302,6 +307,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       console.log("물주기 API 응답:", response);
 
       // 최종 상태 갱신
+      await get().fetchGrowingPlant();
       await get().fetchMyPlants();
       await get().fetchCookies();
 
@@ -434,6 +440,25 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       status: "normal",
       lastWateredAt: null,
     });
+  },
+
+  isPlantLoading: true,
+  fetchGrowingPlant: async () => {
+    set({ isPlantLoading: true });
+
+    try {
+      const plant = await getGrowingPlant();
+
+      set({
+        currentPlant: plant,
+        plantStage: plant?.level ?? 1,
+        selectedPlant: plant ? PLANT_NAME_TO_TYPE[plant.plantName] : null,
+        isPlantLoading: false,
+      });
+    } catch (e) {
+      console.error("현재 식물 조회 실패", e);
+      set({ isPlantLoading: false });
+    }
   },
 
   /* =========================
