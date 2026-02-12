@@ -1,10 +1,5 @@
-interface Step {
-  order: number;
-  description: string;
-}
-
 interface Props {
-  steps: Step[];
+  steps: string[];
 }
 
 export default function RecipeDetailStepSection({ steps }: Props) {
@@ -15,22 +10,27 @@ export default function RecipeDetailStepSection({ steps }: Props) {
 
       {/* 단계 리스트 */}
       <div className="flex flex-col items-start gap-[8px] w-full">
-        {steps.map((step) => (
-          <div
-            key={step.order}
-            className="flex justify-start items-start w-full gap-3"
-          >
-            {/* 번호 */}
-            <div className="flex items-center justify-center w-[30px] h-[20px] px-[12px] rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0">
-              {step.order}
-            </div>
+        {steps.map((description, index) => {
+          const cleanDescription = description.replace(/^\d+\.\s*/, "");
+          const stepOrder = index + 1;
 
-            {/* 설명 */}
-            <p className="text-[#202020] typo-body-sm max-w-[289px]">
-              {step.description}
-            </p>
-          </div>
-        ))}
+          return (
+            <div
+              key={stepOrder}
+              className="flex justify-start items-start w-full gap-3"
+            >
+              {/* 번호 배지 */}
+              <div className="flex items-center justify-center min-w-[30px] h-[20px] px-[12px] rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0">
+                {stepOrder}
+              </div>
+
+              {/* 단계 설명 */}
+              <p className="text-[#202020] typo-body-sm flex-1 break-keep">
+                {cleanDescription}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
