@@ -1,15 +1,8 @@
 import RecipeRankCard from "./RecipeRankCard";
 import RecipeFilterButtons from "./RecipeFilterButtons";
-
-interface Recipe {
-  id: string;
-  title: string;
-  image?: string;
-  likes: number;
-}
-
+import { RecipeRankItem } from "../../../api/cookeeps";
 interface WeeklyRecipeSectionProps {
-  topRecipes: Recipe[];
+  topRecipes: RecipeRankItem[];
 }
 
 export default function WeeklyRecipeSection({
@@ -36,19 +29,16 @@ export default function WeeklyRecipeSection({
         <RecipeFilterButtons />
 
         <div className="flex flex-col gap-1 w-full">
-          {topRecipes
-            .sort((a, b) => b.likes - a.likes) // 좋아요 수 내림차순
-            .slice(0, 3)
-            .map((recipe, idx) => (
-              <RecipeRankCard
-                key={recipe.id}
-                id={recipe.id}
-                rank={idx + 1}
-                title={recipe.title}
-                image={recipe.image}
-                likes={recipe.likes}
-              />
-            ))}
+          {topRecipes.map((recipe) => (
+            <RecipeRankCard
+              key={recipe.dailyRecipeId}
+              id={String(recipe.dailyRecipeId)}
+              rank={recipe.rank}
+              title={recipe.title}
+              image={recipe.recipeImageUrl || ""}
+              likes={recipe.likeCount}
+            />
+          ))}
         </div>
       </div>
     </div>

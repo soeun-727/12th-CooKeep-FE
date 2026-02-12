@@ -16,6 +16,7 @@ import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 import HarvestModal from "../../components/cookeeps/modals/HarvestModal";
+import { getWeeklyRanking, RankingResponse } from "../../api/cookeeps";
 
 type ActiveModal =
   | "onboarding"
@@ -192,6 +193,31 @@ export default function CookeepsPage() {
     }
   };
 
+  const [ranking, setRanking] = useState<RankingResponse | null>(null);
+
+  // 데이터 통합 페칭
+  useEffect(() => {
+    const fetchAllData = async () => {
+      const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
+        useCookeepsStore.getState();
+
+      // 1. 기존 식물 관련 데이터 호출
+      fetchGrowingPlant();
+      fetchCookies();
+      fetchMyPlants();
+
+      // 2. 이번 주 랭킹 데이터 호출
+      try {
+        const rankingData = await getWeeklyRanking();
+        setRanking(rankingData);
+      } catch (error) {
+        console.error("랭킹 데이터 로드 실패:", error);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
   return (
     <div className="h-[100dvh] flex flex-col overflow-hidden relative">
       {/* 1. 온보딩 */}
@@ -318,8 +344,8 @@ export default function CookeepsPage() {
 
       {/* ===== 스크롤 영역 ===== */}
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-6">
-        <WeeklyTop3Section users={top3Users} />
-        <WeeklyRecipeSection topRecipes={topRecipes} />
+        <WeeklyTop3Section users={ranking?.wateringRanking ?? []} />
+        <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />{" "}
       </div>
     </div>
   );

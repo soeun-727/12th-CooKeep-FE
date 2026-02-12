@@ -1,8 +1,8 @@
-import type { User } from "../../../constants/mocktop3Users";
+import { WateringRankItem } from "../../../api/cookeeps";
 import RankingCard from "./RankingCard";
 
 interface WeeklyTop3SectionProps {
-  users: User[];
+  users: WateringRankItem[];
 }
 
 export default function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
@@ -20,23 +20,18 @@ export default function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
         {order.map((idx) => {
           const user = users[idx];
 
-          // 실제 순위
-          const sortedUsers = [...users].sort(
-            (a, b) => b.watering_count - a.watering_count,
-          );
-          const actualRank = sortedUsers.findIndex((u) => u.id === user.id) + 1;
-
-          // 화면상 1등 스타일 적용
-          const isFirst = actualRank === 1;
+          // 데이터가 3개 미만일 경우를 대비한 가드
+          if (!user) return <div key={`empty-${idx}`} className="w-[80px]" />;
+          const isFirst = user.rank === 1;
 
           return (
             <RankingCard
-              key={user.id}
-              rank={actualRank} // 왕관 표시 기준
+              key={user.nickname}
+              rank={user.rank}
               name={user.nickname}
-              plantImage={user.plant_image}
-              score={user.watering_count}
-              isFirst={isFirst} // 가운데 카드만 스타일 적용
+              plantImage={user.profileImageUrl}
+              isFirst={isFirst}
+              score={0}
             />
           );
         })}
