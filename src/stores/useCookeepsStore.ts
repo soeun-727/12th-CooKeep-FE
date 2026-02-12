@@ -41,7 +41,9 @@ interface CookeepsState {
   // 추가
   justHarvestedPlant: MyPlant | null;
   setJustHarvestedPlant: (plant: MyPlant | null) => void;
-  fetchMyPlants: () => Promise<void>;
+  // fetchMyPlants: () => Promise<void>;
+  fetchMyPlants: (snapshotPlant?: MyPlant) => Promise<void>;
+
   registerPlant: (
     plantId: number,
   ) => Promise<ApiResponse<RegisterResponseData>>;
@@ -96,12 +98,14 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
   currentPlant: null,
   justHarvestedPlant: null,
   setJustHarvestedPlant: (plant) => set({ justHarvestedPlant: plant }),
-  fetchMyPlants: async () => {
+  fetchMyPlants: async (snapshotPlant?: MyPlant) => {
     try {
+      // const plants = await getMyPlants();
+      // const prevPlant = get().currentPlant;
       const plants = await getMyPlants();
-      const prevPlant = get().currentPlant;
+      const prevPlant = snapshotPlant ?? get().currentPlant;
 
-      if (prevPlant && prevPlant.level === 3 && !prevPlant.isHarvested) {
+      if (prevPlant && !prevPlant.isHarvested) {
         const harvestedVersion = plants.find(
           (p: MyPlant) =>
             p.userPlantId === prevPlant.userPlantId && p.isHarvested,
@@ -134,11 +138,12 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
               ]),
             ),
             // 수확된 식물은 더이상 프로필(현재 키우는 중)이 아니도록 초기화
-            myPlants: get().myPlants.map((p) =>
-              p.userPlantId === harvestedVersion.userPlantId
-                ? { ...p, isProfile: false, isHarvested: true }
-                : p,
-            ),
+            // myPlants: get().myPlants.map((p) =>
+            //   p.userPlantId === harvestedVersion.userPlantId
+            //     ? { ...p, isProfile: false, isHarvested: true }
+            //     : p,
+            // ),
+            myPlants: plants,
           }));
           return; // 아래 로직 타지 않게
         }
@@ -289,18 +294,30 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       console.log("  → prevCookie 저장:", cookie);
     }
 
+    const snapshotPlant = currentPlant; // 👈 스냅샷 저장
+
     if (cookie < 10) {
       console.log("쿠키 부족");
       return;
     }
 
     try {
-      const response = await waterMyPlant(currentPlant.userPlantId);
-      console.log("물주기 API 응답:", response);
+      //       const response = await waterMyPlant(currentPlant.userPlantId);
+      //       console.log("물주기 API 응답:", response);
 
-      // 최종 상태 갱신
+      //       // 최종 상태 갱신
+      //       await get().fetchMyPlants();      // 먼저
+      // await get().fetchGrowingPlant();  // 나중
+
+      // ✅ 물주기 API는 딱 한 번만 호출
+      await waterMyPlant(snapshotPlant.userPlantId);
+
+      // ✅ 수확 감지 먼저
+      await get().fetchMyPlants(snapshotPlant);
+
+      // ✅ 그 다음 현재 성장 식물 동기화
       await get().fetchGrowingPlant();
-      await get().fetchMyPlants();
+
       await get().fetchCookies();
 
       const newPlant = get().currentPlant;
