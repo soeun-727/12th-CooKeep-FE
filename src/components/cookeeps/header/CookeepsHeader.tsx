@@ -36,13 +36,13 @@ export default function CookeepsHeader() {
   };
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-10 flex h-14 items-center justify-between px-4">
+    <header className="fixed top-0 left-0 z-50 pointer-events-none w-full max-w-[450px] flex items-center justify-center h-12">
       {/* 왼쪽 */}
-      <div className="flex-1 px-[31px]">
+      <div className="flex-1">
         <img
           src={Logo}
           alt="CooKeep logo"
-          className="w-20 object-contain pb-1"
+          className="w-24 object-contain  ml-[31px] pb-1 mt-1"
         />
       </div>
 
@@ -69,7 +69,7 @@ export default function CookeepsHeader() {
         {/* 설정 */}
         <button
           onClick={() => navigate("/settings")}
-          className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#202020]"
+          className="flex mr-3 h-[28px] w-[28px] items-center justify-center rounded-full bg-[#202020]"
         >
           <img
             src={settings}
