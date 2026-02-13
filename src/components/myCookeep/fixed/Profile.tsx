@@ -90,17 +90,21 @@ export default function Profile() {
             </div>
             {/* 유저 정보 */}
             <div className="flex flex-col">
-              <p className="typo-h2 text-white">{profile.nickname}</p>
+              <p className="typo-h2 text-white">
+                {profile.nickname || "쿠킵이"}
+              </p>
               <div className="typo-caption text-white">
                 <span>
                   지금은 {profile.growingPlantName || "요리 실력을"} 키우는 중!
                 </span>
               </div>
-              <div className="flex items-center gap-px h-5 px-3 bg-[#E6FBEB] typo-caption rounded-[100px] mt-3">
-                <span className="text-(--color-green)">
+              <div className="flex items-center justify-center gap-[2px] h-5 px-3 bg-[#E6FBEB] rounded-[100px] mt-3 w-fit mx-auto">
+                <span className="typo-caption text-(--color-green) leading-none flex items-center">
                   {profile.daysSinceJoined}
                 </span>
-                <span className="text-zinc-500">일 째 Cookeep</span>
+                <span className="typo-caption text-zinc-500 leading-none flex items-center">
+                  일째 CooKeep
+                </span>
               </div>
             </div>
           </div>
