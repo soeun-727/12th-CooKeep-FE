@@ -26,7 +26,7 @@ export default function Initial() {
       {/* 로고 */}
       <div className="flex flex-col items-center mt-[23px]">
         <span className="typo-caption">1인 가구 요리 루틴 플랫폼</span>
-        <img src={mainLogo} alt="로고" className="w-41" />
+        <img src={mainLogo} alt="로고" className="w-[218px]" />
       </div>
 
       {/* 애니메이션 */}
