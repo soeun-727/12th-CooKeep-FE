@@ -10,28 +10,27 @@ export default function Initial() {
   const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center bg-[#FAFAFA] h-full">
-      <div className="absolute top-12 left-0 right-0 flex justify-center pointer-events-none z-0">
-        <img src={confetti} className="w-[326px]" />
+      <div className="absolute top-[3px] left-0 right-0 flex justify-center pointer-events-none z-0">
+        <img src={confetti} className="w-86" />
       </div>
       {/* 상단 텍스트 영역 */}
-      <div className="flex flex-col mt-34 items-center">
-        <h1 className="typo-h2 flex gap-1">
-          <span className="text-neutral-800">재료 관리</span>
-          <span className="text-(--color-green-deep)">부터,</span>
-        </h1>
-        <h1 className="typo-h2 flex gap-1">
-          <span className="text-neutral-800">레시피 추천</span>
-          <span className="text-(--color-green-deep)">까지!</span>
+      <div className="flex flex-col mt-[86px] items-center">
+        <h1 className="text-[19px] font-semibold flex gap-1">
+          <span className="text-(--color-green-deep)">재료 관리</span>
+          <span className="text-neutral-800">부터,</span>
+          <span className="text-(--color-green-deep)">요리 기록</span>
+          <span className="text-neutral-800">까지!</span>
         </h1>
       </div>
 
       {/* 로고 */}
-      <div className="mt-[42px]">
-        <img src={mainLogo} alt="로고" className="w-41" />
+      <div className="flex flex-col items-center mt-[23px]">
+        <span className="typo-caption">1인 가구 요리 루틴 플랫폼</span>
+        <img src={mainLogo} alt="로고" className="w-[218px]" />
       </div>
 
       {/* 애니메이션 */}
-      <div className="relative mt-13 w-full overflow-hidden">
+      <div className="relative mt-27 w-full overflow-hidden">
         <div className="flex h-50 items-end animate-roll-left w-max flex-nowrap">
           {INFINITE_CHAR.map((char, index) => (
             <img
@@ -45,7 +44,7 @@ export default function Initial() {
       </div>
       <div className="flex flex-col items-center justify-center gap-3">
         {/* 버튼 영역 */}
-        <div className="mt-25">
+        <div className="mt-26">
           <Button variant="green" size="L" onClick={() => navigate("/login")}>
             시작하기
           </Button>
