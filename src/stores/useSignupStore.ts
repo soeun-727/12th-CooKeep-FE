@@ -57,7 +57,7 @@ export const useSignupStore = create<SignupState>((set, get) => ({
 
     try {
       await verifySignupCodeApi(normalizedPhone, code);
-      set({ isVerified: true });
+      // set({ isVerified: true });
       return { success: true };
     } catch (error) {
       if (axios.isAxiosError(error)) {

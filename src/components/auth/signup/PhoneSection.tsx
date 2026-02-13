@@ -46,10 +46,13 @@ export default function PhoneSection() {
     return `${m}:${s}`;
   };
 
+  const [isSending, setIsSending] = useState(false);
+
   const handleSendCode = async () => {
-    if (!isPhoneValid) return;
+    if (!isPhoneValid || isSending) return;
 
     try {
+      setIsSending(true);
       setCode("");
       setCodeError(undefined);
 
@@ -74,6 +77,8 @@ export default function PhoneSection() {
       } else {
         setCodeError("알 수 없는 오류가 발생했습니다.");
       }
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -133,7 +138,7 @@ export default function PhoneSection() {
               <button
                 type="button"
                 onClick={isCodeSent ? handleResend : handleSendCode}
-                disabled={!isPhoneValid} // disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
+                disabled={!isPhoneValid || isSending} // disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
                 className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
           ${
             isPhoneValid // isPhoneValid && !(isCodeSent && timeLeft > 0)
@@ -207,9 +212,9 @@ export default function PhoneSection() {
           type={modalType}
           phone={phone}
           onConfirm={() => {
-            // if (modalType === "verify") {
-            //   useSignupStore.getState().setIsVerified(true); // Zustand에서 직접 set
-            // }
+            if (modalType === "verify") {
+              useSignupStore.getState().setIsVerified(true);
+            }
             setModalType(null);
           }}
           onLogin={() => {

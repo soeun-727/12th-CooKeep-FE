@@ -15,12 +15,6 @@ export default function ResetPassword() {
   const { phone, isVerified, reset } = useFindPasswordStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isVerified || !phone) {
-      navigate("/find");
-    }
-  }, [isVerified, phone, navigate]);
-
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +23,17 @@ export default function ResetPassword() {
   const [isSuccess, setIsSuccess] = useState(false);
   const validatePassword = (pw: string) =>
     pw.length >= 8 && /[a-zA-Z]/.test(pw) && /[0-9]/.test(pw);
+
+  // useEffect(() => {
+  //   if (!isVerified || !phone) {
+  //     navigate("/find");
+  //   }
+  // }, [isVerified, phone, navigate]);
+  useEffect(() => {
+    if (!isSuccess && (!isVerified || !phone)) {
+      navigate("/find");
+    }
+  }, [isVerified, phone, isSuccess, navigate]);
 
   const isPasswordValid = password ? validatePassword(password) : false;
   const isPasswordMatch =
@@ -62,7 +67,7 @@ export default function ResetPassword() {
 
       setError(undefined);
       setIsSuccess(true);
-      reset(); // store 초기화
+      // reset(); // store 초기화
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
@@ -173,7 +178,10 @@ export default function ResetPassword() {
             <Button
               size="L"
               variant="black"
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                reset();
+                navigate("/login");
+              }}
               className="mt-[48px] !text-[#32E389]"
             >
               로그인하기

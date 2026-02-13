@@ -19,7 +19,7 @@ export const useFindPasswordStore = create<FindPasswordState>((set, get) => ({
   isCodeSent: false,
   isVerified: false,
 
-  setPhone: (phone) => set({ phone }),
+  setPhone: (phone) => set({ phone: phone.replace(/[^0-9]/g, "") }),
 
   sendCode: async () => {
     const { phone } = get();
