@@ -54,7 +54,9 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
     isVerified && isPasswordValid && isPasswordMatch && isRequiredAgreed;
 
   const navigate = useNavigate();
-  const phoneNumber = useSignupStore((s) => s.phone);
+  const rawPhoneNumber = useSignupStore((s) => s.phone);
+  const phoneNumber = rawPhoneNumber.replace(/-/g, "");
+
   const [loading, setLoading] = useState(false);
 
   const [emailAlreadyModal, setEmailAlreadyModal] = useState(false);
