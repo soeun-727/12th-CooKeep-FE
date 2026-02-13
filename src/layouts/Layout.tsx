@@ -45,7 +45,7 @@ export default function Layout() {
       <main
         className={`
           ${showHeader ? "pt-[48px]" : ""} 
-          ${showTabBar ? "pb-[90px]" : ""}
+          ${showTabBar ? "pb-[56px]" : ""}
           min-h-[100dvh]
         `}
       >
