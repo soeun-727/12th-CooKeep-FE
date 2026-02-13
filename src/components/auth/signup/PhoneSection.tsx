@@ -4,6 +4,7 @@ import TextField from "../../ui/TextField";
 import PhoneAuthModal from "./PhoneAuthModal";
 import { useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../../stores/useSignupStore";
+import axios from "axios";
 
 export default function PhoneSection() {
   const { phone, setPhone, isCodeSent, isVerified, sendCode, verifyCode } =
@@ -45,25 +46,35 @@ export default function PhoneSection() {
     return `${m}:${s}`;
   };
 
-  const handleSendCode = () => {
-    const alreadySignedUp = false;
+  const handleSendCode = async () => {
+    if (!isPhoneValid) return;
 
-    if (alreadySignedUp) {
-      setModalType("already");
-      return;
+    try {
+      setCode("");
+      setCodeError(undefined);
+
+      setTimeLeft(300);
+      setTimerActive(true);
+
+      await sendCode(); // 실제 API 호출
+
+      setModalType("send");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 409) {
+          // 🔥 이미 가입된 번호
+          setModalType("already");
+        } else if (status === 429) {
+          setCodeError("인증 요청이 너무 빠릅니다.");
+        } else {
+          setCodeError("인증번호 발송 중 오류가 발생했습니다.");
+        }
+      } else {
+        setCodeError("알 수 없는 오류가 발생했습니다.");
+      }
     }
-
-    // 기존 인증 완전 무효화
-    setCode("");
-    setCodeError(undefined);
-
-    // 타이머 리셋
-    setTimeLeft(300);
-    setTimerActive(false);
-    setTimerActive(true);
-
-    sendCode();
-    setModalType("send");
   };
 
   const handleVerify = async () => {
@@ -77,12 +88,12 @@ export default function PhoneSection() {
       return;
     }
 
-    const success = await verifyCode(code); // 이건 인증 결과만 반환
+    const success = await verifyCode(code);
+
     if (success) {
-      setCodeError(undefined);
-      setModalType("verify"); // 모달 띄우기
+      setModalType("verify");
     } else {
-      setCodeError("인증번호를 다시 입력해 주세요");
+      setCodeError("인증번호가 올바르지 않거나 만료되었습니다");
     }
   };
 

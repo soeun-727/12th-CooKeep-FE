@@ -38,6 +38,28 @@ export const signup = async (payload: SignupRequest) => {
   return res.data;
 };
 
+// 회원가입 - 인증번호 발송
+export const sendSignupCodeApi = async (phoneNumber: string) => {
+  const res = await api.post("/api/auth/signup/send-code", {
+    phoneNumber,
+  });
+
+  return res.data;
+};
+
+// 회원가입 - 인증번호 확인
+export const verifySignupCodeApi = async (
+  phoneNumber: string,
+  code: string,
+) => {
+  const res = await api.post("/api/auth/signup/verify-code", {
+    phoneNumber,
+    code,
+  });
+
+  return res.data;
+};
+
 // 비밀번호 찾기 - 인증번호 발송
 export const sendPasswordCodeApi = async (phoneNumber: string) => {
   const res = await api.post("/api/auth/password/send-code", {
