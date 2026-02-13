@@ -239,12 +239,14 @@ export default function RecordWritePage() {
       </div>
       {showUploadModal && (
         <UploadCompleteModal
+          isOpen={showUploadModal} // isOpen 전달
           onConfirm={async () => {
             await useCookeepsStore.getState().fetchCookies();
             resetRecord();
             navigate("/mycookeep");
           }}
           onCancel={() => setShowUploadModal(false)}
+          closeOnOverlayClick={false} // 필요에 따라 설정
         />
       )}
     </>

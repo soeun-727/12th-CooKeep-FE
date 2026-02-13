@@ -44,3 +44,8 @@ export const setProfileMyPlant = async (userPlantId: number) => {
   const res = await axios.patch(`/api/my-plants/${userPlantId}/profile`);
   return res.data;
 };
+
+export const getGrowingPlant = async () => {
+  const res = await axios.get("/api/my-plants/growing-plant");
+  return res.data.data; // 단일 객체 | null
+};

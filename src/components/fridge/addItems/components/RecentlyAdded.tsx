@@ -31,8 +31,8 @@ export default function RecentlyAdded() {
           <div
             className={`w-2 h-2 border-b-2 border-r-2 transition-all duration-300 ${
               isOpen
-                ? "rotate-[225deg] translate-y-[2px] border-[var(--color-green-deep)]"
-                : "rotate-45 -translate-y-[1px] border-zinc-500"
+                ? "rotate-45 -translate-y-[1px] border-[var(--color-green-deep)]"
+                : "rotate-[225deg] translate-y-[2px] border-zinc-500"
             }`}
           />
         </button>
