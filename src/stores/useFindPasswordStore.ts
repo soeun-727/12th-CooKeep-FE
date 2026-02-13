@@ -31,7 +31,7 @@ export const useFindPasswordStore = create<FindPasswordState>((set, get) => ({
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
 
-        if (status === 409) {
+        if (status === 404) {
           throw new Error("가입된 번호가 없습니다.");
         }
         if (status === 429) {
