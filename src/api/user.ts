@@ -85,12 +85,26 @@ export interface MyProfileResponse {
     Nickname: string;
     phoneNumber: string;
     email: string;
-    authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
+    // authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
+    authProvider: "LOCAL" | "KAKAO" | "GOOGLE";
     marketingPush: boolean;
   };
 }
 
 export const getMyProfile = async (): Promise<MyProfileResponse> => {
   const res = await api.get<MyProfileResponse>("/api/users/me/profile");
+  return res.data;
+};
+
+// 8. 마케팅 푸시 동의 변경 API
+export const updateMarketingPush = async (marketingPush: boolean) => {
+  const res = await api.patch<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/marketing-push", {
+    marketingPush,
+  });
+
   return res.data;
 };

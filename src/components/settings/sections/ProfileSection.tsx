@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import SettingsInputItem from "../components/SettingsInputItem";
 import axios from "axios";
-import { getMyProfile, updateNickname } from "../../../api/user";
+import { MyProfileResponse, updateNickname } from "../../../api/user";
 
 const MASKED_PASSWORD = "********";
 
@@ -12,62 +12,33 @@ type ProfileInfo = {
   email: string;
 };
 
-export default function ProfileSection() {
+type Props = {
+  profile: MyProfileResponse["data"];
+};
+
+export default function ProfileSection({ profile }: Props) {
   const MAX_NICKNAME_LENGTH = 10;
-
-  const [account, setAccount] = useState<ProfileInfo>({
-    nickname: "",
-    phone: "",
-    email: "",
-  });
-
-  const [authProvider, setAuthProvider] = useState<"LOCAL" | string>("LOCAL");
-  const isSocialLogin = authProvider !== "LOCAL";
-  const [loading, setLoading] = useState(true);
 
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
 
-  const isNicknameError = account.nickname.length > MAX_NICKNAME_LENGTH;
+  const isSocialLogin = profile.authProvider !== "LOCAL";
 
-  useEffect(() => {
-    const fetchAccount = async () => {
-      try {
-        setLoading(true);
+  // 최초 1회 초기화
+  const [account, setAccount] = useState<ProfileInfo>(() => ({
+    nickname: profile.Nickname,
+    phone: profile.phoneNumber,
+    email: profile.email,
+  }));
 
-        const res = await getMyProfile();
-        const data = res.data;
-
-        setAccount({
-          nickname: data.Nickname,
-          phone: data.phoneNumber,
-          email: data.email,
-        });
-
-        setAuthProvider(data.authProvider);
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          if (err.response?.status === 401) {
-            alert("로그인이 필요합니다.");
-          } else {
-            alert("회원 정보를 불러오지 못했습니다.");
-          }
-        } else {
-          alert("알 수 없는 오류가 발생했습니다.");
-        }
-      } finally {
-        setLoading(false); // 끝
-      }
-    };
-
-    fetchAccount();
-  }, []);
-
+  // 닉네임 포커스
   useEffect(() => {
     if (isEditingNickname) {
       nicknameInputRef.current?.focus();
     }
   }, [isEditingNickname]);
+
+  const isNicknameError = account.nickname.length > MAX_NICKNAME_LENGTH;
 
   const handleNicknameSave = async () => {
     if (!account.nickname.trim() || isNicknameError) return;
@@ -93,8 +64,6 @@ export default function ProfileSection() {
     }
   };
 
-  if (loading) return null;
-
   return (
     <section className="px-4">
       <div className="flex flex-col gap-[22px]">
@@ -113,13 +82,11 @@ export default function ProfileSection() {
                 <input
                   ref={nicknameInputRef}
                   value={account.nickname}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setAccount((prev) => ({
-                      ...prev,
-                      nickname: value,
-                    }));
-                  }}
+                  onChange={(e) =>
+                    setAccount((prev) =>
+                      prev ? { ...prev, nickname: e.target.value } : prev,
+                    )
+                  }
                   className="
                     flex-1
                     h-full
