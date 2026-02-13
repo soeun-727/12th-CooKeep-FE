@@ -108,3 +108,16 @@ export const updateMarketingPush = async (marketingPush: boolean) => {
 
   return res.data;
 };
+
+// 9. 이메일 변경 API
+export const updateEmail = async (email: string) => {
+  const res = await api.patch<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/email", {
+    email,
+  });
+
+  return res.data;
+};
