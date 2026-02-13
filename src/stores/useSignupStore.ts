@@ -1,6 +1,12 @@
 // src/store/useSignupStore.ts
 import { create } from "zustand";
 import { sendSignupCodeApi, verifySignupCodeApi } from "../api/auth";
+import axios from "axios";
+
+interface VerifyResult {
+  success: boolean;
+  message?: string;
+}
 
 interface SignupState {
   phone: string;
@@ -10,7 +16,7 @@ interface SignupState {
   setPhone: (phone: string) => void;
   setIsVerified: (value: boolean) => void;
   sendCode: () => Promise<void>;
-  verifyCode: (code: string) => Promise<boolean>;
+  verifyCode: (code: string) => Promise<VerifyResult>;
   resetSignup: () => void;
 }
 
@@ -52,9 +58,25 @@ export const useSignupStore = create<SignupState>((set, get) => ({
     try {
       await verifySignupCodeApi(normalizedPhone, code);
       set({ isVerified: true });
-      return true;
-    } catch {
-      return false;
+      return { success: true };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+
+        if (status === 400) {
+          return { success: false, message: "인증번호가 일치하지 않습니다." };
+        }
+
+        if (status === 404) {
+          return { success: false, message: "인증 요청 내역이 없습니다." };
+        }
+
+        if (status === 429) {
+          return { success: false, message: "인증 시도 횟수를 초과했습니다." };
+        }
+      }
+
+      return { success: false, message: "인증 중 오류가 발생했습니다." };
     }
   },
 

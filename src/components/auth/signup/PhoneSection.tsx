@@ -12,7 +12,7 @@ export default function PhoneSection() {
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | undefined>();
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
 
   type ModalType = "send" | "verify" | "already" | "help";
@@ -64,7 +64,7 @@ export default function PhoneSection() {
         const status = err.response?.status;
 
         if (status === 409) {
-          // 🔥 이미 가입된 번호
+          // 이미 가입된 번호
           setModalType("already");
         } else if (status === 429) {
           setCodeError("인증 요청이 너무 빠릅니다.");
@@ -88,12 +88,12 @@ export default function PhoneSection() {
       return;
     }
 
-    const success = await verifyCode(code);
+    const result = await verifyCode(code);
 
-    if (success) {
+    if (result.success) {
       setModalType("verify");
     } else {
-      setCodeError("인증번호가 올바르지 않거나 만료되었습니다");
+      setCodeError(result.message);
     }
   };
 
@@ -207,9 +207,9 @@ export default function PhoneSection() {
           type={modalType}
           phone={phone}
           onConfirm={() => {
-            if (modalType === "verify") {
-              useSignupStore.getState().setIsVerified(true); // Zustand에서 직접 set
-            }
+            // if (modalType === "verify") {
+            //   useSignupStore.getState().setIsVerified(true); // Zustand에서 직접 set
+            // }
             setModalType(null);
           }}
           onLogin={() => {

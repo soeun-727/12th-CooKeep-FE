@@ -48,25 +48,26 @@ export const useFindPasswordStore = create<FindPasswordState>((set, get) => ({
 
     try {
       await verifyPasswordCodeApi(phone, code);
-
       set({ isVerified: true });
       return true;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
 
+        if (status === 400) {
+          throw new Error("인증번호가 일치하지 않거나 만료되었습니다.");
+        }
+
         if (status === 404) {
           throw new Error("인증 요청 내역이 없습니다.");
         }
-        if (status === 409) {
-          throw new Error("인증번호가 일치하지 않거나 만료되었습니다.");
-        }
+
         if (status === 429) {
           throw new Error("인증 시도 횟수를 초과했습니다.");
         }
       }
 
-      return false;
+      throw new Error("인증 중 오류가 발생했습니다.");
     }
   },
 
