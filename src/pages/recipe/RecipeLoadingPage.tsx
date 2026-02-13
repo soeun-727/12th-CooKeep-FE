@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // import LoadingIcon from "../../assets/recipe/main/LoadingIcon.svg";
-import CheckIcon from "../../assets/signup/check.svg";
+import CheckIcon from "../../assets/recipe/check.svg";
 import StepMessage from "../../components/recipe/main/loading/StepMessage";
 import { useRecipeFlowStore } from "../../stores/useRecipeFlowStore";
 import RecipeLoadingSpinner from "../../components/recipe/main/loading/RecipeLoadingSpinner";
