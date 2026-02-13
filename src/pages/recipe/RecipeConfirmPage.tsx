@@ -26,7 +26,7 @@ export default function RecipeConfirmPage() {
     <div className="flex flex-col w-full pb-32">
       <BackHeader title="레시피 추천" onBack={() => navigate(-1)} />
 
-      <div className="px-5 mt-[124px] flex flex-col gap-8">
+      <div className="px-5 mt-[70px] flex flex-col gap-8">
         <SelectedIngredientList ingredients={selectedIngredients} />
 
         <DifficultySelector />
