@@ -23,17 +23,41 @@ export default function LoginMain() {
   } = useAuthStore();
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const handlePhoneChange = (value: string) => {
+    // 1. 숫자만 남기기
+    const input = value.replace(/\D/g, "");
+    const size = input.length;
+
+    // 2. 입력된 숫자 길이에 따라 실시간으로 하이픈 배치
+    let formatted = "";
+
+    if (size < 4) {
+      formatted = input;
+    } else if (size < 8) {
+      // 010-1234 형태
+      formatted = `${input.slice(0, 3)}-${input.slice(3)}`;
+    } else {
+      // 010-1234-5678 형태
+      formatted = `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7, 11)}`;
+    }
+
+    // 3. Store 상태 업데이트 (최대 13자)
+    setPhoneNumber(formatted);
+  };
+
   const handleLogin = async () => {
     const result = await login();
 
     if (result?.success) {
       if (result.isFirst) {
-        navigate("/onboarding"); // 최초 로그인 시
+        navigate("/onboarding");
       } else {
-        navigate("/fridge"); // 기존 사용자 시
+        navigate("/fridge");
       }
     }
   };
+
   return (
     <>
       <div className="pt-[133px] w-[352px] mx-auto">
@@ -44,7 +68,7 @@ export default function LoginMain() {
           <TextField
             value={phoneNumber}
             placeholder="휴대폰 번호(- 없이 숫자만 입력)"
-            onChange={setPhoneNumber}
+            onChange={handlePhoneChange}
             errorMessage={
               phoneNumber.length > 0 && !isValidPhone
                 ? "잘못된 휴대폰 번호입니다"

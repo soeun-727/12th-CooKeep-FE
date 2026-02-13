@@ -17,8 +17,7 @@ export default function PhoneSection() {
   type ModalType = "send" | "verify" | "already" | "help";
   const [modalType, setModalType] = useState<ModalType | null>(null);
 
-  const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
-
+  const isPhoneValid = /^010-\d{3,4}-\d{4}$/.test(phone);
   const navigate = useNavigate();
 
   // 타이머
@@ -89,6 +88,20 @@ export default function PhoneSection() {
 
   const handleResend = () => handleSendCode();
 
+  const handlePhoneChange = (value: string) => {
+    const input = value.replace(/\D/g, "");
+    const size = input.length;
+
+    let formatted = "";
+    if (size < 4) {
+      formatted = input;
+    } else if (size < 8) {
+      formatted = `${input.slice(0, 3)}-${input.slice(3)}`;
+    } else {
+      formatted = `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7, 11)}`;
+    }
+    setPhone(formatted);
+  };
   return (
     <div className="pt-[241px] w-[352px] mx-auto">
       {/* 전화번호 입력 + 발송 버튼 */}
@@ -97,7 +110,7 @@ export default function PhoneSection() {
         <div className="relative mt-[12px]">
           <TextField
             value={phone}
-            onChange={setPhone}
+            onChange={handlePhoneChange}
             placeholder="휴대폰 번호(- 없이 숫자만 입력)"
             disabled={isVerified}
             errorMessage={

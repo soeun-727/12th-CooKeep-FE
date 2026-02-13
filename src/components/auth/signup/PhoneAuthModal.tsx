@@ -6,6 +6,8 @@ export type PhoneAuthModalType = "send" | "verify" | "already" | "help";
 interface PhoneAuthModalProps {
   type: PhoneAuthModalType;
   phone?: string;
+  email?: string; // ✅ 추가
+  authType?: "phone" | "email"; // ✅ 추가
   onConfirm: () => void;
   onLogin?: () => void;
 }
@@ -13,6 +15,8 @@ interface PhoneAuthModalProps {
 const PhoneAuthModal = ({
   type,
   phone,
+  email,
+  authType = "phone", // 기본은 phone
   onConfirm,
   onLogin,
 }: PhoneAuthModalProps) => {
@@ -20,6 +24,16 @@ const PhoneAuthModal = ({
   const isVerify = type === "verify";
   const isAlready = type === "already";
   const isHelp = type === "help";
+
+  const isBlackButton = isHelp || (isAlready && authType === "email");
+
+  const buttonText = isHelp
+    ? "닫기"
+    : isAlready
+      ? authType === "email"
+        ? "로그인하기"
+        : "로그인하기"
+      : "확인";
 
   return (
     <>
@@ -55,17 +69,28 @@ const PhoneAuthModal = ({
         {/* 메인 메시지 */}
         <p className="text-[14px] font-medium text-center leading-[20px] text-[#111111]">
           {isSend && "인증번호가 발송되었습니다."}
-          {isVerify && "인증이 완료되었습니다!"}
+          {isVerify && "인증에 성공하였습니다"}
           {isAlready && "이미 가입된 계정이 있어요"}
           {isHelp &&
             "통신 환경에 따라 발송이 지연되거나 차단될 수 있어요. 문제가 지속되면 아래 고객센터로 문의해 주세요."}
         </p>
 
         {/* 부가 텍스트 */}
-        {isVerify && phone && (
+        {/* verify일 때 전화번호 */}
+        {isVerify && authType === "phone" && phone && (
           <p className="text-[12px] text-[#7D7D7D] text-center">
             {phone.replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2")}
           </p>
+        )}
+
+        {isAlready && authType === "phone" && phone && (
+          <p className="text-[12px] text-[#7D7D7D] text-center">
+            {phone.replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2")}
+          </p>
+        )}
+
+        {isAlready && authType === "email" && email && (
+          <p className="text-[12px] text-[#7D7D7D] text-center">{email}</p>
         )}
 
         {isHelp && (
@@ -79,10 +104,10 @@ const PhoneAuthModal = ({
           size="S"
           onClick={isAlready ? onLogin : onConfirm}
           className={`
-    ${isHelp ? "!w-[200px] !bg-[#202020]" : "!w-[184px] !bg-[#1FC16F]"}
+    ${isBlackButton ? "!w-[200px] !bg-[#202020]" : "!w-[184px] !bg-[#32E389]"}
   `}
         >
-          {isHelp ? "닫기" : isAlready ? "로그인하기" : "확인"}
+          {buttonText}
         </Button>
       </div>
     </>
