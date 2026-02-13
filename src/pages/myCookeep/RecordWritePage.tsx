@@ -184,7 +184,7 @@ export default function RecordWritePage() {
               className="relative z-10 inline-flex items-center px-[16px] py-[9px] rounded-[3px] bg-white text-[#32E389] text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
               style={{ width: 206, height: 36 }}
             >
-              AI 레시피에서 달라진 부분이 있나요?
+              나만의 팁 작성하기
             </div>
             <div
               className="absolute top-0 translate-y-[-50%] w-[12px] h-[12px] bg-white rotate-45 z-0"
@@ -239,12 +239,14 @@ export default function RecordWritePage() {
       </div>
       {showUploadModal && (
         <UploadCompleteModal
+          isOpen={showUploadModal} // isOpen 전달
           onConfirm={async () => {
             await useCookeepsStore.getState().fetchCookies();
             resetRecord();
             navigate("/mycookeep");
           }}
           onCancel={() => setShowUploadModal(false)}
+          closeOnOverlayClick={false} // 필요에 따라 설정
         />
       )}
     </>

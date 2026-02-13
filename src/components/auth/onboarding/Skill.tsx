@@ -42,7 +42,7 @@ export default function Skill({ selectedSkill, onSelect }: SkillProps) {
         <SkillButton
           image={four}
           title="요리 고수"
-          description="어려운 요리도 잘 하는 편이예요"
+          description="어려운 요리도 잘 하는 편이에요"
           isSelected={selectedSkill === "요리 고수"}
           onClick={() => onSelect("요리 고수")}
         />

@@ -6,10 +6,10 @@ export default function CircleGraph({ percentage }: { percentage: number }) {
   const offset = circumference - (percentage / 100) * openCircumference;
 
   return (
-    <div className="relative flex items-center justify-center w-[86px] h-[86px]">
+    <div className="relative flex items-center justify-center w-[105px]">
       <svg
         className="w-full h-full"
-        viewBox="0 0 86 86"
+        viewBox="0 0 94 94"
         style={{ transform: "rotate(125deg)" }}
       >
         <defs>
@@ -28,8 +28,8 @@ export default function CircleGraph({ percentage }: { percentage: number }) {
 
         {/* 배경 원 (비어있는 가이드 라인) */}
         <circle
-          cx="43"
-          cy="43"
+          cx="47"
+          cy="47"
           r={radius}
           stroke="#F4F4F5"
           strokeWidth="8"
@@ -40,8 +40,8 @@ export default function CircleGraph({ percentage }: { percentage: number }) {
 
         {/* 수치 원 (실제 차오르는 게이지) */}
         <circle
-          cx="43"
-          cy="43"
+          cx="47"
+          cy="47"
           r={radius}
           stroke="url(#circleGradient)"
           strokeWidth="8"
