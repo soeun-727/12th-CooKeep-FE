@@ -31,7 +31,7 @@ const PhoneAuthModal = ({
     ? "닫기"
     : isAlready
       ? authType === "email"
-        ? "로그인하러가기"
+        ? "로그인하기"
         : "로그인하기"
       : "확인";
 
@@ -70,7 +70,7 @@ const PhoneAuthModal = ({
         <p className="text-[14px] font-medium text-center leading-[20px] text-[#111111]">
           {isSend && "인증번호가 발송되었습니다."}
           {isVerify && "인증에 성공하였습니다"}
-          {isAlready && "이미 가입된 계정이에요"}
+          {isAlready && "이미 가입된 계정이 있어요"}
           {isHelp &&
             "통신 환경에 따라 발송이 지연되거나 차단될 수 있어요. 문제가 지속되면 아래 고객센터로 문의해 주세요."}
         </p>
