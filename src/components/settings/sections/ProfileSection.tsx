@@ -1,9 +1,8 @@
 // src/pages/settings/sections/ProfileSection.tsx
-
 import { useEffect, useRef, useState } from "react";
 import SettingsInputItem from "../components/SettingsInputItem";
 import axios from "axios";
-import { updateNickname } from "../../../api/user";
+import { getMyProfile, updateNickname } from "../../../api/user";
 
 const MASKED_PASSWORD = "********";
 
@@ -22,7 +21,10 @@ export default function ProfileSection() {
     email: "",
   });
 
-  const isSocialLogin = !account.phone;
+  const [authProvider, setAuthProvider] = useState<"LOCAL" | string>("LOCAL");
+  const isSocialLogin = authProvider !== "LOCAL";
+  const [loading, setLoading] = useState(true);
+
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
 
@@ -30,13 +32,32 @@ export default function ProfileSection() {
 
   useEffect(() => {
     const fetchAccount = async () => {
-      // 나중에 API
-      const data = {
-        nickname: "밥말아먹는 수육",
-        phone: "",
-        email: "abcdef@gmail.com",
-      };
-      setAccount(data);
+      try {
+        setLoading(true);
+
+        const res = await getMyProfile();
+        const data = res.data;
+
+        setAccount({
+          nickname: data.Nickname,
+          phone: data.phoneNumber,
+          email: data.email,
+        });
+
+        setAuthProvider(data.authProvider);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status === 401) {
+            alert("로그인이 필요합니다.");
+          } else {
+            alert("회원 정보를 불러오지 못했습니다.");
+          }
+        } else {
+          alert("알 수 없는 오류가 발생했습니다.");
+        }
+      } finally {
+        setLoading(false); // 끝
+      }
     };
 
     fetchAccount();
@@ -71,6 +92,8 @@ export default function ProfileSection() {
       }
     }
   };
+
+  if (loading) return null;
 
   return (
     <section className="px-4">
@@ -158,7 +181,7 @@ export default function ProfileSection() {
 
         <SettingsInputItem
           label="휴대전화"
-          value={isSocialLogin ? " " : account.phone}
+          value={isSocialLogin ? "" : account.phone}
           buttonText="휴대폰 번호 변경"
           to="/settings/phone"
           disabled={isSocialLogin}
@@ -174,7 +197,7 @@ export default function ProfileSection() {
         {/* 비밀번호는 항상 고정 */}
         <SettingsInputItem
           label="비밀번호"
-          value={isSocialLogin ? " " : MASKED_PASSWORD}
+          value={isSocialLogin ? "" : MASKED_PASSWORD}
           buttonText="비밀번호 변경"
           to="/settings/password"
           disabled={isSocialLogin}

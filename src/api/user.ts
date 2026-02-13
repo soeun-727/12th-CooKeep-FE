@@ -76,3 +76,21 @@ export const updateNickname = async (nickname: string) => {
 export const updatePushConsent = (marketingConsent: boolean) => {
   return api.patch("/api/users/me/onboarding/push", { marketingConsent });
 };
+
+// 7. 회원 정보 조회 API
+export interface MyProfileResponse {
+  status: string;
+  timestamp: string;
+  data: {
+    Nickname: string;
+    phoneNumber: string;
+    email: string;
+    authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
+    marketingPush: boolean;
+  };
+}
+
+export const getMyProfile = async (): Promise<MyProfileResponse> => {
+  const res = await api.get<MyProfileResponse>("/api/users/me/profile");
+  return res.data;
+};
