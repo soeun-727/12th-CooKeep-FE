@@ -102,7 +102,7 @@ export default function AccountSection({
           </p>
         </AgreementPage>
       ) : (
-        <div className="pt-[161px] mx-auto">
+        <div className="pt-[108px] mx-auto">
           {/* 제목 */}
           <div className="typo-h1">회원가입</div>
           <div className="mx-auto mt-[12px]">

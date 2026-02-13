@@ -37,27 +37,22 @@ export default function Statistics() {
           isExpanded ? "-translate-y-[230px]" : "translate-y-0"
         }`}
       >
-        {/* [영역 1]: 기본 통계 화면 (기존 307px 높이를 유지해야 함) */}
         <div className="flex flex-col items-center w-full h-[307px] shrink-0">
           <div className="flex flex-col typo-caption text-white bg-black rounded-[6px] w-[157px] h-[26px] text-center justify-center mt-5">
             나의 식재료 소비 달성 현황
           </div>
 
-          <div className="flex w-[272px] mt-6">
-            <div className="flex flex-col gap-[6px] w-1/2 items-center justify-center">
+          <div className="flex w-77 mt-6 justify-between pt-[6.5px]">
+            <div className="flex flex-col gap-[6.5px] w-1/2 items-center justify-center">
               <CircleGraph percentage={data.graph1.percentage} />
               <span className="typo-caption !text-[10px] text-zinc-500 text-center leading-tight">
-                (실제 소비 음식/
-                <br />
-                전체 음식) %
+                (실제 소비 음식/전체 음식) %
               </span>
             </div>
-            <div className="flex flex-col gap-[6px] w-1/2 items-center justify-center">
+            <div className="flex flex-col gap-[6.5px] w-1/2 items-center justify-center">
               <CircleGraph percentage={data.graph2.percentage} />
               <span className="typo-caption !text-[10px] text-zinc-500 text-center leading-tight">
-                (실제 소비 음식/
-                <br />
-                폐기 임박 음식) %
+                (실제 소비 음식/폐기 임박 음식) %
               </span>
             </div>
           </div>
