@@ -22,19 +22,28 @@
 html {
   font-family: var(--font-sans);
   -webkit-text-size-adjust: 100%;
+  height: -webkit-fill-available;
 }
 
 body,
 #root {
   height: 100%;
+  height: -webkit-fill-available;
   margin: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.scroll-container {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* =========================
