@@ -11,7 +11,9 @@ const MainHeader = ({ isAllView }: MainHeaderProps) => {
   const navigate = useNavigate();
   const { setViewCategory } = useIngredientStore();
   const handleSettings = () => {
-    navigate("/settings");
+    navigate("/settings", {
+      state: { from: location.pathname },
+    });
   };
   const handleBack = () => {
     setViewCategory(null);

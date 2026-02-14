@@ -1,5 +1,5 @@
 // src/pages/settings/components/SettingsInputItem.tsx
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type SettingsInputItemProps = {
   label: string;
@@ -17,6 +17,7 @@ export default function SettingsInputItem({
   disabled = false,
 }: SettingsInputItemProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="flex flex-col gap-2 h-[80px] w-full">
@@ -43,7 +44,11 @@ export default function SettingsInputItem({
         {/* button */}
         <button
           type="button"
-          onClick={() => navigate(to)}
+          onClick={() =>
+            navigate(to, {
+              state: location.state,
+            })
+          }
           disabled={disabled}
           className={`
             flex
