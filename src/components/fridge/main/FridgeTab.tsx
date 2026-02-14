@@ -79,8 +79,6 @@ export default function FridgeTab() {
 
           if (lastShown !== today) {
             const eligibility = await getPushEligibility();
-
-            // 🚀 조건 추가: 서버에서도 true라고 하고, 실제로 dDay가 0인 아이템이 있을 때만 오픈
             const hasTodayItems = parsed.some((i) => i.dDay === 0);
 
             if (eligibility && eligibility.eligible && hasTodayItems) {
