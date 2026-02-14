@@ -96,3 +96,20 @@ export const resetPasswordApi = async (
 
   return res.data;
 };
+
+// 로그아웃
+export const logoutApi = async () => {
+  const res = await api.post("/api/auth/logout");
+  return res.data;
+};
+
+// 회원 탈퇴 API
+export const withdrawUser = async () => {
+  const res = await api.delete<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/auth/withdraw");
+
+  return res.data;
+};

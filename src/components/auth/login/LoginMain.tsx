@@ -109,6 +109,9 @@ export default function LoginMain() {
           size="L"
           disabled={!canLogin || isSubmitting}
           onClick={handleLogin}
+          className={`${
+            !canLogin || isSubmitting ? "!text-white" : "!text-[#32E389]"
+          }`}
         >
           로그인
         </Button>
