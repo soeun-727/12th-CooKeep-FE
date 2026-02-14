@@ -28,10 +28,10 @@ export default function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
             <RankingCard
               key={user.nickname}
               rank={user.rank}
-              name={user.nickname}
+              name={user.nickname || "쿠킵이"}
               plantImage={user.profileImageUrl}
               isFirst={isFirst}
-              score={0}
+              score={user.wateringCount}
             />
           );
         })}

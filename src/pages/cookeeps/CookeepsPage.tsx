@@ -4,9 +4,7 @@ import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
 import WeeklyTop3Section from "../../components/cookeeps/ranking/WeeklyTop3Section";
-import { top3Users } from "../../constants/mocktop3Users";
 import WeeklyRecipeSection from "../../components/cookeeps/recipe/WeeklyRecipeSection";
-import { topRecipes } from "../../constants/mockTopRecipes";
 import OnboardingModal from "../../components/cookeeps/modals/OnboardingModal";
 import PlantSelectModal from "../../components/cookeeps/modals/PlantSelectModal";
 import { PLANT_DATA } from "../../constants/plantData";
@@ -346,7 +344,7 @@ export default function CookeepsPage() {
 
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-6">
         <WeeklyTop3Section users={ranking?.wateringRanking ?? []} />
-        <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />{" "}
+        <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />
       </div>
     </div>
   );
