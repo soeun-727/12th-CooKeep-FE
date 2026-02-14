@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import settings from "../../../assets/cookeeps/main/settings_cookeeps.svg";
 import { myLogo, cookieIcon } from "../../../assets";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 export default function MyCookeepHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
   const cookie = useCookeepsStore((s) => s.cookie);
 
   const TOOLTIP_KEY = "cookeepsPlantShortcutSeen";
@@ -46,7 +47,11 @@ export default function MyCookeepHeader() {
 
         {/* 설정 */}
         <button
-          onClick={() => navigate("/settings")}
+          onClick={() =>
+            navigate("/settings", {
+              state: { from: location.pathname },
+            })
+          }
           className="flex h-9 w-9 items-center justify-center"
         >
           <img

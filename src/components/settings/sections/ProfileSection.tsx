@@ -1,9 +1,8 @@
 // src/pages/settings/sections/ProfileSection.tsx
-
 import { useEffect, useRef, useState } from "react";
 import SettingsInputItem from "../components/SettingsInputItem";
 import axios from "axios";
-import { updateNickname } from "../../../api/user";
+import { MyProfileResponse, updateNickname } from "../../../api/user";
 
 const MASKED_PASSWORD = "********";
 
@@ -13,46 +12,47 @@ type ProfileInfo = {
   email: string;
 };
 
-export default function ProfileSection() {
+type Props = {
+  profile: MyProfileResponse["data"];
+};
+
+export default function ProfileSection({ profile }: Props) {
   const MAX_NICKNAME_LENGTH = 10;
 
-  const [account, setAccount] = useState<ProfileInfo>({
-    nickname: "",
-    phone: "",
-    email: "",
-  });
-
-  const isSocialLogin = !account.phone;
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
 
-  const isNicknameError = account.nickname.length > MAX_NICKNAME_LENGTH;
+  const isSocialLogin = profile.authProvider !== "LOCAL";
 
-  useEffect(() => {
-    const fetchAccount = async () => {
-      // 나중에 API
-      const data = {
-        nickname: "밥말아먹는 수육",
-        phone: "",
-        email: "abcdef@gmail.com",
-      };
-      setAccount(data);
-    };
+  // 최초 1회 초기화
+  const [account, setAccount] = useState<ProfileInfo>(() => ({
+    nickname: profile.Nickname || "",
+    phone: profile.phoneNumber || "",
+    email: profile.email || "",
+  }));
 
-    fetchAccount();
-  }, []);
-
+  // 닉네임 포커스
   useEffect(() => {
     if (isEditingNickname) {
       nicknameInputRef.current?.focus();
     }
   }, [isEditingNickname]);
 
+  const isNicknameError = account.nickname.length > MAX_NICKNAME_LENGTH;
+
   const handleNicknameSave = async () => {
-    if (!account.nickname.trim() || isNicknameError) return;
+    // 1. 앞뒤 공백 제거한 값을 변수에 담기
+    const trimmedNickname = account.nickname.trim();
+
+    // 2. 진짜 빈 값인지 최종 확인
+    if (!trimmedNickname || isNicknameError) return;
 
     try {
-      await updateNickname(account.nickname);
+      // 3. 서버에는 공백이 제거된 깔끔한 값을 보냄
+      await updateNickname(trimmedNickname);
+
+      // 4. 내 로컬 상태도 깔끔한 값으로 동기화
+      setAccount((prev) => ({ ...prev, nickname: trimmedNickname }));
 
       setIsEditingNickname(false);
     } catch (err) {
@@ -72,6 +72,14 @@ export default function ProfileSection() {
     }
   };
 
+  const formatPhoneNumber = (phone: string) => {
+    if (!phone) return "";
+    // 숫자만 남기기
+    const digits = phone.replace(/[^\d]/g, "");
+    // 11자리 기준 (010-1234-5678)
+    return digits.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+  };
+
   return (
     <section className="px-4">
       <div className="flex flex-col gap-[22px]">
@@ -89,14 +97,12 @@ export default function ProfileSection() {
               <>
                 <input
                   ref={nicknameInputRef}
-                  value={account.nickname}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setAccount((prev) => ({
-                      ...prev,
-                      nickname: value,
-                    }));
-                  }}
+                  value={account?.nickname || ""}
+                  onChange={(e) =>
+                    setAccount((prev) =>
+                      prev ? { ...prev, nickname: e.target.value } : prev,
+                    )
+                  }
                   className="
                     flex-1
                     h-full
@@ -108,7 +114,7 @@ export default function ProfileSection() {
                 />
                 <button
                   onClick={handleNicknameSave}
-                  disabled={!account.nickname.trim() || isNicknameError}
+                  disabled={!account.nickname?.trim() || isNicknameError}
                   className="
                     w-[115px]
                     px-[18px]
@@ -148,17 +154,29 @@ export default function ProfileSection() {
             )}
           </div>
           <div className="absolute top-19 px-2">
-            {isEditingNickname && isNicknameError && (
-              <span className="text-[#D91F1F] typo-caption leading-0">
-                닉네임은 10글자 이하로 입력해주세요
-              </span>
+            {isEditingNickname && (
+              <>
+                {/* 1. 글자 수 초과 에러 */}
+                {isNicknameError && (
+                  <span className="text-[#D91F1F] typo-caption leading-0">
+                    닉네임은 {MAX_NICKNAME_LENGTH}글자 이하로 입력해주세요
+                  </span>
+                )}
+
+                {/* 2. 빈 값 에러 (추가) */}
+                {!account.nickname.trim() && (
+                  <span className="text-[#D91F1F] typo-caption leading-0">
+                    닉네임을 입력해주세요
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
 
         <SettingsInputItem
           label="휴대전화"
-          value={isSocialLogin ? " " : account.phone}
+          value={isSocialLogin ? "" : formatPhoneNumber(account.phone)}
           buttonText="휴대폰 번호 변경"
           to="/settings/phone"
           disabled={isSocialLogin}
@@ -174,7 +192,7 @@ export default function ProfileSection() {
         {/* 비밀번호는 항상 고정 */}
         <SettingsInputItem
           label="비밀번호"
-          value={isSocialLogin ? " " : MASKED_PASSWORD}
+          value={isSocialLogin ? "" : MASKED_PASSWORD}
           buttonText="비밀번호 변경"
           to="/settings/password"
           disabled={isSocialLogin}

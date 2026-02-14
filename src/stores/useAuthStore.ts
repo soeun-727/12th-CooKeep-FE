@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import { saveTokens } from "../utils/auth";
-import { loginApi } from "../api/auth";
+import { loginApi, logoutApi } from "../api/auth";
 import axios from "axios";
 import { clearTokens } from "../utils/auth";
+import { useSignupStore } from "./useSignupStore";
+import { usePhoneUpdateStore } from "./usePhoneUpdateStore";
+import { useFindPasswordStore } from "./useFindPasswordStore";
+import { useEditPasswordAuthStore } from "./useEditPasswordAuthStore";
 
 // 1. 소셜 로그인 시 받는 데이터 구조 정의
 interface SocialLoginPayload {
@@ -138,14 +142,34 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 
-  logout: () => {
-    clearTokens(); // 추가해야한다고 해서 추가했습니다.
-    // 로그아웃 시 토큰 및 유저 정보 초기화
-    set({
-      isLoggedIn: false,
-      userId: null,
-      userStatus: null,
-      nextStep: null,
-    });
+  logout: async () => {
+    try {
+      await logoutApi();
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      // 1. 토큰 삭제
+      clearTokens();
+
+      // 2. 현재 Auth 상태 초기화
+      set({
+        isLoggedIn: false,
+        userId: null,
+        userStatus: null,
+        nextStep: null,
+        phoneNumber: "",
+        password: "",
+        canLogin: false,
+      });
+
+      // 3. 인증 관련 스토어들 모조리 초기화 (중요!)
+      useSignupStore.getState().resetSignup();
+      usePhoneUpdateStore.getState().reset();
+      useFindPasswordStore.getState().reset();
+      useEditPasswordAuthStore.getState().reset();
+
+      // 추가로 로컬 스토리지를 완전히 비우고 싶다면 (선택사항)
+      // localStorage.clear();
+    }
   },
 }));

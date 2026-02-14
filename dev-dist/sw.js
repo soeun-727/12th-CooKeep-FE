@@ -84,12 +84,11 @@ define(["./workbox-5119daf5"], function (workbox) {
     [
       {
         url: "/index.html",
-        revision: "0.0v1p3je8v6o",
+        revision: "0.9tr2gq9ti0g",
       },
     ],
     {},
   );
-
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(
     new workbox.NavigationRoute(

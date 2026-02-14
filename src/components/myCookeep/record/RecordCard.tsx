@@ -10,12 +10,16 @@ interface Props {
   record: DailyRecipe;
 }
 
-export default function RecordCard({ record }: Props) {
+export default function RecordCard({ record: initialRecord }: Props) {
   const navigate = useNavigate();
   const { updateRecordVisibility } = useCookeepRecordStore();
-
+  const record =
+    useCookeepRecordStore((state) =>
+      state.records.find(
+        (r) => String(r.dailyRecipeId) === String(initialRecord.dailyRecipeId),
+      ),
+    ) || initialRecord;
   const [isOptionOpen, setIsOptionOpen] = useState(false);
-
   const isPublic = record.isPublic;
 
   const formatDateDot = (dateStr: string) => {
@@ -36,12 +40,15 @@ export default function RecordCard({ record }: Props) {
     setIsOptionOpen(false);
   };
 
+  // RecordCard.tsx 수정본 일부
+
   const handleConfirmChange = () => {
     if (nextVisibility !== null) {
       updateRecordVisibility(String(record.dailyRecipeId), nextVisibility);
     }
     setIsConfirmOpen(false);
     setNextVisibility(null);
+    setIsOptionOpen(false);
   };
 
   const handleCancelChange = () => {

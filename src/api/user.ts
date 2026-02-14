@@ -37,6 +37,19 @@ export interface ProfileResponse {
   data: ProfileData;
 }
 
+export interface MyProfileResponse {
+  status: string;
+  timestamp: string;
+  data: {
+    Nickname: string;
+    phoneNumber: string;
+    email: string;
+    // authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
+    authProvider: "LOCAL" | "KAKAO" | "GOOGLE";
+    marketingPush: boolean;
+  };
+}
+
 /** API 함수들 */
 
 // 1. 주간 목표 재설정 API
@@ -75,4 +88,63 @@ export const updateNickname = async (nickname: string) => {
 // 6. (참고) 푸시 알림 동의 수정 API (기존 기능 유지 시)
 export const updatePushConsent = (marketingConsent: boolean) => {
   return api.patch("/api/users/me/onboarding/push", { marketingConsent });
+};
+
+/** [GET] 유통기한 임박 식재료 존재 여부 확인 (팝업 노출 자격) */
+export const getPushEligibility = async () => {
+  const res = await api.get<{
+    status: string;
+    data: { eligible: boolean };
+  }>("/api/users/me/push/eligibility");
+
+  return res.data.data; // { eligible: true / false }
+};
+// 7. 회원 정보 조회 API
+export const getMyProfile = async (): Promise<MyProfileResponse> => {
+  const res = await api.get<MyProfileResponse>("/api/users/me/profile");
+  return res.data;
+};
+
+// 8. 마케팅 푸시 동의 변경 API
+export const updateMarketingPush = async (marketingPush: boolean) => {
+  const res = await api.patch<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/marketing-push", {
+    marketingPush,
+  });
+
+  return res.data;
+};
+
+// 9. 이메일 변경 API
+export const updateEmail = async (email: string) => {
+  const res = await api.patch<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/email", {
+    email,
+  });
+
+  return res.data;
+};
+
+/** 전화번호 변경을 위한 인증번호 발송 API */
+export const sendUpdatePhoneCode = async (phoneNumber: string) => {
+  const res = await api.post("/api/users/me/phone/send-code", { phoneNumber });
+  return res.data;
+};
+
+/** 전화번호 변경을 위한 인증번호 확인 API */
+export const verifyUpdatePhoneCode = async (
+  phoneNumber: string,
+  code: string,
+) => {
+  const res = await api.post("/api/users/me/phone/verify-code", {
+    phoneNumber,
+    code,
+  });
+  return res.data;
 };

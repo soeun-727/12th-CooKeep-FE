@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PlantShortcutTooltip from "./PlantShortcutTooltip";
 import settings from "../../../assets/cookeeps/main/settings_cookeeps.svg";
 import Logo from "../../../assets/cookeeps/main/logo_cookeeps_black.svg";
@@ -9,6 +9,7 @@ import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 
 export default function CookeepsHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
   const cookie = useCookeepsStore((s) => s.cookie);
 
   const TOOLTIP_KEY = "cookeepsPlantShortcutSeen";
@@ -36,7 +37,7 @@ export default function CookeepsHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 z-50 pointer-events-none w-full max-w-[450px] flex items-center h-12">
+    <header className="fixed top-0 left-0 z-50  w-full max-w-[450px] flex items-center h-12">
       {/* 왼쪽 */}
       <div className="flex-1">
         <img
@@ -68,7 +69,11 @@ export default function CookeepsHeader() {
 
         {/* 설정 */}
         <button
-          onClick={() => navigate("/settings")}
+          onClick={() =>
+            navigate("/settings", {
+              state: { from: location.pathname },
+            })
+          }
           className="flex mr-3 h-[28px] w-[28px] items-center justify-center rounded-full bg-[#202020]"
         >
           <img

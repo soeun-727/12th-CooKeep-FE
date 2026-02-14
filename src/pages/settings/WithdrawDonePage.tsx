@@ -36,7 +36,11 @@ export default function WithdrawDonePage() {
       />
 
       <div className="mt-[48px]">
-        <Button size="L" onClick={() => navigate("/", { replace: true })}>
+        <Button
+          size="L"
+          onClick={() => navigate("/", { replace: true })}
+          className="!text-[#32E389]"
+        >
           메인으로 돌아가기
         </Button>
       </div>
