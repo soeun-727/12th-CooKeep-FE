@@ -37,7 +37,7 @@ export default function CookeepsHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 z-50 pointer-events-none w-full max-w-[450px] flex items-center h-12">
+    <header className="fixed top-0 left-0 z-50  w-full max-w-[450px] flex items-center h-12">
       {/* 왼쪽 */}
       <div className="flex-1">
         <img
