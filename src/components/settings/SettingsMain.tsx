@@ -44,7 +44,7 @@ export default function SettingsMain() {
     setProfile(null);
 
     // 3. 홈 또는 로그인 페이지로 이동
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   if (loading || !profile) return null;
