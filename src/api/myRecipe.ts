@@ -19,7 +19,10 @@ export interface DailyRecipe {
   title: string;
   recipeImageUrl: string;
   isPublic: boolean;
-  createdAt: string; // "2026-02-09T03:01:41..."
+  createdAt: string;
+  liked: boolean;
+  likeCount: number;
+  bookmarked: boolean;
 }
 
 export interface DailyRecipesResponse {
@@ -69,6 +72,37 @@ export interface UpdateDailyRecipeRequest {
   title?: string;
   description?: string;
 }
+
+// api/myRecipe.ts
+
+export interface MyLikedRecipeItem {
+  dailyRecipeId: number;
+  title: string;
+  likeCount: number;
+  recipeImageUrl: string | null;
+  rank: number;
+}
+
+export interface MyLikedRecipesResponse {
+  content: MyLikedRecipeItem[];
+  totalPages: number;
+  totalElements: number;
+  last: boolean; // ★ 무한 스크롤 중단 판별용
+  number: number; // 현재 페이지 번호
+  size: number;
+}
+
+/** [GET] 내가 좋아요 누른 레시피 목록 조회 (무한 스크롤용) */
+export const getMyLikedRecipes = async (
+  page: number = 0,
+  size: number = 10,
+) => {
+  const res = await api.get<{ data: MyLikedRecipesResponse }>(
+    "/api/daily-recipes/likes/my",
+    { params: { page, size } },
+  );
+  return res.data.data;
+};
 
 /** [PATCH] 데일리 레시피 수정 (제목, 한줄평) */
 export const updateDailyRecipe = async (
@@ -137,4 +171,41 @@ export const deleteDailyRecipe = async (dailyRecipeId: number) => {
     `/api/users/me/daily-recipes/${dailyRecipeId}`,
   );
   return res.data;
+};
+
+/** [POST] 데일리 레시피 좋아요 토글 */
+export const toggleRecipeLike = async (dailyRecipeId: number) => {
+  const res = await api.post<{
+    status: string;
+    data: {
+      dailyRecipeId: number;
+      likeCount: number;
+      liked: boolean;
+    };
+  }>(`/api/daily-recipes/likes/${dailyRecipeId}/toggle`); // 오타 주의: toggle
+  return res.data;
+};
+
+/** [POST] 데일리 레시피 북마크 토글 */
+export const toggleRecipeBookmark = async (dailyRecipeId: number) => {
+  const res = await api.post<{
+    status: string;
+    data: {
+      bookmarked: boolean;
+      dailyRecipeId: number;
+    };
+  }>(`/api/daily-recipes/bookmarks/${dailyRecipeId}/toggle`);
+  return res.data;
+};
+
+/** [GET] 내가 북마크한 레시피 목록 조회 */
+export const getMyBookmarkedRecipes = async (
+  page: number = 0,
+  size: number = 10,
+) => {
+  const res = await api.get<{ data: MyLikedRecipesResponse }>(
+    "/api/daily-recipes/bookmarks/my",
+    { params: { page, size } },
+  );
+  return res.data.data;
 };

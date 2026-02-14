@@ -58,6 +58,8 @@ export interface WeeklyRecipeDetailResponse {
   nickname: string;
   recipeImageUrl: string | null;
   title: string;
+  liked: boolean;
+  bookmarked: boolean;
 }
 
 /** [GET] 이번 주 공개 레시피 상세 조회 */

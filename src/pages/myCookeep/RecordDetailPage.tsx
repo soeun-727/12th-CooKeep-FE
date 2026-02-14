@@ -133,8 +133,10 @@ export default function RecordDetailPage() {
     <div className="flex-1 flex flex-col h-full overflow-y-auto no-scrollbar bg-[#FAFAFA]">
       {/* 3. 헤더 영역: 스크롤 시 상단에 고정되도록 sticky 유지 */}
       <div className="sticky top-0 z-[120] bg-[#FAFAFA] w-full">
-        <div className="relative flex items-center w-full max-w-[450px] mx-auto">
-          <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
+        <div className="relative w-full flex justify-center items-center w-full max-w-[450px] mx-auto">
+          <div className="absolute left-0 w-full">
+            <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
+          </div>
           <div className="absolute right-2 top-2 flex items-center">
             {isMenuOpen && (
               <div className="absolute right-2 top-10 flex flex-col items-center justify-center bg-white rounded-[10px] w-[102px] h-[68px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">

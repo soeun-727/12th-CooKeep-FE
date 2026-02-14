@@ -10,13 +10,64 @@ import {
   getWeeklyRecipeDetail,
   WeeklyRecipeDetailResponse,
 } from "../../api/cookeeps";
+import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
 
 export default function RecipeDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-
+  const records = useCookeepRecordStore((state) => state.records);
+  const updateRecordLike = useCookeepRecordStore(
+    (state) => state.updateRecordLike,
+  );
+  const updateRecordBookmark = useCookeepRecordStore(
+    (state) => state.updateRecordBookmark,
+  );
   const [recipe, setRecipe] = useState<WeeklyRecipeDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const storeRecord = records.find((r) => String(r.dailyRecipeId) === id);
+  // 화면에 보여줄 데이터 (스토어에 있으면 스토어꺼, 없으면 서버에서 받아온 상세 데이터 사용)
+  const isLiked = storeRecord ? storeRecord.liked : recipe?.liked;
+  const isBookmarked = storeRecord
+    ? storeRecord.bookmarked
+    : recipe?.bookmarked;
+
+  // 좋아요 토글 핸들러
+  // 좋아요 토글 핸들러
+  const handleLikeToggle = async () => {
+    if (!id || !recipe) return;
+
+    // 1. 전역 스토어 업데이트 (목록 페이지를 위해)
+    await updateRecordLike(id);
+
+    // 2. ✅ 현재 상세 페이지의 로컬 상태 업데이트 (화면 반영을 위해)
+    setRecipe((prev) => {
+      if (!prev) return prev;
+      const nextLiked = !prev.liked;
+      return {
+        ...prev,
+        liked: nextLiked,
+        likeCount: nextLiked ? prev.likeCount + 1 : prev.likeCount - 1,
+      };
+    });
+  };
+
+  // 북마크 토글 핸들러
+  const handleBookmarkToggle = async () => {
+    if (!id || !recipe) return;
+
+    // 1. 전역 스토어 업데이트
+    await updateRecordBookmark(id);
+
+    // 2. ✅ 현재 상세 페이지의 로컬 상태 업데이트
+    setRecipe((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        bookmarked: !prev.bookmarked,
+      };
+    });
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -48,12 +99,19 @@ export default function RecipeDetailPage() {
 
   return (
     <div className="min-h-screen w-full">
+      <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
       <div className="mx-auto w-full max-w-[450px] px-4">
         {/* 헤더 */}
-        <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
+
         <div className="flex flex-col mx-auto pt-[51px]">
           {/* 유저 메타 */}
-          <RecipeDetailUserMeta userName={recipe.nickname} />
+          <RecipeDetailUserMeta
+            userName={recipe.nickname}
+            isLiked={!!isLiked}
+            isBookmarked={!!isBookmarked} // 👈 이제 이 값이 변하면서 자식을 다시 그립니다.
+            onLike={handleLikeToggle}
+            onBookmark={handleBookmarkToggle}
+          />
 
           {/* 메인 콘텐츠 */}
           <div className="flex flex-col items-start gap-4 self-stretch w-full">
