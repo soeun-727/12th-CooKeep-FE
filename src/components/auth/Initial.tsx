@@ -31,7 +31,7 @@ export default function Initial() {
 
       {/* 애니메이션 */}
       <div className="relative mt-27 w-full overflow-hidden">
-        <div className="flex h-50 items-end animate-roll-left w-max flex-nowrap">
+        <div className="flex h-50 items-end animate-roll-left w-max flex-nowrap mb-26">
           {INFINITE_CHAR.map((char, index) => (
             <img
               key={index}
@@ -44,7 +44,7 @@ export default function Initial() {
       </div>
       <div className="flex flex-col items-center justify-center gap-3">
         {/* 버튼 영역 */}
-        <div className="mt-26">
+        <div className="">
           <Button variant="green" size="L" onClick={() => navigate("/login")}>
             시작하기
           </Button>
