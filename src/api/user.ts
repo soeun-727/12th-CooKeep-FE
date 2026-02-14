@@ -76,3 +76,13 @@ export const updateNickname = async (nickname: string) => {
 export const updatePushConsent = (marketingConsent: boolean) => {
   return api.patch("/api/users/me/onboarding/push", { marketingConsent });
 };
+
+/** [GET] 유통기한 임박 식재료 존재 여부 확인 (팝업 노출 자격) */
+export const getPushEligibility = async () => {
+  const res = await api.get<{
+    status: string;
+    data: { eligible: boolean };
+  }>("/api/users/me/push/eligibility");
+
+  return res.data.data; // { eligible: true / false }
+};
