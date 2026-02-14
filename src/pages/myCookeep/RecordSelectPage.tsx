@@ -26,7 +26,7 @@ export default function RecordSelectPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { editingRecordId, updateRecordRecipe } = useCookeepRecordStore();
+  const { editingRecordId } = useCookeepRecordStore();
 
   // 검색 필터
   const filteredRecipes = useMemo(() => {
@@ -161,11 +161,7 @@ export default function RecordSelectPage() {
 
               //  수정 모드 → 여기서만 레시피 교체
               if (editingRecordId) {
-                updateRecordRecipe({
-                  recordId: editingRecordId,
-                  recipeId: recipe.aiRecipeId,
-                  recipeTitle: recipe.title,
-                });
+                setSelectedRecipeId(recipe.aiRecipeId);
               }
 
               // 무조건 write로 이동

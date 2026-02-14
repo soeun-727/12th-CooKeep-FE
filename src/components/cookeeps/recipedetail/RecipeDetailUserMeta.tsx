@@ -6,9 +6,19 @@ import saveIcon from "../../../assets/cookeeps/main/save_cookeeps.svg";
 
 interface Props {
   userName: string;
+  isLiked: boolean;
+  isBookmarked: boolean;
+  onLike: () => void;
+  onBookmark: () => void;
 }
 
-export default function RecipeDetailUserMeta({ userName }: Props) {
+export default function RecipeDetailUserMeta({
+  userName,
+  isLiked,
+  isBookmarked,
+  onLike,
+  onBookmark,
+}: Props) {
   // const [liked, setLiked] = useState(false);
   // const [saved, setSaved] = useState(false);
 
@@ -38,12 +48,26 @@ export default function RecipeDetailUserMeta({ userName }: Props) {
 
       {/* 버튼 영역 */}
       <div className="flex items-center gap-1 sm:gap-2">
-        <button className="w-[28px] h-[28px] flex items-center justify-center rounded-full">
-          <img src={likeIcon} alt="좋아요" className="w-5 h-5" />
+        <button
+          onClick={onLike}
+          className="w-[28px] h-[28px] flex items-center justify-center rounded-full"
+        >
+          <img
+            src={likeIcon}
+            alt="좋아요"
+            className={`w-5 h-5 ${isLiked ? "invert brightness-100" : ""}`}
+          />
         </button>
 
-        <button className="w-[28px] h-[28px] flex items-center justify-center rounded-full">
-          <img src={saveIcon} alt="저장" className="w-5 h-5" />
+        <button
+          onClick={onBookmark}
+          className="w-[28px] h-[28px] flex items-center justify-center rounded-full"
+        >
+          <img
+            src={saveIcon}
+            alt="저장"
+            className={`w-5 h-5 ${isBookmarked ? "invert brightness-100" : ""}`}
+          />
         </button>
       </div>
     </div>

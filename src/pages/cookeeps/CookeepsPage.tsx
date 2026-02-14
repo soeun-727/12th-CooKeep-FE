@@ -4,9 +4,7 @@ import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
 import WeeklyTop3Section from "../../components/cookeeps/ranking/WeeklyTop3Section";
-import { top3Users } from "../../constants/mocktop3Users";
 import WeeklyRecipeSection from "../../components/cookeeps/recipe/WeeklyRecipeSection";
-import { topRecipes } from "../../constants/mockTopRecipes";
 import OnboardingModal from "../../components/cookeeps/modals/OnboardingModal";
 import PlantSelectModal from "../../components/cookeeps/modals/PlantSelectModal";
 import { PLANT_DATA } from "../../constants/plantData";
@@ -16,6 +14,7 @@ import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 import HarvestModal from "../../components/cookeeps/modals/HarvestModal";
+import { getWeeklyRanking, RankingResponse } from "../../api/cookeeps";
 
 type ActiveModal =
   | "onboarding"
@@ -192,6 +191,31 @@ export default function CookeepsPage() {
     }
   };
 
+  const [ranking, setRanking] = useState<RankingResponse | null>(null);
+
+  // 데이터 통합 페칭
+  useEffect(() => {
+    const fetchAllData = async () => {
+      const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
+        useCookeepsStore.getState();
+
+      // 1. 기존 식물 관련 데이터 호출
+      fetchGrowingPlant();
+      fetchCookies();
+      fetchMyPlants();
+
+      // 2. 이번 주 랭킹 데이터 호출
+      try {
+        const rankingData = await getWeeklyRanking();
+        setRanking(rankingData);
+      } catch (error) {
+        console.error("랭킹 데이터 로드 실패:", error);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
   return (
     <div className="flex-1 flex flex-col min-h-0 relative no-scrollbar">
       {/* 1. 온보딩 */}
@@ -317,9 +341,10 @@ export default function CookeepsPage() {
       </div>
 
       {/* ===== 스크롤 영역 ===== */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-[10px] pt-5 pb-6">
-        <WeeklyTop3Section users={top3Users} />
-        <WeeklyRecipeSection topRecipes={topRecipes} />
+
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-6">
+        <WeeklyTop3Section users={ranking?.wateringRanking ?? []} />
+        <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />
       </div>
     </div>
   );
