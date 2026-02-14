@@ -96,3 +96,9 @@ export const resetPasswordApi = async (
 
   return res.data;
 };
+
+// 로그아웃
+export const logoutApi = async () => {
+  const res = await api.post("/api/auth/logout");
+  return res.data;
+};
