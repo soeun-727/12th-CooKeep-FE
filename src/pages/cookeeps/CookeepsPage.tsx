@@ -343,15 +343,10 @@ export default function CookeepsPage() {
       </div>
 
       {/* ===== 스크롤 영역 ===== */}
-<<<<<<< HEAD
+
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-6">
         <WeeklyTop3Section users={ranking?.wateringRanking ?? []} />
         <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />{" "}
-=======
-      <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-[10px] pt-5 pb-6">
-        <WeeklyTop3Section users={top3Users} />
-        <WeeklyRecipeSection topRecipes={topRecipes} />
->>>>>>> 1c75c7f2f452e2a37686b3a2f11b81b6e3eaa827
       </div>
     </div>
   );
