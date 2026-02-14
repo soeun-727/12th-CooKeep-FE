@@ -12,7 +12,7 @@ export default function TermsPage() {
       <BackHeader title="이용약관" onBack={() => navigate(-1)} />
 
       {/* 전체 스크롤 영역 */}
-      <div className="flex-1 overflow-y-auto px-4 pb-6 pt-[129px]">
+      <div className="flex-1 overflow-y-auto px-4 pb-6 pt-[75px]">
         <div className="flex flex-col gap-[24px] max-w-[361px] mx-auto pb-[34px]">
           {AGREEMENTS.map((agreement) => (
             <AgreementReadCard

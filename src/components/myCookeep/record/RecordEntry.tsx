@@ -33,9 +33,6 @@ export default function RecordEntry({ records }: Props) {
                 <Button size="L" variant="black" onClick={handleRecordClick}>
                   오늘 만든 요리 기록하기
                 </Button>
-                <p className="text-center text-[12px] leading-[16px] text-[#7D7D7D]">
-                  AI가 추천해준 레시피를 불러와서 기록해보세요
-                </p>
               </div>
             </>
           ) : (

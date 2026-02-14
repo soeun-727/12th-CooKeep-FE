@@ -23,7 +23,7 @@ export default function SettingsMain() {
 
   return (
     <>
-      <main className="pt-[157px] px-4">
+      <main className="pt-[103px] px-4">
         <div className="space-y-6">
           <ProfileSection />
           <NotificationSection />

@@ -4,6 +4,7 @@ import TextField from "../../ui/TextField";
 import PhoneAuthModal from "./PhoneAuthModal";
 import { useNavigate } from "react-router-dom";
 import { useSignupStore } from "../../../stores/useSignupStore";
+import axios from "axios";
 
 export default function PhoneSection() {
   const { phone, setPhone, isCodeSent, isVerified, sendCode, verifyCode } =
@@ -11,14 +12,13 @@ export default function PhoneSection() {
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | undefined>();
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
 
   type ModalType = "send" | "verify" | "already" | "help";
   const [modalType, setModalType] = useState<ModalType | null>(null);
 
-  const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
-
+  const isPhoneValid = /^010-\d{3,4}-\d{4}$/.test(phone);
   const navigate = useNavigate();
 
   // 타이머
@@ -46,25 +46,40 @@ export default function PhoneSection() {
     return `${m}:${s}`;
   };
 
-  const handleSendCode = () => {
-    const alreadySignedUp = false;
+  const [isSending, setIsSending] = useState(false);
 
-    if (alreadySignedUp) {
-      setModalType("already");
-      return;
+  const handleSendCode = async () => {
+    if (!isPhoneValid || isSending) return;
+
+    try {
+      setIsSending(true);
+      setCode("");
+      setCodeError(undefined);
+
+      setTimeLeft(300);
+      setTimerActive(true);
+
+      await sendCode(); // 실제 API 호출
+
+      setModalType("send");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 409) {
+          // 이미 가입된 번호
+          setModalType("already");
+        } else if (status === 429) {
+          setCodeError("인증 요청이 너무 빠릅니다.");
+        } else {
+          setCodeError("인증번호 발송 중 오류가 발생했습니다.");
+        }
+      } else {
+        setCodeError("알 수 없는 오류가 발생했습니다.");
+      }
+    } finally {
+      setIsSending(false);
     }
-
-    // 기존 인증 완전 무효화
-    setCode("");
-    setCodeError(undefined);
-
-    // 타이머 리셋
-    setTimeLeft(300);
-    setTimerActive(false);
-    setTimerActive(true);
-
-    sendCode();
-    setModalType("send");
   };
 
   const handleVerify = async () => {
@@ -78,17 +93,31 @@ export default function PhoneSection() {
       return;
     }
 
-    const success = await verifyCode(code); // 이건 인증 결과만 반환
-    if (success) {
-      setCodeError(undefined);
-      setModalType("verify"); // 모달 띄우기
+    const result = await verifyCode(code);
+
+    if (result.success) {
+      setModalType("verify");
     } else {
-      setCodeError("인증번호를 다시 입력해 주세요");
+      setCodeError(result.message);
     }
   };
 
   const handleResend = () => handleSendCode();
 
+  const handlePhoneChange = (value: string) => {
+    const input = value.replace(/\D/g, "");
+    const size = input.length;
+
+    let formatted = "";
+    if (size < 4) {
+      formatted = input;
+    } else if (size < 8) {
+      formatted = `${input.slice(0, 3)}-${input.slice(3)}`;
+    } else {
+      formatted = `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7, 11)}`;
+    }
+    setPhone(formatted);
+  };
   return (
     <div className="pt-[241px] w-[352px] mx-auto">
       {/* 전화번호 입력 + 발송 버튼 */}
@@ -97,7 +126,7 @@ export default function PhoneSection() {
         <div className="relative mt-[12px]">
           <TextField
             value={phone}
-            onChange={setPhone}
+            onChange={handlePhoneChange}
             placeholder="휴대폰 번호(- 없이 숫자만 입력)"
             disabled={isVerified}
             errorMessage={
@@ -109,7 +138,7 @@ export default function PhoneSection() {
               <button
                 type="button"
                 onClick={isCodeSent ? handleResend : handleSendCode}
-                disabled={!isPhoneValid} // disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
+                disabled={!isPhoneValid || isSending} // disabled={!isPhoneValid || (isCodeSent && timeLeft > 0)}
                 className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
           ${
             isPhoneValid // isPhoneValid && !(isCodeSent && timeLeft > 0)
@@ -184,7 +213,7 @@ export default function PhoneSection() {
           phone={phone}
           onConfirm={() => {
             if (modalType === "verify") {
-              useSignupStore.getState().setIsVerified(true); // Zustand에서 직접 set
+              useSignupStore.getState().setIsVerified(true);
             }
             setModalType(null);
           }}

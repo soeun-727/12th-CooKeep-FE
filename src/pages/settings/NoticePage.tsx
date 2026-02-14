@@ -28,7 +28,7 @@ export default function NoticePage() {
   return (
     <>
       <BackHeader title="공지사항" onBack={() => navigate(-1)} />
-      <main className="pt-[129px] px-4 pb-[34px] flex flex-col gap-[14px] min-h-screen">
+      <main className="pt-[75px] px-4 pb-[34px] flex flex-col gap-[14px] min-h-screen">
         {loading ? (
           <p className="text-center text-gray-500">불러오는 중...</p>
         ) : categories.length === 0 ? (

@@ -4,6 +4,7 @@ import TextField from "../../ui/TextField";
 import FindPhoneAuthModal from "./FindPhoneAuthModal";
 import { useNavigate } from "react-router-dom";
 import { useFindPasswordStore } from "../../../stores/useFindPasswordStore";
+// import axios from "axios";
 
 export default function FindPhoneSection() {
   const { phone, setPhone, isCodeSent, sendCode, verifyCode } =
@@ -11,13 +12,19 @@ export default function FindPhoneSection() {
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | undefined>();
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
 
   type ModalType = "send" | "verify" | "notRegistered" | "help";
   const [modalType, setModalType] = useState<ModalType | null>(null);
 
-  const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
+  const isPhoneValid = /^01[0-9]{9}$/.test(phone);
+  const formatPhone = (value: string) => {
+    if (value.length <= 3) return value;
+    if (value.length <= 7) return `${value.slice(0, 3)}-${value.slice(3)}`;
+    return `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`;
+  };
+
   const navigate = useNavigate();
 
   // 타이머
@@ -45,20 +52,28 @@ export default function FindPhoneSection() {
 
   // 인증번호 발송
   const handleSendCode = async () => {
-    // TODO: 실제 API로 가입 여부 체크
-    const isRegistered = true; // 실제로는 서버 호출
-    if (!isRegistered) {
-      setModalType("notRegistered");
-      return;
+    try {
+      setCode("");
+      setCodeError(undefined);
+
+      await sendCode();
+
+      setTimeLeft(300);
+      setTimerActive(true);
+      setModalType("send");
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === "가입된 번호가 없습니다.") {
+          setModalType("notRegistered");
+          return;
+        }
+
+        alert(error.message);
+        return;
+      }
+
+      alert("인증 요청 중 오류가 발생했습니다.");
     }
-
-    setCode("");
-    setCodeError(undefined);
-    setTimeLeft(300);
-    setTimerActive(true);
-
-    sendCode();
-    setModalType("send");
   };
 
   const handleVerify = async () => {
@@ -66,17 +81,19 @@ export default function FindPhoneSection() {
       setCodeError("인증번호가 만료되었습니다");
       return;
     }
-    if (code.length !== 6) {
-      setCodeError("인증번호를 다시 입력해 주세요");
-      return;
-    }
 
-    const success = await verifyCode(code);
-    if (success) {
-      setCodeError(undefined);
-      setModalType("verify");
-    } else {
-      setCodeError("인증번호를 다시 입력해 주세요");
+    try {
+      const success = await verifyCode(code);
+      if (success) {
+        setCodeError(undefined);
+        setModalType("verify");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        setCodeError(error.message);
+      } else {
+        setCodeError("인증 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -89,7 +106,7 @@ export default function FindPhoneSection() {
         <div className="typo-h1">휴대폰 인증</div>
         <div className="relative mt-[12px]">
           <TextField
-            value={phone}
+            value={formatPhone(phone)}
             onChange={setPhone}
             placeholder="휴대폰 번호(- 없이 숫자만 입력)"
             errorMessage={

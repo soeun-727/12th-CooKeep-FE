@@ -91,14 +91,21 @@ export default function MyCookeepPage() {
   };
 
   return (
-    <>
-      <Profile />
+    <div className="flex flex-col h-full min-h-0">
+      <div className="shrink-0">
+        <Profile />
 
-      <div className="mt-6">
-        <MyCookeepTabBar activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="mt-6">
+          <MyCookeepTabBar
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
+        </div>
       </div>
 
-      <div className="flex-1 mt-[10px] mb-[15px]">{renderContent()}</div>
+      <div className="flex-1 mt-[10px] mb-[15px] overflow-y-auto no-scrollbar">
+        {renderContent()}
+      </div>
 
       {shouldShowAddMoreModal && (
         <AddMoreModal
@@ -109,6 +116,6 @@ export default function MyCookeepPage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }

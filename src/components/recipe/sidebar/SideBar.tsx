@@ -109,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     <>
       {/* 1. 배경 오버레이 */}
       <div
-        className={`absolute inset-0 z-[120] bg-[#11111160]
+        className={`fixed inset-0 z-[120] bg-[#11111160]
           transition-opacity duration-300
           ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         onClick={onClose}
@@ -118,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* 2. 사이드바 본체 */}
       <div
         className={`fixed left-0 z-[130] top-[22px]
-          w-[342px] h-[calc(100%-112px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
+          w-[342px] h-[calc(100%-78px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
           transform transition-transform duration-300 ease-in-out
           ${translateClasses}`}
       >

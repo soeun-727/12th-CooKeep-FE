@@ -20,8 +20,8 @@ const MainHeader = ({ isAllView }: MainHeaderProps) => {
   return (
     <header className="fixed top-0 left-0 z-50 pointer-events-none w-full max-w-[450px]">
       <div className="mx-auto max-w-[450px] pointer-events-auto">
-        <div className="h-[48px] flex items-center justify-between pb-1 bg-[#FAFAFA]">
-          <div className="flex-1 flex p-1">
+        <div className="h-12 flex items-center justify-between pb-1 bg-[#FAFAFA]">
+          <div className="flex-1 flex">
             {isAllView ? (
               <button onClick={handleBack}>
                 <img className="ml-[18px] h-9" src={backIcon} />
@@ -30,7 +30,7 @@ const MainHeader = ({ isAllView }: MainHeaderProps) => {
               <img
                 src={mainLogo}
                 alt="CooKeep logo"
-                className="w-25 object-contain pb-1 ml-[31px] mt-1"
+                className="w-24 object-contain pb-1 ml-[31px] mt-1"
               />
             )}
           </div>
