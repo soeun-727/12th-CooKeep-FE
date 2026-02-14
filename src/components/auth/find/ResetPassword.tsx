@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
 import { useNavigate } from "react-router-dom";
-
 // 아이콘
 import pwIcon from "../../../assets/login/key.svg";
 import pwImage from "../../../assets/login/pw.svg";
 import openpwImage from "../../../assets/signup/openpw.svg";
 import checkIcon from "../../../assets/signup/check.svg";
 import { useFindPasswordStore } from "../../../stores/useFindPasswordStore";
+import { resetPasswordApi } from "../../../api/auth";
+import axios from "axios";
 
 export default function ResetPassword() {
+  const { phone, isVerified, reset } = useFindPasswordStore();
   const navigate = useNavigate();
-
-  const { phone, reset } = useFindPasswordStore();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,7 +22,18 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | undefined>();
   const [isSuccess, setIsSuccess] = useState(false);
   const validatePassword = (pw: string) =>
-    password.length >= 8 && /[a-zA-Z]/.test(password) && /[0-9]/.test(pw);
+    pw.length >= 8 && /[a-zA-Z]/.test(pw) && /[0-9]/.test(pw);
+
+  // useEffect(() => {
+  //   if (!isVerified || !phone) {
+  //     navigate("/find");
+  //   }
+  // }, [isVerified, phone, navigate]);
+  useEffect(() => {
+    if (!isSuccess && (!isVerified || !phone)) {
+      navigate("/find");
+    }
+  }, [isVerified, phone, isSuccess, navigate]);
 
   const isPasswordValid = password ? validatePassword(password) : false;
   const isPasswordMatch =
@@ -42,20 +53,31 @@ export default function ResetPassword() {
 
   const handleSubmit = async () => {
     if (!validatePassword(password)) {
-      setError("비밀번호는 8자리 이상, 영문+숫자+특수문자를 포함해야 합니다.");
+      setError("비밀번호는 8자리 이상, 영문+숫자를 포함해야 합니다.");
       return;
     }
+
     if (password !== confirmPassword) {
       setError("비밀번호 확인이 일치하지 않습니다.");
       return;
     }
 
     try {
-      await resetPasswordAPI(phone, password);
+      await resetPasswordApi(phone, password, confirmPassword);
+
       setError(undefined);
       setIsSuccess(true);
-      reset(); // 플로우 종료 → store 초기화
-    } catch {
+      // reset(); // store 초기화
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+
+        if (status === 400) {
+          setError("요청 값이 올바르지 않습니다.");
+          return;
+        }
+      }
+
       setError("비밀번호 변경 중 오류가 발생했습니다.");
     }
   };
@@ -131,10 +153,10 @@ export default function ResetPassword() {
       <Button
         type="submit"
         size="L"
-        variant="green"
+        variant="black"
         disabled={!isFormValid}
         onClick={handleSubmit}
-        className="mt-[31px]"
+        className="mt-[31px] !text-[#32E389] disabled:!text-white"
       >
         비밀번호 재설정
       </Button>
@@ -156,8 +178,11 @@ export default function ResetPassword() {
             <Button
               size="L"
               variant="black"
-              onClick={() => navigate("/login")}
-              className="mt-[48px]"
+              onClick={() => {
+                reset();
+                navigate("/login");
+              }}
+              className="mt-[48px] !text-[#32E389]"
             >
               로그인하기
             </Button>
@@ -167,13 +192,3 @@ export default function ResetPassword() {
     </div>
   );
 }
-
-// 예시 API 함수
-const resetPasswordAPI = async (phone: string, newPassword: string) => {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      console.log(`전화번호: ${phone}, 새 비밀번호: ${newPassword}`);
-      resolve();
-    }, 1000);
-  });
-};

@@ -8,7 +8,8 @@ import RecordEntry from "../../components/myCookeep/record/RecordEntry";
 import AddMoreModal from "../../components/myCookeep/record/AddMoreModal";
 import { hasTodayRecord } from "../../utils/record";
 import RecordCard from "../../components/myCookeep/record/RecordCard";
-import { DailyRecipe, getDailyRecipesByDate } from "../../api/myRecipe";
+import { getDailyRecipesByDate } from "../../api/myRecipe";
+import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
 
 type TabType = "record" | "calendar" | "statistics";
 
@@ -18,7 +19,7 @@ export default function MyCookeepPage() {
 
   const [activeTab, setActiveTab] = useState<TabType>("record");
   const [dismissed, setDismissed] = useState(false);
-  const [selectedRecords, setSelectedRecords] = useState<DailyRecipe[]>([]);
+  const { records, setRecords } = useCookeepRecordStore();
   const [enteredByBottomTab, setEnteredByBottomTab] = useState(
     location.state?.fromTab === true,
   );
@@ -33,11 +34,11 @@ export default function MyCookeepPage() {
     try {
       const response = await getDailyRecipesByDate(dateStr);
       if (response.status === "OK") {
-        setSelectedRecords(response.data);
+        setRecords(response.data);
       }
     } catch (error) {
       console.error("레시피 조회 실패:", error);
-      setSelectedRecords([]);
+      setRecords([]);
     }
   };
 
@@ -54,7 +55,7 @@ export default function MyCookeepPage() {
 
   const handleTabChange = (tab: string) => {
     if (tab === "record" || tab === "calendar" || tab === "statistics") {
-      setSelectedRecords([]);
+      setRecords([]);
       setActiveTab(tab);
       setDismissed(false);
       setEnteredByBottomTab(false);
@@ -70,10 +71,10 @@ export default function MyCookeepPage() {
   const renderContent = () => {
     switch (activeTab) {
       case "calendar":
-        if (selectedRecords.length > 0) {
+        if (records.length > 0) {
           return (
             <div className="flex flex-col items-center gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-              {selectedRecords.map((record) => (
+              {records.map((record) => (
                 <RecordCard key={record.dailyRecipeId} record={record} />
               ))}
             </div>
@@ -86,19 +87,26 @@ export default function MyCookeepPage() {
 
       case "record":
       default:
-        return <RecordEntry records={selectedRecords} />;
+        return <RecordEntry records={records} />;
     }
   };
 
   return (
-    <>
-      <Profile />
+    <div className="flex flex-col h-full min-h-0">
+      <div className="shrink-0">
+        <Profile />
 
-      <div className="mt-6">
-        <MyCookeepTabBar activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="mt-6">
+          <MyCookeepTabBar
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
+        </div>
       </div>
 
-      <div className="flex-1 mt-[10px] mb-[15px]">{renderContent()}</div>
+      <div className="flex-1 mt-[10px] mb-[15px] overflow-y-auto no-scrollbar">
+        {renderContent()}
+      </div>
 
       {shouldShowAddMoreModal && (
         <AddMoreModal
@@ -109,6 +117,6 @@ export default function MyCookeepPage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }

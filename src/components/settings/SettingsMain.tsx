@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ProfileSection from "./sections/ProfileSection";
@@ -6,27 +6,55 @@ import NotificationSection from "./sections/NotificationSection";
 import SupportSection from "./sections/SupportSection";
 import logoutIcon from "../../assets/settings/logout.svg";
 import ConfirmModal from "../ui/ConfirmModal";
+import { getMyProfile, MyProfileResponse } from "../../api/user";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 export default function SettingsMain() {
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
-  const handleLogoutConfirm = () => {
+  const [profile, setProfile] = useState<MyProfileResponse["data"] | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getMyProfile();
+        setProfile(res.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleLogoutConfirm = async () => {
     setOpenLogoutModal(false);
 
-    // TODO: 토큰 / 상태 초기화 필요하면 여기서
-    // localStorage.clear();
-    // zustand reset 등
+    // 1. 스토어의 logout 실행 (API 호출 + 토큰 삭제 + 상태 초기화)
+    await logout();
 
-    navigate("/", { replace: true }); // 완전 첫 페이지
+    // 2. [추가] 현재 컴포넌트의 로컬 상태도 비워주기
+    // 이렇게 하면 아래 if (loading || !profile) return null; 로직에 걸려
+    // 화면이 즉시 비워지거나 스켈레톤/로딩 상태로 전환됩니다.
+    setProfile(null);
+
+    // 3. 홈 또는 로그인 페이지로 이동
+    navigate("/login", { replace: true });
   };
+
+  if (loading || !profile) return null;
 
   return (
     <>
       <main className="pt-[103px] px-4">
         <div className="space-y-6">
-          <ProfileSection />
-          <NotificationSection />
+          <ProfileSection profile={profile} />
+          <NotificationSection marketingPush={profile.marketingPush} />
           <SupportSection />
         </div>
 

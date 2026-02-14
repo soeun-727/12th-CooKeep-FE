@@ -21,7 +21,7 @@ export default function ExpiryAlertModal({ isOpen, onClose, items }: Props) {
     : "유통기한이 오늘까지인 재료들이 있어요!";
 
   return (
-    <div className="absolute inset-0 z-60 flex items-center justify-center">
+    <div className="fixed inset-0 z-100 flex items-center justify-center">
       {/* backdrop */}
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 

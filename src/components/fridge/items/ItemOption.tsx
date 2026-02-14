@@ -4,10 +4,13 @@ import thrown from "../../../assets/fridge/thrown.svg";
 import { useIngredientStore } from "../../../stores/useIngredientStore";
 import DoublecheckModal from "../../ui/DoublecheckModal";
 import AlertModal from "../../ui/AlertModal";
+import { useNavigate } from "react-router-dom";
+import { useRecipeFlowStore } from "../../../stores/useRecipeFlowStore";
 
 export default function ItemOption() {
+  const navigate = useNavigate();
   const { selectedIds, ingredients, deleteSelected } = useIngredientStore();
-
+  const { setSelectedIngredients } = useRecipeFlowStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
@@ -31,6 +34,14 @@ export default function ItemOption() {
     setIsModalOpen(true);
   };
 
+  const handleRecipeRecommend = () => {
+    const selectedIngredients = ingredients.filter((item) =>
+      selectedIds.includes(item.id),
+    );
+    setSelectedIngredients(selectedIngredients);
+    navigate("/recipe/confirm");
+  };
+
   const handleConfirm = async () => {
     const type = modalType;
     const result = await deleteSelected(type);
@@ -51,11 +62,11 @@ export default function ItemOption() {
   return (
     <>
       {/* 하단 옵션 바 */}
-      <div className="fixed bottom-[90px] left-1/2 z-50 w-full max-w-[450px] -translate-x-1/2">
+      <div className="fixed bottom-[56px] left-1/2 z-60 w-full max-w-[450px] -translate-x-1/2">
         <div className="flex h-11 bg-white border-[0.5px] border-[#D1D1D1]">
           <button
             onClick={() => handleOpenModal("eaten")}
-            className="flex-1 transition-all active:bg-[var(--color-green-light)] active:shadow-[inset_0_1px_6.7px_0_rgba(17,17,17,0.2)]"
+            className="flex-1 transition-all active:bg-[var(--color-green-light)] active:shadow-[inset_0_-1px_20px_-4px_rgba(0,0,0,0.25)]"
           >
             <div className="flex h-11 items-center justify-center gap-[3px]">
               <span className="typo-body2">다 먹었어요</span>
@@ -74,7 +85,7 @@ export default function ItemOption() {
           </button>
 
           <button
-            onClick={() => console.log("레시피 추천 로직")}
+            onClick={handleRecipeRecommend}
             className="flex-1 transition-all active:bg-[var(--color-green-light)] active:shadow-[inset_0_1px_6.7px_0_rgba(17,17,17,0.2)]"
           >
             <div className="flex h-11 items-center justify-center typo-body2">
