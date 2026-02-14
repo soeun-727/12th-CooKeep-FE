@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
 import PhoneAuthModal from "../../auth/signup/PhoneAuthModal";
-import { useSignupStore } from "../../../stores/useSignupStore";
+import { usePhoneUpdateStore } from "../../../stores/usePhoneUpdateStore";
 
 type ModalType = "send" | "verify" | "help";
 
@@ -14,8 +14,8 @@ interface PhoneVerifySectionProps {
 export default function PhoneVerifySection({
   onSuccess,
 }: PhoneVerifySectionProps) {
-  const { phone, setPhone, isCodeSent, sendCode, verifyCode } =
-    useSignupStore();
+  const { phone, setPhone, isCodeSent, requestSendCode, requestVerifyCode } =
+    usePhoneUpdateStore();
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string>();
@@ -24,6 +24,14 @@ export default function PhoneVerifySection({
   const [modalType, setModalType] = useState<ModalType | null>(null);
 
   const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
+
+  // 숫자에 하이픈을 자동으로 넣어주는 함수
+  const formatPhoneNumber = (value: string) => {
+    const digits = value.replace(/[^\d]/g, ""); // 숫자만 남기기
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+  };
 
   /* =====================
      타이머
@@ -55,15 +63,24 @@ export default function PhoneVerifySection({
   /* =====================
      인증번호 발송 / 재발송
   ====================== */
-  const handleSendCode = () => {
-    setCode("");
-    setCodeError(undefined);
+  const handleSendCode = async () => {
+    const result = await requestSendCode();
 
-    setTimeLeft(180);
-    setTimerActive(true);
-
-    sendCode(); // Zustand store API 호출
-    setModalType("send");
+    if (result.success) {
+      setCode("");
+      setCodeError(undefined);
+      setTimeLeft(300);
+      setTimerActive(true);
+      setModalType("send");
+    } else {
+      if (result.errorStatus === 409) {
+        alert("이미 사용 중인 번호입니다.");
+      } else if (result.errorStatus === 429) {
+        alert("재요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
+      } else {
+        alert("인증번호 발송에 실패했습니다.");
+      }
+    }
   };
 
   const handleResend = handleSendCode;
@@ -82,13 +99,24 @@ export default function PhoneVerifySection({
       return;
     }
 
-    const success = await verifyCode(code);
+    // 수정: verifyCode -> requestVerifyCode (Store의 실제 API 호출 함수)
+    const result = await requestVerifyCode(code);
 
-    if (success) {
+    // PhoneVerifySection.tsx 내의 handleVerify 함수 중 일부
+    if (result.success) {
       setCodeError(undefined);
-      setModalType("verify"); // 모달 띄우기
+      setModalType("verify");
     } else {
-      setCodeError("인증번호를 다시 입력해 주세요");
+      if (result.errorStatus === 429) {
+        setCodeError("인증 시도 횟수를 초과했습니다.");
+      } else if (result.errorStatus === 404) {
+        setCodeError("인증 요청 내역이 없습니다.");
+      } else if (result.errorStatus === 400) {
+        // 🔹 400 에러 처리 추가 (인증번호 불일치 등)
+        setCodeError("인증번호가 일치하지 않습니다.");
+      } else {
+        setCodeError("인증번호를 다시 확인해 주세요.");
+      }
     }
   };
 
@@ -99,8 +127,14 @@ export default function PhoneVerifySection({
       {/* 전화번호 입력 */}
       <div className="relative mt-[12px]">
         <TextField
-          value={phone}
-          onChange={setPhone}
+          value={formatPhoneNumber(phone)}
+          onChange={(val) => {
+            // 3. 숫자가 아닌 문자는 모두 제거하고 11자까지만 저장
+            const onlyNumber = val.replace(/[^\d]/g, "");
+            if (onlyNumber.length <= 11) {
+              setPhone(onlyNumber);
+            }
+          }}
           placeholder="새 휴대폰 번호(- 없이 숫자만 입력)"
           errorMessage={
             !isPhoneValid && phone

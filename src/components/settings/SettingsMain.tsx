@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import ProfileSection from "./sections/ProfileSection";
@@ -6,10 +6,29 @@ import NotificationSection from "./sections/NotificationSection";
 import SupportSection from "./sections/SupportSection";
 import logoutIcon from "../../assets/settings/logout.svg";
 import ConfirmModal from "../ui/ConfirmModal";
+import { getMyProfile, MyProfileResponse } from "../../api/user";
 
 export default function SettingsMain() {
   const navigate = useNavigate();
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
+
+  const [profile, setProfile] = useState<MyProfileResponse["data"] | null>(
+    null,
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getMyProfile();
+        setProfile(res.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleLogoutConfirm = () => {
     setOpenLogoutModal(false);
@@ -21,12 +40,14 @@ export default function SettingsMain() {
     navigate("/", { replace: true }); // 완전 첫 페이지
   };
 
+  if (loading || !profile) return null;
+
   return (
     <>
       <main className="pt-[103px] px-4">
         <div className="space-y-6">
-          <ProfileSection />
-          <NotificationSection />
+          <ProfileSection profile={profile} />
+          <NotificationSection marketingPush={profile.marketingPush} />
           <SupportSection />
         </div>
 
