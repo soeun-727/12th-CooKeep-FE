@@ -43,8 +43,6 @@ export default function RecordWritePage() {
         const response = await getAiRecipeDetail(selectedRecipeId);
         if (response.status === "OK") {
           setRecipeDetail(response.data);
-
-          // 신규 진입 시 서버에서 온 제목으로 초기화
           if (!title) {
             setTitle(response.data.title);
           }
@@ -57,7 +55,6 @@ export default function RecordWritePage() {
     fetchDetail();
   }, [selectedRecipeId, setTitle, title]);
 
-  // 가드 로직
   useEffect(() => {
     if (showUploadModal) return;
     if (!selectedRecipeId && !editingRecordId) {
@@ -99,13 +96,12 @@ export default function RecordWritePage() {
     }
   };
 
-  /* ---------- 업로드 로직 ---------- */
   const handleUpload = async () => {
     if (!recipeDetail || selectedRecipeId === null || isPublic === null) {
       alert("레시피 정보가 로드되지 않았습니다.");
       return;
     }
-    setIsUploading(true); // 로딩 시작
+    setIsUploading(true);
     try {
       const requestData = {
         aiRecipeId: selectedRecipeId,
@@ -114,38 +110,38 @@ export default function RecordWritePage() {
         description: memo,
         recipeImageUrl: images[0]?.url || "",
       };
-      console.log("전송 데이터:", requestData); // 데이터 확인용
       const response = await createDailyRecipe(requestData);
-      console.log("서버 응답:", response); // 응답 구조 확인용
       if (response && (response.status === "OK" || response.data)) {
         setShowUploadModal(true);
       } else {
         throw new Error("응답 형식이 올바르지 않습니다.");
       }
     } catch (error: any) {
-      console.error("업로드 상세 에러:", error);
       const errorMsg =
         error.response?.data?.message || "레시피 등록에 실패했습니다.";
       alert(errorMsg);
     } finally {
-      setIsUploading(false); // 로딩 종료
+      setIsUploading(false);
     }
   };
+
   if (!recipeDetail) {
     return (
-      // 임시로 넣은 로딩 화면
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#32E389]"></div>
       </div>
     );
   }
+
   return (
     <>
-      <div className="min-h-screen w-full flex flex-col ">
-        <BackHeader title="레시피 선택" onBack={() => navigate(-1)} />
+      <div className="flex-1 flex flex-col h-full overflow-y-auto no-scrollbar bg-[#FAFAFA]">
+        <div className="sticky top-0 z-[120] bg-[#FAFAFA] shrink-0">
+          <BackHeader title="레시피 선택" onBack={() => navigate(-1)} />
+        </div>
 
-        <div className="flex-1 mx-auto w-full max-w-[450px] px-4 flex flex-col">
-          <div className="pt-[51px] flex flex-col gap-[10px]">
+        <div className="flex-1 mx-auto w-full max-w-[450px] px-4 flex flex-col min-h-0 mt-10">
+          <div className="pt-4 flex flex-col gap-[10px]">
             <RecordWriteImageCard
               title={title}
               imageSrc={images[0]?.url}
@@ -168,7 +164,7 @@ export default function RecordWritePage() {
             />
           </div>
 
-          <div className="flex w-full flex-col items-center pt-4">
+          <div className="flex w-full flex-col items-center pt-4 shrink-0">
             <textarea
               value={memo}
               onChange={(e) => setMemo(e.target.value.slice(0, 500))}
@@ -179,7 +175,7 @@ export default function RecordWritePage() {
             />
           </div>
 
-          <div className="relative mt-[15px] flex justify-center animate-float-bubble">
+          <div className="relative mt-[15px] flex justify-center animate-float-bubble shrink-0">
             <div
               className="relative z-10 inline-flex items-center px-[16px] py-[9px] rounded-[3px] bg-white text-[#32E389] text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
               style={{ width: 206, height: 36 }}
@@ -192,11 +188,11 @@ export default function RecordWritePage() {
             />
           </div>
 
-          <div className="mt-auto pt-[64px] pb-[34px] flex flex-col gap-4 items-center">
+          <div className="mt-auto pt-[64px] pb-[20px] flex flex-col gap-4 items-center shrink-0">
             <div className="flex justify-center gap-[9px] w-full">
               <button
                 onClick={() => setIsPublic(false)}
-                className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 ${isPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
+                className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 transition-colors ${isPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
               >
                 <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white">
                   <img
@@ -210,7 +206,7 @@ export default function RecordWritePage() {
 
               <button
                 onClick={() => setIsPublic(true)}
-                className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 ${isPublic === true ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
+                className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 transition-colors ${isPublic === true ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
               >
                 <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white">
                   <img
@@ -237,16 +233,17 @@ export default function RecordWritePage() {
           </div>
         </div>
       </div>
+
       {showUploadModal && (
         <UploadCompleteModal
-          isOpen={showUploadModal} // isOpen 전달
+          isOpen={showUploadModal}
           onConfirm={async () => {
             await useCookeepsStore.getState().fetchCookies();
             resetRecord();
             navigate("/mycookeep");
           }}
           onCancel={() => setShowUploadModal(false)}
-          closeOnOverlayClick={false} // 필요에 따라 설정
+          closeOnOverlayClick={false}
         />
       )}
     </>
