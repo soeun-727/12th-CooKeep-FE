@@ -1,19 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
 import arrowIcon from "../../assets/signup/arrowright.svg";
 import characterImg from "../../assets/character/sad_char_faded.svg";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { withdrawUser } from "../../api/auth";
+import { getMyProfile } from "../../api/user";
 
 export default function WithdrawPage() {
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
 
-  const username = "[username]"; // 임시 나중에 API 연동
+  const [username, setUsername] = useState("사용자");
   const [agree, setAgree] = useState(false);
   const [reasonOpen, setReasonOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [customReason, setCustomReason] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await getMyProfile();
+        setUsername(res.data.Nickname);
+      } catch (error) {
+        console.error("사용자 정보 조회 실패:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
 
   // 임시
   const reasons = [
@@ -27,12 +49,42 @@ export default function WithdrawPage() {
 
   // 탈퇴 버튼 클릭
   const handleWithdraw = async () => {
-    // 탈퇴 API 연동
-    navigate("/settings/withdraw/done", {
-      replace: true,
-      state: { fromWithdraw: true },
-    });
+    if (isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // 1. 탈퇴 API 호출
+      await withdrawUser();
+
+      // 2. 로그아웃 처리 (토큰 삭제 등)
+      await logout();
+
+      // 3. 탈퇴 완료 페이지로 이동
+      navigate("/settings/withdraw/done", {
+        replace: true,
+        state: { fromWithdraw: true },
+      });
+    } catch (error) {
+      console.error("회원 탈퇴 오류:", error);
+      alert("탈퇴 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsSubmitting(false);
+      setOpenModal(false);
+    }
   };
+
+  // 로딩 중일 때
+  if (loading) {
+    return (
+      <>
+        <BackHeader title="탈퇴하기" onBack={() => navigate(-1)} />
+        <main className="pt-[161px] px-4 pb-[120px] max-w-[450px] mx-auto">
+          <div className="text-center">로딩 중...</div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -188,11 +240,11 @@ export default function WithdrawPage() {
       >
         <Button
           size="L"
-          disabled={!agree || !selectedReason}
+          disabled={!agree || !selectedReason || isSubmitting}
           onClick={() => setOpenModal(true)}
           className="!w-full !max-w-[450px]"
         >
-          탈퇴하기
+          {isSubmitting ? "처리 중..." : "탈퇴하기"}
         </Button>
       </div>
 
@@ -217,14 +269,16 @@ export default function WithdrawPage() {
               {/* 탈퇴 진행 */}
               <button
                 onClick={handleWithdraw}
+                disabled={isSubmitting}
                 className="w-[95px] h-[44px] rounded-[10px] bg-[#C3C3C3] text-white"
               >
-                네
+                {isSubmitting ? "처리중" : "네"}
               </button>
 
               {/* 취소 */}
               <button
                 onClick={() => setOpenModal(false)}
+                disabled={isSubmitting}
                 className="w-[95px] h-[44px] rounded-[10px] bg-[#1FC16F] text-white"
               >
                 아니오
