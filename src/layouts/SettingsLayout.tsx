@@ -11,19 +11,14 @@ export default function SettingsLayout() {
 
   const handleBack = () => {
     if (location.pathname === "/settings") {
-      navigate(initialFrom.current || "/fridge");
+      if (initialFrom.current) {
+        navigate(initialFrom.current);
+      } else {
+        navigate(-1);
+      }
     } else {
       navigate(-1);
     }
-    // if (location.pathname === "/settings") {
-    //   if (initialFrom.current) {
-    //     navigate(initialFrom.current);
-    //   } else {
-    //     navigate(-1);
-    //   }
-    // } else {
-    //   navigate(-1);
-    // }
   };
 
   return (
