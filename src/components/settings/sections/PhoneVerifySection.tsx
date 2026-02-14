@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
 import PhoneAuthModal from "../../auth/signup/PhoneAuthModal";
-import { useSignupStore } from "../../../stores/useSignupStore";
+import { usePhoneUpdateStore } from "../../../stores/usePhoneUpdateStore";
 
 type ModalType = "send" | "verify" | "help";
 
@@ -14,8 +14,8 @@ interface PhoneVerifySectionProps {
 export default function PhoneVerifySection({
   onSuccess,
 }: PhoneVerifySectionProps) {
-  const { phone, setPhone, isCodeSent, sendCode, verifyCode } =
-    useSignupStore();
+  const { phone, setPhone, isCodeSent, requestSendCode, requestVerifyCode } =
+    usePhoneUpdateStore();
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string>();
@@ -55,15 +55,24 @@ export default function PhoneVerifySection({
   /* =====================
      인증번호 발송 / 재발송
   ====================== */
-  const handleSendCode = () => {
-    setCode("");
-    setCodeError(undefined);
+  const handleSendCode = async () => {
+    const result = await requestSendCode();
 
-    setTimeLeft(180);
-    setTimerActive(true);
-
-    sendCode(); // Zustand store API 호출
-    setModalType("send");
+    if (result.success) {
+      setCode("");
+      setCodeError(undefined);
+      setTimeLeft(300);
+      setTimerActive(true);
+      setModalType("send");
+    } else {
+      if (result.errorStatus === 409) {
+        alert("이미 사용 중인 번호입니다.");
+      } else if (result.errorStatus === 429) {
+        alert("재요청이 너무 빠릅니다. 잠시 후 시도해주세요.");
+      } else {
+        alert("인증번호 발송에 실패했습니다.");
+      }
+    }
   };
 
   const handleResend = handleSendCode;
@@ -82,13 +91,24 @@ export default function PhoneVerifySection({
       return;
     }
 
-    const success = await verifyCode(code);
+    // 수정: verifyCode -> requestVerifyCode (Store의 실제 API 호출 함수)
+    const result = await requestVerifyCode(code);
 
-    if (success) {
+    // PhoneVerifySection.tsx 내의 handleVerify 함수 중 일부
+    if (result.success) {
       setCodeError(undefined);
-      setModalType("verify"); // 모달 띄우기
+      setModalType("verify");
     } else {
-      setCodeError("인증번호를 다시 입력해 주세요");
+      if (result.errorStatus === 429) {
+        setCodeError("인증 시도 횟수를 초과했습니다.");
+      } else if (result.errorStatus === 404) {
+        setCodeError("인증 요청 내역이 없습니다.");
+      } else if (result.errorStatus === 400) {
+        // 🔹 400 에러 처리 추가 (인증번호 불일치 등)
+        setCodeError("인증번호가 일치하지 않습니다.");
+      } else {
+        setCodeError("인증번호를 다시 확인해 주세요.");
+      }
     }
   };
 

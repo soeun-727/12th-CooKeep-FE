@@ -121,3 +121,21 @@ export const updateEmail = async (email: string) => {
 
   return res.data;
 };
+
+/** 전화번호 변경을 위한 인증번호 발송 API */
+export const sendUpdatePhoneCode = async (phoneNumber: string) => {
+  const res = await api.post("/api/users/me/phone/send-code", { phoneNumber });
+  return res.data;
+};
+
+/** 전화번호 변경을 위한 인증번호 확인 API */
+export const verifyUpdatePhoneCode = async (
+  phoneNumber: string,
+  code: string,
+) => {
+  const res = await api.post("/api/users/me/phone/verify-code", {
+    phoneNumber,
+    code,
+  });
+  return res.data;
+};
