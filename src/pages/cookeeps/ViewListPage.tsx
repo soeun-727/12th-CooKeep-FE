@@ -25,7 +25,7 @@ export default function ViewListPage({ type }: Props) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const [recipes, setRecipes] = useState<MyLikedRecipeItem[]>([]);
-  const [page, setPage] = useState(0);
+  const [, setPage] = useState(0);
   const [isLast, setIsLast] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
