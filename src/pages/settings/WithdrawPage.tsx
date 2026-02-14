@@ -279,7 +279,7 @@ export default function WithdrawPage() {
               <button
                 onClick={() => setOpenModal(false)}
                 disabled={isSubmitting}
-                className="w-[95px] h-[44px] rounded-[10px] bg-[#1FC16F] text-white"
+                className="w-[95px] h-[44px] rounded-[10px] bg-[#32E389] text-white"
               >
                 아니오
               </button>
