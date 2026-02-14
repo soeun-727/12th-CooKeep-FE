@@ -105,7 +105,11 @@ export const useCookeepRecordStore = create<RecordState>((set, get) => ({
       set((state) => ({
         records: state.records.map((r) =>
           String(r.dailyRecipeId) === recordId
-            ? { ...r, liked: res.data.liked, likeCount: res.data.likeCount }
+            ? {
+                ...r,
+                liked: res.data.liked,
+                likeCount: res.data.likeCount,
+              }
             : r,
         ),
       }));

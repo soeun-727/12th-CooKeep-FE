@@ -175,6 +175,7 @@ export const deleteDailyRecipe = async (dailyRecipeId: number) => {
 
 /** [POST] 데일리 레시피 좋아요 토글 */
 export const toggleRecipeLike = async (dailyRecipeId: number) => {
+  if (!dailyRecipeId) throw new Error("레시피 ID가 유효하지 않습니다.");
   const res = await api.post<{
     status: string;
     data: {
@@ -182,8 +183,9 @@ export const toggleRecipeLike = async (dailyRecipeId: number) => {
       likeCount: number;
       liked: boolean;
     };
-  }>(`/api/daily-recipes/likes/${dailyRecipeId}/toggle`); // 오타 주의: toggle
-  return res.data;
+  }>(`/api/daily-recipes/likes/${dailyRecipeId}/toggle`);
+
+  return res.data; // { status: "OK", data: { liked: true, ... } } 형태로 반환됨
 };
 
 /** [POST] 데일리 레시피 북마크 토글 */
