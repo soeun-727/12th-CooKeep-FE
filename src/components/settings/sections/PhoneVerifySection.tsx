@@ -25,6 +25,14 @@ export default function PhoneVerifySection({
 
   const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
 
+  // 숫자에 하이픈을 자동으로 넣어주는 함수
+  const formatPhoneNumber = (value: string) => {
+    const digits = value.replace(/[^\d]/g, ""); // 숫자만 남기기
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+  };
+
   /* =====================
      타이머
   ====================== */
@@ -119,8 +127,14 @@ export default function PhoneVerifySection({
       {/* 전화번호 입력 */}
       <div className="relative mt-[12px]">
         <TextField
-          value={phone}
-          onChange={setPhone}
+          value={formatPhoneNumber(phone)}
+          onChange={(val) => {
+            // 3. 숫자가 아닌 문자는 모두 제거하고 11자까지만 저장
+            const onlyNumber = val.replace(/[^\d]/g, "");
+            if (onlyNumber.length <= 11) {
+              setPhone(onlyNumber);
+            }
+          }}
           placeholder="새 휴대폰 번호(- 없이 숫자만 입력)"
           errorMessage={
             !isPhoneValid && phone
