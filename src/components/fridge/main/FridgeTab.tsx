@@ -18,6 +18,7 @@ import {
   getRefrigeratorHome,
   type RefrigeratorHomeResponse,
 } from "../../../api/ingredient";
+import { getPushEligibility } from "../../../api/user";
 
 export default function FridgeTab() {
   const {
@@ -50,30 +51,6 @@ export default function FridgeTab() {
 
     return [...fridge, ...freezer, ...pantry];
   };
-  useEffect(() => {
-    const fetchFridgeData = async () => {
-      try {
-        const response = await getRefrigeratorHome();
-        if (!response || !response.data) {
-          console.error("서버 응답이 없거나 data 필드가 없습니다.");
-          return;
-        }
-        const targetData = response.data.data || response.data;
-
-        if (targetData) {
-          const parsed = parseServerData(targetData);
-          setIngredients(parsed);
-        }
-      } catch (error: any) {
-        console.error("냉장고 데이터 로드 실패 상세:", {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-        });
-      }
-    };
-    fetchFridgeData();
-  }, [setIngredients]);
 
   const { filteredIngredients, sortedIngredients } = useSortedIngredients();
 
@@ -86,14 +63,37 @@ export default function FridgeTab() {
   const [isExpiryModalOpen, setIsExpiryModalOpen] = useState(false);
 
   useEffect(() => {
-    if (todayIngredients.length === 0) return;
-    const today = new Date().toISOString().slice(0, 10);
-    const lastShown = localStorage.getItem(EXPIRY_MODAL_KEY);
-    if (lastShown !== today) {
-      setIsExpiryModalOpen(true);
-      localStorage.setItem(EXPIRY_MODAL_KEY, today);
-    }
-  }, [todayIngredients]);
+    const initFridgeData = async () => {
+      try {
+        // 1. 냉장고 데이터 먼저 로드
+        const response = await getRefrigeratorHome();
+        const targetData = response.data.data || response.data;
+
+        if (targetData) {
+          const parsed = parseServerData(targetData);
+          setIngredients(parsed);
+
+          // 2. 데이터 세팅이 끝난 후, 팝업 자격 확인
+          const today = new Date().toISOString().slice(0, 10);
+          const lastShown = localStorage.getItem(EXPIRY_MODAL_KEY);
+
+          if (lastShown !== today) {
+            const eligibility = await getPushEligibility();
+            const hasTodayItems = parsed.some((i) => i.dDay === 0);
+
+            if (eligibility && eligibility.eligible && hasTodayItems) {
+              setIsExpiryModalOpen(true);
+              localStorage.setItem(EXPIRY_MODAL_KEY, today);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("냉장고 초기화 실패:", error);
+      }
+    };
+
+    initFridgeData();
+  }, [setIngredients]);
 
   const { selectedIngredientId, closeDetail } = useIngredientStore();
   const selectedIngredient = ingredients.find(
@@ -119,11 +119,13 @@ export default function FridgeTab() {
   return (
     <div className="w-full flex flex-col transition-all">
       <Search />
-      <ExpiryAlertModal
-        isOpen={isExpiryModalOpen}
-        onClose={() => setIsExpiryModalOpen(false)}
-        items={todayIngredients}
-      />
+      {isExpiryModalOpen && todayIngredients.length > 0 && (
+        <ExpiryAlertModal
+          isOpen={isExpiryModalOpen}
+          onClose={() => setIsExpiryModalOpen(false)}
+          items={todayIngredients}
+        />
+      )}
 
       {isSearching &&
         (filteredIngredients.length > 0 ? (

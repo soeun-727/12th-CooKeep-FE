@@ -37,6 +37,19 @@ export interface ProfileResponse {
   data: ProfileData;
 }
 
+export interface MyProfileResponse {
+  status: string;
+  timestamp: string;
+  data: {
+    Nickname: string;
+    phoneNumber: string;
+    email: string;
+    // authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
+    authProvider: "LOCAL" | "KAKAO" | "GOOGLE";
+    marketingPush: boolean;
+  };
+}
+
 /** API 함수들 */
 
 // 1. 주간 목표 재설정 API
@@ -77,20 +90,16 @@ export const updatePushConsent = (marketingConsent: boolean) => {
   return api.patch("/api/users/me/onboarding/push", { marketingConsent });
 };
 
-// 7. 회원 정보 조회 API
-export interface MyProfileResponse {
-  status: string;
-  timestamp: string;
-  data: {
-    Nickname: string;
-    phoneNumber: string;
-    email: string;
-    // authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
-    authProvider: "LOCAL" | "KAKAO" | "GOOGLE";
-    marketingPush: boolean;
-  };
-}
+/** [GET] 유통기한 임박 식재료 존재 여부 확인 (팝업 노출 자격) */
+export const getPushEligibility = async () => {
+  const res = await api.get<{
+    status: string;
+    data: { eligible: boolean };
+  }>("/api/users/me/push/eligibility");
 
+  return res.data.data; // { eligible: true / false }
+};
+// 7. 회원 정보 조회 API
 export const getMyProfile = async (): Promise<MyProfileResponse> => {
   const res = await api.get<MyProfileResponse>("/api/users/me/profile");
   return res.data;

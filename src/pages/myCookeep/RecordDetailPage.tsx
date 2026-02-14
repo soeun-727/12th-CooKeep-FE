@@ -130,41 +130,45 @@ export default function RecordDetailPage() {
   if (!record) return null;
 
   return (
-    <div className="min-h-screen w-full flex flex-col">
-      <div className="relative flex items-center w-full max-w-[450px] mx-auto">
-        <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
-        <div className="absolute right-2 top-2 flex items-center">
-          {/* 드롭다운 메뉴 (Sort 컴포넌트 스타일 계승) */}
-          {isMenuOpen && (
-            <div className="absolute right-2 top-10 flex flex-col items-center justify-center bg-white rounded-[10px] w-[102px] h-[68px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">
-              {/* 수정하기 버튼 */}
-              <button
-                onClick={handleEdit}
-                className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
-              >
-                수정하기
-              </button>
+    <div className="flex-1 flex flex-col h-full overflow-y-auto no-scrollbar bg-[#FAFAFA]">
+      {/* 3. 헤더 영역: 스크롤 시 상단에 고정되도록 sticky 유지 */}
+      <div className="sticky top-0 z-[120] bg-[#FAFAFA] w-full">
+        <div className="relative w-full flex justify-center items-center w-full max-w-[450px] mx-auto">
+          <div className="absolute left-0 w-full">
+            <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
+          </div>
+          <div className="absolute right-2 top-2 flex items-center">
+            {isMenuOpen && (
+              <div className="absolute right-2 top-10 flex flex-col items-center justify-center bg-white rounded-[10px] w-[102px] h-[68px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">
+                {/* 수정하기 버튼 */}
+                <button
+                  onClick={handleEdit}
+                  className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  수정하기
+                </button>
 
-              {/* 구분선 */}
-              <div className="w-[80px] h-[0.5px] bg-[#D1D1D1]" />
+                {/* 구분선 */}
+                <div className="w-[80px] h-[0.5px] bg-[#D1D1D1]" />
 
-              {/* 삭제하기 버튼 */}
-              <button
-                onClick={handleDeleteClick}
-                className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
-              >
-                삭제하기
-              </button>
-            </div>
-          )}
+                {/* 삭제하기 버튼 */}
+                <button
+                  onClick={handleDeleteClick}
+                  className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  삭제하기
+                </button>
+              </div>
+            )}
 
-          {/* 옵션 아이콘 버튼 */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-9 h-9 flex items-center justify-center relative z-[110]"
-          >
-            <img src={optionIcon} className="w-1" alt="option" />
-          </button>
+            {/* 옵션 아이콘 버튼 */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="w-9 h-9 flex items-center justify-center relative z-[110]"
+            >
+              <img src={optionIcon} className="w-1" alt="option" />
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex-1 mx-auto w-full max-w-[450px] px-4 flex flex-col">
