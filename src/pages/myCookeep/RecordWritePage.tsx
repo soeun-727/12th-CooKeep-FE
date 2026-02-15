@@ -20,6 +20,7 @@ export default function RecordWritePage() {
   const [recipeDetail, setRecipeDetail] = useState<AiRecipeDetail | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const {
     selectedRecipeId,
@@ -56,11 +57,11 @@ export default function RecordWritePage() {
   }, [selectedRecipeId, setTitle, title]);
 
   useEffect(() => {
-    if (showUploadModal) return;
+    if (showUploadModal || isSuccess) return;
     if (!selectedRecipeId && !editingRecordId) {
       navigate("/mycookeep/record/select", { replace: true });
     }
-  }, [selectedRecipeId, editingRecordId, showUploadModal, navigate]);
+  }, [selectedRecipeId, editingRecordId, showUploadModal, navigate, isSuccess]);
 
   const handleMemoInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const el = e.currentTarget;
@@ -101,7 +102,9 @@ export default function RecordWritePage() {
       alert("레시피 정보가 로드되지 않았습니다.");
       return;
     }
+
     setIsUploading(true);
+
     try {
       const requestData = {
         aiRecipeId: selectedRecipeId,
@@ -110,13 +113,21 @@ export default function RecordWritePage() {
         description: memo,
         recipeImageUrl: images[0]?.url || "",
       };
+
       const response = await createDailyRecipe(requestData);
-      if (response && (response.status === "OK" || response.data)) {
+      if (
+        response &&
+        (response.data ||
+          String(response.status) === "200" ||
+          response.status === "OK")
+      ) {
+        setIsSuccess(true);
         setShowUploadModal(true);
       } else {
-        throw new Error("응답 형식이 올바르지 않습니다.");
+        alert("업로드에 실패했습니다.");
       }
     } catch (error: any) {
+      console.error("업로드 에러:", error);
       const errorMsg =
         error.response?.data?.message || "레시피 등록에 실패했습니다.";
       alert(errorMsg);
@@ -177,7 +188,7 @@ export default function RecordWritePage() {
 
           <div className="relative mt-[15px] flex justify-center animate-float-bubble shrink-0">
             <div
-              className="relative z-10 inline-flex items-center px-[16px] py-[9px] rounded-[3px] bg-white text-[#32E389] text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
+              className="relative z-10 inline-flex text-center justify-center items-center px-[16px] py-[9px] rounded-[3px] bg-white text-[#32E389] text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
               style={{ width: 206, height: 36 }}
             >
               나만의 팁 작성하기
@@ -239,10 +250,15 @@ export default function RecordWritePage() {
           isOpen={showUploadModal}
           onConfirm={async () => {
             await useCookeepsStore.getState().fetchCookies();
-            resetRecord();
             navigate("/mycookeep");
+            setTimeout(() => {
+              resetRecord();
+            }, 100);
           }}
-          onCancel={() => setShowUploadModal(false)}
+          onCancel={() => {
+            setIsSuccess(false);
+            setShowUploadModal(false);
+          }}
           closeOnOverlayClick={false}
         />
       )}
