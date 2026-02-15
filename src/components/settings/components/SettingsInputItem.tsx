@@ -19,6 +19,19 @@ export default function SettingsInputItem({
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleClick = () => {
+    // 비밀번호 변경 페이지로 갈 때 fromSettings state 추가
+    if (to === "/settings/password") {
+      navigate(to, {
+        state: { ...location.state, fromSettings: true },
+      });
+    } else {
+      navigate(to, {
+        state: location.state,
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2 h-[80px] w-full">
       {/* label */}
@@ -44,11 +57,7 @@ export default function SettingsInputItem({
         {/* button */}
         <button
           type="button"
-          onClick={() =>
-            navigate(to, {
-              state: location.state,
-            })
-          }
+          onClick={handleClick}
           disabled={disabled}
           className={`
             flex
