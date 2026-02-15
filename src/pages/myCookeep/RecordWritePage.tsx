@@ -12,6 +12,7 @@ import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import { uploadImage } from "../../api/image";
 import { createDailyRecipe } from "../../api/myRecipe";
 import { AiRecipeDetail, getAiRecipeDetail } from "../../api/dailyAiRecipe";
+import imageCompression from "browser-image-compression";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -69,6 +70,12 @@ export default function RecordWritePage() {
     el.style.height = `${el.scrollHeight}px`;
   };
 
+  const compressionOptions = {
+    maxSizeMB: 1, // 최대 1MB로 압축
+    maxWidthOrHeight: 1080, // 해상도 리사이즈
+    useWebWorker: true, // 성능 최적화
+  };
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0 || isUploading) return;
@@ -79,9 +86,34 @@ export default function RecordWritePage() {
     }
 
     setIsUploading(true);
+
     try {
       const fileList = Array.from(files);
-      const uploadPromises = fileList.map((file) => uploadImage(file));
+
+      // 1. 이미지 압축
+      const compressedFiles = await Promise.all(
+        fileList.map(async (file) => {
+          const compressedBlob = await imageCompression(
+            file,
+            compressionOptions,
+          );
+
+          // Blob → File로 변환
+          const compressedFile = new File(
+            [compressedBlob],
+            file.name, // 원본 파일명 유지
+            {
+              type: compressedBlob.type,
+            },
+          );
+
+          return compressedFile;
+        }),
+      );
+
+      // 2. 서버 업로드
+      const uploadPromises = compressedFiles.map((file) => uploadImage(file));
+
       const responses = await Promise.all(uploadPromises);
 
       const newImages = responses.map((res) => ({
@@ -90,6 +122,7 @@ export default function RecordWritePage() {
 
       addImages(newImages);
     } catch (error) {
+      console.error("이미지 업로드 에러:", error);
       alert("이미지 업로드 중 오류가 발생했습니다.");
     } finally {
       setIsUploading(false);
@@ -162,6 +195,7 @@ export default function RecordWritePage() {
             <input
               type="file"
               accept="image/*"
+              capture="environment"
               multiple
               ref={fileInputRef}
               hidden
