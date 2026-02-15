@@ -1,11 +1,13 @@
 // src/pages/settings/FaqPage.tsx
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
 import { faqCategories } from "../../constants/faqData";
 import FaqCategoryItem from "../../components/settings/components/FaqCategoryItem";
 
 export default function FaqPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const openCategoryId = location.state?.openCategoryId;
 
   return (
     <>
@@ -16,6 +18,7 @@ export default function FaqPage() {
             key={category.id}
             title={category.title}
             items={category.items}
+            defaultOpen={category.id === openCategoryId}
           />
         ))}
       </main>
