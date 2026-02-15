@@ -35,7 +35,7 @@ export default function FreeWaterModal({ isOpen, onConfirm, onClose }: Props) {
             onClose();
           }}
         >
-          지금 물 주러 가기
+          물 주러 가기
         </Button>
       </div>
     </div>
