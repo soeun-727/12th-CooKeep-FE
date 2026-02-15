@@ -19,7 +19,7 @@ import { getKoreanStorage, getKoreanUnit } from "../../../utils/mapping";
 interface Props {
   ingredient: Ingredient;
   onClose: () => void;
-  onUpdate: (updated: Partial<Ingredient>) => void;
+  onUpdate: () => void;
 }
 
 export default function IngredientDetailModal({
@@ -40,31 +40,20 @@ export default function IngredientDetailModal({
   const [openEditor, setOpenEditor] = useState<
     null | "storage" | "expiry" | "quantity"
   >(null);
+  const [isDirty, setIsDirty] = useState(false);
 
   const { changeStorage, changeExpiryDate, changeQuantity, changeMemo } =
     useIngredientStore();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-
     const fetchDetail = async () => {
       try {
         setIsLoading(true);
         const response = await getIngredientDetail(Number(ingredient.id));
         if (response.data && response.data.data) {
           const data = response.data.data;
-
-          onUpdate({
-            memo: data.memo,
-            quantity: data.quantity,
-            expiryDate: data.expirationDate.replace(/-/g, "."),
-            dDay: data.leftDays,
-            tip: data.aiTip,
-            image: data.imageUrl,
-            category: getKoreanStorage(data.storage) as any,
-            unit: ingredient.unit,
-            createdAt: ingredient.createdAt,
-          });
+          setMemo(data.memo || "");
         }
       } catch (error) {
         console.error("상세 정보 로드 실패:", error);
@@ -72,9 +61,7 @@ export default function IngredientDetailModal({
         setIsLoading(false);
       }
     };
-
     fetchDetail();
-
     return () => {
       document.body.style.overflow = "";
     };
@@ -86,25 +73,22 @@ export default function IngredientDetailModal({
     상온: pantryIcon,
   };
 
-  const handleSave = async () => {
+  const handleSaveMemo = async () => {
     try {
       await changeMemo(ingredient.id, memo);
       setIsEditing(false);
-      onUpdate({ memo });
+      setIsDirty(true); // 👈 깃발만 올림
     } catch (error) {
       console.error("메모 저장 실패:", error);
     }
   };
 
-  if (isLoading) {
+  if (isLoading)
     return (
       <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
-        <div className="bg-white p-6 rounded-lg shadow-lg text-sm font-medium">
-          정보를 불러오는 중...
-        </div>
+        <div className="bg-white p-6 rounded-lg text-sm">정보 로딩 중...</div>
       </div>
     );
-  }
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
@@ -178,8 +162,8 @@ export default function IngredientDetailModal({
                     value={memo}
                     autoFocus
                     onChange={(e) => setMemo(e.target.value)}
-                    onBlur={handleSave}
-                    onKeyDown={(e) => e.key === "Enter" && handleSave()}
+                    onBlur={handleSaveMemo}
+                    onKeyDown={(e) => e.key === "Enter" && handleSaveMemo()}
                     className="flex-1 text-[14px] font-medium text-[#202020] border-b border-[#C3C3C3] focus:outline-none"
                   />
                 ) : (
@@ -323,7 +307,7 @@ export default function IngredientDetailModal({
                 value={ingredient.category}
                 onSave={async (val) => {
                   await changeStorage(ingredient.id, val);
-                  onUpdate({ category: val as Ingredient["category"] });
+                  setIsDirty(true);
                   setOpenEditor(null);
                 }}
               />
@@ -338,15 +322,9 @@ export default function IngredientDetailModal({
               <ExpiryEditor
                 value={ingredient.expiryDate}
                 onSave={async (val) => {
-                  try {
-                    await changeExpiryDate(ingredient.id, val);
-                    onUpdate({
-                      expiryDate: val,
-                    });
-                    setOpenEditor(null);
-                  } catch (error) {
-                    console.error("날짜 수정 중 오류:", error);
-                  }
+                  await changeExpiryDate(ingredient.id, val);
+                  setIsDirty(true);
+                  setOpenEditor(null);
                 }}
               />
             </EditModal>
@@ -360,13 +338,9 @@ export default function IngredientDetailModal({
               <QuantityEditor
                 value={ingredient.quantity}
                 onSave={async (val) => {
-                  try {
-                    await changeQuantity(ingredient.id, Number(val));
-                    onUpdate({ quantity: Number(val) });
-                    setOpenEditor(null);
-                  } catch (error) {
-                    console.error("수량 수정 실패:", error);
-                  }
+                  await changeQuantity(ingredient.id, Number(val));
+                  setIsDirty(true);
+                  setOpenEditor(null);
                 }}
               />
             </EditModal>

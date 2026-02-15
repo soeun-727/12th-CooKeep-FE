@@ -2,7 +2,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import AllItem from "../../components/cookeeps/lists/AllItem";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getWeeklyRecipesAll, RecipeRankItem } from "../../api/cookeeps";
-import tempImage from "../../assets/temporary-image.png";
+import tempImage from "../../assets/mycookeep/record/temp_food_photo.svg";
 
 export default function ViewAllPage() {
   const navigate = useNavigate();
