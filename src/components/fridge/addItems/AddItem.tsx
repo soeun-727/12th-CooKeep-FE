@@ -81,9 +81,13 @@ export default function AddItem() {
   }, [setHistoryItems]);
 
   const filteredItems = masterItems.filter((item) => {
-    const matchesCategory = item.categoryId === selectedCategoryId;
-    const matchesSearch = item.name.includes(searchTerm);
-    return matchesCategory && matchesSearch;
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    if (searchTerm.trim().length > 0) {
+      return matchesSearch;
+    }
+    return item.categoryId === selectedCategoryId;
   });
 
   if (isLoading)
@@ -91,8 +95,8 @@ export default function AddItem() {
 
   return (
     <>
-      <div className="flex flex-col items-center mt-1">
-        <div className="[&_p]:hidden [&_input]:border-none [&_input]:outline-none [&_input::placeholder]:text-stone-300 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]">
+      <div className="flex flex-col items-center mt-1 h-full overflow-hidden">
+        <div className="shrink-0 [&_p]:hidden [&_input]:border-none [&_input]:outline-none [&_input::placeholder]:text-stone-300 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]">
           <TextField
             value={searchTerm}
             placeholder="재료명을 검색하세요"
@@ -100,7 +104,7 @@ export default function AddItem() {
             rightIcon={<img src={searchIcon} className="" />}
           />
         </div>
-        <div className="mt-4 pl-[31px] w-[401px]">
+        <div className="mt-4 pl-[31px] w-[401px] shrink-0">
           <div className="flex gap-[6px] overflow-x-auto no-scrollbar scroll-smooth">
             {INGREDIENT_CATEGORIES.map((category) => (
               <div key={category.id} className="flex-shrink-0">
@@ -114,10 +118,12 @@ export default function AddItem() {
             ))}
           </div>
         </div>
-        <div>
+        <div className="w-full flex-1 overflow-hidden">
           <ItemsGrid items={filteredItems} />
         </div>
-        <AddItemFooter />
+        <div className="shrink-0 w-full">
+          <AddItemFooter />
+        </div>
       </div>
       {isModalOpen && (
         <Custom

@@ -8,10 +8,7 @@ export default function AddItemLayout() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("냉장고");
   return (
-    <div
-      className="flex flex-col min-h-screen
-     bg-[#FAFAFA]"
-    >
+    <div className="flex flex-col h-screen bg-[#FAFAFA] overflow-hidden">
       <BackHeader title="재료 등록" onBack={() => navigate(-1)} />
 
       <main className="flex-1">

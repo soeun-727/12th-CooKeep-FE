@@ -12,7 +12,10 @@ interface ItemsGridProps {
 }
 
 export default function ItemsGrid({ items }: ItemsGridProps) {
-  const { selectedItems, toggleItem, setModalOpen } = useAddIngredientStore();
+  const { selectedItems, toggleItem, setModalOpen, searchTerm } =
+    useAddIngredientStore();
+  const isSearchEmpty =
+    searchTerm && searchTerm.trim().length > 0 && items.length === 0;
 
   return (
     <div className="w-full flex flex-col items-center justify-center pt-6">
@@ -31,16 +34,20 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setModalOpen(true)}
-          className="flex flex-col items-center justify-center gap-[10px] mt-4 mb-50"
-        >
-          <img src={character} className="w-[50px]" />
-          <span className="typo-caption text-zinc-500 text-center py-1">
-            검색 결과가 없어요
-          </span>
-        </button>
+        {isSearchEmpty && (
+          <button
+            type="button"
+            onClick={() => setModalOpen(true)}
+            className="flex flex-col items-center justify-center gap-3 mt-30 mb-50 animate-fadeIn"
+          >
+            <img src={character} className="w-23" alt="no result" />
+            <div className="bg-black rounded-[100px] h-6 py-1 px-[18px] flex justify-center items-center">
+              <span className="typo-caption text-white text-center py-1">
+                직접 재료 추가하기
+              </span>
+            </div>
+          </button>
+        )}
       </div>
     </div>
   );
