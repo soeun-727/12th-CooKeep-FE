@@ -38,7 +38,7 @@ export default function InstallGuide({ onFinish }: InstallGuideProps) {
           <img
             src={installGuideImage}
             alt="Install Guide"
-            className="max-w-[449px] w-full max-h-[300px] h-full object-cover"
+            className="max-w-[449px] w-full max-h-[300px] h-full"
             style={{ aspectRatio: "223 / 149" }}
           />
 
