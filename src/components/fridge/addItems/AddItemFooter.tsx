@@ -13,7 +13,7 @@ export default function AddItemFooter() {
     navigate("/fridge/add-detail");
   };
   return (
-    <div className="fixed bottom-[103px] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
+    <div className="fixed bottom-[71px] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
       <div className="mb-[-4px]">
         <RecentlyAdded />
       </div>
