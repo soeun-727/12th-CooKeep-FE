@@ -3,7 +3,7 @@
 export type FaqItem = {
   id: number;
   question: string;
-  answer: string;
+  answer: string | React.ReactNode;
 };
 
 export type FaqCategory = {
@@ -58,7 +58,7 @@ export const faqCategories: FaqCategory[] = [
 
   {
     id: 2,
-    title: "2. 서비스 이용",
+    title: "2. 서비스 소개 및 기능",
     items: [
       {
         id: 1,
@@ -119,9 +119,31 @@ export const faqCategories: FaqCategory[] = [
     items: [
       {
         id: 1,
+        question: "모바일에서 홈 화면에 아이콘을 어떻게 추가하나요?",
+        answer: (
+          <div className="flex flex-col gap-1 pl-2">
+            <p className="font-bold">아이폰(iOS)</p>
+            <div className="pl-2">
+              <p>1. Safari에서 쿠킵 웹사이트 접속</p>
+              <p>2. 하단 가운데 공유 버튼</p>
+              <p>3. 「홈 화면에 추가」 선택</p>
+              <p>4. 아이콘 이름 확인/수정 → 추가</p>
+            </div>
+            <p className="font-bold mt-3">갤럭시(Android)</p>
+            <div className="pl-2">
+              <p>1. Chrome에서 웹사이트 접속</p>
+              <p>2. 우측 상단 ⋮ (더보기) 터치</p>
+              <p>3. 「홈 화면에 추가」 또는 「앱 설치」 선택</p>
+              <p>4. 이름 확인 → 추가 / 설치</p>
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: 2,
         question: "서비스가 갑자기 작동하지 않아요.",
         answer:
-          "쿠킵은 대학생들이 운영하는 프로젝트 서비스로, 일시적인 서버 불안정이 발생할 수 있습니다. 잠시 후 다시 시도해 주시고, 문제가 지속되면 cookeep2026@gmail.com으로 제보해 주시면 감사하겠습니다.",
+          "쿠킵은 대학생/직장인들이 운영하는 프로젝트 서비스로, 일시적인 서버 불안정이 발생할 수 있습니다. 잠시 후 다시 시도해 주시고, 문제가 지속되면 cookeep2026@gmail.com으로 제보해 주시면 감사하겠습니다.",
       },
     ],
   },

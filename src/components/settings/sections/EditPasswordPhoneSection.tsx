@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import TextField from "../../ui/TextField";
 import Button from "../../ui/Button";
 import FindPhoneAuthModal from "../../auth/find/FindPhoneAuthModal";
 import { useEditPasswordAuthStore } from "../../../stores/useEditPasswordAuthStore";
-
-import { useNavigate } from "react-router-dom";
+import { getMyProfile } from "../../../api/user";
 
 export default function EditPasswordPhoneSection() {
   const navigate = useNavigate();
@@ -14,13 +15,37 @@ export default function EditPasswordPhoneSection() {
 
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string>();
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [timerActive, setTimerActive] = useState(false);
+  const [registeredPhone, setRegisteredPhone] = useState("");
 
-  type ModalType = "send" | "verify" | "help";
+  type ModalType = "send" | "verify" | "help" | "mismatch";
   const [modalType, setModalType] = useState<ModalType | null>(null);
 
   const isPhoneValid = /^01[0-9]{9}$/.test(phone.replace(/-/g, ""));
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/[^0-9]/g, "");
+
+    if (numbers.length <= 3) return numbers;
+    if (numbers.length <= 7)
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  // 등록된 전화번호 조회
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getMyProfile();
+        setRegisteredPhone(res.data.phoneNumber.replace(/-/g, ""));
+      } catch (err) {
+        console.error("프로필 조회 실패:", err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   /* 타이머 */
   useEffect(() => {
@@ -46,18 +71,39 @@ export default function EditPasswordPhoneSection() {
     )}`;
 
   /* 인증번호 발송 */
+  const [resendCount, setResendCount] = useState(0);
+  const MAX_RESEND = 3;
+
   const handleSendCode = async () => {
+    // 전화번호 일치 여부 확인
+    const cleanPhone = phone.replace(/-/g, "");
+    if (cleanPhone !== registeredPhone) {
+      setModalType("mismatch");
+      return;
+    }
+
     setCode("");
     setCodeError(undefined);
     setTimeLeft(300);
     setTimerActive(true);
 
-    await sendCode();
-    setModalType("send");
+    try {
+      await sendCode();
+      setModalType("send");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 400) {
+          setCodeError("전화번호가 등록된 번호와 일치하지 않습니다");
+        } else if (status === 429) {
+          setCodeError("인증 요청이 너무 빠릅니다");
+        } else {
+          setCodeError("인증번호 발송에 실패했습니다");
+        }
+      }
+    }
   };
-  /* 인증번호 재발송 */
-  const [resendCount, setResendCount] = useState(0);
-  const MAX_RESEND = 3;
 
   const handleResend = async () => {
     if (resendCount >= MAX_RESEND) {
@@ -66,13 +112,7 @@ export default function EditPasswordPhoneSection() {
     }
 
     setResendCount((prev) => prev + 1);
-    setCode("");
-    setCodeError(undefined);
-    setTimeLeft(300);
-    setTimerActive(true);
-
-    await sendCode(); // 같은 API 재사용
-    setModalType("send");
+    await handleSendCode();
   };
 
   /* 인증 확인 */
@@ -82,12 +122,28 @@ export default function EditPasswordPhoneSection() {
       return;
     }
 
-    const success = await verifyCode(code);
-    if (success) {
-      setTimerActive(false);
-      setModalType("verify");
-    } else {
-      setCodeError("인증번호를 다시 입력해 주세요");
+    try {
+      const success = await verifyCode(code);
+      if (success) {
+        setTimerActive(false);
+        setModalType("verify");
+      } else {
+        setCodeError("인증번호를 다시 입력해 주세요");
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 400) {
+          setCodeError("인증번호가 일치하지 않습니다");
+        } else if (status === 404) {
+          setCodeError("인증 요청 내역이 없습니다");
+        } else if (status === 429) {
+          setCodeError("인증 시도 횟수를 초과했습니다");
+        } else {
+          setCodeError("인증 중 오류가 발생했습니다");
+        }
+      }
     }
   };
 
@@ -98,8 +154,11 @@ export default function EditPasswordPhoneSection() {
       {/* 전화번호 */}
       <div className="mt-[12px]">
         <TextField
-          value={phone}
-          onChange={setPhone}
+          value={formatPhone(phone)}
+          onChange={(v) => {
+            const onlyNumber = v.replace(/[^0-9]/g, "");
+            setPhone(onlyNumber);
+          }}
           placeholder="휴대폰 번호 (- 없이 입력)"
           errorMessage={
             phone && !isPhoneValid
@@ -111,18 +170,19 @@ export default function EditPasswordPhoneSection() {
               type="button"
               onClick={isCodeSent ? handleResend : handleSendCode}
               disabled={!isPhoneValid || resendCount >= MAX_RESEND}
-              className={`w-[102px] h-[24px] rounded-full  typo-caption text-white
-          ${
-            isPhoneValid
-              ? "bg-[#202020] border-[#202020]"
-              : "bg-[#C3C3C3] border-[#C3C3C3]"
-          } disabled:cursor-not-allowed`}
+              className={`w-[102px] h-[24px] rounded-full typo-caption text-white
+                ${
+                  isPhoneValid
+                    ? "bg-[#202020] border-[#202020]"
+                    : "bg-[#C3C3C3] border-[#C3C3C3]"
+                } disabled:cursor-not-allowed`}
             >
               {isCodeSent ? "인증번호 재발송" : "인증번호 발송"}
             </button>
           }
         />
       </div>
+
       {/* 인증번호 */}
       <div className="mt-[5px]">
         <TextField
@@ -130,8 +190,6 @@ export default function EditPasswordPhoneSection() {
           onChange={(v) => {
             const onlyNumber = v.replace(/[^0-9]/g, "");
             setCode(onlyNumber);
-
-            // 사용자가 다시 입력 시작하면 에러 제거
             if (codeError) setCodeError(undefined);
           }}
           placeholder="인증번호 입력"
@@ -149,6 +207,7 @@ export default function EditPasswordPhoneSection() {
             인증하기 {isCodeSent && `(${formatTime(timeLeft)})`}
           </span>
         </Button>
+
         <button
           type="button"
           onClick={() => setModalType("help")}
@@ -159,7 +218,25 @@ export default function EditPasswordPhoneSection() {
       </div>
 
       {/* 모달 */}
-      {modalType && (
+      {modalType === "mismatch" && (
+        <div className="fixed inset-0 z-[100] bg-[rgba(17,17,17,0.5)]" />
+      )}
+      {modalType === "mismatch" && (
+        <div className="fixed z-[110] left-1/2 -translate-x-1/2 top-[343px] bg-white rounded-[10px] w-[240px] pt-[35px] px-[28px] pb-[25px] flex flex-col items-center gap-4">
+          <p className="text-[14px] font-medium text-center leading-[20px] text-[#111111]">
+            등록된 전화번호와 일치하지 않습니다
+          </p>
+          <Button
+            size="S"
+            onClick={() => setModalType(null)}
+            className="!w-[184px] !bg-[#32E389]"
+          >
+            확인
+          </Button>
+        </div>
+      )}
+
+      {modalType && modalType !== "mismatch" && (
         <FindPhoneAuthModal
           type={modalType}
           phone={phone}

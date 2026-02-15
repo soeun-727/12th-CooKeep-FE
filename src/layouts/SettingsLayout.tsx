@@ -22,9 +22,17 @@ export default function SettingsLayout() {
   };
 
   return (
-    <div className="min-h-screen">
+    // <div className="min-h-screen">
+    //   <BackHeader title="회원정보" onBack={handleBack} />
+    //   <Outlet />
+    // </div>
+    <div className="h-screen flex flex-col">
       <BackHeader title="회원정보" onBack={handleBack} />
-      <Outlet />
+
+      {/* 여기가 핵심 */}
+      <div className="flex-1 overflow-y-auto no-scrollbar">
+        <Outlet />
+      </div>
     </div>
   );
 }

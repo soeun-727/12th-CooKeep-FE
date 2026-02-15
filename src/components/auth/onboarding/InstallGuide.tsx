@@ -87,7 +87,11 @@ export default function InstallGuide({ onFinish }: InstallGuideProps) {
             </Button>
 
             <button
-              onClick={() => navigate("/settings/faq")}
+              onClick={() =>
+                navigate("/settings/faq", {
+                  state: { openCategoryId: 4 },
+                })
+              }
               className="typo-caption text-[#7D7D7D] underline"
             >
               자세한 설명 보기

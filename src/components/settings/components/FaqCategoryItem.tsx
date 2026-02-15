@@ -7,10 +7,11 @@ import arrowIcon from "../../../assets/signup/arrowright.svg";
 type Props = {
   title: string;
   items: FaqItem[];
+  defaultOpen?: boolean;
 };
 
-export default function FaqCategoryItem({ title, items }: Props) {
-  const [open, setOpen] = useState(false);
+export default function FaqCategoryItem({ title, items, defaultOpen }: Props) {
+  const [open, setOpen] = useState(defaultOpen ?? false);
 
   return (
     <div

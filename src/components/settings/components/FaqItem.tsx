@@ -1,7 +1,7 @@
 // src/pages/settings/components/FaqItem.tsx
 type Props = {
   question: string;
-  answer: string;
+  answer: string | React.ReactNode;
 };
 
 export default function FaqItem({ question, answer }: Props) {

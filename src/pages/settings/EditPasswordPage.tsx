@@ -1,8 +1,9 @@
-// src/pages/settings/EditPasswordPage.tsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import TextField from "../../components/ui/TextField";
 import Button from "../../components/ui/Button";
+import { verifyCurrentPassword, changePassword } from "../../api/user";
 
 import pwIcon from "../../assets/login/key.svg";
 import pwImage from "../../assets/login/pw.svg";
@@ -11,23 +12,14 @@ import checkIcon from "../../assets/signup/check.svg";
 
 export default function EditPasswordPage() {
   const navigate = useNavigate();
-
   const location = useLocation();
+
   const verifiedFromPhone = location.state?.verifiedBy === "phone";
 
   // 기존 비밀번호
   const [currentPassword, setCurrentPassword] = useState("");
-
-  // 여기서부터 바뀐 핵심
-  const isPhoneVerified = verifiedFromPhone;
-  // const [isPhoneVerified, setIsPhoneVerified] = useState(verifiedFromPhone);
   const [isCurrentPwValid, setIsCurrentPwValid] = useState<boolean | null>(
     verifiedFromPhone ? true : null,
-  );
-
-  type VerifyMethod = "password" | "phone" | null;
-  const [verifiedBy, setVerifiedBy] = useState<VerifyMethod>(
-    verifiedFromPhone ? "phone" : null,
   );
 
   // UI 상태
@@ -53,26 +45,79 @@ export default function EditPasswordPage() {
     password && confirmPassword ? password === confirmPassword : false;
 
   const isFormValid =
-    (isCurrentPwValid === true || isPhoneVerified) &&
+    (isCurrentPwValid === true || verifiedFromPhone) &&
     isPasswordValid &&
     isPasswordMatch;
 
+  // 기존 비밀번호 검증
+  const handleCurrentPasswordBlur = async () => {
+    if (!currentPassword) return;
+    if (isCurrentPwValid === true) return;
+    if (verifiedFromPhone) return; // 본인인증으로 이미 검증됨
+
+    if (currentPwFailCount >= MAX_ATTEMPTS) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    try {
+      await verifyCurrentPassword(currentPassword);
+      setIsCurrentPwValid(true);
+      setCurrentPwFailCount(0);
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 423) {
+          // 5회 초과
+          setShowAuthModal(true);
+          return;
+        }
+
+        if (status === 400) {
+          const next = currentPwFailCount + 1;
+          setCurrentPwFailCount(next);
+          setIsCurrentPwValid(false);
+
+          if (next >= MAX_ATTEMPTS) {
+            setShowAuthModal(true);
+          }
+        }
+      }
+    }
+  };
+
+  // 비밀번호 변경
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
     try {
-      await changePasswordAPI(currentPassword, password);
+      await changePassword(password, confirmPassword);
       setIsSuccess(true);
-    } catch {
-      setError("비밀번호 변경 중 오류가 발생했습니다.");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 400) {
+          setError(
+            "비밀번호 형식이 올바르지 않거나 기존 비밀번호와 동일합니다.",
+          );
+        } else if (status === 403) {
+          setError("소셜 로그인 사용자는 비밀번호를 변경할 수 없습니다.");
+        } else {
+          setError("비밀번호 변경 중 오류가 발생했습니다.");
+        }
+      } else {
+        setError("알 수 없는 오류가 발생했습니다.");
+      }
     }
   };
 
   useEffect(() => {
-    if (!location.state?.fromPasswordFail) {
-      navigate("/settings/password", { replace: true });
+    if (!location.state?.fromSettings && !verifiedFromPhone) {
+      navigate("/settings", { replace: true });
     }
-  }, []);
+  }, [location.state, verifiedFromPhone, navigate]);
 
   return (
     <div className="relative min-h-screen bg-[#FAFAFA]">
@@ -89,33 +134,10 @@ export default function EditPasswordPage() {
               setIsCurrentPwValid(null);
               setError(undefined);
             }}
-            onBlur={async () => {
-              if (!currentPassword) return;
-              if (isCurrentPwValid === true) return;
-
-              if (currentPwFailCount >= MAX_ATTEMPTS) {
-                setShowAuthModal(true);
-                return;
-              }
-
-              const isValid = await verifyCurrentPasswordAPI(currentPassword);
-
-              if (!isValid) {
-                const next = currentPwFailCount + 1;
-                setCurrentPwFailCount(next);
-                setIsCurrentPwValid(false);
-
-                if (next >= MAX_ATTEMPTS) {
-                  setShowAuthModal(true);
-                }
-              } else {
-                setIsCurrentPwValid(true);
-                setVerifiedBy("password");
-                setCurrentPwFailCount(0);
-              }
-            }}
+            onBlur={handleCurrentPasswordBlur}
             placeholder="기존 비밀번호"
             autoComplete="current-password"
+            disabled={verifiedFromPhone} // 본인인증 완료 시 비활성화
             errorMessage={
               isCurrentPwValid === false
                 ? `기존 비밀번호가 일치하지 않습니다 (${currentPwFailCount}/${MAX_ATTEMPTS})`
@@ -123,7 +145,7 @@ export default function EditPasswordPage() {
             }
             successMessage={
               isCurrentPwValid === true
-                ? verifiedBy === "phone"
+                ? verifiedFromPhone
                   ? "본인인증이 완료되었습니다"
                   : "기존 비밀번호가 확인되었습니다"
                 : undefined
@@ -133,6 +155,7 @@ export default function EditPasswordPage() {
               <button
                 type="button"
                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                disabled={verifiedFromPhone}
               >
                 <img
                   src={
@@ -242,19 +265,11 @@ export default function EditPasswordPage() {
         </Button>
       </div>
 
+      {/* 5회 실패 모달 */}
       {showAuthModal && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div
-            className="
-    w-[254px]
-    flex flex-col items-center
-    pt-[35px] px-[28px] pb-[25px]
-    gap-[16px]
-    rounded-[10px]
-    bg-white
-  "
-          >
-            <p className="typo-body-sm text-[#111] text-center self-stretch">
+          <div className="w-[254px] flex flex-col items-center pt-[25px] px-[28px] pb-[25px] gap-[16px] rounded-[10px] bg-white">
+            <p className="typo-label text-[#111] text-center self-stretch">
               비밀번호가 5회 일치하지 않았어요.
               <br />
               본인인증을 진행해 주세요
@@ -262,7 +277,7 @@ export default function EditPasswordPage() {
 
             <Button
               size="S"
-              variant="black"
+              variant="green"
               className="!w-full"
               onClick={() => {
                 setShowAuthModal(false);
@@ -289,9 +304,9 @@ export default function EditPasswordPage() {
               size="L"
               variant="black"
               className="mt-[48px]"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/settings")}
             >
-              로그인하기
+              확인
             </Button>
           </div>
         </div>
@@ -299,25 +314,3 @@ export default function EditPasswordPage() {
     </div>
   );
 }
-
-// 🔧 예시 API
-const changePasswordAPI = async (
-  currentPassword: string,
-  newPassword: string,
-) => {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      console.log("기존:", currentPassword, "새 비밀번호:", newPassword);
-      resolve();
-    }, 1000);
-  });
-};
-
-const verifyCurrentPasswordAPI = async (password: string) => {
-  return new Promise<boolean>((resolve) => {
-    setTimeout(() => {
-      // 테스트용: 이 값만 맞다고 가정
-      resolve(password === "test1234");
-    }, 500);
-  });
-};
