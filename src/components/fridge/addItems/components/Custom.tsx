@@ -44,7 +44,7 @@ const Custom: React.FC<CustomProps> = ({
       const expiryDays = DEFAULT_EXPIRY_DAYS[serverCategoryKey] || 7;
 
       const requestData: CustomIngredientRequest = {
-        name: searchTerm.trim() || "이름 없음",
+        name: localName.trim() || "이름 없음",
         expirationDays: expiryDays,
         storage: "FRIDGE",
         category: serverCategoryKey,
@@ -72,6 +72,12 @@ const Custom: React.FC<CustomProps> = ({
       setLocalName(searchTerm);
     }
   }, [isOpen, searchTerm]);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
 
   const finishEditing = () => {
     if (localName.trim() === "") {
@@ -101,7 +107,7 @@ const Custom: React.FC<CustomProps> = ({
           ) : (
             <div className="flex items-center justify-center gap-1 group">
               <h2 className="typo-body1 max-w-[180px] text-center font-bold text-neutral-900 break-all truncate">
-                '{searchTerm}'
+                '{localName}'
               </h2>
               <button
                 onClick={() => setIsEditing(true)}
@@ -114,7 +120,7 @@ const Custom: React.FC<CustomProps> = ({
         </div>
 
         <p className="text-[12px] text-zinc-500 mb-4 leading-none text-center">
-          '{searchTerm}'의 카테고리를 선택해주세요
+          '{localName}'의 카테고리를 선택해주세요
         </p>
 
         <div className="w-40 h-40 flex-1 overflow-y-auto no-scrollbar grid grid-cols-3 gap-2 mb-4">

@@ -1,34 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { carIcon, elecIcon, treeIcon, triButton } from "../../../assets";
 import CircleGraph from "./CircleGraph";
-
-interface StatsData {
-  graph1: {
-    denominator_total_managed: number;
-    numerator_total_consumed: number;
-    percentage: number;
-  };
-  graph2: {
-    denominator_expired_managed: number;
-    numerator_expired_consumed: number;
-    percentage: number;
-  };
-}
+import { ConsumptionReport, getConsumptionReport } from "../../../api/stats";
 
 export default function Statistics() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const data: StatsData = {
-    graph1: {
-      denominator_total_managed: 20,
-      numerator_total_consumed: 12,
-      percentage: 60,
-    },
-    graph2: {
-      denominator_expired_managed: 5,
-      numerator_expired_consumed: 5,
-      percentage: 100,
-    },
+  const [report, setReport] = useState<ConsumptionReport | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        const data = await getConsumptionReport();
+        setReport(data);
+      } catch (error) {
+        console.error("리포트 데이터 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchReport();
+  }, []);
+
+  const stats = {
+    totalRate: report?.consumptionRate || 0,
+    nearExpiryRate: report?.nearExpiryConsumptionRate || 0,
+    totalCount: report?.totalIngredientCount || 0,
+    consumedCount: report?.consumedIngredientCount || 0,
+    nearExpiryCount: report?.nearExpiryIngredientCount || 0,
+    consumedNearExpiry: report?.consumedNearExpiryCount || 0,
   };
+
+  if (isLoading)
+    return (
+      <div className="h-[354px] flex items-center justify-center">
+        데이터 로딩 중...
+      </div>
+    );
 
   return (
     <div className="h-[354px] py-6 w-full flex flex-col items-center bg-white overflow-hidden relative">
@@ -44,13 +52,13 @@ export default function Statistics() {
 
           <div className="flex w-77 mt-6 justify-between pt-[6.5px]">
             <div className="flex flex-col gap-[6.5px] w-1/2 items-center justify-center">
-              <CircleGraph percentage={data.graph1.percentage} />
+              <CircleGraph percentage={stats.totalRate} />
               <span className="typo-caption !text-[10px] text-zinc-500 text-center leading-tight">
                 (실제 소비 음식/전체 음식) %
               </span>
             </div>
             <div className="flex flex-col gap-[6.5px] w-1/2 items-center justify-center">
-              <CircleGraph percentage={data.graph2.percentage} />
+              <CircleGraph percentage={stats.nearExpiryRate} />
               <span className="typo-caption !text-[10px] text-zinc-500 text-center leading-tight">
                 (실제 소비 음식/폐기 임박 음식) %
               </span>
