@@ -13,6 +13,7 @@ export default function Profile() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showBubble, setShowBubble] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     setIsLoading(true);
@@ -31,6 +32,17 @@ export default function Profile() {
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile, location.key]);
+
+  useEffect(() => {
+    if (!isLoading && profile && !profile.weeklyGoal) {
+      setShowBubble(true);
+      const timer = setTimeout(() => {
+        setShowBubble(false);
+      }, 5000); // 5초 뒤 사라짐
+
+      return () => clearTimeout(timer); // 언마운트 시 타이머 클리어
+    }
+  }, [isLoading, profile, location.key]);
 
   const setProfilePlant = useCookeepsStore((s) => s.setProfilePlant);
   const setProfileAuto = useCookeepsStore((s) => s.setProfileAuto);
@@ -140,6 +152,21 @@ export default function Profile() {
               />
             </button>
           </div>
+
+          {showBubble && !profile.weeklyGoal && (
+            <div className="relative top-4 flex justify-center animate-float-bubble shrink-0">
+              <div
+                className="relative z-10 inline-flex text-center justify-center items-center px-[16px] py-[9px] rounded-[3px] bg-white text-zinc-500 text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
+                style={{ width: 227, height: 28 }}
+              >
+                이번 주 달성하고 싶은 목표를 세워보세요!
+              </div>
+              <div
+                className="absolute top-0 translate-y-[-50%] w-[12px] h-[12px] bg-white rotate-45 z-0"
+                style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.13)" }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
