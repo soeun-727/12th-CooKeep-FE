@@ -44,7 +44,7 @@ export default function RecipeIngredientSection({
             {selectedIngredients.map((item, idx) => (
               <span
                 key={idx}
-                className="flex items-center justify-center h-[20px] px-[12px] rounded-full bg-[#1FC16F] text-white text-[12px] leading-[16px]"
+                className="flex items-center justify-center h-[20px] px-[12px] rounded-full bg-[#1FC16F] text-white text-[12px] leading-[16px] font-medium"
               >
                 {formatIngredient(item)}
               </span>
@@ -62,7 +62,7 @@ export default function RecipeIngredientSection({
               {requiredIngredients.map((item, idx) => (
                 <span
                   key={idx}
-                  className="flex items-center justify-center h-[20px] px-[12px] rounded-full bg-[#EBEBEB] text-[#7D7D7D] text-[12px] leading-[16px]"
+                  className="flex items-center justify-center h-[20px] px-[12px] rounded-full bg-[#EBEBEB] text-[#7D7D7D] text-[12px] leading-[16px] font-medium"
                 >
                   {formatIngredient(item)}
                 </span>
@@ -76,7 +76,7 @@ export default function RecipeIngredientSection({
       {substitutions.length > 0 && (
         <div className="flex flex-col items-start gap-[10px] self-stretch w-full">
           {/* 섹션 타이틀 */}
-          <span className="self-stretch text-[#7D7D7D] typo-label !text-[12px]">
+          <span className="self-stretch text-[#7D7D7D] typo-label">
             대체/생략 가능 재료
           </span>
 
@@ -98,7 +98,7 @@ export default function RecipeIngredientSection({
                         key={itemIdx}
                         className="flex px-[12px] py-[2px] justify-center items-center gap-[8px] rounded-[100px] bg-[#EBEBEB]"
                       >
-                        <span className="text-[#7D7D7D] text-center text-[12px] leading-[16px] whitespace-nowrap">
+                        <span className="text-[#7D7D7D] text-center text-[12px] leading-[16px] font-medium whitespace-nowrap">
                           {formatIngredient(item)}
                         </span>
                       </div>
