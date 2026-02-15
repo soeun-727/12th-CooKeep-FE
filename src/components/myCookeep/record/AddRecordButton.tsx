@@ -18,7 +18,7 @@ export default function AddRecordButton() {
       //   onTouchStart={() => setPressed(true)}
       //   onTouchEnd={() => setPressed(false)}
       className="
-        absolute bottom-29 right-[calc(50%-180px)] z-40
+        absolute bottom-[82px] right-[calc(50%-180px)] z-40
         w-12 h-12
         rounded-full
         bg-[#202020]
