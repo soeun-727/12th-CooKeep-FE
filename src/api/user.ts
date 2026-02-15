@@ -148,3 +148,59 @@ export const verifyUpdatePhoneCode = async (
   });
   return res.data;
 };
+
+// 기존 비밀번호 확인 API
+export const verifyCurrentPassword = async (password: string) => {
+  const res = await api.post<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/password/verify", {
+    password,
+  });
+  return res.data;
+};
+
+// 비밀번호 변경 API (기존 비밀번호 없이)
+export const changePassword = async (
+  password: string,
+  passwordConfirm: string,
+) => {
+  const res = await api.patch<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/password", {
+    password,
+    passwordConfirm,
+  });
+  return res.data;
+};
+
+// 비밀번호 변경용 전화번호 인증 발송
+export const sendPasswordChangeCode = async (phoneNumber: string) => {
+  const res = await api.post<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/password/send-code", {
+    phoneNumber,
+  });
+  return res.data;
+};
+
+// 비밀번호 변경용 전화번호 인증 확인
+export const verifyPasswordChangeCode = async (
+  phoneNumber: string,
+  code: string,
+) => {
+  const res = await api.post<{
+    status: string;
+    timestamp: string;
+    data: string;
+  }>("/api/users/me/password/verify-code", {
+    phoneNumber,
+    code,
+  });
+  return res.data;
+};

@@ -1,9 +1,10 @@
-// src/stores/useEditPasswordAuthStore.ts
 import { create } from "zustand";
+import { sendPasswordChangeCode, verifyPasswordChangeCode } from "../api/user";
 
 interface EditPasswordAuthState {
   phone: string;
   isCodeSent: boolean;
+  isVerified: boolean;
 
   setPhone: (phone: string) => void;
   sendCode: () => Promise<void>;
@@ -15,31 +16,33 @@ export const useEditPasswordAuthStore = create<EditPasswordAuthState>(
   (set, get) => ({
     phone: "",
     isCodeSent: false,
+    isVerified: false,
 
-    setPhone: (phone) => set({ phone }),
+    setPhone: (phone) => set({ phone: phone.replace(/[^0-9]/g, "") }),
 
     sendCode: async () => {
-      // TODO: 실제 인증번호 발송 API로 교체
-      console.log("📨 인증번호 발송:", get().phone);
-
-      await new Promise((res) => setTimeout(res, 500));
+      const { phone } = get();
+      await sendPasswordChangeCode(phone);
       set({ isCodeSent: true });
     },
 
     verifyCode: async (code: string) => {
-      // TODO: 실제 인증번호 검증 API로 교체
-      console.log("인증번호 확인:", code);
+      const { phone } = get();
 
-      await new Promise((res) => setTimeout(res, 500));
-
-      // 테스트용: 123456만 성공
-      return code === "123456";
+      try {
+        await verifyPasswordChangeCode(phone, code);
+        set({ isVerified: true });
+        return true;
+      } catch {
+        return false;
+      }
     },
 
     reset: () =>
       set({
         phone: "",
         isCodeSent: false,
+        isVerified: false,
       }),
   }),
 );
