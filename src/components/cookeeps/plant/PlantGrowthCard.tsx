@@ -59,7 +59,7 @@ export default function PlantGrowthCard({
 
   return (
     //  배경과 16px만 겹침
-    <div className="-mt-[16px] flex justify-center">
+    <div className="-mt-[27px] flex justify-center">
       {/* 카드 기준 */}
       <div className="relative w-full max-w-[450px] shadow-[0px_1px_8px_-2px_rgba(17,17,17,0.25)]">
         {/* 플로팅 WaterButton */}
@@ -73,15 +73,15 @@ export default function PlantGrowthCard({
         </div>
 
         {/* 카드 본체 */}
-        <div className="bg-white rounded-xl shadow px-[22px] pt-[32px] pb-[14px]">
-          <div className="flex flex-col items-center gap-[11px] max-w-[360px] mx-auto">
+        <div className="bg-white rounded-xl shadow px-[15px] pt-[23px] pb-2">
+          <div className="flex flex-col items-center max-w-[360px] mx-auto">
             {/* 식물 이름 / 날짜 / 새로고침 */}
-            <div className="flex justify-between items-center w-full">
-              <div className="flex items-end gap-2">
+            <div className="flex justify-between items-center w-full h-9">
+              <div className="flex items-center justify-center gap-2 h-[26px]">
                 <span className="text-[18px] font-semibold text-[#202020]">
                   {plantName}
                 </span>
-                <span className="text-xs text-[#7D7D7D] mb-[2px]">
+                <span className="text-xs text-[#7D7D7D] mt-1">
                   {dateText} 기준
                 </span>
               </div>

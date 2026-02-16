@@ -100,7 +100,7 @@ export const useRecipeStore = create<RecipeState>((set) => ({
     } catch (error) {
       console.error("세션 삭제 실패:", error);
       set({ isLoading: false });
-      alert("레시피 삭제에 실패했습니다.");
+      throw error;
     }
   },
 }));

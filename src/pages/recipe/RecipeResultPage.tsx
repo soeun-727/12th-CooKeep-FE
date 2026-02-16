@@ -121,7 +121,7 @@ export default function RecipeResultPage() {
         })}
 
         {/* 버튼 영역 */}
-        <div className="p-4 w-full max-w-[450px] mx-auto">
+        <div className="p-4 w-full max-w-[450px] mx-auto mb-7">
           <RecipeActionButtons
             retryCount={retryCount}
             onRetry={handleRetry}

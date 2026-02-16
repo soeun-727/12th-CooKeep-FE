@@ -71,7 +71,7 @@ export default function RecipeSelectPage() {
 
       {!viewCategory && <FloatingNotice text="요리할 재료를 선택해 주세요" />}
 
-      <div className="mt-[102px]">
+      <div className="mt-[48px]">
         <Search />
 
         {viewCategory || searchTerm ? (

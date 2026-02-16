@@ -14,7 +14,7 @@
 
 .floating-notice {
   position: fixed;
-  top: 160px;
+  top: 106px;
   left: 50%;
   transform: translateX(-50%);
   display: inline-flex;

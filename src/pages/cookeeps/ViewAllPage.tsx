@@ -2,7 +2,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import AllItem from "../../components/cookeeps/lists/AllItem";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getWeeklyRecipesAll, RecipeRankItem } from "../../api/cookeeps";
-import tempImage from "../../assets/mycookeep/record/temp_food_photo.svg";
+import tempImage from "../../assets/cookeeps/main/temp_recipe_cookeeps.svg";
 
 export default function ViewAllPage() {
   const navigate = useNavigate();
@@ -115,11 +115,6 @@ export default function ViewAllPage() {
             >
               {isLoading && (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-500" />
-              )}
-              {!isLoading && isLast && (
-                <p className="text-zinc-400 text-xs py-4">
-                  마지막 레시피입니다.
-                </p>
               )}
             </div>
           </div>

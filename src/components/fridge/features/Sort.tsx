@@ -29,7 +29,7 @@ export default function Sort({ categoryIcon, viewCategory }: SortProps) {
 
           <div className="absolute right-0 flex items-center">
             {isMenuOpen && (
-              <div className="absolute right-[34px] bottom-0 flex flex-col items-center justify-center bg-white rounded-[10px] w-[123px] h-[98px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">
+              <div className="absolute right-[34px] bottom-0 flex flex-col items-center justify-center bg-white rounded-[10px] w-[130px] h-[104px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">
                 {options.map((option, index) => (
                   <div
                     key={option}
@@ -40,7 +40,7 @@ export default function Sort({ categoryIcon, viewCategory }: SortProps) {
                         setSortOrder(option);
                         setIsMenuOpen(false);
                       }}
-                      className="whitespace-nowrap w-full h-[30px] text-[10px] leading-none"
+                      className="whitespace-nowrap w-full h-[30px] typo-caption !font-semibold leading-none"
                     >
                       {option}
                     </button>

@@ -139,11 +139,11 @@ export default function RecordDetailPage() {
           </div>
           <div className="absolute right-2 top-2 flex items-center">
             {isMenuOpen && (
-              <div className="absolute right-2 top-10 flex flex-col items-center justify-center bg-white rounded-[10px] w-[102px] h-[68px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">
+              <div className="absolute right-2 top-10 flex flex-col items-center justify-center bg-white rounded-[10px] w-[130px] h-[72px] shadow-[0_1px_8.2px_-2px_#11111140] animate-fadeIn z-50 overflow-hidden">
                 {/* 수정하기 버튼 */}
                 <button
                   onClick={handleEdit}
-                  className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
+                  className="w-full h-[34px] typo-caption !font-semibold hover:bg-gray-50 transition-colors"
                 >
                   수정하기
                 </button>
@@ -154,7 +154,7 @@ export default function RecordDetailPage() {
                 {/* 삭제하기 버튼 */}
                 <button
                   onClick={handleDeleteClick}
-                  className="w-full h-[34px] text-[10px] font-semibold hover:bg-gray-50 transition-colors"
+                  className="w-full h-[34px] typo-caption !font-semibold hover:bg-gray-50 transition-colors"
                 >
                   삭제하기
                 </button>
@@ -244,7 +244,12 @@ export default function RecordDetailPage() {
         </div>
         {isEditing && (
           <div className=" flex mt-2 mb-2">
-            <Button size="L" variant="black" onClick={handleUpdateClick}>
+            <Button
+              size="L"
+              variant="black"
+              onClick={handleUpdateClick}
+              className="w-full"
+            >
               수정 완료
             </Button>
           </div>

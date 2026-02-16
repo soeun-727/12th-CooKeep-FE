@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 interface DoublecheckModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title: React.ReactNode;
   description?: string;
   onConfirm: () => void;
   confirmText?: string;
