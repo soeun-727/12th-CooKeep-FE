@@ -121,7 +121,9 @@ export default function IngredientDetailModal({
                 </span>
                 <div className="flex flex-col items-start gap-2">
                   <span className="text-[12px] text-[#C3C3C3] leading-4">
-                    D-{ingredient.dDay}
+                    {ingredient.dDay < 0
+                      ? `D+${Math.abs(ingredient.dDay)}`
+                      : `D-${ingredient.dDay}`}
                   </span>
                   <span
                     className={`text-[12px] font-semibold leading-4 ${ingredient.dDay > 3 ? "text-[#1FA43C]" : "text-[#D91F1F]"}`}
