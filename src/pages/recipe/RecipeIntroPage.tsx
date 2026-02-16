@@ -45,7 +45,7 @@ export default function RecipeIntroPage() {
         />
 
         <div className="flex flex-col items-center h-[144px] gap-[28px] self-stretch">
-          <h1 className="text-center text-[28px] font-bold leading-[36px] text-[#202020]">
+          <h1 className="text-center text-[28px] font-semibold leading-[36px] text-[#202020]">
             지금 있는 재료로
             <br />
             요리해볼까요?
@@ -54,9 +54,9 @@ export default function RecipeIntroPage() {
           <div className="w-[249px] h-[44px]">
             <Button
               size="S"
-              variant="black"
+              variant="green"
               onClick={() => navigate("/recipe/select")}
-              className="w-full h-full !text-[#32E389]"
+              className="w-full h-full "
             >
               요리할 재료 선택하기
             </Button>

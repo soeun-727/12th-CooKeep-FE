@@ -30,6 +30,7 @@ export default function IngredientDetailModal({
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [memo, setMemo] = useState("");
+  const [detailData, setDetailData] = useState<any>(null);
   const [openEditor, setOpenEditor] = useState<
     null | "storage" | "expiry" | "quantity"
   >(null);
@@ -53,6 +54,7 @@ export default function IngredientDetailModal({
         const response = await getIngredientDetail(Number(ingredient.id));
         if (response.data && response.data.data) {
           const data = response.data.data;
+          setDetailData(data);
           setMemo(data.memo || "");
         }
       } catch (error) {
@@ -90,6 +92,7 @@ export default function IngredientDetailModal({
       </div>
     );
 
+  const displayTip = detailData?.aiTip || ingredient.tip;
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
       <div
@@ -221,7 +224,7 @@ export default function IngredientDetailModal({
               </div>
             </div>
 
-            {ingredient.tip && (
+            {displayTip && (
               <div className="flex flex-col items-center gap-5 self-stretch mt-1">
                 <div className="flex items-end justify-center gap-5 w-full relative">
                   <img
@@ -240,7 +243,7 @@ export default function IngredientDetailModal({
                         TIP
                       </span>
                       <p className="text-[10px] font-medium leading-[14px] text-[#202020] self-stretch break-words">
-                        {ingredient.tip}
+                        {displayTip}
                       </p>
                     </div>
                   </div>

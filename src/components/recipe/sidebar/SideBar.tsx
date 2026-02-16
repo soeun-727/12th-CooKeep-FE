@@ -29,6 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const [shouldAnimateOpen, setShouldAnimateOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<{
     id: number;
     name: string;
@@ -38,16 +39,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     ? "translate-x-0"
     : "-translate-x-full";
 
-  // 삭제 확인 모달의 Confirm 핸들러 수정
   const handleConfirmDelete = async () => {
     if (selectedRecipe) {
-      await deleteSession(selectedRecipe.id); // API 호출
-      // 현재 URL에 삭제한 sessionId가 포함되어 있다면 메인으로 리다이렉트
-      if (window.location.pathname.includes(String(selectedRecipe.id))) {
-        navigate("/recipe"); // 또는 레시피 목록 메인 페이지로
+      try {
+        await deleteSession(selectedRecipe.id);
+
+        if (window.location.pathname.includes(String(selectedRecipe.id))) {
+          navigate("/recipe");
+        }
+        setIsDeleteModalOpen(false);
+        setSelectedRecipe(null);
+      } catch (err) {
+        setIsDeleteModalOpen(false);
+        setIsErrorModalOpen(true);
       }
-      setIsDeleteModalOpen(false);
-      setSelectedRecipe(null);
     }
   };
 
@@ -182,6 +187,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         title={selectedRecipe?.name ?? ""}
         description="이 레시피를 삭제할까요?"
       />
+      <div className="whitespace-pre-wrap !font-medium">
+        <DoublecheckModal
+          isOpen={isErrorModalOpen}
+          onClose={() => setIsErrorModalOpen(false)}
+          onConfirm={() => setIsDeleteModalOpen(false)}
+          title={
+            <span className="block font-medium leading-relaxed">
+              요리 기록이 있는 레시피는
+              <br />
+              삭제할 수 없어요
+            </span>
+          }
+          variant="singular"
+          confirmText="확인"
+        />
+      </div>
     </>
   );
 };
