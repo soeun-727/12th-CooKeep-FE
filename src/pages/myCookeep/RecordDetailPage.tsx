@@ -244,7 +244,12 @@ export default function RecordDetailPage() {
         </div>
         {isEditing && (
           <div className=" flex mt-2 mb-2">
-            <Button size="L" variant="black" onClick={handleUpdateClick}>
+            <Button
+              size="L"
+              variant="black"
+              onClick={handleUpdateClick}
+              className="w-full"
+            >
               수정 완료
             </Button>
           </div>

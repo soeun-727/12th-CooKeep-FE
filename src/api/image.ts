@@ -12,13 +12,13 @@ export const uploadImage = async (file: File): Promise<ImageUploadResponse> => {
   const formData = new FormData();
   formData.append("image", file, file.name);
   const res = await api.post<ImageUploadResponse>(
-    `/api/images?folder=recipeImages`,
+    `/api/images?folder=RECIPE_IMAGES`,
     formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    },
+    // {
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    // },
   );
 
   return res.data;

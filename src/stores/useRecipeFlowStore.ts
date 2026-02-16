@@ -115,7 +115,8 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
               sessionId: data.sessionId,
               changeCount: 0, // 상세 조회 시점에서는 기본값 설정
               recipe: parsed.recipe || parsed,
-              youtubeReferences: parsed.youtubeReferences || [],
+              youtubeReferences:
+                parsed.youtubeReferences ?? parsed.youtube_references ?? [],
             };
           } catch (e) {
             console.error("JSON 파싱 에러:", e);
