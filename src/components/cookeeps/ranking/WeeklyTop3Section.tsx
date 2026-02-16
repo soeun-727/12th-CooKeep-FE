@@ -9,7 +9,7 @@ export default function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
   const order = [1, 0, 2]; // 2-1-3 UI
 
   return (
-    <div className="flex flex-col items-center gap-[26px] w-full py-5 rounded-[6px] bg-[#E6FBEB] shadow-md">
+    <div className="flex flex-col items-center gap-[26px] w-full min-h-[202px] py-5 rounded-[6px] bg-[#E6FBEB] shadow-md">
       <div className="flex flex-col items-center gap-[2px]">
         <h2 className="text-[18px] font-semibold text-gray-800 text-center">
           이번 주 식물 돌봄 <span className="text-[#1FC16F]">TOP3</span> 쿠킵이

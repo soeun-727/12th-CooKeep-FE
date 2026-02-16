@@ -1,6 +1,7 @@
 import RecipeRankCard from "./RecipeRankCard";
 import RecipeFilterButtons from "./RecipeFilterButtons";
 import { RecipeRankItem } from "../../../api/cookeeps";
+import tempImage from "../../../assets/cookeeps/main/temp_recipe_cookeeps.svg";
 interface WeeklyRecipeSectionProps {
   topRecipes: RecipeRankItem[];
 }
@@ -15,7 +16,7 @@ export default function WeeklyRecipeSection({
   const weekNumber = Math.ceil(date / 7);
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md mx-auto bg-white p-4 gap-4 rounded-lg shadow-md">
+    <div className="flex flex-col items-center w-full min-h-[259px] max-w-md mx-auto bg-white p-4 gap-4 rounded-lg shadow-md">
       {/* 제목 */}
       <h2 className="text-center font-semibold text-[18px] leading-[26px]">
         <span className="text-[#1FC16F]">
@@ -35,7 +36,7 @@ export default function WeeklyRecipeSection({
               id={String(recipe.dailyRecipeId)}
               rank={recipe.rank}
               title={recipe.title}
-              image={recipe.recipeImageUrl || ""}
+              image={recipe.recipeImageUrl || tempImage}
               likes={recipe.likeCount}
             />
           ))}
