@@ -9,7 +9,7 @@ import {
   toggleRecipeBookmark,
   toggleRecipeLike,
 } from "../../api/myRecipe";
-import temp from "../../assets/mycookeep/record/temp_food_photo.svg";
+import temp from "../../assets/cookeeps/main/temp_recipe_cookeeps.svg";
 
 interface Props {
   type: string;
