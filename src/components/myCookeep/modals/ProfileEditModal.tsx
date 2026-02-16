@@ -28,7 +28,7 @@ export default function ProfileEditModal({ isOpen, onClose, onSave }: Props) {
   const selectedPlantImage =
     myPlants.find((p) => p.userPlantId === selectedId)?.imageUrl ?? groundImg;
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center">
+    <div className="fixed inset-0 z-[200] flex items-end justify-center">
       {/* 배경 어둡게 */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 

@@ -38,7 +38,7 @@ export default function Profile() {
       setShowBubble(true);
       const timer = setTimeout(() => {
         setShowBubble(false);
-      }, 5000); // 5초 뒤 사라짐
+      }, 7000); // 7초 뒤 사라짐
 
       return () => clearTimeout(timer); // 언마운트 시 타이머 클리어
     }
@@ -154,7 +154,7 @@ export default function Profile() {
           </div>
 
           {showBubble && !profile.weeklyGoal && (
-            <div className="relative top-4 flex justify-center animate-float-bubble shrink-0">
+            <div className="absolute top-[245px] flex justify-center animate-float-bubble shrink-0">
               <div
                 className="relative z-10 inline-flex text-center justify-center items-center px-[16px] py-[9px] rounded-[3px] bg-white text-zinc-500 text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
                 style={{ width: 227, height: 28 }}
