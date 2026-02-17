@@ -80,8 +80,8 @@ export default function RecordWritePage() {
     const files = e.target.files;
     if (!files || files.length === 0 || isUploading) return;
 
-    if (images.length + files.length > 2) {
-      alert("이미지는 최대 2장까지 업로드 가능합니다.");
+    if (images.length >= 1) {
+      alert("이미지는 1장만 업로드 가능합니다.");
       return;
     }
 
@@ -195,8 +195,6 @@ export default function RecordWritePage() {
             <input
               type="file"
               accept="image/*"
-              capture="environment"
-              multiple
               ref={fileInputRef}
               hidden
               onChange={handleImageChange}
