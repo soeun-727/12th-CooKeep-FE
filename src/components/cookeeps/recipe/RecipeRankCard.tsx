@@ -30,7 +30,7 @@ export default function RecipeRankCard({
           <div className="flex justify-center items-center w-8 h-6 rounded-full bg-gray-800">
             <span className="text-white text-[12px] font-semibold">{rank}</span>
           </div>
-          <div className="truncate font-medium text-gray-800 text-[14px]">
+          <div className="w-[159px] truncate font-medium text-gray-800 text-[14px]">
             {title}
           </div>
         </div>
