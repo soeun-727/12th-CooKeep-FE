@@ -43,7 +43,7 @@ export default function RecordEntry({ records }: Props) {
         </div>
       </div>
       {records.length > 0 && (
-        <div className="fixed bottom-[calc(4px+env(safe-area-inset-bottom))] pb-10 inset-x-0 z-[100] pointer-events-none">
+        <div className="fixed bottom-[calc(4px+env(safe-area-inset-bottom))] inset-x-0 z-[100] pointer-events-none">
           <div className="max-w-[450px] mx-auto px-6 flex justify-end pointer-events-auto">
             <AddRecordButton />
           </div>
