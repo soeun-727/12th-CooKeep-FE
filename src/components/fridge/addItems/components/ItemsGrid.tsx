@@ -18,8 +18,8 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
     searchTerm && searchTerm.trim().length > 0 && items.length === 0;
 
   return (
-    <div className="w-full flex flex-col items-center justify-center pt-6">
-      <div className="flex flex-col w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
+    <div className="w-full flex flex-col items-center justify-center pt-6 pb-25">
+      <div className="flex flex-col w-[294px]">
         <div className="grid grid-cols-3 gap-3 justify-items-center">
           {items.map((item) => (
             <Item

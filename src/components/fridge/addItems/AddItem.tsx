@@ -95,7 +95,7 @@ export default function AddItem() {
 
   return (
     <>
-      <div className="flex flex-col items-center mt-1 h-full overflow-hidden">
+      <div className="w-full flex flex-col items-center mt-1 h-full overflow-hidden">
         <div className="shrink-0 [&_p]:hidden [&_input]:border-none [&_input]:outline-none [&_input::placeholder]:text-stone-300 shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]">
           <TextField
             value={searchTerm}
@@ -118,10 +118,10 @@ export default function AddItem() {
             ))}
           </div>
         </div>
-        <div className="w-full flex-1 overflow-hidden">
+        <div className="w-full flex-1 min-h-0 overflow-y-auto no-scrollbar scroll-smooth">
           <ItemsGrid items={filteredItems} />
         </div>
-        <div className="shrink-0 w-full">
+        <div className="shrink-0 w-full pt-35">
           <AddItemFooter />
         </div>
       </div>
