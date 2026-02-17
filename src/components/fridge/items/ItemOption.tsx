@@ -62,7 +62,7 @@ export default function ItemOption() {
   return (
     <>
       {/* 하단 옵션 바 */}
-      <div className="fixed bottom-[56px] left-1/2 z-60 w-full max-w-[450px] -translate-x-1/2">
+      <div className="fixed bottom-[calc(56px+env(safe-area-inset-bottom))] left-1/2 z-60 w-full max-w-[450px] -translate-x-1/2">
         <div className="flex h-11 bg-white border-[0.5px] border-[#D1D1D1]">
           <button
             onClick={() => handleOpenModal("eaten")}

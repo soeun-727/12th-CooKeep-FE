@@ -104,7 +104,7 @@ export default function MyCookeepPage() {
         </div>
       </div>
 
-      <div className="flex-1 mt-[10px] mb-[15px] overflow-y-auto no-scrollbar">
+      <div className="flex-1 mt-[10px] pb-15 overflow-y-auto no-scrollbar">
         {renderContent()}
       </div>
 
