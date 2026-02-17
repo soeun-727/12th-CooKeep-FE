@@ -54,6 +54,7 @@ import RecordWritePage from "./pages/myCookeep/RecordWritePage";
 import RecordDetailPage from "./pages/myCookeep/RecordDetailPage";
 import KakaoLoginCallback from "./components/auth/simplelogin/KakaoLoginCallback";
 import GoogleLoginCallback from "./components/auth/simplelogin/GoogleLoginCallback";
+import GuestPage from "./pages/auth/GuestPage";
 
 export default function App() {
   return (
@@ -62,6 +63,7 @@ export default function App() {
         {/* auth */}
         <Route path="/" element={<InitialPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/guest" element={<GuestPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/simplelogin" element={<SimpleLoginAgreementPage />} />
