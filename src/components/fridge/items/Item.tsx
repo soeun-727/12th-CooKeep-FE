@@ -51,11 +51,11 @@ const Item: React.FC<ItemProps> = ({
             e.stopPropagation();
             onSelect?.();
           }}
-          className="flex-shrink-0 z-10 w-9 h-9"
+          className="flex-shrink-0 z-10 w-9 h-9 -ml-2 flex justify-start"
         >
           <img
             src={isSelected ? checkOn : check}
-            className="w-9 h-9 object-contain ml-[-6px] flex-shrink-0"
+            className="w-full object-contain flex-shrink-0"
             alt="check"
           />
         </button>
