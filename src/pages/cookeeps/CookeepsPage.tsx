@@ -309,7 +309,7 @@ export default function CookeepsPage() {
       </div> */}
 
       {/* ===== 상단 영역 ===== */}
-      <div className="relative shrink-0 -mt-[54px]">
+      <div className="relative shrink-0 -mt-[35px]">
         <PlantBackground
           showToast={toastVisible}
           message="물 주기에 성공했어요!"
