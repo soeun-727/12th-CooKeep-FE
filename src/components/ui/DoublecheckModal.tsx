@@ -51,7 +51,7 @@ const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
 
       {/* 모달 박스 */}
       <div className="relative w-[254px] bg-white rounded-[10px] shadow-xl flex flex-col items-center px-7 py-[25px] animate-popIn">
-        <h2 className="typo-body1 w-[198px] mb-2 text-center font-bold text-neutral-900">
+        <h2 className="typo-body w-[198px] mb-2 text-center font-bold text-neutral-900">
           {title}
         </h2>
         {description && (

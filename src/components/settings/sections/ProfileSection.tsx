@@ -108,7 +108,7 @@ export default function ProfileSection({ profile }: Props) {
                     h-full
                     w-45
                     outline-none
-                    typo-body-sm
+                    typo-body2
                     text-[#202020]
                   "
                 />
@@ -131,7 +131,7 @@ export default function ProfileSection({ profile }: Props) {
               </>
             ) : (
               <>
-                <span className="typo-body-sm text-[#AEAEAE]">
+                <span className="typo-body2 text-[#AEAEAE]">
                   {account.nickname}
                 </span>
 

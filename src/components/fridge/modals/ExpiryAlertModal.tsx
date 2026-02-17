@@ -14,12 +14,6 @@ export default function ExpiryAlertModal({ isOpen, onClose, items }: Props) {
 
   if (!isOpen || items.length === 0) return null;
 
-  const isSingle = items.length === 1;
-
-  const titleText = isSingle
-    ? "유통기한이 오늘까지인 재료가 있어요!"
-    : "유통기한이 오늘까지인 재료들이 있어요!";
-
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center">
       {/* backdrop */}
@@ -35,10 +29,10 @@ export default function ExpiryAlertModal({ isOpen, onClose, items }: Props) {
             className="w-[75px] h-[60px]"
           />
 
-          <p className="typo-body-sm text-[#202020] text-center whitespace-pre-line">
-            <span className="font-semibold">{titleText}</span>
-            {"\n"}
-            지금 요리하면 쿠키 3개를 드려요!
+          <p className="typo-body2 text-[#202020] text-center whitespace-pre-line">
+            유통기한이 오늘까지인 재료가 있어요!
+            <br />
+            지금 확인하고 요리해볼까요?
           </p>
         </div>
 

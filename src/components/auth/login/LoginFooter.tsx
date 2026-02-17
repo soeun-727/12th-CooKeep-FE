@@ -72,8 +72,8 @@ export default function LoginFooter() {
           </button>
         </div>
         <button
-          onClick={() => navigate("/fridge")}
-          className="mt-5 typo-body1 font-bold text-[var(--color-green-deep)] mb-[34px]"
+          onClick={() => navigate("/guest")}
+          className="mt-5 typo-body font-bold text-[var(--color-green-deep)] mb-[34px]"
         >
           일단 둘러보기
           {/* 현재 페이지 미구현 */}
