@@ -52,7 +52,7 @@ export default function SettingsInputItem({
         "
       >
         {/* value */}
-        <span className="typo-body-sm text-[#AEAEAE]">{value}</span>
+        <span className="typo-body2 text-[#AEAEAE]">{value}</span>
 
         {/* button */}
         <button

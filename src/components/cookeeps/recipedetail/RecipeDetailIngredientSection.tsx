@@ -12,9 +12,7 @@ export default function RecipeDetailIngredientSection({ ingredients }: Props) {
     <div className="flex flex-col gap-8 w-full">
       {/* 필수 재료 */}
       <div>
-        <span className="typo-body-sm text-[#202020]">
-          내가 가지고 있는 재료
-        </span>
+        <span className="typo-body2 text-[#202020]">내가 가지고 있는 재료</span>
         <div className="flex flex-wrap gap-[5px] mt-2">
           {user_ingredients.map((item) => (
             <span
@@ -30,9 +28,7 @@ export default function RecipeDetailIngredientSection({ ingredients }: Props) {
       {/* 선택 재료 */}
       {additional_ingredients.length > 0 && (
         <div>
-          <span className="typo-body-sm text-[#202020]">
-            추가로 필요한 재료
-          </span>
+          <span className="typo-body2 text-[#202020]">추가로 필요한 재료</span>
           <div className="flex flex-wrap gap-[5px] mt-2">
             {additional_ingredients.map((item) => (
               <span
@@ -49,7 +45,7 @@ export default function RecipeDetailIngredientSection({ ingredients }: Props) {
       {/* 대체 재료 */}
       {optional_ingredients.length > 0 && (
         <div>
-          <span className="typo-body-sm text-[#7D7D7D]">
+          <span className="typo-body2 text-[#7D7D7D]">
             대체 / 생략 가능 재료
           </span>
 

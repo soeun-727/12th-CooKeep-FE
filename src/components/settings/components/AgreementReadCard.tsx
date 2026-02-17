@@ -25,20 +25,20 @@ export default function AgreementReadCard({ agreement, notice }: Props) {
           remarkPlugins={[remarkGfm]}
           components={{
             h2: ({ children }) => (
-              <h2 className="typo-body-sm text-[#202020] mt-2 mb-2">
+              <h2 className="typo-body2 text-[#202020] mt-2 mb-2">
                 {children}
               </h2>
             ),
             p: ({ children }) => (
-              <p className="typo-body-sm text-[#7D7D7D] mb-[6px]">{children}</p>
+              <p className="typo-body2 text-[#7D7D7D] mb-[6px]">{children}</p>
             ),
             li: ({ children }) => (
-              <li className="typo-body-sm text-[#7D7D7D] ml-4 list-disc">
+              <li className="typo-body2 text-[#7D7D7D] ml-4 list-disc">
                 {children}
               </li>
             ),
             strong: ({ children }) => (
-              <strong className="typo-body-sm font-medium text-[#D91F1F]">
+              <strong className="typo-body2 font-medium text-[#D91F1F]">
                 {children}
               </strong>
             ),
@@ -60,7 +60,7 @@ export default function AgreementReadCard({ agreement, notice }: Props) {
               </td>
             ),
             a: ({ href, children }) => (
-              <a href={href} className="underline typo-body-sm text-[#7D7D7D]">
+              <a href={href} className="underline typo-body2 text-[#7D7D7D]">
                 {children}
               </a>
             ),

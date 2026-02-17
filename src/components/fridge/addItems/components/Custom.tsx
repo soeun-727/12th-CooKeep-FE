@@ -102,11 +102,11 @@ const Custom: React.FC<CustomProps> = ({
               onChange={(e) => setLocalName(e.target.value)}
               onBlur={finishEditing}
               onKeyDown={(e) => e.key === "Enter" && finishEditing()}
-              className="typo-body1 w-[180px] text-center font-bold text-neutral-900 border-b border-zinc-300 outline-none"
+              className="typo-body w-[180px] text-center font-bold text-neutral-900 border-b border-zinc-300 outline-none"
             />
           ) : (
             <div className="flex items-center justify-center gap-1 group">
-              <h2 className="typo-body1 max-w-[180px] text-center font-bold text-neutral-900 break-all truncate">
+              <h2 className="typo-body max-w-[180px] text-center font-bold text-neutral-900 break-all truncate">
                 '{localName}'
               </h2>
               <button

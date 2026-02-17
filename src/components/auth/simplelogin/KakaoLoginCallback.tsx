@@ -80,7 +80,7 @@ export default function KakaoLoginCallback() {
         height: "100vh",
       }}
     >
-      <p className="typo-body1">로그인 중입니다...</p>
+      <p className="typo-body">로그인 중입니다...</p>
     </div>
   );
 }
