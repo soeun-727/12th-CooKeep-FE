@@ -71,10 +71,17 @@ export default function RecordWritePage() {
     el.style.height = `${el.scrollHeight}px`;
   };
 
+  // const compressionOptions = {
+  //   maxSizeMB: 1, // 최대 1MB로 압축
+  //   maxWidthOrHeight: 1080, // 해상도 리사이즈
+  //   useWebWorker: true, // 성능 최적화
+  // };
   const compressionOptions = {
-    maxSizeMB: 1, // 최대 1MB로 압축
-    maxWidthOrHeight: 1080, // 해상도 리사이즈
-    useWebWorker: true, // 성능 최적화
+    maxSizeMB: 0.7,
+    maxWidthOrHeight: 720,
+    useWebWorker: true,
+    initialQuality: 0.7,
+    alwaysKeepResolution: false,
   };
 
   // const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,38 +132,91 @@ export default function RecordWritePage() {
   //   }
   // };
 
+  // 버전2
+  // const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (!files || files.length === 0 || isUploading) return;
+
+  //   const file = files[0];
+
+  //   // 초고용량 방어
+  // if (file.size > 15 * 1024 * 1024) {
+  //   alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
+  //   return;
+  // }
+
+  //   setIsUploading(true);
+
+  //   try {
+  //     // 1. 기존 이미지가 있다면 서버에서 삭제
+  //     if (image?.url) {
+  //       try {
+  //         await deleteImage(image.url);
+  //       } catch (err) {
+  //         console.warn("기존 이미지 삭제 실패 (무시하고 진행)", err);
+  //       }
+  //     }
+
+  //     // 2. 이미지 압축
+  //     const compressedBlob = await imageCompression(file, compressionOptions);
+
+  //     const compressedFile = new File([compressedBlob], file.name, {
+  //       type: compressedBlob.type,
+  //     });
+
+  //     // 3. 서버 업로드
+  //     const response = await uploadImage(compressedFile);
+
+  //     // 4. 스토어에 새 이미지 저장
+  //     setImage({
+  //       url: response.data.imageUrl,
+  //     });
+  //   } catch (error) {
+  //     console.error("이미지 업로드 에러:", error);
+  //     alert("이미지 업로드 중 오류가 발생했습니다.");
+  //   } finally {
+  //     setIsUploading(false);
+  //     if (e.target) e.target.value = "";
+  //   }
+  // };
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0 || isUploading) return;
 
+    const file = files[0];
+
+    // 초고용량 방어
+    if (file.size > 15 * 1024 * 1024) {
+      alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
+      return;
+    }
+
     setIsUploading(true);
 
     try {
-      const file = files[0];
-
-      // 🚀 1. 기존 이미지가 있다면 서버에서 삭제
-      if (image?.url) {
-        try {
-          await deleteImage(image.url);
-        } catch (err) {
-          console.warn("기존 이미지 삭제 실패 (무시하고 진행)", err);
-        }
-      }
-
-      // 🚀 2. 이미지 압축
+      // 1️⃣ 이미지 압축
       const compressedBlob = await imageCompression(file, compressionOptions);
 
       const compressedFile = new File([compressedBlob], file.name, {
         type: compressedBlob.type,
       });
 
-      // 🚀 3. 서버 업로드
+      // 2️⃣ 새 이미지 업로드
       const response = await uploadImage(compressedFile);
+      const newUrl = response.data.imageUrl;
 
-      // 🚀 4. 스토어에 새 이미지 저장
-      setImage({
-        url: response.data.imageUrl,
-      });
+      // 3️⃣ 기존 이미지 삭제 (업로드 성공 후!)
+      if (image?.url) {
+        try {
+          await deleteImage(image.url);
+        } catch (err) {
+          console.warn("기존 이미지 삭제 실패 (무시)", err);
+        }
+      }
+
+      // 4️⃣ 스토어 교체
+      setImage({ url: newUrl });
     } catch (error) {
       console.error("이미지 업로드 에러:", error);
       alert("이미지 업로드 중 오류가 발생했습니다.");
