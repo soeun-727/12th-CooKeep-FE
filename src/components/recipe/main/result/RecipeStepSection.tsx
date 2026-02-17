@@ -18,7 +18,7 @@ export default function RecipeStepSection({ steps }: Props) {
   return (
     <div className="flex flex-col items-start gap-[10px] w-full">
       {/* 제목 */}
-      <span className="typo-body-sm text-[#7D7D7D] self-stretch">레시피</span>
+      <span className="typo-body2 text-[#7D7D7D] self-stretch">레시피</span>
 
       {/* 단계 리스트 */}
       <div className="flex flex-col items-start gap-[8px] w-full">
@@ -33,7 +33,7 @@ export default function RecipeStepSection({ steps }: Props) {
             </div> */}
 
             {/* 레시피 설명 */}
-            {/* <p className="text-[#202020] typo-body-sm max-w-[289px]">
+            {/* <p className="text-[#202020] typo-body2 max-w-[289px]">
               {formatDescription(step.description)}
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function RecipeStepSection({ steps }: Props) {
               {step.order}
             </div>
 
-            <p className="text-[#202020] typo-body-sm max-w-[289px] leading-[22px]">
+            <p className="text-[#202020] typo-body2 max-w-[289px] leading-[22px]">
               {formatDescription(step.description)}
             </p>
           </div>

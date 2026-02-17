@@ -79,25 +79,25 @@ export default function AgreementPage({
               remarkPlugins={[remarkGfm]}
               components={{
                 h2: ({ children }) => (
-                  <h2 className="typo-body-sm text-[#202020] mt-2 mb-2">
+                  <h2 className="typo-body2 text-[#202020] mt-2 mb-2">
                     {children}
                   </h2>
                 ),
 
                 p: ({ children }) => (
-                  <p className="typo-body-sm text-[#7D7D7D] mb-[6px]">
+                  <p className="typo-body2 text-[#7D7D7D] mb-[6px]">
                     {children}
                   </p>
                 ),
 
                 li: ({ children }) => (
-                  <li className="typo-body-sm text-[#7D7D7D] ml-4 list-disc">
+                  <li className="typo-body2 text-[#7D7D7D] ml-4 list-disc">
                     {children}
                   </li>
                 ),
 
                 strong: ({ children }) => (
-                  <strong className="typo-body-sm font-medium text-[#D91F1F]">
+                  <strong className="typo-body2 font-medium text-[#D91F1F]">
                     {children}
                   </strong>
                 ),
@@ -125,7 +125,7 @@ export default function AgreementPage({
                 a: ({ children, href }) => (
                   <a
                     href={href}
-                    className="underline text-[#7D7D7D] typo-body-sm"
+                    className="underline text-[#7D7D7D] typo-body2"
                   >
                     {children}
                   </a>
