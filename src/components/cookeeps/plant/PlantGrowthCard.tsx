@@ -59,7 +59,7 @@ export default function PlantGrowthCard({
 
   return (
     //  배경과 16px만 겹침
-    <div className="-mt-[27px] flex justify-center">
+    <div className="-mt-[46px] flex justify-center">
       {/* 카드 기준 */}
       <div className="relative w-full max-w-[450px] shadow-[0px_1px_8px_-2px_rgba(17,17,17,0.25)]">
         {/* 플로팅 WaterButton */}
