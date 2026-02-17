@@ -11,6 +11,10 @@ import {
   WeeklyRecipeDetailResponse,
 } from "../../api/cookeeps";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
+import {
+  checkRecipeBookmarkStatus,
+  checkRecipeLikeStatus,
+} from "../../api/myRecipe";
 
 export default function RecipeDetailPage() {
   const navigate = useNavigate();
@@ -92,19 +96,37 @@ export default function RecipeDetailPage() {
     }
   };
 
+  // RecipeDetailPage.tsx 수정 로직
+
   useEffect(() => {
     if (!id) return;
-    const fetchDetail = async () => {
+
+    const fetchFullDetail = async () => {
       try {
-        const data = await getWeeklyRecipeDetail(id);
-        setRecipe(data);
+        setIsLoading(true);
+
+        // 1. 세 가지 API를 동시에 호출하여 시간을 단축합니다.
+        const [detailData, likeStatus, bookmarkStatus] = await Promise.all([
+          getWeeklyRecipeDetail(id),
+          checkRecipeLikeStatus(Number(id)),
+          checkRecipeBookmarkStatus(Number(id)),
+        ]);
+
+        // 2. 서버에서 받은 상세 데이터에 실시간 상태값들을 합칩니다.
+        setRecipe({
+          ...detailData,
+          liked: likeStatus.liked,
+          likeCount: likeStatus.likeCount,
+          bookmarked: bookmarkStatus.bookmarked,
+        });
       } catch (error) {
-        console.error("레시피 상세 로드 실패:", error);
+        console.error("데이터 통합 로드 실패:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchDetail();
+
+    fetchFullDetail();
   }, [id]);
 
   if (isLoading)
