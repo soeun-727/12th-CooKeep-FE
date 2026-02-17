@@ -11,6 +11,10 @@ import {
   WeeklyRecipeDetailResponse,
 } from "../../api/cookeeps";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
+import {
+  checkRecipeBookmarkStatus,
+  checkRecipeLikeStatus,
+} from "../../api/myRecipe";
 
 export default function RecipeDetailPage() {
   const navigate = useNavigate();
@@ -33,55 +37,96 @@ export default function RecipeDetailPage() {
     : recipe?.bookmarked;
 
   // 좋아요 토글 핸들러
-  // 좋아요 토글 핸들러
   const handleLikeToggle = async () => {
     if (!id || !recipe) return;
 
-    // 1. 전역 스토어 업데이트 (목록 페이지를 위해)
-    await updateRecordLike(id);
+    try {
+      // 1. 스토어 업데이트 및 서버 데이터 받아오기
+      const updatedData = await updateRecordLike(id);
 
-    // 2. ✅ 현재 상세 페이지의 로컬 상태 업데이트 (화면 반영을 위해)
-    setRecipe((prev) => {
-      if (!prev) return prev;
-      const nextLiked = !prev.liked;
-      return {
-        ...prev,
-        liked: nextLiked,
-        likeCount: nextLiked ? prev.likeCount + 1 : prev.likeCount - 1,
-      };
-    });
+      // 2. ✅ 로컬 상태를 서버에서 준 정확한 값으로 업데이트
+      // 만약 updatedData가 없으면(스토어 로직상) 기존처럼 반전 처리
+      if (updatedData) {
+        setRecipe((prev) =>
+          prev
+            ? {
+                ...prev,
+                liked: updatedData.liked,
+                likeCount: updatedData.likeCount,
+              }
+            : null,
+        );
+      } else {
+        // 스토어에 records가 없는 경우(상세페이지 직접 진입 등) 대비한 fallback
+        setRecipe((prev) => {
+          if (!prev) return prev;
+          const nextLiked = !prev.liked;
+          return {
+            ...prev,
+            liked: nextLiked,
+            likeCount: nextLiked ? prev.likeCount + 1 : prev.likeCount - 1,
+          };
+        });
+      }
+    } catch (error) {
+      console.error("좋아요 업데이트 실패:", error);
+    }
   };
 
   // 북마크 토글 핸들러
   const handleBookmarkToggle = async () => {
     if (!id || !recipe) return;
 
-    // 1. 전역 스토어 업데이트
-    await updateRecordBookmark(id);
+    try {
+      // 1. 스토어 업데이트 및 서버 데이터 받아오기
+      const updatedData = await updateRecordBookmark(id);
 
-    // 2. ✅ 현재 상세 페이지의 로컬 상태 업데이트
-    setRecipe((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        bookmarked: !prev.bookmarked,
-      };
-    });
+      // 2. ✅ 로컬 상태 동기화
+      if (updatedData) {
+        setRecipe((prev) =>
+          prev ? { ...prev, bookmarked: updatedData.bookmarked } : null,
+        );
+      } else {
+        setRecipe((prev) =>
+          prev ? { ...prev, bookmarked: !prev.bookmarked } : null,
+        );
+      }
+    } catch (error) {
+      console.error("북마크 업데이트 실패:", error);
+    }
   };
+
+  // RecipeDetailPage.tsx 수정 로직
 
   useEffect(() => {
     if (!id) return;
-    const fetchDetail = async () => {
+
+    const fetchFullDetail = async () => {
       try {
-        const data = await getWeeklyRecipeDetail(id);
-        setRecipe(data);
+        setIsLoading(true);
+
+        // 1. 세 가지 API를 동시에 호출하여 시간을 단축합니다.
+        const [detailData, likeStatus, bookmarkStatus] = await Promise.all([
+          getWeeklyRecipeDetail(id),
+          checkRecipeLikeStatus(Number(id)),
+          checkRecipeBookmarkStatus(Number(id)),
+        ]);
+
+        // 2. 서버에서 받은 상세 데이터에 실시간 상태값들을 합칩니다.
+        setRecipe({
+          ...detailData,
+          liked: likeStatus.liked,
+          likeCount: likeStatus.likeCount,
+          bookmarked: bookmarkStatus.bookmarked,
+        });
       } catch (error) {
-        console.error("레시피 상세 로드 실패:", error);
+        console.error("데이터 통합 로드 실패:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchDetail();
+
+    fetchFullDetail();
   }, [id]);
 
   if (isLoading)

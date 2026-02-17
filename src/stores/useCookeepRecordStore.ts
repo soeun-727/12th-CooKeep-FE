@@ -39,8 +39,15 @@ interface RecordState {
     recordId: string,
     isPublic: boolean,
   ) => Promise<void>;
-  updateRecordLike: (recordId: string) => Promise<void>;
-  updateRecordBookmark: (recordId: string) => Promise<void>;
+  updateRecordLike: (recordId: string) => Promise<{
+    dailyRecipeId: number;
+    likeCount: number;
+    liked: boolean;
+  } | void>;
+
+  updateRecordBookmark: (recordId: string) => Promise<{
+    bookmarked: boolean;
+  } | void>;
 }
 
 export const useCookeepRecordStore = create<RecordState>((set, get) => ({
@@ -85,45 +92,47 @@ export const useCookeepRecordStore = create<RecordState>((set, get) => ({
   setRecords: (records) => set({ records }),
 
   updateRecordLike: async (recordId: string) => {
-    const previousRecords = get().records; // 실패 시 복구용 백업
+    const previousRecords = get().records;
+    const targetRecord = previousRecords.find(
+      (r) => String(r.dailyRecipeId) === recordId,
+    );
 
-    // 1. [낙관적 업데이트] 하트 색상과 숫자를 즉시 변경
-    set((state) => ({
-      records: state.records.map((r) => {
-        if (String(r.dailyRecipeId) === recordId) {
-          return {
-            ...r,
-            liked: !r.liked, // true <-> false 반전
-            likeCount: r.liked ? r.likeCount - 1 : r.likeCount + 1, // 숫자 증감
-          };
-        }
-        return r;
-      }),
-    }));
-
-    try {
-      // 2. 서버 API 호출
-      const res = await toggleRecipeLike(Number(recordId));
-
-      if (res.status !== "OK") throw new Error("좋아요 실패");
-
-      // 3. 서버에서 준 정확한 최종 값으로 동기화 (선택 사항이지만 안전함)
+    // 1. [낙관적 업데이트] 배열에 데이터가 있을 때만 실행
+    if (targetRecord) {
       set((state) => ({
         records: state.records.map((r) =>
           String(r.dailyRecipeId) === recordId
             ? {
                 ...r,
-                liked: res.data.liked,
-                likeCount: res.data.likeCount,
+                liked: !r.liked,
+                likeCount: r.liked ? r.likeCount - 1 : r.likeCount + 1,
               }
             : r,
         ),
       }));
+    }
+
+    try {
+      // 2. 서버 API 호출 (배열에 있든 없든 서버에는 알려야 함)
+      const res = await toggleRecipeLike(Number(recordId));
+      if (res.status !== "OK") throw new Error("좋아요 실패");
+
+      // 3. 서버 응답으로 동기화
+      if (targetRecord) {
+        set((state) => ({
+          records: state.records.map((r) =>
+            String(r.dailyRecipeId) === recordId
+              ? { ...r, liked: res.data.liked, likeCount: res.data.likeCount }
+              : r,
+          ),
+        }));
+      }
+
+      // ✅ 중요: 상세 페이지에서 이 결과값을 쓸 수 있도록 반환값을 전달해주면 좋습니다.
+      return res.data;
     } catch (error) {
-      console.error("좋아요 처리 실패:", error);
-      // 4. [복구] 실패 시 이전 상태로 롤백
       set({ records: previousRecords });
-      alert("자신의 글에는 좋아요를 누를 수 없거나 오류가 발생했습니다.");
+      throw error; // 부모 컴포넌트에서 에러 처리를 할 수 있게 던짐
     }
   },
 
