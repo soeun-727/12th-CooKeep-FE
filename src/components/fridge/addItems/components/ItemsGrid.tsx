@@ -19,7 +19,7 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
 
   return (
     <div className="w-full flex flex-col items-center justify-center pt-6">
-      <div className="flex flex-col w-[294px] h-[482px] overflow-y-auto no-scrollbar scroll-smooth">
+      <div className="flex flex-col w-[294px] h-[438px] overflow-y-auto no-scrollbar scroll-smooth">
         <div className="grid grid-cols-3 gap-3 justify-items-center">
           {items.map((item) => (
             <Item
