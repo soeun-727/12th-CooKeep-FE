@@ -211,3 +211,28 @@ export const getMyBookmarkedRecipes = async (
   );
   return res.data.data;
 };
+
+/** [GET] 특정 레시피의 좋아요 상태 및 개수 확인 */
+export const checkRecipeLikeStatus = async (dailyRecipeId: number) => {
+  const res = await api.get<{
+    status: string;
+    data: {
+      dailyRecipeId: number;
+      likeCount: number;
+      liked: boolean;
+    };
+  }>(`/api/daily-recipes/likes/${dailyRecipeId}/check`);
+  return res.data.data;
+};
+
+/** [GET] 특정 레시피의 북마크 상태 확인 */
+export const checkRecipeBookmarkStatus = async (dailyRecipeId: number) => {
+  const res = await api.get<{
+    status: string;
+    data: {
+      bookmarked: boolean;
+      dailyRecipeId: number;
+    };
+  }>(`/api/daily-recipes/bookmarks/${dailyRecipeId}/check`);
+  return res.data.data;
+};
