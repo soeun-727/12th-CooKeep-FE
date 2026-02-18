@@ -24,7 +24,7 @@ export default function AgreementList({
 
   if (agreementPage) {
     return (
-      <div className="fixed inset-0 z-50 bg-gray-100 flex justify-center">
+      <div className="fixed inset-0 z-50 bg-gray-100 flex items-center justify-center">
         <div className="w-full max-w-[450px] min-h-[100dvh] bg-[#FAFAFA]">
           {" "}
           {/*overflow-y-auto*/}
@@ -72,7 +72,7 @@ export default function AgreementList({
       </label>
 
       {/* 개별 약관 */}
-      <div className="w-full h-[138px] p-3 flex flex-col gap-[6px]">
+      <div className="w-[361px] h-[138px] px-4 py-3 flex flex-col gap-[6px]">
         {AGREEMENTS.map((item) => (
           <div
             key={item.key}
