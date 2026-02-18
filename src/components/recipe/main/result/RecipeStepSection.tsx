@@ -22,27 +22,29 @@ export default function RecipeStepSection({ steps }: Props) {
 
       {/* 단계 리스트 */}
       <div className="flex flex-col items-start gap-[8px] w-full">
-        {steps.map((step) => (
+        {/* {steps.map((step) => (
           <div
             key={step.order}
             className="flex justify-start items-start w-full gap-3"
           >
-            {/* 번호 */}
-            {/* <div className="flex items-center justify-center w-[30px] h-[20px] px-[12px] rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0">
-              {step.order}
-            </div> */}
-
-            {/* 레시피 설명 */}
-            {/* <p className="text-[#202020] typo-body2 max-w-[289px]">
-              {formatDescription(step.description)}
-            </p>
-          </div>
-        ))} */}
             <div className="flex items-center justify-center w-[30px] h-[22px] px-3 rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0 mt-[3px]">
               {step.order}
             </div>
 
             <p className="text-[#202020] typo-body2 max-w-[289px] leading-[22px]">
+              {formatDescription(step.description)}
+            </p>
+          </div>
+        ))} */}
+        {steps.map((step) => (
+          <div key={step.order} className="flex items-start gap-3 w-full">
+            {/* 번호 버튼 */}
+            <div className="flex items-center justify-center w-[30px] h-[20px] leading-[16px] rounded-full bg-[#202020] text-white text-xs font-semibold flex-shrink-0 ">
+              {step.order}
+            </div>
+
+            {/* 설명 */}
+            <p className="flex-1 text-[#202020] typo-body2 leading-[22px]">
               {formatDescription(step.description)}
             </p>
           </div>
