@@ -11,7 +11,7 @@ export default function EditModal({ isOpen, onClose, title, children }: Props) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center ">
+    <div className="fixed inset-0 z-200 flex items-end justify-center ">
       {/* 배경 어둡게 */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
