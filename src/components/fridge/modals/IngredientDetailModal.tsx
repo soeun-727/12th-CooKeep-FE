@@ -13,7 +13,13 @@ import EditModal from "../../ui/EditModal";
 import StorageEditor from "../addItems/components/edit/StorageEditor";
 import ExpiryEditor from "../addItems/components/edit/ExpiryEditor";
 import QuantityEditor from "../addItems/components/edit/QuantityEditor";
-import { getIngredientDetail } from "../../../api/ingredient";
+import {
+  getIngredientDetail,
+  updateIngredientStorage,
+  updateIngredientDate,
+  updateIngredientQuantity,
+  updateIngredientMemo,
+} from "../../../api/ingredient";
 import { getKoreanUnit } from "../../../utils/mapping";
 
 interface Props {
@@ -35,6 +41,7 @@ export default function IngredientDetailModal({
     null | "storage" | "expiry" | "quantity"
   >(null);
   const [isDirty, setIsDirty] = useState(false);
+  const displayData = detailData || ingredient;
 
   const { changeStorage, changeExpiryDate, changeQuantity, changeMemo } =
     useIngredientStore();
@@ -69,14 +76,18 @@ export default function IngredientDetailModal({
     };
   }, [ingredient.id]);
 
-  const storageIconMap = {
+  const storageIconMap: Record<string, string> = {
     냉장: fridgeIcon,
     냉동: freezerIcon,
     상온: pantryIcon,
+    FRIDGE: fridgeIcon,
+    FREEZER: freezerIcon,
+    PANTRY: pantryIcon,
   };
 
   const handleSaveMemo = async () => {
     try {
+      await updateIngredientMemo(Number(ingredient.id), memo);
       await changeMemo(ingredient.id, memo);
       setIsEditing(false);
       setIsDirty(true);
@@ -92,14 +103,14 @@ export default function IngredientDetailModal({
       </div>
     );
 
-  const displayTip = detailData?.aiTip || ingredient.tip;
+  const displayTip = displayData.aiTip || ingredient.tip;
+
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/40"
         onClick={handleModalClose}
       />
-
       <div className="relative z-10 w-full max-w-[330px] max-h-[90vh] overflow-y-auto no-scrollbar rounded-[6px] px-5 py-6 bg-gradient-to-b from-[#F5F5F5] to-white shadow-[0_1px_8.2px_-2px_rgba(17,17,17,0.25)] animate-fadeIn">
         <div className="flex w-full max-w-[290px] flex-col items-center gap-5 mx-auto">
           <div className="flex flex-col items-center gap-2 self-stretch">
@@ -113,25 +124,25 @@ export default function IngredientDetailModal({
             <div className="flex w-full items-center gap-[14px]">
               <div className="flex h-[86px] w-[86px] items-center justify-center rounded-[10px] bg-[#E6FBEB] flex-shrink-0">
                 <img
-                  src={ingredient.image}
-                  alt={ingredient.name}
+                  src={displayData.imageUrl || displayData.image}
+                  alt={displayData.name}
                   className="h-[60px] w-[60px] rounded-[6px] object-cover aspect-square"
                 />
               </div>
               <div className="flex flex-1 flex-col items-start gap-1">
                 <span className="w-full truncate text-[16px] font-semibold leading-5 text-[#202020]">
-                  {ingredient.name}
+                  {displayData.name}
                 </span>
                 <div className="flex flex-col items-start gap-2">
                   <span className="text-[12px] text-[#C3C3C3] leading-4">
-                    {ingredient.dDay < 0
-                      ? `D+${Math.abs(ingredient.dDay)}`
-                      : `D-${ingredient.dDay}`}
+                    {displayData.leftDays < 0
+                      ? `D+${Math.abs(displayData.leftDays)}`
+                      : `D-${displayData.leftDays}`}
                   </span>
                   <span
-                    className={`text-[12px] font-semibold leading-4 ${ingredient.dDay > 3 ? "text-[#1FA43C]" : "text-[#D91F1F]"}`}
+                    className={`text-[12px] font-semibold leading-4 ${displayData.leftDays > 3 ? "text-[#1FA43C]" : "text-[#D91F1F]"}`}
                   >
-                    {ingredient.dDay > 3
+                    {displayData.leftDays > 3
                       ? "유통기한이 넉넉해요"
                       : "유통기한이 얼마 남지 않았어요"}
                   </span>
@@ -179,7 +190,7 @@ export default function IngredientDetailModal({
                     <img
                       src={
                         storageIconMap[
-                          ingredient.category as keyof typeof storageIconMap
+                          displayData.storage || displayData.category
                         ]
                       }
                       className="w-5 h-5 brightness-0"
@@ -194,7 +205,7 @@ export default function IngredientDetailModal({
                       유통기한
                     </span>
                     <span className="text-[12px] leading-4 text-[#202020]">
-                      {ingredient.expiryDate}
+                      {displayData.expirationDate || displayData.expiryDate}
                     </span>
                   </div>
                   <div
@@ -205,8 +216,8 @@ export default function IngredientDetailModal({
                       수량/단위
                     </span>
                     <span className="text-[12px] leading-4 text-[#202020]">
-                      {ingredient.quantity}
-                      {getKoreanUnit(ingredient.unit)}
+                      {displayData.quantity}
+                      {getKoreanUnit(displayData.unit)}
                     </span>
                   </div>
                 </div>
@@ -214,9 +225,9 @@ export default function IngredientDetailModal({
                   <div className="flex justify-end items-end gap-1">
                     <span className="text-[10px] font-semibold text-[#C3C3C3] leading-4">
                       등록일자{" "}
-                      {ingredient.createdAt &&
-                      !isNaN(new Date(ingredient.createdAt).getTime())
-                        ? new Date(ingredient.createdAt).toLocaleDateString()
+                      {displayData.createdAt &&
+                      !isNaN(new Date(displayData.createdAt).getTime())
+                        ? new Date(displayData.createdAt).toLocaleDateString()
                         : "정보 없음"}
                     </span>
                   </div>
@@ -264,11 +275,20 @@ export default function IngredientDetailModal({
               title="보관장소 수정"
             >
               <StorageEditor
-                value={ingredient.category}
+                value={displayData.storage || displayData.category}
                 onSave={async (val) => {
-                  await changeStorage(ingredient.id, val);
-                  setIsDirty(true);
-                  setOpenEditor(null);
+                  try {
+                    await updateIngredientStorage(
+                      Number(ingredient.id),
+                      val as any,
+                    );
+                    await changeStorage(ingredient.id, val);
+                    setDetailData((prev: any) => ({ ...prev, storage: val }));
+                    setIsDirty(true);
+                    setOpenEditor(null);
+                  } catch (e) {
+                    console.error(e);
+                  }
                 }}
               />
             </EditModal>
@@ -279,11 +299,20 @@ export default function IngredientDetailModal({
               title="유통기한 수정"
             >
               <ExpiryEditor
-                value={ingredient.expiryDate}
+                value={displayData.expirationDate || displayData.expiryDate}
                 onSave={async (val) => {
-                  await changeExpiryDate(ingredient.id, val);
-                  setIsDirty(true);
-                  setOpenEditor(null);
+                  try {
+                    await updateIngredientDate(Number(ingredient.id), val);
+                    await changeExpiryDate(ingredient.id, val);
+                    setDetailData((prev: any) => ({
+                      ...prev,
+                      expirationDate: val,
+                    }));
+                    setIsDirty(true);
+                    setOpenEditor(null);
+                  } catch (e) {
+                    console.error(e);
+                  }
                 }}
               />
             </EditModal>
@@ -294,11 +323,23 @@ export default function IngredientDetailModal({
               title="수량 수정"
             >
               <QuantityEditor
-                value={ingredient.quantity}
+                value={displayData.quantity}
                 onSave={async (val) => {
-                  await changeQuantity(ingredient.id, Number(val));
-                  setIsDirty(true);
-                  setOpenEditor(null);
+                  try {
+                    await updateIngredientQuantity(
+                      Number(ingredient.id),
+                      Number(val),
+                    );
+                    await changeQuantity(ingredient.id, Number(val));
+                    setDetailData((prev: any) => ({
+                      ...prev,
+                      quantity: Number(val),
+                    }));
+                    setIsDirty(true);
+                    setOpenEditor(null);
+                  } catch (e) {
+                    console.error(e);
+                  }
                 }}
               />
             </EditModal>
