@@ -15,7 +15,7 @@ const Signup = () => {
   }, [resetSignup]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50">
+    <div className="h-[100dvh] flex flex-col items-center overflow-hidden bg-gray-50">
       {!hideHeader && <AuthHeader />}
 
       <SignupForm setHideHeader={setHideHeader} />

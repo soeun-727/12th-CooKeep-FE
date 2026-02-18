@@ -102,203 +102,209 @@ export default function AccountSection({
           </p>
         </AgreementPage>
       ) : (
-        <div className="pt-[108px] mx-auto">
-          {/* 제목 */}
-          <div className="typo-h1">회원가입</div>
-          <div className="mx-auto mt-[12px]">
-            {/* 휴대폰 번호 */}
+        <div className="flex-1 min-h-0 flex flex-col w-full px-5 pb-[34px]">
+          <div className="flex-1 overflow-y-auto no-scrollbar pt-[108px]">
+            {/* 제목 */}
+            <div className="typo-h1">회원가입</div>
+            <div className="mx-auto mt-[12px]">
+              {/* 휴대폰 번호 */}
 
-            <TextField
-              value={phoneNumber}
-              placeholder="휴대폰 번호(- 없이 숫자만 입력)"
-              onChange={() => {}}
-              disabled
-              leftIcon={<img src={phoneIcon} alt="휴대폰 아이콘" />}
-            />
-            <div className="mt-[5px]">
-              {/* 이메일 */}
               <TextField
-                value={email}
-                onChange={setEmail}
-                placeholder="이메일 주소 입력"
-                errorMessage={
-                  email && !isEmailValid
-                    ? "이메일 주소를 다시 확인해 주세요"
-                    : undefined
-                }
-                successMessage={
-                  email && isEmailValid ? "사용 가능한 이메일입니다" : undefined
-                }
-                leftIcon={<img src={mailIcon} alt="메일 아이콘" />}
+                value={phoneNumber}
+                placeholder="휴대폰 번호(- 없이 숫자만 입력)"
+                onChange={() => {}}
+                disabled
+                leftIcon={<img src={phoneIcon} alt="휴대폰 아이콘" />}
               />
-
-              {/* 비밀번호 */}
               <div className="mt-[5px]">
+                {/* 이메일 */}
                 <TextField
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={setPassword}
-                  placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
+                  value={email}
+                  onChange={setEmail}
+                  placeholder="이메일 주소 입력"
                   errorMessage={
-                    password && !isPasswordValid
-                      ? "영문, 숫자 포함 8자 이상의 비밀번호를 사용해 주세요"
+                    email && !isEmailValid
+                      ? "이메일 주소를 다시 확인해 주세요"
                       : undefined
                   }
                   successMessage={
-                    password && isPasswordValid
-                      ? "사용 가능한 비밀번호입니다"
+                    email && isEmailValid
+                      ? "사용 가능한 이메일입니다"
                       : undefined
                   }
-                  leftIcon={<img src={pwIcon} alt="" />}
-                  rightIcon={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="flex items-center justify-center h-full"
-                    >
-                      <img src={getPasswordIcon()} alt="비밀번호 아이콘" />
-                    </button>
-                  }
+                  leftIcon={<img src={mailIcon} alt="메일 아이콘" />}
                 />
 
-                {/* 비밀번호 확인 */}
+                {/* 비밀번호 */}
                 <div className="mt-[5px]">
                   <TextField
-                    type={showPasswordConfirm ? "text" : "password"}
-                    value={passwordConfirm}
-                    onChange={setPasswordConfirm}
-                    placeholder="비밀번호 확인"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={setPassword}
+                    placeholder="영문, 숫자 포함 8자 이상의 비밀번호"
                     errorMessage={
-                      passwordConfirm && !isPasswordMatch
-                        ? "비밀번호가 일치하지 않습니다"
+                      password && !isPasswordValid
+                        ? "영문, 숫자 포함 8자 이상의 비밀번호를 사용해 주세요"
                         : undefined
                     }
                     successMessage={
-                      passwordConfirm && isPasswordMatch
-                        ? "비밀번호가 일치합니다"
+                      password && isPasswordValid
+                        ? "사용 가능한 비밀번호입니다"
                         : undefined
                     }
                     leftIcon={<img src={pwIcon} alt="" />}
                     rightIcon={
                       <button
                         type="button"
-                        onClick={() =>
-                          setShowPasswordConfirm(!showPasswordConfirm)
-                        }
+                        onClick={() => setShowPassword(!showPassword)}
                         className="flex items-center justify-center h-full"
                       >
-                        <img
-                          src={getPasswordConfirmIcon()}
-                          alt="비밀번호 확인 아이콘"
-                        />
+                        <img src={getPasswordIcon()} alt="비밀번호 아이콘" />
                       </button>
                     }
                   />
 
-                  {/* 약관 영역 */}
-                  <div className="mt-5">
-                    {/* 전체 동의 */}
-                    <label className="relative flex items-center px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
-                      <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          className="peer absolute inset-0 w-full h-full appearance-none cursor-pointer z-10"
-                          checked={isAllChecked}
-                          onChange={(e) =>
-                            updateAgreements({
-                              terms: e.target.checked,
-                              privacy: e.target.checked,
-                              marketing: e.target.checked,
-                            })
+                  {/* 비밀번호 확인 */}
+                  <div className="mt-[5px]">
+                    <TextField
+                      type={showPasswordConfirm ? "text" : "password"}
+                      value={passwordConfirm}
+                      onChange={setPasswordConfirm}
+                      placeholder="비밀번호 확인"
+                      errorMessage={
+                        passwordConfirm && !isPasswordMatch
+                          ? "비밀번호가 일치하지 않습니다"
+                          : undefined
+                      }
+                      successMessage={
+                        passwordConfirm && isPasswordMatch
+                          ? "비밀번호가 일치합니다"
+                          : undefined
+                      }
+                      leftIcon={<img src={pwIcon} alt="" />}
+                      rightIcon={
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowPasswordConfirm(!showPasswordConfirm)
                           }
-                        />
-                        <img
-                          src={blankCheck}
-                          alt="unchecked"
-                          className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
-                        />
-                        <img
-                          src={greenCheck}
-                          alt="checked"
-                          className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
-                        />
-                      </div>
-
-                      <span className="ml-[12px] typo-label text-[#202020]">
-                        약관 전체동의
-                      </span>
-                    </label>
-
-                    {/* 개별 약관 박스 */}
-                    <div className="w-full p-3 flex flex-col gap-[10px]">
-                      {AGREEMENTS.map((item) => (
-                        <div
-                          key={item.key}
-                          className="flex items-center justify-between w-full h-[24px]"
+                          className="flex items-center justify-center h-full"
                         >
-                          <label className="flex items-center gap-3 cursor-pointer overflow-hidden">
-                            {item.key !== "policy" ? (
-                              <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
-                                <input
-                                  type="checkbox"
-                                  className="peer absolute inset-0 w-full h-full appearance-none cursor-pointer z-10"
-                                  checked={agreements[item.key]}
-                                  onChange={(e) =>
-                                    updateAgreements({
-                                      [item.key]: e.target.checked,
-                                    })
-                                  }
-                                />
-                                <img
-                                  src={blankCheck}
-                                  alt="unchecked"
-                                  className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
-                                />
-                                <img
-                                  src={grayCheck}
-                                  alt="checked"
-                                  className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
-                                />
-                              </div>
-                            ) : (
-                              <span className="w-5 h-5 flex-shrink-0 inline-block" />
-                            )}
+                          <img
+                            src={getPasswordConfirmIcon()}
+                            alt="비밀번호 확인 아이콘"
+                          />
+                        </button>
+                      }
+                    />
 
-                            <span className="typo-label text-[#7D7D7D] truncate">
-                              {item.label}
-                            </span>
-                          </label>
-
-                          <button
-                            type="button"
-                            className="flex-shrink-0"
-                            onClick={() => {
-                              setAgreementPage(item);
-                              setHideHeader(true);
-                            }}
-                          >
-                            <img
-                              src={arrowIcon}
-                              alt="약관 보기"
-                              className="w-6 h-6"
-                            />
-                          </button>
+                    {/* 약관 영역 */}
+                    <div className="mt-5">
+                      {/* 전체 동의 */}
+                      <label className="relative flex items-center px-3 h-[48px] w-full rounded-[6px] border border-[#D1D1D1] cursor-pointer">
+                        <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                          <input
+                            type="checkbox"
+                            className="peer absolute inset-0 w-full h-full appearance-none cursor-pointer z-10"
+                            checked={isAllChecked}
+                            onChange={(e) =>
+                              updateAgreements({
+                                terms: e.target.checked,
+                                privacy: e.target.checked,
+                                marketing: e.target.checked,
+                              })
+                            }
+                          />
+                          <img
+                            src={blankCheck}
+                            alt="unchecked"
+                            className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
+                          />
+                          <img
+                            src={greenCheck}
+                            alt="checked"
+                            className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
+                          />
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* 회원가입 버튼 */}
-                  <div className="mt-[22px]">
-                    <Button
-                      type="submit"
-                      size="L"
-                      disabled={!isSignupEnabled || !isPhoneVerified || loading}
-                      onClick={onSubmit}
-                      className=" mt-[8px] "
-                    >
-                      {loading ? "가입 중..." : "회원가입"}
-                    </Button>
+                        <span className="ml-[12px] typo-label text-[#202020]">
+                          약관 전체동의
+                        </span>
+                      </label>
+
+                      {/* 개별 약관 박스 */}
+                      <div className="w-full p-3 flex flex-col gap-[10px]">
+                        {AGREEMENTS.map((item) => (
+                          <div
+                            key={item.key}
+                            className="flex items-center justify-between w-full h-[24px]"
+                          >
+                            <label className="flex items-center gap-3 cursor-pointer overflow-hidden">
+                              {item.key !== "policy" ? (
+                                <div className="relative w-6 h-6 flex-shrink-0 flex items-center justify-center">
+                                  <input
+                                    type="checkbox"
+                                    className="peer absolute inset-0 w-full h-full appearance-none cursor-pointer z-10"
+                                    checked={agreements[item.key]}
+                                    onChange={(e) =>
+                                      updateAgreements({
+                                        [item.key]: e.target.checked,
+                                      })
+                                    }
+                                  />
+                                  <img
+                                    src={blankCheck}
+                                    alt="unchecked"
+                                    className="block peer-checked:hidden w-full h-full object-contain pointer-events-none z-0"
+                                  />
+                                  <img
+                                    src={grayCheck}
+                                    alt="checked"
+                                    className="hidden peer-checked:block w-4 h-4 object-contain pointer-events-none z-0"
+                                  />
+                                </div>
+                              ) : (
+                                <span className="w-5 h-5 flex-shrink-0 inline-block" />
+                              )}
+
+                              <span className="typo-label text-[#7D7D7D] truncate">
+                                {item.label}
+                              </span>
+                            </label>
+
+                            <button
+                              type="button"
+                              className="flex-shrink-0"
+                              onClick={() => {
+                                setAgreementPage(item);
+                                setHideHeader(true);
+                              }}
+                            >
+                              <img
+                                src={arrowIcon}
+                                alt="약관 보기"
+                                className="w-6 h-6"
+                              />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 회원가입 버튼 */}
+                    <div className="mt-[22px]">
+                      <Button
+                        type="submit"
+                        size="L"
+                        disabled={
+                          !isSignupEnabled || !isPhoneVerified || loading
+                        }
+                        onClick={onSubmit}
+                        className=" mt-[8px] "
+                      >
+                        {loading ? "가입 중..." : "회원가입"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
