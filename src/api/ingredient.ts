@@ -72,9 +72,10 @@ export interface IngredientDetailResponse {
   storage: string; // 서버: "FRIDGE"
   expirationDate: string; // 서버: "2026-12-25"
   quantity: number;
+  unit: string;
   leftDays: number;
   memo: string;
-  aiTip: string; // 🚀 tip 대신 aiTip으로 변경
+  aiTip: string;
   imageUrl: string;
 }
 
@@ -197,9 +198,10 @@ export const updateIngredientDate = (
   ingredientId: number,
   expirationDate: string,
 ) => {
+  const formattedDate = expirationDate.replace(/\./g, "-");
   return api.patch<{ status: string; data: IngredientDetailResponse }>(
     `/api/users/me/ingredients/${ingredientId}/date`,
-    { expirationDate },
+    { expirationDate: formattedDate },
   );
 };
 

@@ -36,7 +36,7 @@ export const GOAL_TYPE_MAP = {
     value: "USE_EXPIRING_INGREDIENT",
     label: "유통기한 임박 재료 사용",
   },
-  like: { value: "RECIPE_LIKE", label: "레시피 좋아요" },
+  like: { value: "RECIPE_LIKE", label: "레시피 좋아요 누르기" },
 } as const;
 
 // 서버 전송용 타입 추출
