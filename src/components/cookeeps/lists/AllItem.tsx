@@ -55,7 +55,7 @@ const AllItem = ({
           onClick={handleIconClick}
           className="flex items-center justify-between w-[38px] active:scale-90 transition-transform cursor-pointer"
         >
-          <img src={likeGray} alt="like" className="w-3" />
+          <img src={likeGray} alt="like" className="w-4" />
           <span className="typo-caption text-zinc-500">{likes ?? 0}</span>
         </div>
         <img

@@ -55,7 +55,7 @@ export default function RecipeDetailUserMeta({
           <img
             src={likeIcon}
             alt="좋아요"
-            className={`w-5 h-5 ${isLiked ? "invert brightness-100" : ""}`}
+            className={`w-7 h-7 ${isLiked ? "invert brightness-100" : ""}`}
           />
         </button>
 
@@ -66,7 +66,7 @@ export default function RecipeDetailUserMeta({
           <img
             src={saveIcon}
             alt="저장"
-            className={`w-5 h-5 ${isBookmarked ? "invert brightness-100" : ""}`}
+            className={`w-7 h-7 ${isBookmarked ? "invert brightness-100" : ""}`}
           />
         </button>
       </div>
