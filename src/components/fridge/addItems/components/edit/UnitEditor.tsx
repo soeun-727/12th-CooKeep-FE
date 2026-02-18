@@ -38,7 +38,7 @@ export default function QuantityEditor({ value, onSave }: QuantityEditorProps) {
                   key={unit}
                   disabled={isInitialValue}
                   onClick={() => handleQuickSelect(unit)}
-                  className={`h-11 w-[361px] rounded-[10px] typo-body font-bold transition-all
+                  className={`h-11 w-[361px] rounded-[10px] typo-body !font-bold transition-all
                 ${
                   isInitialValue
                     ? "bg-gray-200 text-zinc-500 cursor-not-allowed"
@@ -59,7 +59,7 @@ export default function QuantityEditor({ value, onSave }: QuantityEditorProps) {
               size="S"
               variant="black"
               onClick={() => setIsCustomInput(true)}
-              className="!bg-white border border-[#D1D1D1] text-zinc-500 font-bold"
+              className="!bg-white border border-[#D1D1D1] text-zinc-500"
             >
               직접 입력하기
             </Button>
