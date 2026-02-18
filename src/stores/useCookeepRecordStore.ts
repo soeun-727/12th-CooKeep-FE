@@ -18,7 +18,8 @@ interface RecordState {
   title: string;
   memo: string;
   isPublic: boolean | null;
-  images: RecordImage[];
+  // images: RecordImage[];
+  image: RecordImage | null;
 
   // 상태 변경 함수
   setSelectedRecipeId: (id: number) => void;
@@ -26,8 +27,10 @@ interface RecordState {
   setTitle: (title: string) => void;
   setMemo: (memo: string) => void;
   setIsPublic: (value: boolean) => void;
-  addImages: (newImages: RecordImage[]) => void;
-  removeImage: (index: number) => void;
+  // addImages: (newImages: RecordImage[]) => void;
+  // removeImage: (index: number) => void;
+  setImage: (image: RecordImage | null) => void;
+  clearImage: () => void;
   resetRecord: () => void;
 
   records: DailyRecipe[];
@@ -53,7 +56,8 @@ export const useCookeepRecordStore = create<RecordState>((set, get) => ({
   title: "",
   memo: "",
   isPublic: null,
-  images: [],
+  // images: [],
+  image: null,
   records: [],
 
   setSelectedRecipeId: (id) => set({ selectedRecipeId: id }),
@@ -62,15 +66,17 @@ export const useCookeepRecordStore = create<RecordState>((set, get) => ({
   setMemo: (memo) => set({ memo }),
   setIsPublic: (value) => set({ isPublic: value }),
 
-  addImages: (newImages) =>
-    set((state) => ({
-      images: [...state.images, ...newImages].slice(0, 2),
-    })),
+  // addImages: (newImages) =>
+  //   set((state) => ({
+  //     images: [...state.images, ...newImages].slice(0, 2),
+  //   })),
 
-  removeImage: (index) =>
-    set((state) => ({
-      images: state.images.filter((_, i) => i !== index),
-    })),
+  // removeImage: (index) =>
+  //   set((state) => ({
+  //     images: state.images.filter((_, i) => i !== index),
+  //   })),
+  setImage: (image) => set({ image }),
+  clearImage: () => set({ image: null }),
 
   resetRecord: () =>
     set({
@@ -79,7 +85,7 @@ export const useCookeepRecordStore = create<RecordState>((set, get) => ({
       title: "",
       memo: "",
       isPublic: null,
-      images: [],
+      image: null,
     }),
 
   // 서버 데이터를 스토어에 저장하는 함수

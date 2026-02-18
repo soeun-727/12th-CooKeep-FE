@@ -9,10 +9,11 @@ import privateIcon from "../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../assets/mycookeep/record/public_icon.svg";
 import UploadCompleteModal from "../../components/myCookeep/record/UploadCompleteModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
-import { uploadImage } from "../../api/image";
+import { deleteImage, uploadImage } from "../../api/image";
 import { createDailyRecipe } from "../../api/myRecipe";
 import { AiRecipeDetail, getAiRecipeDetail } from "../../api/dailyAiRecipe";
 import imageCompression from "browser-image-compression";
+import { AxiosError } from "axios";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -28,12 +29,12 @@ export default function RecordWritePage() {
     editingRecordId,
     title,
     memo,
-    images,
+    image,
     isPublic,
     setTitle,
     setMemo,
     setIsPublic,
-    addImages,
+    setImage,
     resetRecord,
   } = useCookeepRecordStore();
 
@@ -70,57 +71,152 @@ export default function RecordWritePage() {
     el.style.height = `${el.scrollHeight}px`;
   };
 
+  // const compressionOptions = {
+  //   maxSizeMB: 1, // 최대 1MB로 압축
+  //   maxWidthOrHeight: 1080, // 해상도 리사이즈
+  //   useWebWorker: true, // 성능 최적화
+  // };
   const compressionOptions = {
-    maxSizeMB: 1, // 최대 1MB로 압축
-    maxWidthOrHeight: 1080, // 해상도 리사이즈
-    useWebWorker: true, // 성능 최적화
+    maxSizeMB: 0.7,
+    maxWidthOrHeight: 720,
+    useWebWorker: true,
+    initialQuality: 0.7,
+    alwaysKeepResolution: false,
   };
+
+  // const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (!files || files.length === 0 || isUploading) return;
+
+  //   setIsUploading(true);
+
+  //   try {
+  //     // const fileList = Array.from(files);
+
+  //     // 1. 이미지 압축
+  //     // const compressedFiles = await Promise.all(
+  //     //   fileList.map(async (file) => {
+  //     //     const compressedBlob = await imageCompression(
+  //     //       file,
+  //     //       compressionOptions,
+  //     //     );
+
+  //     //     // Blob → File로 변환
+  //     //     const compressedFile = new File(
+  //     //       [compressedBlob],
+  //     //       file.name, // 원본 파일명 유지
+  //     //       {
+  //     //         type: compressedBlob.type,
+  //     //       },
+  //     //     );
+
+  //     //     return compressedFile;
+  //     //   }),
+  //     // );
+
+  //     // 2. 서버 업로드
+  //     // const uploadPromises = compressedFiles.map((file) => uploadImage(file));
+
+  //     // const responses = await Promise.all(uploadPromises);
+
+  //     // const newImages = responses.map((res) => ({
+  //     //   url: res.data.imageUrl,
+  //     // }));
+
+  //   } catch (error) {
+  //     console.error("이미지 업로드 에러:", error);
+  //     alert("이미지 업로드 중 오류가 발생했습니다.");
+  //   } finally {
+  //     setIsUploading(false);
+  //     if (e.target) e.target.value = "";
+  //   }
+  // };
+
+  // 버전2
+  // const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (!files || files.length === 0 || isUploading) return;
+
+  //   const file = files[0];
+
+  //   // 초고용량 방어
+  // if (file.size > 15 * 1024 * 1024) {
+  //   alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
+  //   return;
+  // }
+
+  //   setIsUploading(true);
+
+  //   try {
+  //     // 1. 기존 이미지가 있다면 서버에서 삭제
+  //     if (image?.url) {
+  //       try {
+  //         await deleteImage(image.url);
+  //       } catch (err) {
+  //         console.warn("기존 이미지 삭제 실패 (무시하고 진행)", err);
+  //       }
+  //     }
+
+  //     // 2. 이미지 압축
+  //     const compressedBlob = await imageCompression(file, compressionOptions);
+
+  //     const compressedFile = new File([compressedBlob], file.name, {
+  //       type: compressedBlob.type,
+  //     });
+
+  //     // 3. 서버 업로드
+  //     const response = await uploadImage(compressedFile);
+
+  //     // 4. 스토어에 새 이미지 저장
+  //     setImage({
+  //       url: response.data.imageUrl,
+  //     });
+  //   } catch (error) {
+  //     console.error("이미지 업로드 에러:", error);
+  //     alert("이미지 업로드 중 오류가 발생했습니다.");
+  //   } finally {
+  //     setIsUploading(false);
+  //     if (e.target) e.target.value = "";
+  //   }
+  // };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0 || isUploading) return;
 
-    if (images.length + files.length > 2) {
-      alert("이미지는 최대 2장까지 업로드 가능합니다.");
+    const file = files[0];
+
+    // 초고용량 방어
+    if (file.size > 15 * 1024 * 1024) {
+      alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
       return;
     }
 
     setIsUploading(true);
 
     try {
-      const fileList = Array.from(files);
+      // 1️⃣ 이미지 압축
+      const compressedBlob = await imageCompression(file, compressionOptions);
 
-      // 1. 이미지 압축
-      const compressedFiles = await Promise.all(
-        fileList.map(async (file) => {
-          const compressedBlob = await imageCompression(
-            file,
-            compressionOptions,
-          );
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: compressedBlob.type,
+      });
 
-          // Blob → File로 변환
-          const compressedFile = new File(
-            [compressedBlob],
-            file.name, // 원본 파일명 유지
-            {
-              type: compressedBlob.type,
-            },
-          );
+      // 2️⃣ 새 이미지 업로드
+      const response = await uploadImage(compressedFile);
+      const newUrl = response.data.imageUrl;
 
-          return compressedFile;
-        }),
-      );
+      // 3️⃣ 기존 이미지 삭제 (업로드 성공 후!)
+      if (image?.url) {
+        try {
+          await deleteImage(image.url);
+        } catch (err) {
+          console.warn("기존 이미지 삭제 실패 (무시)", err);
+        }
+      }
 
-      // 2. 서버 업로드
-      const uploadPromises = compressedFiles.map((file) => uploadImage(file));
-
-      const responses = await Promise.all(uploadPromises);
-
-      const newImages = responses.map((res) => ({
-        url: res.data.imageUrl,
-      }));
-
-      addImages(newImages);
+      // 4️⃣ 스토어 교체
+      setImage({ url: newUrl });
     } catch (error) {
       console.error("이미지 업로드 에러:", error);
       alert("이미지 업로드 중 오류가 발생했습니다.");
@@ -144,7 +240,7 @@ export default function RecordWritePage() {
         isPublic: isPublic,
         title: title || recipeDetail.title,
         description: memo,
-        recipeImageUrl: images[0]?.url || "",
+        recipeImageUrl: image?.url || "",
       };
 
       const response = await createDailyRecipe(requestData);
@@ -159,10 +255,14 @@ export default function RecordWritePage() {
       } else {
         alert("업로드에 실패했습니다.");
       }
-    } catch (error: any) {
-      console.error("업로드 에러:", error);
-      const errorMsg =
-        error.response?.data?.message || "레시피 등록에 실패했습니다.";
+    } catch (error: unknown) {
+      let errorMsg = "레시피 등록 실패";
+
+      if (error && typeof error === "object") {
+        const axiosError = error as AxiosError<{ message?: string }>;
+        errorMsg = axiosError.response?.data?.message ?? errorMsg;
+      }
+
       alert(errorMsg);
     } finally {
       setIsUploading(false);
@@ -188,15 +288,14 @@ export default function RecordWritePage() {
           <div className="pt-4 flex flex-col gap-[10px]">
             <RecordWriteImageCard
               title={title}
-              imageSrc={images[0]?.url}
+              // imageSrc={images[0]?.url}
+              imageSrc={image?.url}
               onClickAddImage={() => fileInputRef.current?.click()}
               onChangeTitle={setTitle}
             />
             <input
               type="file"
               accept="image/*"
-              capture="environment"
-              multiple
               ref={fileInputRef}
               hidden
               onChange={handleImageChange}
