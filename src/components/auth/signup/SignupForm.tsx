@@ -122,7 +122,7 @@ export default function SignupForm({ setHideHeader }: SignupFormProps) {
   if (isFinished) return <SuccessSection />;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex-1 min-h-0 flex flex-col gap-4">
       {!isVerified && <PhoneSection />}
 
       {isVerified && (

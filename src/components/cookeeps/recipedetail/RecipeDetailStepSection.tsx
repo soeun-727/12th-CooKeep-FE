@@ -15,17 +15,30 @@ export default function RecipeDetailStepSection({ steps }: Props) {
           const stepOrder = index + 1;
 
           return (
-            <div
-              key={stepOrder}
-              className="flex justify-start items-start w-full gap-3"
-            >
-              {/* 번호 배지 */}
-              <div className="flex items-center justify-center min-w-[30px] h-[20px] px-[12px] rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0">
-                {stepOrder}
+            // <div
+            //   key={stepOrder}
+            //   className="flex justify-start items-start w-full gap-3"
+            // >
+            //   {/* 번호 배지 */}
+            //   <div className="flex items-center justify-center min-w-[30px] h-[20px] px-[12px] rounded-full bg-[#202020] text-white text-[12px] font-semibold leading-[16px] flex-shrink-0">
+            //     {stepOrder}
+            //   </div>
+
+            //   {/* 단계 설명 */}
+            //   <p className="text-[#202020] typo-body2 flex-1 break-keep">
+            //     {cleanDescription}
+            //   </p>
+            // </div>
+            <div key={stepOrder} className="flex items-start gap-3 w-full">
+              {/* 번호 */}
+              <div className="flex items-start justify-center w-[30px] flex-shrink-0">
+                <div className="flex items-center justify-center w-[30px] h-[20px] leading-[16px] rounded-full bg-[#202020] text-white text-xs font-semibold">
+                  {stepOrder}
+                </div>
               </div>
 
-              {/* 단계 설명 */}
-              <p className="text-[#202020] typo-body2 flex-1 break-keep">
+              {/* 설명 */}
+              <p className="flex-1 text-[#202020] typo-body2 leading-[24px]">
                 {cleanDescription}
               </p>
             </div>

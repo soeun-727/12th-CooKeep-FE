@@ -37,7 +37,7 @@ export default function RecipeRankCard({
 
         {/* 좋아요 수: 왼쪽 블록의 오른쪽 끝 */}
         <div className="flex items-center gap-1">
-          <img src={fullLikeIcon} alt="like" className="w-4 h-4" />
+          <img src={fullLikeIcon} alt="like" className="w-5 h-5" />
           <span className="text-gray-400 text-[12px]">{likes}</span>
         </div>
       </div>

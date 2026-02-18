@@ -35,42 +35,46 @@ export default function SimpleLoginAgreement() {
       <BackHeader title="약관 동의" onBack={() => navigate(-1)} />
 
       {/* 회원가입과 동일한 컨테이너 */}
-      <div className="pt-[285px] mx-auto w-full max-w-[375px]">
-        {/* 일러스트 */}
-        <div className="flex flex-col gap-2">
-          <img
-            src={illustration}
-            className="w-[75px]"
-            alt="약관 동의 일러스트"
-          />
-          <img src={shadow} className="w-[75px]" />
-        </div>
+      <div className="flex flex-col min-h-screen">
+        <div className="flex-1 flex flex-col justify-end mx-auto w-[361px] pb-14">
+          {/* 일러스트 */}
+          <div className="flex flex-col gap-2">
+            <img
+              src={illustration}
+              className="w-[75px]"
+              alt="약관 동의 일러스트"
+            />
+            <img src={shadow} className="w-[75px]" />
+          </div>
 
-        {/* 타이틀 */}
-        <h1 className="typo-h2 mt-[29.5px]">
-          서비스 이용을 위해 <br />
-          약관 동의가 필요해요
-        </h1>
+          {/* 타이틀 */}
+          <h1 className="typo-h2 mt-[29.5px]">
+            서비스 이용을 위해 <br />
+            약관 동의가 필요해요
+          </h1>
 
-        {/* 약관 영역 */}
-        <AgreementList
-          agreements={agreements}
-          updateAgreements={(next) =>
-            setAgreements((prev) => ({ ...prev, ...next }))
-          }
-        />
+          {/* 약관 영역 */}
+          <div className="flex items-center justify-center">
+            <AgreementList
+              agreements={agreements}
+              updateAgreements={(next) =>
+                setAgreements((prev) => ({ ...prev, ...next }))
+              }
+            />
+          </div>
 
-        {/* 버튼 */}
-        <div className="mt-[10px] ">
-          <Button
-            size="L"
-            variant="green"
-            disabled={!(agreements.terms && agreements.privacy) || isLoading}
-            onClick={handleStart}
-            className="mt-[8px]"
-          >
-            시작하기
-          </Button>
+          {/* 버튼 */}
+          <div className="mt-[10px] ">
+            <Button
+              size="L"
+              variant="green"
+              disabled={!(agreements.terms && agreements.privacy) || isLoading}
+              onClick={handleStart}
+              className="mt-[8px]"
+            >
+              시작하기
+            </Button>
+          </div>
         </div>
       </div>
     </>
