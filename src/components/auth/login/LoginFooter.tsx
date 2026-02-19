@@ -51,9 +51,9 @@ export default function LoginFooter() {
 
       <div className="flex items-center justify-center gap-3 mt-7">
         {/* 간편 로그인 미구현  */}
-        <button onClick={handleGoogleLogin}>
+        {/* <button onClick={handleGoogleLogin}>
           <img src={Google} alt="구글 로고" className="" />
-        </button>
+        </button> */}
 
         <button onClick={handleKakaoLogin}>
           <img src={Kakao} alt="카카오 로고" className="" />
