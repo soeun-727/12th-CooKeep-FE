@@ -13,21 +13,21 @@ export default function LoginFooter() {
     window.location.href = KAKAO_AUTH_URL;
   };
 
-  const handleGoogleLogin = () => {
-    const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+  // const handleGoogleLogin = () => {
+  //   const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  //   const REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 
-    const GOOGLE_AUTH_URL =
-      `https://accounts.google.com/o/oauth2/v2/auth` +
-      `?client_id=${CLIENT_ID}` +
-      `&redirect_uri=${REDIRECT_URI}` +
-      `&response_type=code` +
-      `&scope=openid email profile` +
-      `&access_type=offline` +
-      `&prompt=consent`;
+  //   const GOOGLE_AUTH_URL =
+  //     `https://accounts.google.com/o/oauth2/v2/auth` +
+  //     `?client_id=${CLIENT_ID}` +
+  //     `&redirect_uri=${REDIRECT_URI}` +
+  //     `&response_type=code` +
+  //     `&scope=openid email profile` +
+  //     `&access_type=offline` +
+  //     `&prompt=consent`;
 
-    window.location.href = GOOGLE_AUTH_URL;
-  };
+  //   window.location.href = GOOGLE_AUTH_URL;
+  // };
 
   return (
     <>
