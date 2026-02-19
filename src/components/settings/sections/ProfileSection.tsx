@@ -187,6 +187,7 @@ export default function ProfileSection({ profile }: Props) {
           value={account.email}
           buttonText="이메일 주소 변경"
           to="/settings/email"
+          disabled={isSocialLogin}
         />
 
         {/* 비밀번호는 항상 고정 */}

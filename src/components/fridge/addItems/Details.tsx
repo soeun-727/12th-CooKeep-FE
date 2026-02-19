@@ -45,9 +45,9 @@ export default function Details() {
 
   return (
     <>
-      <div className="relative flex flex-col items-center w-full h-[calc(100vh-34px)] bg-[#F8F8F8] pt-1">
+      <div className="relative flex flex-col items-center w-full h-full bg-[#F8F8F8] pt-1">
         <div className="flex-1 overflow-y-auto no-scrollbar min-h-0">
-          <div className="flex flex-col gap-[10px] overflow-y-auto no-scrollbar pb-10">
+          <div className="flex flex-col gap-[10px] overflow-y-auto no-scrollbar pb-15">
             {selectedItems.length > 0 ? (
               selectedItems.map((item) => (
                 <DetailedItem key={item.id} {...item} />
@@ -64,7 +64,7 @@ export default function Details() {
         </div>
 
         {selectedItems.length > 0 && (
-          <div className="shrink-0 flex pb-[calc(113px+env(safe-area-inset-bottom))] justify-center z-50">
+          <div className="shrink-0 flex flex-col items-center w-full pb-5 z-50">
             <Button
               size="L"
               variant="black"
@@ -73,6 +73,7 @@ export default function Details() {
             >
               등록 완료
             </Button>
+            <div className="h-[env(safe-area-inset-bottom)]" />
           </div>
         )}
       </div>

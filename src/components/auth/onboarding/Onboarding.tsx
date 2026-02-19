@@ -147,12 +147,13 @@ export default function Onboarding() {
   // --- 기본 온보딩 UI ---
 
   return (
-    <>
+    <div className="flex flex-col h-[100dvh] bg-[#FAFAFA]">
       <AuthHeader />
-      <div className="min-h-screen relative pb-32 bg-[#FAFAFA]">
-        <div className="w-[361px] mx-auto flex flex-col items-center">
-          <Progress currentStep={step} />
-
+      <div className="w-full max-w-[361px] mx-auto px-1">
+        <Progress currentStep={step} />
+      </div>
+      <div className="flex-1 flex flex-col items-center">
+        <div className="w-full max-w-[361px] px-1">
           {step === 0 && (
             <FoodType selectedTypes={foodTypes} onToggle={setFoodTypes} />
           )}
@@ -170,7 +171,8 @@ export default function Onboarding() {
             />
           )}
         </div>
-
+      </div>
+      <div className="shrink-0">
         <Footer
           onNext={nextStep}
           onPrev={prevStep}
@@ -181,6 +183,6 @@ export default function Onboarding() {
           isLoading={isLoading}
         />
       </div>
-    </>
+    </div>
   );
 }

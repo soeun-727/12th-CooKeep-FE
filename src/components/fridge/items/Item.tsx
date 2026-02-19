@@ -61,7 +61,7 @@ const Item: React.FC<ItemProps> = ({
         </button>
 
         <img
-          className="w-10 h-10 object-contain flex-shrink-0 -translate-x-[2px] -translate-y-[2px]"
+          className="w-10 h-10 object-contain flex-shrink-0 -translate-x-1 -translate-y-[3px]"
           src={image}
           alt={name}
         />

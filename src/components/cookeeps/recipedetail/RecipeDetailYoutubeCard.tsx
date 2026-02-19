@@ -59,10 +59,10 @@ export default function RecipeDetailYoutube({ videos, tags = [] }: Props) {
         <>
           {/* 태그 */}
           {tags.length > 0 && (
-            <div className="flex flex-wrap gap-x-2 gap-y-1">
+            <div className="flex flex-wrap gap-x-2 gap-y-[2px]">
               {tags.map((tag, idx) => (
                 <span key={idx} className="text-[#32E389] text-[14px]">
-                  #{tag}
+                  {`# ${tag}`}
                 </span>
               ))}
             </div>

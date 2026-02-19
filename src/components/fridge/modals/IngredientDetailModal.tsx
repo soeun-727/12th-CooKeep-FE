@@ -134,17 +134,20 @@ export default function IngredientDetailModal({
                   {displayData.name}
                 </span>
                 <div className="flex flex-col items-start gap-2">
-                  <span className="text-[12px] text-[#C3C3C3] leading-4">
-                    {displayData.leftDays < 0
-                      ? `D+${Math.abs(displayData.leftDays)}`
-                      : `D-${displayData.leftDays}`}
-                  </span>
                   <span
-                    className={`text-[12px] font-semibold leading-4 ${displayData.leftDays > 3 ? "text-[#1FA43C]" : "text-[#D91F1F]"}`}
+                    className={`text-[12px] font-semibold leading-4 ${
+                      displayData.leftDays < 0
+                        ? "text-[#D91F1F]" // 지났을 때 빨간색
+                        : displayData.leftDays > 3
+                          ? "text-[#1FA43C]" // 넉넉할 때 초록색
+                          : "text-[#D91F1F]" // 임박했을 때 빨간색
+                    }`}
                   >
-                    {displayData.leftDays > 3
-                      ? "유통기한이 넉넉해요"
-                      : "유통기한이 얼마 남지 않았어요"}
+                    {displayData.leftDays < 0
+                      ? "유통기한이 지났어요" // 0보다 작을 때 (D+)
+                      : displayData.leftDays > 3
+                        ? "유통기한이 넉넉해요" // 4일 이상 남았을 때
+                        : "유통기한이 얼마 남지 않았어요"}
                   </span>
                 </div>
               </div>
