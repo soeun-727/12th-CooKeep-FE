@@ -40,21 +40,18 @@ export default function AddItem() {
         INGREDIENT_CATEGORIES[12];
 
       return cat.ingredients.map((ing) => {
-        const defaultDays = DEFAULT_EXPIRY_DAYS[cat.category] || 7;
         const days =
-          ing.leftDays && ing.leftDays > 0 ? ing.leftDays : defaultDays;
-        const formattedExpiry = calculateExpiryDate(days);
+          ing.expirationDays || DEFAULT_EXPIRY_DAYS[cat.category] || 7;
         return {
           id: ing.id,
           name: ing.name,
           image: ing.imageUrl,
           categoryId: categoryInfo.id,
-          type: "DEFAULT" as const,
-          storageType: "FRIDGE" as const,
-          unit: "PIECE" as const,
-          expiration: formattedExpiry,
-          quantity: 1,
-        } as MasterItem;
+          type: ing.type || "DEFAULT",
+          unit: ing.unit, // 서버에서 받은 단위
+          storage: ing.storage, // 서버에서 받은 보관장소
+          expirationDays: days, // 계산된 일수 전달
+        } as any;
       });
     });
   };
@@ -141,6 +138,7 @@ export default function AddItem() {
 
             toggleItem({
               id: newId,
+              referenceId: newId,
               name: serverData.name || searchTerm,
               image: serverData.imageUrl || defaultChar,
               categoryId: selectedCategoryId || 13,

@@ -84,11 +84,10 @@ export default function CookeepsPage() {
 
   // 모달 순서 자동 계산
   const derivedModal: ActiveModal = (() => {
-    if (!hasSeenOnboarding) return "onboarding";
-
     // 수확 모달은 별도 관리
     if (showHarvestModal) return null;
-
+    if (!hasSeenOnboarding && !currentPlant && !isPlantLoading)
+      return "onboarding";
     // 3. 강제 지정된 모달(무료 물주기, 선택확인)을 우선적으로 체크
     if (activeModal === "free") return "free";
     if (activeModal === "selected") return "selected";
@@ -104,6 +103,14 @@ export default function CookeepsPage() {
 
     return null;
   })();
+
+  // 데이터 통합 페칭 useEffect 내부 또는 별도 추가
+  useEffect(() => {
+    if (currentPlant && !hasSeenOnboarding) {
+      localStorage.setItem("hasSeenOnboarding", "true");
+      setHasSeenOnboarding(true);
+    }
+  }, [currentPlant, hasSeenOnboarding]);
 
   // 시간계산
   useEffect(() => {
