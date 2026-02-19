@@ -38,7 +38,11 @@ const PlantSelectModal: React.FC<PlantSelectModalProps> = ({
 
       {/* 모달 영역 */}
       <div className="relative w-[258px] bg-white rounded-[10px] flex flex-col items-center pt-[35px] pb-[25px] px-7 gap-4">
-        <h2 className="typo-body">키우고 싶은 식재료를 선택해주세요</h2>
+        <h2 className="typo-body text-center">
+          키우고 싶은 식재료를
+          <br />
+          선택해주세요
+        </h2>
 
         {/* 그리드 영역 */}
         <div className="grid grid-cols-3 gap-2 justify-items-center w-full">

@@ -191,7 +191,7 @@ export default function RecordDetailPage() {
             record.content.youtubeReferences.length > 0 && (
               <RecipeDetailYoutube
                 videos={record.content.youtubeReferences}
-                tags={[]} // 상세 API에 태그 정보가 있다면 추가
+                tags={record.content.youtubeSearchQueries ?? []}
               />
             )}
         </div>
@@ -202,8 +202,14 @@ export default function RecordDetailPage() {
             <textarea
               value={tempDescription}
               onChange={(e) => setTempDescription(e.target.value)}
-              placeholder="나만의 팁 작성하기"
-              className="overflow-hidden w-full h-12 rounded-[10px] bg-white px-[15px] py-3 text-center typo-body text-[#202020] shadow-sm whitespace-pre-wrap break-words border-[1px] border-[#32E389] outline-none resize-none"
+              onInput={(e) => {
+                const el = e.currentTarget;
+                el.style.height = "auto";
+                el.style.height = `${el.scrollHeight}px`;
+              }}
+              placeholder="글자 수 최대 500자"
+              className="overflow-hidden w-full rounded-[10px] bg-white px-[10px] py-3 text-center typo-body text-[#202020] placeholder:text-[#7D7D7D] resize-none outline-none"
+              rows={1}
             />
           ) : (
             record.description && (

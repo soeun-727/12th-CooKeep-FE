@@ -20,6 +20,7 @@ type RecipeFlowState = {
 
   isLoading: boolean;
   error: string | null;
+  isCompleted: boolean;
 
   setSelectedIngredients: (items: Ingredient[]) => void;
   setDifficulty: (d: Difficulty) => void;
@@ -44,6 +45,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
   isLoading: false,
   error: null,
+  isCompleted: false,
 
   setSelectedIngredients: (items) => set({ selectedIngredients: items }),
 
@@ -95,6 +97,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
       retryCount: 0,
       recipeHistory: [],
       error: null,
+      isCompleted: false,
     }),
 
   fetchSessionDetail: async (sessionId: number) => {
@@ -128,6 +131,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
       set({
         sessionId,
         recipeHistory: parsedHistory,
+        isCompleted: data.completed,
         isLoading: false,
       });
     } catch (error) {
@@ -147,7 +151,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
       set({ isLoading: true });
       await completeAiRecipe(sessionId);
       // 필요하다면 여기서 초기화를 하거나, 성공 메시지를 상태에 저장할 수 있습니다.
-      set({ isLoading: false });
+      set({ isCompleted: true, isLoading: false });
     } catch (error) {
       console.error("레시피 채택 실패:", error);
       set({ isLoading: false });

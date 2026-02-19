@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Button from "../../../../ui/Button";
+import { getKoreanUnit } from "../../../../../utils/mapping";
 
 interface QuantityEditorProps {
   value: string;
@@ -8,7 +9,7 @@ interface QuantityEditorProps {
 
 export default function QuantityEditor({ value, onSave }: QuantityEditorProps) {
   const [isCustomInput, setIsCustomInput] = useState(false);
-  const [customValue, setCustomValue] = useState(String(value));
+  const [customValue, setCustomValue] = useState(getKoreanUnit(value));
   const [selectedUnit, setSelectedUnit] = useState<string | null>(value);
   const units = ["개", "묶음", "봉지", "팩", "캔", "병"];
 

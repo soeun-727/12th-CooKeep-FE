@@ -132,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <div className="flex-1 overflow-y-auto py-[35px] px-[26px] no-scrollbar">
             <div className="w-[290px]">
               <div
-  className={`
+                className={`
     rounded-[6px]
     bg-white
     shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]
@@ -151,8 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     
     [&_input::placeholder]:text-[#C3C3C3]
   `}
->
-
+              >
                 <TextField
                   value={searchTerm}
                   placeholder="레시피를 검색하세요"

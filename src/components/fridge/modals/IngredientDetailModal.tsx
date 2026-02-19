@@ -106,7 +106,7 @@ export default function IngredientDetailModal({
   const displayTip = displayData.aiTip || ingredient.tip;
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-200 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/40"
         onClick={handleModalClose}
@@ -134,6 +134,11 @@ export default function IngredientDetailModal({
                   {displayData.name}
                 </span>
                 <div className="flex flex-col items-start gap-2">
+                  <span className="text-[12px] text-[#C3C3C3] leading-4">
+                    {displayData.leftDays < 0
+                      ? `D+${Math.abs(displayData.leftDays)}`
+                      : `D-${displayData.leftDays}`}
+                  </span>
                   <span
                     className={`text-[12px] font-semibold leading-4 ${
                       displayData.leftDays < 0
