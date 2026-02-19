@@ -128,10 +128,10 @@ export default function Profile() {
             >
               {profile.weeklyGoal ? (
                 <>
-                  이번주 목표는... 주 {targetCount}회 {goalLabel}!
+                  이번 주 목표는... 주 {targetCount}회 {goalLabel}!
                 </>
               ) : (
-                <>이번주 목표는...</>
+                <>이번 주 목표는...</>
               )}
             </span>
             <button
@@ -153,8 +153,13 @@ export default function Profile() {
             </button>
           </div>
 
-          {showBubble && !profile.weeklyGoal && (
-            <div className="absolute top-[245px] flex justify-center animate-float-bubble shrink-0">
+          {/* 말풍선 섹션: showBubble 여부에 따라 투명도만 조절 */}
+          {!profile.weeklyGoal && (
+            <div
+              className={`absolute top-[245px] flex justify-center animate-float-bubble shrink-0 transition-opacity duration-1000 ease-in-out ${
+                showBubble ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+            >
               <div
                 className="relative z-10 inline-flex text-center justify-center items-center px-[16px] py-[9px] rounded-[3px] bg-white text-zinc-500 text-[12px] font-medium shadow-[0_4px_16px_rgba(0,0,0,0.13)]"
                 style={{ width: 227, height: 28 }}
