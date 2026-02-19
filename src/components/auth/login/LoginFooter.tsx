@@ -1,7 +1,7 @@
 import line from "../../../assets/login/Line.png";
 import Line from "../../../assets/login/Horizontal-Line.png";
 import Kakao from "../../../assets/login/Kakao.svg";
-import Google from "../../../assets/login/Google.svg";
+// import Google from "../../../assets/login/Google.svg";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginFooter() {
