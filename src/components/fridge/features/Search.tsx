@@ -23,6 +23,8 @@ export default function Search() {
           className={`
           relative
           w-full 
+          rounded-[6px]
+          overflow-hidden
           shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]
           [&_p]:hidden
           [&_input]:w-full
