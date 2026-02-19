@@ -51,17 +51,24 @@ const AllItem = ({
 
       {/* 우측 아이콘 및 이미지 */}
       <div className="flex items-center flex-shrink-0">
+        {/* 좋아요 영역 */}
         <div
           onClick={handleIconClick}
-          className="flex items-center justify-between w-[38px] active:scale-90 transition-transform cursor-pointer"
+          className="flex items-center gap-1 flex-shrink-0 mx-4"
         >
-          <img src={likeGray} alt="like" className="w-4" />
-          <span className="typo-caption text-zinc-500">{likes ?? 0}</span>
+          <img src={likeGray} alt="like" className="w-[13px] flex-shrink-0" />
+
+          {/* 숫자 오른쪽 정렬 */}
+          <span className="flex-1 text-right ml-1 typo-caption text-zinc-500 whitespace-nowrap">
+            {likes ?? 0}
+          </span>
         </div>
+
+        {/* 이미지 (항상 고정 위치) */}
         <img
           src={img}
           alt={title}
-          className="w-[65px] h-[42px] rounded-[6px] ml-[14px] object-cover"
+          className="w-[65px] h-[42px] rounded-[6px] object-cover flex-shrink-0"
         />
       </div>
     </div>
