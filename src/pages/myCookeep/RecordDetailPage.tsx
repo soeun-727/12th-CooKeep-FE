@@ -191,7 +191,7 @@ export default function RecordDetailPage() {
             record.content.youtubeReferences.length > 0 && (
               <RecipeDetailYoutube
                 videos={record.content.youtubeReferences}
-                tags={[]} // 상세 API에 태그 정보가 있다면 추가
+                tags={record.content.youtubeSearchQueries ?? []}
               />
             )}
         </div>

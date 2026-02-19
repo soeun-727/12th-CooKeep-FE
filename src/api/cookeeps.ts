@@ -31,6 +31,7 @@ export interface IngredientItem {
   name: string;
   unit: string;
   quantity: number;
+  description?: string | null;
   type?: string;
   referenceId?: number;
 }
@@ -47,6 +48,7 @@ export interface RecipeDetailContent {
     title: string;
     thumbnail: string;
   }[];
+  youtubeSearchQueries: string[];
 }
 
 export interface WeeklyRecipeDetailResponse {
