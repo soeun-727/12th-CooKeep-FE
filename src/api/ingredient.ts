@@ -19,9 +19,13 @@ export type UnitType =
 // --- [조회] 마스터 식재료 목록 관련 ---
 export interface MasterIngredient {
   id: number;
+  type: IngredientType;
   name: string;
-  leftDays: number;
   imageUrl: string;
+  category: CategoryType;
+  unit: UnitType;
+  expirationDays: number;
+  storage: StorageType;
 }
 
 export interface IngredientCategory {
@@ -225,9 +229,11 @@ export const updateIngredientMemo = (ingredientId: number, memo: string) => {
 
 /** [GET] 마스터 식재료 목록 조회 (AddItem 페이지용) */
 export const getMasterIngredientList = () => {
-  return api.get<{ status: string; data: MasterIngredientListResponse }>(
-    "/api/users/me/ingredients/list",
-  );
+  return api.get<{
+    status: string;
+    timestamp: string;
+    data: MasterIngredientListResponse;
+  }>("/api/users/me/ingredients/list");
 };
 
 /** [POST] 식재료 냉장고 최종 추가 */

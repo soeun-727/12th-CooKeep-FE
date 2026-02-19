@@ -22,6 +22,10 @@ export interface AddSourceItem {
   name: string;
   image: string;
   categoryId: number;
+  type?: IngredientType;
+  unit?: UnitType;
+  storage?: StorageType;
+  expirationDays?: number;
 }
 interface AddIngredientState {
   searchTerm: string;
@@ -76,7 +80,9 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   setSearchTerm: (term) => set({ searchTerm: term }),
   setCategoryId: (id) => set({ selectedCategoryId: id, searchTerm: "" }),
 
-  toggleItem: (item) =>
+  toggleItem: (
+    item: AddSourceItem, // item 안에 storage, unit, expirationDays가 들어있어야 함
+  ) =>
     set((state) => {
       const isExist = state.selectedItems.find((i) => i.id === item.id);
       if (isExist) {
@@ -85,20 +91,23 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
         };
       }
 
+      const today = new Date();
+      const daysToAdd = item.expirationDays || 7;
+      today.setDate(today.getDate() + daysToAdd);
+      const calculatedDate = today.toISOString().split("T")[0];
+
       const newItem: MasterItem = {
         id: item.id,
         referenceId: item.id,
         name: item.name,
         image: item.image,
         categoryId: item.categoryId,
-        type: (item as MasterItem).type || "DEFAULT",
-        storageType: (item as MasterItem).storageType || "FRIDGE",
-        unit: (item as MasterItem).unit || "PIECE",
-        quantity: (item as MasterItem).quantity || 1,
-        expiration:
-          (item as MasterItem).expiration ||
-          new Date().toISOString().split("T")[0],
-        memo: (item as MasterItem).memo || "",
+        type: item.type || "DEFAULT",
+        storageType: (item.storage || "FRIDGE") as StorageType,
+        unit: (item.unit || "PIECE") as UnitType,
+        expiration: calculatedDate,
+        quantity: 1,
+        memo: "",
       };
 
       return { selectedItems: [...state.selectedItems, newItem] };
