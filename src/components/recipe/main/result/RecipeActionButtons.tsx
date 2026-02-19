@@ -25,6 +25,7 @@ export default function RecipeActionButtons({
     difficulty,
     recipeHistory,
     completeSession,
+    isCompleted,
   } = useRecipeFlowStore();
 
   const latestRecipe = recipeHistory.at(-1);
@@ -69,9 +70,11 @@ export default function RecipeActionButtons({
       {/* 요리할래요 버튼 */}
       <button
         onClick={handleCookClick}
-        disabled={!latestRecipe || isLoading}
+        disabled={!latestRecipe || isLoading || isCompleted}
         className={`w-full rounded-[10px] h-[38px] typo-button text-white ${
-          !latestRecipe || isLoading ? "bg-gray-300" : "bg-[#32E389]"
+          !latestRecipe || isLoading || isCompleted
+            ? "bg-gray-300"
+            : "bg-[#32E389]"
         }`}
       >
         이 레시피대로 요리할래요
