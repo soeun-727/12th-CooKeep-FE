@@ -29,6 +29,7 @@ export interface AiSessionDetailResponse {
   data: {
     sessionId: number;
     messages: AiSessionMessage[];
+    completed: boolean;
   };
 }
 

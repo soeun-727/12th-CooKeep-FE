@@ -8,7 +8,7 @@ export default function RecipeDetailMemo({ userName, memo }: Props) {
     <div className="w-full px-1 flex justify-center">
       <div
         className="
-          flex items-center justify-center gap-2
+          flex flex-col items-center justify-center gap-2
           w-full max-w-[450px]
           px-4 py-3
           rounded-[10px]
@@ -19,7 +19,7 @@ export default function RecipeDetailMemo({ userName, memo }: Props) {
           {userName}
         </span>
 
-        <span className="text-[#7D7D7D] text-[16px] font-semibold line-clamp-1">
+        <span className="text-[#7D7D7D] text-[16px] font-semibold whitespace-pre-wrap break-words w-full text-center">
           “{memo}”
         </span>
       </div>

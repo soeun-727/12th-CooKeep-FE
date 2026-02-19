@@ -13,6 +13,7 @@ export interface Ingredient {
   name: string;
   unit: string;
   quantity: number;
+  description?: string | null;
   type?: string;
   referenceId?: number;
 }
@@ -36,6 +37,7 @@ export interface AiRecipeDetail {
   ingredientsJson: IngredientsJson;
   stepsJson: string[];
   youtubeUrlJson: YoutubeVideo[];
+  youtubeSearchQueries: string;
 }
 
 export interface AiRecipeDetailResponse {

@@ -60,6 +60,7 @@ export interface MyRecipeDetail {
     ingredients: IngredientsJson;
     steps: string[];
     youtubeReferences: YoutubeVideo[];
+    youtubeSearchQueries: string[];
   };
 }
 
