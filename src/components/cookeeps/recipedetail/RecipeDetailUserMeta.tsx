@@ -47,26 +47,26 @@ export default function RecipeDetailUserMeta({
       </div>
 
       {/* 버튼 영역 */}
-      <div className="flex items-center gap-1 sm:gap-2">
+      <div className="flex items-center">
         <button
           onClick={onLike}
-          className="w-[28px] h-[28px] flex items-center justify-center rounded-full"
+          className="w-[36px] h-[36px] flex items-center justify-center rounded-full"
         >
           <img
             src={likeIcon}
             alt="좋아요"
-            className={`w-7 h-7 ${isLiked ? "invert brightness-100" : ""}`}
+            className={`w-8 h-8 ${isLiked ? "invert brightness-100" : ""}`}
           />
         </button>
 
         <button
           onClick={onBookmark}
-          className="w-[28px] h-[28px] flex items-center justify-center rounded-full"
+          className="w-[36px] h-[36px] flex items-center justify-center rounded-full"
         >
           <img
             src={saveIcon}
             alt="저장"
-            className={`w-7 h-7 ${isBookmarked ? "invert brightness-100" : ""}`}
+            className={`w-8 h-8 ${isBookmarked ? "invert brightness-100" : ""}`}
           />
         </button>
       </div>
