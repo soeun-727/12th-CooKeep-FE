@@ -45,6 +45,7 @@ export default function Notification({ onNext }: Props) {
 
   return (
     <div className="flex flex-col w-[361px] mx-auto h-screen overflow-hidden relative bg-[#fafafa]">
+      {/* 1. 상단 텍스트 영역 */}
       <div className="mt-[107px] shrink-0">
         <h1 className="typo-h1 text-left">
           쿠킵 루틴, 알림으로 받아보시겠어요?
@@ -58,13 +59,16 @@ export default function Notification({ onNext }: Props) {
         </p>
       </div>
 
+      {/* 2. 중간 롤링 영역 */}
       <div
         className="relative flex flex-col items-center justify-start overflow-hidden mt-14 no-scrollbar"
         style={{
-          height: "calc(100dvh - 450px)",
+          height: "calc(100dvh - 460px)", // 버튼 영역과 겹치지 않게 높이 제한
         }}
       >
+        {/* 리스트 상단 블러 */}
         <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-[#fafafa] to-transparent z-10" />
+        
         <div className="flex flex-col gap-[6px] animate-roll">
           {INFINITE_DATA.map((data, index) => (
             <ExampleNotification
@@ -74,9 +78,12 @@ export default function Notification({ onNext }: Props) {
             />
           ))}
         </div>
+        
+        {/* 리스트 하단 블러: 위치를 bottom-0으로 고정하여 버튼 영역 직전에서 사라지게 함 */}
         <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-[#fafafa] to-transparent z-10" />
       </div>
 
+      {/* 3. 하단 버튼 영역: 배경색을 불투명하게 주어 겹침 현상 차단 */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[361px] bg-[#fafafa] z-50 pb-[34px]">
         <div className="flex justify-end">
           <img src={char} className="w-[95px] mb-[26.5px]" alt="character" />
