@@ -38,8 +38,8 @@ export default function FoodType({ selectedTypes, onToggle }: FoodTypeProps) {
         <h3 className="typo-h3 text-gray-500">최대 3개까지 선택해주세요</h3>
       </div>
 
-      <div className="mt-11 flex flex-col gap-2">
-        <div className="flex gap-2">
+      <div className="mt-12 flex flex-col gap-2 items-center">
+        <div className="flex gap-2 justify-center">
           <FoodTypeButton
             image={Korean}
             grayImage={KoreanGray}
@@ -62,7 +62,7 @@ export default function FoodType({ selectedTypes, onToggle }: FoodTypeProps) {
             onClick={() => handleToggle("일식")}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-center">
           <FoodTypeButton
             image={Western}
             grayImage={WesternGray}
