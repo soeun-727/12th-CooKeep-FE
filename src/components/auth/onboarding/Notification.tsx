@@ -76,8 +76,7 @@ export default function Notification({ onNext }: Props) {
           </div>
           <div className="absolute -bottom-6 left-0 w-full h-12 bg-gradient-to-t from-[#fafafa] via-[#fafafa] to-transparent z-10" />
         </div>
-        <div className="flex flex-col gap-2 fixed bottom-0 left-1/2 -translate-x-1/2 pb-[34px] z-50">
-          <div className="flex justify-end">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[361px] bg-[#fafafa] z-[100] pb-[34px] flex flex-col gap-2"> <div className="flex justify-end">
             <img src={char} className="w-[95px] mt-[35px] mb-[26.5px]" />
           </div>
           <Button
