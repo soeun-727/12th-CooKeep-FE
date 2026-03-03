@@ -15,11 +15,15 @@ export default function WaterButton({ onSuccess }: WaterButtonProps) {
 
   const { wantsToWater, setWantsToWater } = useCookeepsStore();
 
-  const handleConfirm = () => {
-    waterPlant();
-    setWantsToWater(false); // 추가 wilteing
+  const handleConfirm = async () => {
+    try {
+      await waterPlant();
+      if (onSuccess) onSuccess(); // 성공 시에만 toast
+    } catch {
+      alert("물 주기에 실패했습니다. 다시 시도해 주세요.");
+    }
+    setWantsToWater(false);
     setModalOpen(false);
-    if (onSuccess) onSuccess(); // 여기서 toast 실행
   };
 
   const isModalOpenControlled = wantsToWater || isModalOpen;

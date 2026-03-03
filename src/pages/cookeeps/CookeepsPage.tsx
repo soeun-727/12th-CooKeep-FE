@@ -278,15 +278,23 @@ export default function CookeepsPage() {
         isOpen={status === "wilted"}
         plant={selectedPlantData?.text ?? ""}
         onClose={() => setActiveModal(null)}
-        onAbandon={() => {
-          abandonPlant();
-          setHideWiltingModal(false); // 추가
-          setActiveModal("select");
+        onAbandon={async () => {
+          try {
+            await abandonPlant();
+            setHideWiltingModal(false);
+            setActiveModal("select");
+          } catch {
+            alert("식물 포기에 실패했습니다. 다시 시도해 주세요.");
+          }
         }}
-        onRecover={() => {
-          recoverPlant();
-          setHideWiltingModal(false); // 추가
-          setActiveModal(null);
+        onRecover={async () => {
+          try {
+            await recoverPlant();
+            setHideWiltingModal(false);
+            setActiveModal(null);
+          } catch {
+            alert("식물 회복에 실패했습니다. 다시 시도해 주세요.");
+          }
         }}
       />
 

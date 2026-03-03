@@ -42,9 +42,12 @@ export default function RecordCard({ record: initialRecord }: Props) {
 
   // RecordCard.tsx 수정본 일부
 
-  const handleConfirmChange = () => {
+  const handleConfirmChange = async () => {
     if (nextVisibility !== null) {
-      updateRecordVisibility(String(record.dailyRecipeId), nextVisibility);
+      await updateRecordVisibility(
+        String(record.dailyRecipeId),
+        nextVisibility,
+      );
     }
     setIsConfirmOpen(false);
     setNextVisibility(null);
