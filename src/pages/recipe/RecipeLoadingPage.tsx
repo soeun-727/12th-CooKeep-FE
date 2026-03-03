@@ -18,7 +18,7 @@ export default function RecipeLoadingPage() {
     "맞춤형 레시피가 완성됐어요!",
   ];
 
-  const { selectedIngredients, difficulty, generateRecipe } =
+  const { selectedIngredients, difficulty, generateRecipe, error } =
     useRecipeFlowStore();
 
   useEffect(() => {
@@ -69,6 +69,18 @@ export default function RecipeLoadingPage() {
           <StepMessage key={idx} message={msg} icon={CheckIcon} />
         ))}
       </div>
+      {error && (
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <p className="text-red-500 text-sm">{error}</p>
+
+          <button
+            onClick={() => generateRecipe()}
+            className="text-sm text-gray-500 underline"
+          >
+            다시 시도하기
+          </button>
+        </div>
+      )}
     </div>
   );
 }
