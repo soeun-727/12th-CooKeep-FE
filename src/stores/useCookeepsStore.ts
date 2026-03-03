@@ -163,6 +163,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       });
     } catch (e) {
       console.error(e);
+      set({ isPlantLoading: false });
     }
   },
 
@@ -329,6 +330,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       });
     } catch (e) {
       console.error("물주기 실패:", e);
+      throw e;
     }
   },
 
