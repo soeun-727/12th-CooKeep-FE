@@ -14,6 +14,7 @@ import { createDailyRecipe } from "../../api/myRecipe";
 import { AiRecipeDetail, getAiRecipeDetail } from "../../api/dailyAiRecipe";
 import imageCompression from "browser-image-compression";
 import { AxiosError } from "axios";
+import RecipeDetailYoutube from "../../components/cookeeps/recipedetail/RecipeDetailYoutubeCard";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -306,6 +307,22 @@ export default function RecordWritePage() {
                 steps: recipeDetail.stepsJson,
               }}
             />
+            {/* 유튜브 카드 추가 */}
+            {recipeDetail.youtubeUrlJson &&
+              recipeDetail.youtubeUrlJson.length > 0 && (
+                <RecipeDetailYoutube
+                  videos={recipeDetail.youtubeUrlJson}
+                  tags={(() => {
+                    try {
+                      return recipeDetail.youtubeSearchQueries
+                        ? JSON.parse(recipeDetail.youtubeSearchQueries)
+                        : [];
+                    } catch {
+                      return [];
+                    }
+                  })()}
+                />
+              )}
           </div>
 
           <div className="flex w-full flex-col items-center pt-4 shrink-0">

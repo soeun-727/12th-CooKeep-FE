@@ -120,11 +120,11 @@ export default function WithdrawPage() {
           </p>
           <p className="text-[14px] font-medium leading-[20px] text-[#202020]">
             - 탈퇴일 포함 30일동안 재가입이 불가하며, 재가입 시 사용자의 이전
-            이용 내역은 복구되지 않습니다
+            이용 내역은 복구되지 않습니다.
           </p>
           <p className="text-[14px] font-medium leading-[20px] text-[#202020]">
             - 탈퇴 고객의 개인정보는 관련 법령에 따라 일정 기간 보관 후 자동
-            파기됩니다
+            파기됩니다.
           </p>
         </div>
 

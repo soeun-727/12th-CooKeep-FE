@@ -186,7 +186,7 @@ export default function RecipeDetailPage() {
                 recipe.content.youtubeReferences.length > 0 && (
                   <RecipeDetailYoutube
                     videos={recipe.content.youtubeReferences}
-                    tags={[]} // 서버 응답에 태그가 없다면 빈 배열
+                    tags={recipe.content.youtubeSearchQueries ?? []}
                   />
                 )}
             </div>
