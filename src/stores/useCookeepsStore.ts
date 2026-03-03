@@ -364,6 +364,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       });
     } catch (e) {
       console.error("포기 실패", e);
+      throw e;
     }
   },
 
@@ -381,6 +382,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
       });
     } catch (e) {
       console.error("회복 실패", e);
+      throw e;
     }
   },
 
