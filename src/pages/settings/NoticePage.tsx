@@ -2,27 +2,43 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
-import {
-  mockNoticeCategories,
-  type NoticeItemType,
-} from "../../constants/mockNoticeData";
 import NoticeCategoryItem from "../../components/settings/components/NoticeCategoryItem";
+import { getNotices } from "../../api/notice";
+
+export type NoticeItemType = {
+  id: number;
+  title: string;
+  content: string;
+};
 
 export default function NoticePage() {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<NoticeItemType[]>([]);
+  const [notices, setNotices] = useState<NoticeItemType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    // Mock 데이터를 시범적으로 불러오기
-    const fetchMock = async () => {
-      setLoading(true);
-      await new Promise((r) => setTimeout(r, 300)); // 가짜 딜레이
-      setCategories(mockNoticeCategories);
-      setLoading(false);
+    const fetchNotices = async () => {
+      try {
+        setLoading(true);
+        const result = await getNotices();
+
+        const mapped = result.data.map((item) => ({
+          id: item.noticeId,
+          title: item.title,
+          content: item.content,
+        }));
+
+        setNotices(mapped);
+      } catch (err) {
+        console.error("공지사항 조회 실패:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchMock();
+    fetchNotices();
   }, []);
 
   return (
@@ -31,13 +47,17 @@ export default function NoticePage() {
       <main className="pt-[75px] px-4 pb-[34px] flex flex-col gap-[14px] min-h-screen">
         {loading ? (
           <p className="text-center text-gray-500">불러오는 중...</p>
-        ) : categories.length === 0 ? (
+        ) : error ? (
+          <p className="text-center text-red-500">
+            공지사항을 불러오지 못했습니다.
+          </p>
+        ) : notices.length === 0 ? (
           <p className="text-center text-gray-500">
             등록된 공지사항이 없습니다.
           </p>
         ) : (
-          categories.map((category) => (
-            <NoticeCategoryItem key={category.id} category={category} />
+          notices.map((notice) => (
+            <NoticeCategoryItem key={notice.id} category={notice} />
           ))
         )}
         <p className="pt-[2px] text-center typo-label text-[#202020]">
