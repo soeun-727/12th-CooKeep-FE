@@ -79,11 +79,12 @@ define(["./workbox-5119daf5"], function (workbox) {
    * requests for URLs in the manifest.
    * See https://goo.gl/S9QRab
    */
+
   workbox.precacheAndRoute(
     [
       {
         url: "/index.html",
-        revision: "0.gvpk71cflv",
+        revision: "0.6jok3od4gh",
       },
     ],
     {},

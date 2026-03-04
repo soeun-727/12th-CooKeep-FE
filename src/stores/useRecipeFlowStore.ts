@@ -9,6 +9,31 @@ import {
 } from "../api/aiRecipe";
 import { getAiSessionDetail } from "../api/aiSession";
 
+import axios from "axios";
+
+const parseAiError = (error: unknown): string => {
+  if (!axios.isAxiosError(error)) {
+    return "알 수 없는 오류가 발생했습니다.";
+  }
+
+  const status = error.response?.status;
+  const code = error.response?.data?.code;
+
+  if (status === 429) {
+    return "AI 요청 횟수를 초과했어요. 잠시 후 다시 시도해주세요.";
+  }
+
+  if (status === 400 && code === "AI_RECIPE_CHANGE_LIMIT_EXCEEDED") {
+    return "레시피 재생성은 최대 5번까지 가능합니다.";
+  }
+
+  if (status === 401) {
+    return "로그인이 만료되었습니다.";
+  }
+
+  return "레시피 생성 중 문제가 발생했어요.";
+};
+
 type RecipeFlowState = {
   selectedIngredients: Ingredient[];
   difficulty: Difficulty | null;
@@ -83,8 +108,13 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
         isLoading: false, // 로딩 종료
       });
     } catch (error) {
-      console.error("AI 레시피 생성 실패:", error);
-      set({ isLoading: false });
+      const message = parseAiError(error);
+
+      set({
+        isLoading: false,
+        error: message,
+      });
+
       throw error;
     }
   },
