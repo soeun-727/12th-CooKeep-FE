@@ -144,7 +144,9 @@ export default function RecipeDetailPage() {
 
   return (
     <div className="min-h-screen w-full">
-      <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
+      <div className="sticky top-0">
+        <BackHeader title="레시피 보기" onBack={() => navigate(-1)} />
+      </div>
       <div className="mx-auto w-full max-w-[450px] px-4">
         {/* 헤더 */}
 

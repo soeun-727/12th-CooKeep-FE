@@ -102,7 +102,7 @@ export default function AddItem() {
           />
         </div>
         <div className="mt-4 pl-[31px] w-[401px] shrink-0">
-          <div className="flex gap-[6px] overflow-x-auto no-scrollbar scroll-smooth">
+          <div className="flex gap-[6px] overflow-x-auto no-scrollbar scroll-smooth pb-2">
             {INGREDIENT_CATEGORIES.map((category) => (
               <div key={category.id} className="flex-shrink-0">
                 <Category
