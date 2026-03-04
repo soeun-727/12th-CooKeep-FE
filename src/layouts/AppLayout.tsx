@@ -26,7 +26,8 @@ export default function AppLayout({ children }: Props) {
           w-full
           max-w-[450px]
           bg-[#FAFAFA]
-          transform translate-x-0
+          min-h-full
+          flex flex-col
         "
       >
         {children}
