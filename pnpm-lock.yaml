@@ -16,6 +16,9 @@ importers:
       browser-image-compression:
         specifier: ^2.0.2
         version: 2.0.2
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.5
       react:
         specifier: ^19.2.0
         version: 19.2.3
@@ -44,6 +47,9 @@ importers:
       "@eslint/js":
         specifier: ^9.39.1
         version: 9.39.2
+      "@types/js-cookie":
+        specifier: ^3.0.6
+        version: 3.0.6
       "@types/node":
         specifier: ^24.10.1
         version: 24.10.4
@@ -1789,6 +1795,12 @@ packages:
         integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==,
       }
 
+  "@types/js-cookie@3.0.6":
+    resolution:
+      {
+        integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==,
+      }
+
   "@types/json-schema@7.0.15":
     resolution:
       {
@@ -3271,6 +3283,13 @@ packages:
         integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==,
       }
     hasBin: true
+
+  js-cookie@3.0.5:
+    resolution:
+      {
+        integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==,
+      }
+    engines: { node: ">=14" }
 
   js-tokens@4.0.0:
     resolution:
@@ -6184,6 +6203,8 @@ snapshots:
     dependencies:
       "@types/unist": 3.0.3
 
+  "@types/js-cookie@3.0.6": {}
+
   "@types/json-schema@7.0.15": {}
 
   "@types/mdast@4.0.4":
@@ -7171,6 +7192,8 @@ snapshots:
       picocolors: 1.1.1
 
   jiti@2.6.1: {}
+
+  js-cookie@3.0.5: {}
 
   js-tokens@4.0.0: {}
 
