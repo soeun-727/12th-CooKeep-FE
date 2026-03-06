@@ -5,7 +5,7 @@ type Props = {
 
 export default function NoticeItem({ content }: Props) {
   // content를 줄 단위로 나눔
-  const lines = content.split("\n");
+  const lines = content.split(/\r?\n/);
 
   // Gray-50로 처리할 텍스트 패턴
   const gray50Text =

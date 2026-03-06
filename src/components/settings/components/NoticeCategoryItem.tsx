@@ -2,15 +2,10 @@
 import { useState } from "react";
 import NoticeItem from "./NoticeItem";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
-
-export type NoticeItemType = {
-  id: number;
-  title: string;
-  content: string;
-};
+import { Notice } from "../../../types/notice";
 
 type Props = {
-  category: NoticeItemType;
+  category: Notice;
 };
 
 export default function NoticeCategoryItem({ category }: Props) {
