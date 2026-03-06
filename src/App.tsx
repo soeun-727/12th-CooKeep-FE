@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 import InitialPage from "./pages/auth/InitialPage";
@@ -55,8 +55,49 @@ import RecordDetailPage from "./pages/myCookeep/RecordDetailPage";
 import KakaoLoginCallback from "./components/auth/simplelogin/KakaoLoginCallback";
 import GoogleLoginCallback from "./components/auth/simplelogin/GoogleLoginCallback";
 import GuestPage from "./pages/auth/GuestPage";
+import { useAuthStore } from "./stores/useAuthStore";
+import { useEffect, useState } from "react";
 
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { checkAuth } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // useEffect 내부 제안
+  useEffect(() => {
+    const authenticated = checkAuth();
+    setIsInitialized(true);
+
+    const publicPaths = [
+      "/",
+      "/login",
+      "/signup",
+      "/onboarding",
+      "/guest",
+      "/kakao/callback",
+      "/google/callback",
+    ];
+    const isPublicPath = publicPaths.includes(location.pathname);
+
+    if (
+      authenticated &&
+      (location.pathname === "/" || location.pathname === "/login")
+    ) {
+      navigate("/fridge", { replace: true });
+    } else if (!authenticated && !isPublicPath) {
+      navigate("/", { replace: true });
+    }
+  }, [location.pathname, navigate, checkAuth]);
+
+  if (!isInitialized) {
+    return (
+      <div className="flex items-center justify-center h-[100dvh] bg-[#FAFAFA]">
+        {/* 스플래시 */}
+      </div>
+    );
+  }
+
   return (
     <AppLayout>
       <Routes>
