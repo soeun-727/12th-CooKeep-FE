@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 import InitialPage from "./pages/auth/InitialPage";
@@ -55,8 +55,52 @@ import RecordDetailPage from "./pages/myCookeep/RecordDetailPage";
 import KakaoLoginCallback from "./components/auth/simplelogin/KakaoLoginCallback";
 import GoogleLoginCallback from "./components/auth/simplelogin/GoogleLoginCallback";
 import GuestPage from "./pages/auth/GuestPage";
+import { useAuthStore } from "./stores/useAuthStore";
+import { useEffect, useState } from "react";
+import SplashPage from "./pages/SplashPage";
 
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { checkAuth } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // useEffect 내부 제안
+  useEffect(() => {
+    const authenticated = checkAuth();
+
+    const publicPaths = [
+      "/",
+      "/login",
+      "/signup",
+      "/onboarding",
+      "/guest",
+      "/kakao/callback",
+      "/google/callback",
+    ];
+    const isPublicPath = publicPaths.includes(location.pathname);
+
+    if (
+      authenticated &&
+      (location.pathname === "/" || location.pathname === "/login")
+    ) {
+      navigate("/fridge", { replace: true });
+    } else if (!authenticated && !isPublicPath) {
+      navigate("/", { replace: true });
+    }
+
+    // 최소 스플래시 시간
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname, navigate, checkAuth]);
+
+  if (!isInitialized) {
+    return <SplashPage />;
+  }
+
   return (
     <AppLayout>
       <Routes>
