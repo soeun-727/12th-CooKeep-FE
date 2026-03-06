@@ -7,9 +7,9 @@ type Props = {
 
 const getThemeColorByPath = (pathname: string) => {
   if (pathname.startsWith("/fridge")) return "#FAFAFA";
-  if (pathname.startsWith("/recipe")) return "#FFFFFF";
-  if (pathname.startsWith("/cookeeps")) return "#D1FBFA";
-  if (pathname.startsWith("/mycookeep")) return "#31E087";
+  if (pathname.startsWith("/recipe")) return "#FAFAFA";
+  if (pathname === "/cookeeps") return "#D1FBFA";
+  if (pathname === "/mycookeep") return "#31E087";
   return "#FAFAFA";
 };
 
