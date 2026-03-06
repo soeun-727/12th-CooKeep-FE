@@ -57,6 +57,7 @@ import GoogleLoginCallback from "./components/auth/simplelogin/GoogleLoginCallba
 import GuestPage from "./pages/auth/GuestPage";
 import { useAuthStore } from "./stores/useAuthStore";
 import { useEffect, useState } from "react";
+import SplashPage from "./pages/SplashPage";
 
 export default function App() {
   const navigate = useNavigate();
@@ -67,7 +68,6 @@ export default function App() {
   // useEffect 내부 제안
   useEffect(() => {
     const authenticated = checkAuth();
-    setIsInitialized(true);
 
     const publicPaths = [
       "/",
@@ -88,14 +88,17 @@ export default function App() {
     } else if (!authenticated && !isPublicPath) {
       navigate("/", { replace: true });
     }
+
+    // 최소 스플래시 시간
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }, [location.pathname, navigate, checkAuth]);
 
   if (!isInitialized) {
-    return (
-      <div className="flex items-center justify-center h-[100dvh] bg-[#FAFAFA]">
-        {/* 스플래시 */}
-      </div>
-    );
+    return <SplashPage />;
   }
 
   return (
