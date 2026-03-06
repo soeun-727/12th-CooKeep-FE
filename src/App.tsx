@@ -56,17 +56,30 @@ import KakaoLoginCallback from "./components/auth/simplelogin/KakaoLoginCallback
 import GoogleLoginCallback from "./components/auth/simplelogin/GoogleLoginCallback";
 import GuestPage from "./pages/auth/GuestPage";
 import { useAuthStore } from "./stores/useAuthStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SplashPage from "./pages/SplashPage";
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-
   const { initializeAuth, isLoggedIn, initialized } = useAuthStore();
+
+  const [showSplash, setShowSplash] = useState(
+    sessionStorage.getItem("splashShown") !== "true",
+  );
+  const isCallback = location.pathname.includes("callback");
 
   useEffect(() => {
     initializeAuth();
+
+    if (!showSplash) return;
+
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      sessionStorage.setItem("splashShown", "true");
+    }, 5000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -74,7 +87,7 @@ export default function App() {
 
     const path = location.pathname;
 
-    // 소셜 로그인 콜백은 무조건 통과
+    // 콜백은 무조건 통과
     if (path.includes("callback")) return;
 
     const publicPaths = [
@@ -84,8 +97,6 @@ export default function App() {
       "/onboarding",
       "/guest",
       "/simplelogin",
-      "/kakao/callback",
-      "/google/callback",
     ];
 
     const isPublic = publicPaths.includes(path);
@@ -99,9 +110,9 @@ export default function App() {
         navigate("/", { replace: true });
       }
     }
-  }, [initialized, isLoggedIn, location.pathname, navigate]);
+  }, [initialized, isLoggedIn, location.pathname]);
 
-  if (!initialized) {
+  if (showSplash && !isCallback) {
     return <SplashPage />;
   }
 
