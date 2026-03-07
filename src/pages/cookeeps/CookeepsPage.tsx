@@ -112,15 +112,15 @@ export default function CookeepsPage() {
     }
   }, [currentPlant, hasSeenOnboarding]);
 
-  // 시간계산
-  useEffect(() => {
-    const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
-      useCookeepsStore.getState();
+  // // 시간계산
+  // useEffect(() => {
+  //   const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
+  //     useCookeepsStore.getState();
 
-    fetchGrowingPlant();
-    fetchCookies();
-    fetchMyPlants();
-  }, []);
+  //   fetchGrowingPlant();
+  //   fetchCookies();
+  //   fetchMyPlants();
+  // }, []);
 
   /* =========================
      물 주기 성공
@@ -198,25 +198,45 @@ export default function CookeepsPage() {
     }
   };
 
-  const [ranking, setRanking] = useState<RankingResponse | null>(null);
+  const [ranking, setRanking] = useState<RankingResponse>({
+    wateringRanking: [],
+    recipeRanking: [],
+  });
 
-  // 데이터 통합 페칭
+  // // 데이터 통합 페칭
+  // useEffect(() => {
+  //   const fetchAllData = async () => {
+  //     const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
+  //       useCookeepsStore.getState();
+
+  //     // 1. 기존 식물 관련 데이터 호출
+  //     fetchGrowingPlant();
+  //     fetchCookies();
+  //     fetchMyPlants();
+
+  //     // 2. 이번 주 랭킹 데이터 호출
+  //     try {
+  //       const rankingData = await getWeeklyRanking();
+  //       setRanking(rankingData);
+  //     } catch (error) {
+  //       console.error("랭킹 데이터 로드 실패:", error);
+  //     }
+  //   };
+
+  //   fetchAllData();
+  // }, []);
   useEffect(() => {
     const fetchAllData = async () => {
       const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
         useCookeepsStore.getState();
 
-      // 1. 기존 식물 관련 데이터 호출
-      fetchGrowingPlant();
-      fetchCookies();
-      fetchMyPlants();
+      await Promise.all([fetchGrowingPlant(), fetchCookies(), fetchMyPlants()]);
 
-      // 2. 이번 주 랭킹 데이터 호출
       try {
         const rankingData = await getWeeklyRanking();
         setRanking(rankingData);
-      } catch (error) {
-        console.error("랭킹 데이터 로드 실패:", error);
+      } catch (e) {
+        console.error(e);
       }
     };
 
@@ -237,7 +257,7 @@ export default function CookeepsPage() {
 
       {/* 2. 식물 선택 */}
       <PlantSelectModal
-        key={derivedModal === "select" ? "open" : "closed"}
+        // key={derivedModal === "select" ? "open" : "closed"}
         isOpen={derivedModal === "select"}
         onConfirm={handleSelectConfirm}
         harvestedPlantNames={harvestedPlantNames}
