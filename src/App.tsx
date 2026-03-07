@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 
 import InitialPage from "./pages/auth/InitialPage";
@@ -55,8 +55,67 @@ import RecordDetailPage from "./pages/myCookeep/RecordDetailPage";
 import KakaoLoginCallback from "./components/auth/simplelogin/KakaoLoginCallback";
 import GoogleLoginCallback from "./components/auth/simplelogin/GoogleLoginCallback";
 import GuestPage from "./pages/auth/GuestPage";
+import { useAuthStore } from "./stores/useAuthStore";
+import { useEffect, useState } from "react";
+import SplashPage from "./pages/SplashPage";
 
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { initializeAuth, isLoggedIn, initialized } = useAuthStore();
+
+  const [showSplash, setShowSplash] = useState(
+    sessionStorage.getItem("splashShown") !== "true",
+  );
+  const isCallback = location.pathname.includes("callback");
+
+  useEffect(() => {
+    initializeAuth();
+
+    if (!showSplash) return;
+
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      sessionStorage.setItem("splashShown", "true");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+
+    const path = location.pathname;
+
+    // 콜백은 무조건 통과
+    if (path.includes("callback")) return;
+
+    const publicPaths = [
+      "/",
+      "/login",
+      "/signup",
+      "/onboarding",
+      "/guest",
+      "/simplelogin",
+    ];
+
+    const isPublic = publicPaths.includes(path);
+
+    if (isLoggedIn) {
+      if (path === "/" || path === "/login") {
+        navigate("/fridge", { replace: true });
+      }
+    } else {
+      if (!isPublic) {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [initialized, isLoggedIn, location.pathname]);
+
+  if (showSplash && !isCallback) {
+    return <SplashPage />;
+  }
+
   return (
     <AppLayout>
       <Routes>

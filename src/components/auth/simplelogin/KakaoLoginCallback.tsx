@@ -50,13 +50,13 @@ export default function KakaoLoginCallback() {
           }
 
           // 3. 정상 상태일 경우 nextStep에 따른 페이지 이동
+          // KakaoLoginCallback.tsx 내부 navigate 부분 수정
           if (data.nextStep === "TERMS") {
-            navigate("/simplelogin");
+            navigate("/simplelogin", { replace: true });
           } else if (data.nextStep === "ONBOARDING") {
-            navigate("/onboarding");
+            navigate("/onboarding", { replace: true });
           } else {
-            // 메인 페이지(냉장고)로 이동
-            navigate("/fridge");
+            navigate("/fridge", { replace: true });
           }
         }
       } catch (err) {

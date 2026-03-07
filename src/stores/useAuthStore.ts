@@ -35,7 +35,9 @@ interface AuthState {
   userId: number | null;
   userStatus: string | null;
   nextStep: string | null;
-
+  initialized: boolean;
+  initializeAuth: () => void;
+  checkAuth: () => void;
   setPhoneNumber: (phone: string) => void;
   setPassword: (pw: string) => void;
   login: () => Promise<LoginResponse | null>;
@@ -55,7 +57,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   userId: null,
   userStatus: null,
   nextStep: null,
+  initialized: false,
 
+  checkAuth: () => {
+    const token = localStorage.getItem("accessToken");
+
+    set({
+      isLoggedIn: !!token,
+    });
+  },
+  initializeAuth: () => {
+    const token = localStorage.getItem("accessToken");
+
+    set({
+      isLoggedIn: !!token,
+      initialized: true,
+    });
+  },
   setPhoneNumber: (phoneNumber) => {
     const isValidPhone = /^010-\d{3,4}-\d{4}$/.test(phoneNumber);
 

@@ -1,8 +1,23 @@
+import { useLocation } from "react-router-dom";
+import { useThemeColor } from "../hooks/useThemeColor";
+
 type Props = {
   children: React.ReactNode;
 };
+
+const getThemeColorByPath = (pathname: string) => {
+  if (pathname.startsWith("/fridge")) return "#FAFAFA";
+  if (pathname.startsWith("/recipe")) return "#FAFAFA";
+  if (pathname === "/cookeeps") return "#D1FBFA";
+  if (pathname === "/mycookeep") return "#31E087";
+  return "#FAFAFA";
+};
+
 // AppLayout.tsx
 export default function AppLayout({ children }: Props) {
+  const { pathname } = useLocation();
+  const themeColor = getThemeColorByPath(pathname);
+  useThemeColor(themeColor);
   return (
     <div className="min-h-[100dvh] bg-gray-100 flex justify-center">
       <div
@@ -11,7 +26,8 @@ export default function AppLayout({ children }: Props) {
           w-full
           max-w-[450px]
           bg-[#FAFAFA]
-          transform translate-x-0
+          min-h-full
+          flex flex-col
         "
       >
         {children}

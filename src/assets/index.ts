@@ -47,3 +47,7 @@ export { default as greenCheck } from "./signup/greenCheck.svg";
 export { default as grayCheck } from "./signup/grayCheck.svg";
 export { default as blankCheck } from "./signup/blankCheck.svg";
 export { default as plantChar } from "./character/plant_char.svg";
+
+export { default as logoBlack } from "./splash/black_logo.svg";
+export { default as logoWhite } from "./splash/white_logo.svg";
+export { default as logoChar } from "./splash/logo_char.svg";

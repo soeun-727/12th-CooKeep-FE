@@ -7,6 +7,17 @@ const api = axios.create({
   timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 10000,
 });
 
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
+  });
+  failedQueue = [];
+};
+
 api.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token && config.headers) {
@@ -25,10 +36,23 @@ api.interceptors.response.use(
       error.response?.data?.code === "AUTH-001";
 
     if (isUnauthorized && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const newAccessToken = await refreshAccessToken();
+        processQueue(null, newAccessToken);
 
         if (originalRequest.headers) {
           const hasBearer = newAccessToken.startsWith("Bearer ");
@@ -40,18 +64,28 @@ api.interceptors.response.use(
         if (originalRequest.data && typeof originalRequest.data === "string") {
           try {
             originalRequest.data = JSON.parse(originalRequest.data);
-          } catch (e) {
-            // parsing error fallback
-          }
+          } catch (e) {}
         }
 
         return api(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
+
         clearTokens();
-        if (!window.location.pathname.includes("/login")) {
+        import("../stores/useAuthStore").then((module) => {
+          module.useAuthStore.getState().logout();
+        });
+
+        if (
+          !window.location.pathname.includes("/login") &&
+          !window.location.pathname.includes("/auth")
+        ) {
           window.location.href = "/login";
         }
+
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
     return Promise.reject(error);
