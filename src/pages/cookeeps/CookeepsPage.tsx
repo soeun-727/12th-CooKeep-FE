@@ -225,23 +225,28 @@ export default function CookeepsPage() {
 
   //   fetchAllData();
   // }, []);
+  const fetchGrowingPlant = useCookeepsStore((s) => s.fetchGrowingPlant);
+  const fetchCookies = useCookeepsStore((s) => s.fetchCookies);
+  const fetchMyPlants = useCookeepsStore((s) => s.fetchMyPlants);
+
   useEffect(() => {
     const fetchAllData = async () => {
-      const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
-        useCookeepsStore.getState();
-
-      await Promise.all([fetchGrowingPlant(), fetchCookies(), fetchMyPlants()]);
-
       try {
-        const rankingData = await getWeeklyRanking();
-        setRanking(rankingData);
+        const results = await Promise.all([
+          fetchGrowingPlant(),
+          fetchCookies(),
+          fetchMyPlants(),
+          getWeeklyRanking(),
+        ]);
+
+        setRanking(results[3]);
       } catch (e) {
         console.error(e);
       }
     };
 
     fetchAllData();
-  }, []);
+  }, [fetchGrowingPlant, fetchCookies, fetchMyPlants]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 relative no-scrollbar">
