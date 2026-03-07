@@ -62,12 +62,33 @@ import SplashPage from "./pages/SplashPage";
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { checkAuth } = useAuthStore();
-  const [isInitialized, setIsInitialized] = useState(false);
+  const { initializeAuth, isLoggedIn, initialized } = useAuthStore();
 
-  // useEffect 내부 제안
+  const [showSplash, setShowSplash] = useState(
+    sessionStorage.getItem("splashShown") !== "true",
+  );
+  const isCallback = location.pathname.includes("callback");
+
   useEffect(() => {
-    const authenticated = checkAuth();
+    initializeAuth();
+
+    if (!showSplash) return;
+
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      sessionStorage.setItem("splashShown", "true");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+
+    const path = location.pathname;
+
+    // 콜백은 무조건 통과
+    if (path.includes("callback")) return;
 
     const publicPaths = [
       "/",
@@ -75,29 +96,23 @@ export default function App() {
       "/signup",
       "/onboarding",
       "/guest",
-      "/kakao/callback",
-      "/google/callback",
+      "/simplelogin",
     ];
-    const isPublicPath = publicPaths.includes(location.pathname);
 
-    if (
-      authenticated &&
-      (location.pathname === "/" || location.pathname === "/login")
-    ) {
-      navigate("/fridge", { replace: true });
-    } else if (!authenticated && !isPublicPath) {
-      navigate("/", { replace: true });
+    const isPublic = publicPaths.includes(path);
+
+    if (isLoggedIn) {
+      if (path === "/" || path === "/login") {
+        navigate("/fridge", { replace: true });
+      }
+    } else {
+      if (!isPublic) {
+        navigate("/", { replace: true });
+      }
     }
+  }, [initialized, isLoggedIn, location.pathname]);
 
-    // 최소 스플래시 시간
-    const timer = setTimeout(() => {
-      setIsInitialized(true);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [location.pathname, navigate, checkAuth]);
-
-  if (!isInitialized) {
+  if (showSplash && !isCallback) {
     return <SplashPage />;
   }
 
