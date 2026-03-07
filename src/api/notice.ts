@@ -1,16 +1,5 @@
 import api from "./axios";
-
-export interface NoticeResponseItem {
-  noticeId: number;
-  title: string;
-  content: string;
-}
-
-export interface NoticeApiResponse {
-  status: string;
-  timestamp: string;
-  data: NoticeResponseItem[];
-}
+import { NoticeApiResponse } from "../types/notice";
 
 export const getNotices = async () => {
   const res = await api.get<NoticeApiResponse>("/api/notices");
