@@ -41,7 +41,7 @@ export default function NoticeCategoryItem({ category }: Props) {
       {/* 내용 */}
       {open && (
         <div className="flex w-full flex-col gap-[14px] px-[12px] pb-[12px]">
-          <NoticeItem content={category.content} />
+          <NoticeItem title={category.title} content={category.content} />
         </div>
       )}
     </div>

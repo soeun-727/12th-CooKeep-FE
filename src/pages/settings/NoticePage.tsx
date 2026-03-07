@@ -18,7 +18,7 @@ export default function NoticePage() {
         setLoading(true);
         const result = await getNotices();
 
-        const mapped = result.data.map(mapNotice);
+        const mapped = result.data.map(mapNotice).sort((a, b) => a.id - b.id); // id 오름차순
 
         setNotices(mapped);
       } catch (err) {
