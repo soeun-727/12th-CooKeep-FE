@@ -63,33 +63,22 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const { initializeAuth, isLoggedIn, initialized } = useAuthStore();
-
-  const [showSplash, setShowSplash] = useState(
-    sessionStorage.getItem("splashShown") !== "true",
-  );
+  const [showSplash, setShowSplash] = useState(true);
   const isCallback = location.pathname.includes("callback");
 
   useEffect(() => {
     initializeAuth();
-
-    if (!showSplash) return;
-
     const timer = setTimeout(() => {
       setShowSplash(false);
-      sessionStorage.setItem("splashShown", "true");
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [initializeAuth]);
 
   useEffect(() => {
-    if (!initialized) return;
+    if (!initialized || isCallback) return;
 
     const path = location.pathname;
-
-    // 콜백은 무조건 통과
-    if (path.includes("callback")) return;
-
     const publicPaths = [
       "/",
       "/login",
@@ -98,21 +87,18 @@ export default function App() {
       "/guest",
       "/simplelogin",
     ];
-
     const isPublic = publicPaths.includes(path);
 
     if (isLoggedIn) {
       if (path === "/" || path === "/login") {
         navigate("/fridge", { replace: true });
       }
-    } else {
-      if (!isPublic) {
-        navigate("/", { replace: true });
-      }
+    } else if (!isPublic) {
+      navigate("/", { replace: true });
     }
-  }, [initialized, isLoggedIn, location.pathname]);
+  }, [initialized, isLoggedIn, location.pathname, navigate, isCallback]);
 
-  if (showSplash && !isCallback) {
+  if (showSplash && !isCallback && !isLoggedIn) {
     return <SplashPage />;
   }
 
