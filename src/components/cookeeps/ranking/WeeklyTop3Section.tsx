@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { WateringRankItem } from "../../../api/cookeeps";
 import RankingCard from "./RankingCard";
 
@@ -5,7 +6,7 @@ interface WeeklyTop3SectionProps {
   users: WateringRankItem[];
 }
 
-export default function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
+function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
   const order = [1, 0, 2]; // 2-1-3 UI
   const currentMonth = new Date().getMonth() + 1;
 
@@ -41,3 +42,5 @@ export default function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
     </div>
   );
 }
+
+export default memo(WeeklyTop3Section);
