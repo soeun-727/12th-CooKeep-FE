@@ -41,7 +41,10 @@ api.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+            const hasBearer = (token as string).startsWith("Bearer ");
+            originalRequest.headers.Authorization = hasBearer
+              ? token
+              : `Bearer ${token}`;
             return api(originalRequest);
           })
           .catch((err) => Promise.reject(err));

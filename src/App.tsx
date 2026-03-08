@@ -63,31 +63,22 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const { initializeAuth, isLoggedIn, initialized } = useAuthStore();
-
-  const [showSplash, setShowSplash] = useState(
-    sessionStorage.getItem("splashShown") !== "true",
-  );
+  const [showSplash, setShowSplash] = useState(true);
   const isCallback = location.pathname.includes("callback");
 
   useEffect(() => {
     initializeAuth();
-
-    if (!showSplash) return;
-
     const timer = setTimeout(() => {
       setShowSplash(false);
-      sessionStorage.setItem("splashShown", "true");
-    }, 5000);
+    }, 1500);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [initializeAuth]);
 
   useEffect(() => {
     if (!initialized) return;
 
     const path = location.pathname;
-
-    // 콜백은 무조건 통과
     if (path.includes("callback")) return;
 
     const publicPaths = [
@@ -98,7 +89,6 @@ export default function App() {
       "/guest",
       "/simplelogin",
     ];
-
     const isPublic = publicPaths.includes(path);
 
     if (isLoggedIn) {
@@ -110,9 +100,8 @@ export default function App() {
         navigate("/", { replace: true });
       }
     }
-  }, [initialized, isLoggedIn, location.pathname]);
-
-  if (showSplash && !isCallback) {
+  }, [initialized, isLoggedIn, location.pathname, navigate]);
+  if ((!initialized || showSplash) && !isCallback) {
     return <SplashPage />;
   }
 
