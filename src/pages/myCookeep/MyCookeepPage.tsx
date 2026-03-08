@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import MyCookeepTabBar from "../../components/myCookeep/fixed/MyCookeepTabBar";
 import Profile from "../../components/myCookeep/fixed/Profile";
@@ -19,7 +19,8 @@ export default function MyCookeepPage() {
 
   const [activeTab, setActiveTab] = useState<TabType>("record");
   const [dismissed, setDismissed] = useState(false);
-  const { records, setRecords } = useCookeepRecordStore();
+  const records = useCookeepRecordStore((s) => s.records);
+  const setRecords = useCookeepRecordStore((s) => s.setRecords);
   const [enteredByBottomTab, setEnteredByBottomTab] = useState(
     location.state?.fromTab === true,
   );
@@ -30,23 +31,43 @@ export default function MyCookeepPage() {
       .split("T")[0];
   };
 
-  const fetchDailyData = async (dateStr: string) => {
-    try {
-      const response = await getDailyRecipesByDate(dateStr);
-      if (response.status === "OK") {
-        setRecords(response.data);
+  // const fetchDailyData = async (dateStr: string) => {
+  //   try {
+  //     const response = await getDailyRecipesByDate(dateStr);
+  //     if (response.status === "OK") {
+  //       setRecords(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("레시피 조회 실패:", error);
+  //     setRecords([]);
+  //   }
+  // };
+  const fetchDailyData = useCallback(
+    async (dateStr: string) => {
+      try {
+        const response = await getDailyRecipesByDate(dateStr);
+        if (response.status === "OK") {
+          setRecords(response.data);
+        }
+      } catch (error) {
+        console.error("레시피 조회 실패:", error);
+        setRecords([]);
       }
-    } catch (error) {
-      console.error("레시피 조회 실패:", error);
-      setRecords([]);
-    }
-  };
+    },
+    [setRecords],
+  );
+
+  // useEffect(() => {
+  //   if (activeTab === "record") {
+  //     fetchDailyData(getKstToday());
+  //   }
+  // }, [activeTab]); // 여기서 fetchDailyData 의존성 에러가 나면 useCallback으로 감싸거나 일단 이대로 진행하세요.
 
   useEffect(() => {
-    if (activeTab === "record") {
+    if (activeTab === "record" && records.length === 0) {
       fetchDailyData(getKstToday());
     }
-  }, [activeTab]); // 여기서 fetchDailyData 의존성 에러가 나면 useCallback으로 감싸거나 일단 이대로 진행하세요.
+  }, [activeTab, records.length, fetchDailyData]);
 
   const handleDateClick = (dateStr: string) => {
     const requestDate = dateStr.replaceAll(".", "-");
@@ -55,7 +76,7 @@ export default function MyCookeepPage() {
 
   const handleTabChange = (tab: string) => {
     if (tab === "record" || tab === "calendar" || tab === "statistics") {
-      setRecords([]);
+      // setRecords([]);
       setActiveTab(tab);
       setDismissed(false);
       setEnteredByBottomTab(false);
