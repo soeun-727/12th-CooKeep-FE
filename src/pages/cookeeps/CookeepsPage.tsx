@@ -203,28 +203,6 @@ export default function CookeepsPage() {
     recipeRanking: [],
   });
 
-  // // 데이터 통합 페칭
-  // useEffect(() => {
-  //   const fetchAllData = async () => {
-  //     const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
-  //       useCookeepsStore.getState();
-
-  //     // 1. 기존 식물 관련 데이터 호출
-  //     fetchGrowingPlant();
-  //     fetchCookies();
-  //     fetchMyPlants();
-
-  //     // 2. 이번 주 랭킹 데이터 호출
-  //     try {
-  //       const rankingData = await getWeeklyRanking();
-  //       setRanking(rankingData);
-  //     } catch (error) {
-  //       console.error("랭킹 데이터 로드 실패:", error);
-  //     }
-  //   };
-
-  //   fetchAllData();
-  // }, []);
   const fetchGrowingPlant = useCookeepsStore((s) => s.fetchGrowingPlant);
   const fetchCookies = useCookeepsStore((s) => s.fetchCookies);
   const fetchMyPlants = useCookeepsStore((s) => s.fetchMyPlants);
@@ -328,25 +306,6 @@ export default function CookeepsPage() {
         isOpen={showHarvestModal}
         onClose={handleHarvestModalClose}
       />
-
-      {/* 테스트용 버튼 */}
-      {/* <div className="absolute top-0 right-0 p-2 space-x-2 z-50">
-        <button
-          className="bg-yellow-400 px-2 py-1 rounded text-sm"
-          onClick={() => useCookeepsStore.getState().setLastWateredAtDaysAgo(7)}
-        >
-          Wilting 테스트 (7일 전)
-        </button>
-
-        <button
-          className="bg-red-400 px-2 py-1 rounded text-sm"
-          onClick={() =>
-            useCookeepsStore.getState().setLastWateredAtDaysAgo(14)
-          }
-        >
-          Wilted 테스트 (14일 전)
-        </button>
-      </div> */}
 
       {/* ===== 상단 영역 ===== */}
       <div className="relative shrink-0 -mt-[35px]">
