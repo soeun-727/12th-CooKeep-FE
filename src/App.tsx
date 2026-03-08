@@ -70,17 +70,15 @@ export default function App() {
     initializeAuth();
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 1500);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [initializeAuth]);
 
   useEffect(() => {
-    if (!initialized) return;
+    if (!initialized || isCallback) return;
 
     const path = location.pathname;
-    if (path.includes("callback")) return;
-
     const publicPaths = [
       "/",
       "/login",
@@ -95,13 +93,12 @@ export default function App() {
       if (path === "/" || path === "/login") {
         navigate("/fridge", { replace: true });
       }
-    } else {
-      if (!isPublic) {
-        navigate("/", { replace: true });
-      }
+    } else if (!isPublic) {
+      navigate("/", { replace: true });
     }
-  }, [initialized, isLoggedIn, location.pathname, navigate]);
-  if ((!initialized || showSplash) && !isCallback) {
+  }, [initialized, isLoggedIn, location.pathname, navigate, isCallback]);
+
+  if (showSplash && !isCallback && !isLoggedIn) {
     return <SplashPage />;
   }
 
