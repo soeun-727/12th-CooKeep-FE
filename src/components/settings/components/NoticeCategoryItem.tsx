@@ -2,15 +2,10 @@
 import { useState } from "react";
 import NoticeItem from "./NoticeItem";
 import arrowIcon from "../../../assets/signup/arrowright.svg";
-
-export type NoticeItemType = {
-  id: number;
-  title: string;
-  content: string;
-};
+import { Notice } from "../../../types/notice";
 
 type Props = {
-  category: NoticeItemType;
+  category: Notice;
 };
 
 export default function NoticeCategoryItem({ category }: Props) {
@@ -46,7 +41,7 @@ export default function NoticeCategoryItem({ category }: Props) {
       {/* 내용 */}
       {open && (
         <div className="flex w-full flex-col gap-[14px] px-[12px] pb-[12px]">
-          <NoticeItem content={category.content} />
+          <NoticeItem title={category.title} content={category.content} />
         </div>
       )}
     </div>
