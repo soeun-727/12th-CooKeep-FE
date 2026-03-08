@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { memo, useState } from "react";
 import privateIcon from "../../../assets/mycookeep/record/private_icon.svg";
 import publicIcon from "../../../assets/mycookeep/record/public_icon.svg";
 import { useCookeepRecordStore } from "../../../stores/useCookeepRecordStore";
@@ -10,7 +10,7 @@ interface Props {
   record: DailyRecipe;
 }
 
-export default function RecordCard({ record: initialRecord }: Props) {
+function RecordCard({ record: initialRecord }: Props) {
   const navigate = useNavigate();
   const { updateRecordVisibility } = useCookeepRecordStore();
   const record =
@@ -74,9 +74,10 @@ export default function RecordCard({ record: initialRecord }: Props) {
           onClick={() => navigate(`/mycookeep/record/${record.dailyRecipeId}`)}
         >
           <img
+            loading="lazy"
             src={record.recipeImageUrl || tempFoodPhoto}
             alt="요리 이미지"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-opacity duration-300"
           />
 
           {/* 상단 그라데이션 */}
@@ -179,3 +180,5 @@ export default function RecordCard({ record: initialRecord }: Props) {
     </>
   );
 }
+
+export default memo(RecordCard);
