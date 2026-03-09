@@ -44,7 +44,6 @@ export default function Layout() {
       {showHeader && <MainHeader isAllView={isAllViewMode} />}
       <main
         className={` flex-1 flex flex-col overflow-y-auto no-scrollbar
-          ${showHeader ? "pt-[48px]" : ""} 
           ${showTabBar ? "pb-[56px]" : ""}
           min-h-[100dvh]
         `}

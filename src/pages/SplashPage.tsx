@@ -18,7 +18,7 @@ export default function SplashPage() {
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-white">
+    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-#FAFAFA">
       {/* 원형 배경 */}
       <div
         className={`
