@@ -22,7 +22,8 @@ export default memo(function PlantImage({
         <img
           src={imageSrc}
           alt="harvested plant"
-          loading="lazy"
+          // loading="lazy"
+          loading="eager"
           decoding="async"
           className="w-full h-full object-contain"
         />

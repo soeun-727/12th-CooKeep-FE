@@ -210,14 +210,13 @@ export default function CookeepsPage() {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const results = await Promise.all([
-          fetchGrowingPlant(),
-          fetchCookies(),
-          fetchMyPlants(),
-          getWeeklyRanking(),
-        ]);
+        await fetchGrowingPlant();
 
-        setRanking(results[3]);
+        fetchCookies();
+        fetchMyPlants();
+
+        const rankingData = await getWeeklyRanking();
+        setRanking(rankingData);
       } catch (e) {
         console.error(e);
       }
@@ -313,6 +312,7 @@ export default function CookeepsPage() {
           showToast={toastVisible}
           message="물 주기에 성공했어요!"
           plant={currentPlant?.plantName}
+          isLoading={isPlantLoading}
           overridePlantStage={
             showHarvestModal
               ? 4 // 수확 모달 떠있을 때 4단계 유지
