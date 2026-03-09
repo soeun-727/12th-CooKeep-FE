@@ -4,16 +4,11 @@ import { useNavigate } from "react-router-dom";
 import BackHeader from "../../components/ui/BackHeader";
 import NoticeCategoryItem from "../../components/settings/components/NoticeCategoryItem";
 import { getNotices } from "../../api/notice";
-
-export type NoticeItemType = {
-  id: number;
-  title: string;
-  content: string;
-};
+import { Notice, mapNotice } from "../../types/notice";
 
 export default function NoticePage() {
   const navigate = useNavigate();
-  const [notices, setNotices] = useState<NoticeItemType[]>([]);
+  const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -23,11 +18,7 @@ export default function NoticePage() {
         setLoading(true);
         const result = await getNotices();
 
-        const mapped = result.data.map((item) => ({
-          id: item.noticeId,
-          title: item.title,
-          content: item.content,
-        }));
+        const mapped = result.data.map(mapNotice).sort((a, b) => a.id - b.id); // id 오름차순
 
         setNotices(mapped);
       } catch (err) {

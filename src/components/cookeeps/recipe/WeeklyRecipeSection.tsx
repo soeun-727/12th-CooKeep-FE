@@ -2,13 +2,12 @@ import RecipeRankCard from "./RecipeRankCard";
 import RecipeFilterButtons from "./RecipeFilterButtons";
 import { RecipeRankItem } from "../../../api/cookeeps";
 import tempImage from "../../../assets/cookeeps/main/temp_recipe_cookeeps.svg";
+import { memo } from "react";
 interface WeeklyRecipeSectionProps {
   topRecipes: RecipeRankItem[];
 }
 
-export default function WeeklyRecipeSection({
-  topRecipes,
-}: WeeklyRecipeSectionProps) {
+function WeeklyRecipeSection({ topRecipes }: WeeklyRecipeSectionProps) {
   return (
     <div className="flex flex-col items-center w-full min-h-[259px] max-w-md mx-auto bg-white p-4 gap-4 rounded-lg shadow-md">
       {/* 제목 */}
@@ -37,3 +36,5 @@ export default function WeeklyRecipeSection({
     </div>
   );
 }
+
+export default memo(WeeklyRecipeSection);
