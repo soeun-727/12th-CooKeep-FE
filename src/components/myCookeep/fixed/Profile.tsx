@@ -1,6 +1,6 @@
 import MyCookeepHeader from "./MyCookeepHeader";
 import { groundImg, refreshIcon, renameIcon } from "../../../assets";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import ProfileEditModal from "../modals/ProfileEditModal";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
@@ -9,7 +9,7 @@ import { GOAL_TYPE_MAP } from "../../../utils/mapping";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,9 +29,12 @@ export default function Profile() {
     }
   }, []);
 
+  // useEffect(() => {
+  //   fetchProfile();
+  // }, [fetchProfile, location.key]);
   useEffect(() => {
     fetchProfile();
-  }, [fetchProfile, location.key]);
+  }, []);
 
   useEffect(() => {
     if (!isLoading && profile && !profile.weeklyGoal) {
@@ -42,7 +45,7 @@ export default function Profile() {
 
       return () => clearTimeout(timer); // 언마운트 시 타이머 클리어
     }
-  }, [isLoading, profile, location.key]);
+  }, [isLoading, profile]); //, location.key
 
   const setProfilePlant = useCookeepsStore((s) => s.setProfilePlant);
   const setProfileAuto = useCookeepsStore((s) => s.setProfileAuto);
@@ -88,6 +91,7 @@ export default function Profile() {
               <img
                 src={profile.profilePlantImageUrl || groundImg}
                 alt="profileBackground"
+                loading="eager"
                 className="w-full p-6 rounded-full object-cover"
               />
               <button
