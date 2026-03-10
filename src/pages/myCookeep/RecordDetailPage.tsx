@@ -16,6 +16,8 @@ import {
 } from "../../api/myRecipe";
 import Button from "../../components/ui/Button";
 import DoublecheckModal from "../../components/ui/DoublecheckModal";
+import { uploadImage } from "../../api/image";
+import imageCompression from "browser-image-compression";
 
 export default function RecordDetailPage() {
   const navigate = useNavigate();
@@ -29,6 +31,10 @@ export default function RecordDetailPage() {
   const [tempTitle, setTempTitle] = useState("");
   const [tempDescription, setTempDescription] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(
+    undefined,
+  );
+  const [isImageUploading, setIsImageUploading] = useState(false);
 
   useEffect(() => {
     if (!recordId) return;
@@ -39,6 +45,7 @@ export default function RecordDetailPage() {
           setRecord(response.data);
           setTempTitle(response.data.title);
           setTempDescription(response.data.description || "");
+          setCurrentImageUrl(response.data.recipeImageUrl || undefined); // ← 추가
         }
       } catch (error) {
         console.error("레시피 상세 조회 실패:", error);
@@ -58,7 +65,7 @@ export default function RecordDetailPage() {
       if (response.status === "OK") {
         setRecord({ ...record, isPublic: newPublicStatus });
       }
-    } catch (error) {
+    } catch {
       alert("공개 범위 변경에 실패했습니다.");
     } finally {
       setIsSubmitting(false);
@@ -96,10 +103,13 @@ export default function RecordDetailPage() {
 
   // 1. [수정 완료] 버튼 클릭 시 모달만 먼저 띄움
   const handleUpdateClick = () => {
+    const imageChanged =
+      currentImageUrl !== (record?.recipeImageUrl || undefined);
     // 변경사항이 아예 없으면 모달 안 띄우고 바로 종료 처리 가능
     if (
       tempTitle === record?.title &&
-      tempDescription === (record?.description || "")
+      tempDescription === (record?.description || "") &&
+      !imageChanged // ← 추가
     ) {
       setIsEditing(false);
       return;
@@ -110,21 +120,58 @@ export default function RecordDetailPage() {
   // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 수정 API 로직
   const handleConfirmUpdate = async () => {
     if (!record || !recordId) return;
-
     try {
+      const wasImageDeleted = !currentImageUrl && !!record.recipeImageUrl;
+      const isImageChanged =
+        currentImageUrl && currentImageUrl !== record.recipeImageUrl;
+
       const response = await updateDailyRecipe(Number(recordId), {
         title: tempTitle,
         description: tempDescription,
+        ...(isImageChanged && { recipeImageUrl: currentImageUrl }),
+        ...(wasImageDeleted && { deleteRecipeImage: true }),
       });
 
       if (response.status === "OK") {
         setRecord(response.data);
+        setCurrentImageUrl(response.data.recipeImageUrl || undefined);
         setIsEditing(false);
       }
-    } catch (error: any) {
-      console.error("수정 실패:", error);
-      alert(error.response?.data?.message || "수정에 실패했습니다.");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      alert(err?.response?.data?.message || "수정에 실패했습니다.");
     }
+  };
+
+  const compressionOptions = {
+    maxSizeMB: 0.7,
+    maxWidthOrHeight: 720,
+    useWebWorker: true,
+    initialQuality: 0.7,
+  };
+
+  const handleImageFileSelect = async (file: File) => {
+    if (file.size > 15 * 1024 * 1024) {
+      alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
+      return;
+    }
+    setIsImageUploading(true);
+    try {
+      const compressedBlob = await imageCompression(file, compressionOptions);
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: compressedBlob.type,
+      });
+      const response = await uploadImage(compressedFile);
+      setCurrentImageUrl(response.data.imageUrl);
+    } catch {
+      alert("이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setIsImageUploading(false);
+    }
+  };
+
+  const handleImageDelete = () => {
+    setCurrentImageUrl(undefined); // UI에서만 제거, 실제 삭제는 수정 완료 시 서버가 처리
   };
 
   if (!record) return null;
@@ -175,9 +222,12 @@ export default function RecordDetailPage() {
         <div className="pt-[51px] flex flex-col gap-[10px]">
           <RecordViewImageCard
             title={tempTitle}
-            imageSrc={record.recipeImageUrl}
+            imageSrc={currentImageUrl} // ← record.recipeImageUrl 대신
             isEditing={isEditing}
+            isImageUploading={isImageUploading} // ← 추가
             onChangeTitle={(newTitle) => setTempTitle(newTitle)}
+            onImageFileSelect={handleImageFileSelect} // ← 추가
+            onImageDelete={handleImageDelete} // ← 추가
           />
 
           {/* 레시피 내용 */}
