@@ -1,31 +1,43 @@
 import MyCookeepHeader from "./MyCookeepHeader";
 import { groundImg, refreshIcon, renameIcon } from "../../../assets";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ProfileEditModal from "../modals/ProfileEditModal";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import { getProfileInfo, type ProfileData } from "../../../api/user";
 import { GOAL_TYPE_MAP } from "../../../utils/mapping";
 
-export default function Profile() {
+function Profile() {
   const navigate = useNavigate();
   // const location = useLocation();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [showBubble, setShowBubble] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
+  // const fetchProfile = useCallback(async () => {
+  //   // setIsLoading(true);
+  //   try {
+  //     const response = await getProfileInfo();
+  //     if (response.status === "OK") {
+  //       setProfile(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("프로필 로딩 실패:", error);
+  //   } finally {
+  //     // setIsLoading(false);
+  //   }
+  // }, []);
   const fetchProfile = useCallback(async () => {
-    setIsLoading(true);
     try {
       const response = await getProfileInfo();
+
       if (response.status === "OK") {
         setProfile(response.data);
       }
     } catch (error) {
       console.error("프로필 로딩 실패:", error);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
@@ -33,11 +45,13 @@ export default function Profile() {
   //   fetchProfile();
   // }, [fetchProfile, location.key]);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   useEffect(() => {
-    if (!isLoading && profile && !profile.weeklyGoal) {
+    if (profile && !profile.weeklyGoal) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowBubble(true);
       const timer = setTimeout(() => {
         setShowBubble(false);
@@ -45,7 +59,7 @@ export default function Profile() {
 
       return () => clearTimeout(timer); // 언마운트 시 타이머 클리어
     }
-  }, [isLoading, profile]); //, location.key
+  }, [profile]); //isLoading, , location.key
 
   const setProfilePlant = useCookeepsStore((s) => s.setProfilePlant);
   const setProfileAuto = useCookeepsStore((s) => s.setProfileAuto);
@@ -57,26 +71,31 @@ export default function Profile() {
     setIsEditModalOpen(false);
   };
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center pt-20">유저 데이터 로딩 중...</div>
-    );
-  if (!profile)
-    return (
-      <div className="flex justify-center pt-20">
-        데이터를 불러올 수 없습니다.
-      </div>
-    );
+  // if (isLoading)
+  //   return (
+  //     <div className="flex justify-center pt-20">유저 데이터 로딩 중...</div>
+  //   );
+  // if (!profile)
+  //   return (
+  //     <div className="flex justify-center pt-20">
+  //       데이터를 불러올 수 없습니다.
+  //     </div>
+  //   );
 
   const currentGoalEntry = Object.entries(GOAL_TYPE_MAP).find(
-    ([, g]) => g.value === profile.weeklyGoal?.goalActionType,
+    ([, g]) => g.value === profile?.weeklyGoal?.goalActionType,
   );
 
   const goalLabel = currentGoalEntry
     ? currentGoalEntry[1].label
     : "목표를 설정해주세요";
+  if (!profile) {
+    return (
+      <div className="w-full h-[260px] bg-gradient-to-b from-[#32E389] to-[#1FC16F] rounded-b-[36px] animate-pulse" />
+    );
+  }
   const goalId = currentGoalEntry ? currentGoalEntry[0] : "cook";
-  const targetCount = profile.weeklyGoal?.targetCount ?? 0;
+  const targetCount = profile?.weeklyGoal?.targetCount ?? 0;
 
   return (
     <>
@@ -87,13 +106,25 @@ export default function Profile() {
 
           <div className="flex w-[361px] mt-5 items-center justify-start">
             {/* 식물 사진 및 수정 버튼 */}
-            <div className="relative w-31 -ml-[7.5px] shrink-0 inline-block">
+            <div className="relative w-31 h-31 -ml-[7.5px] shrink-0 inline-block">
+              {/* <img
+                src={profile?.profilePlantImageUrl || groundImg}
+                alt="profileBackground"
+                loading="eager"
+                decoding="async"
+                className="w-full p-6 rounded-full object-cover"
+              /> */}
               <img
                 src={profile.profilePlantImageUrl || groundImg}
                 alt="profileBackground"
                 loading="eager"
-                className="w-full p-6 rounded-full object-cover"
+                decoding="async"
+                onLoad={() => setImgLoaded(true)}
+                className={`w-full p-6 rounded-full object-cover transition-opacity duration-200 ${
+                  imgLoaded ? "opacity-100" : "opacity-0"
+                }`}
               />
+
               <button
                 className="absolute bottom-4.5 right-5 transition-transform active:scale-90"
                 onClick={() => {
@@ -107,16 +138,16 @@ export default function Profile() {
             {/* 유저 정보 */}
             <div className="flex flex-col">
               <p className="typo-h2 text-white">
-                {profile.nickname || "쿠킵이"}
+                {profile?.nickname || "쿠킵이"}
               </p>
               <div className="typo-caption text-white">
                 <span>
-                  지금은 {profile.growingPlantName || "요리 실력을"} 키우는 중!
+                  지금은 {profile?.growingPlantName || "요리 실력을"} 키우는 중!
                 </span>
               </div>
               <div className="flex -ml-[0.5px] items-center justify-center gap-[2px] h-5 px-3 bg-[#E6FBEB] rounded-[100px] mt-3 w-fit mx-auto">
                 <span className="typo-caption text-(--color-green) leading-none flex items-center">
-                  {profile.daysSinceJoined}
+                  {profile?.daysSinceJoined}
                 </span>
                 <span className="typo-caption text-zinc-500 leading-none flex items-center">
                   일째 CooKeep
@@ -128,9 +159,9 @@ export default function Profile() {
           {/* 목표 요약 바 */}
           <div className="bg-[#1DAD64] p-3 w-[361px] h-12 flex items-center justify-between gap-3 rounded-[12px] shadow-[0px_4px_16px_-10px_rgba(0,0,0,0.25)]">
             <span
-              className={`typo-body2 truncate ${profile.weeklyGoal ? "text-white" : "text-green-300"}`}
+              className={`typo-body2 truncate ${profile?.weeklyGoal ? "text-white" : "text-green-300"}`}
             >
-              {profile.weeklyGoal ? (
+              {profile?.weeklyGoal ? (
                 <>
                   이번 주 목표는... 주 {targetCount}회 {goalLabel}!
                 </>
@@ -143,7 +174,7 @@ export default function Profile() {
                 navigate("/mycookeep/goals", {
                   state: {
                     currentGoalId: goalId,
-                    currentCount: profile.weeklyGoal?.targetCount ?? 0,
+                    currentCount: profile?.weeklyGoal?.targetCount ?? 0,
                   },
                 })
               }
@@ -158,7 +189,7 @@ export default function Profile() {
           </div>
 
           {/* 말풍선 섹션: showBubble 여부에 따라 투명도만 조절 */}
-          {!profile.weeklyGoal && (
+          {!profile?.weeklyGoal && (
             <div
               className={`absolute top-[245px] flex justify-center animate-float-bubble shrink-0 transition-opacity duration-1000 ease-in-out ${
                 showBubble ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -188,3 +219,5 @@ export default function Profile() {
     </>
   );
 }
+
+export default React.memo(Profile);
