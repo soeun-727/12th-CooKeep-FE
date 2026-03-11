@@ -16,83 +16,7 @@ export type UnitType =
   | "GRAM"
   | "MILLILITER";
 
-// --- [조회] 마스터 식재료 목록 관련 ---
-export interface MasterIngredient {
-  id: number;
-  type: IngredientType;
-  name: string;
-  imageUrl: string;
-  category: CategoryType;
-  unit: UnitType;
-  expirationDays: number;
-  storage: StorageType;
-}
-
-export interface IngredientCategory {
-  category: string;
-  displayName: string;
-  ingredients: MasterIngredient[];
-}
-
-export interface MasterIngredientListResponse {
-  categories: IngredientCategory[];
-}
-
-// --- [조회] 냉장고 홈 관련 ---
-export interface HomeIngredient {
-  type: IngredientType;
-  referenceId: number;
-  name: string;
-  leftDays: number;
-  imageUrl: string;
-}
-
-export interface RefrigeratorHomeResponse {
-  fridge: HomeIngredient[];
-  freezer: HomeIngredient[];
-  pantry: HomeIngredient[];
-}
-
-// --- [등록] 관련 인터페이스 ---
-export interface CustomIngredientRequest {
-  name: string;
-  expirationDays: number;
-  storage: StorageType;
-  category: CategoryType;
-}
-
-export interface AddIngredientRequest {
-  type: IngredientType;
-  referenceId: number;
-  quantity: number;
-  unit: string; // "개", "PIECE" 등 혼용 대응을 위해 string
-  storage: string; // "냉장", "FRIDGE" 등 혼용 대응을 위해 string
-  expirationDate: string;
-  memo?: string;
-} // --- [조회] 식재료 상세 관련 인터페이스 (수정됨) ---
-export interface IngredientDetailResponse {
-  ingredientId: number;
-  name: string;
-  storage: string; // 서버: "FRIDGE"
-  expirationDate: string; // 서버: "2026-12-25"
-  quantity: number;
-  unit: string;
-  leftDays: number;
-  memo: string;
-  aiTip: string;
-  imageUrl: string;
-}
-
-/** [GET] 식재료 상세 정보 조회 */
-export const getIngredientDetail = (ingredientId: number) => {
-  // 응답 규격이 { status, timestamp, data } 이므로 timestamp 추가 가능 (선택사항)
-  return api.get<{
-    status: string;
-    timestamp: string;
-    data: IngredientDetailResponse;
-  }>(`/api/users/me/refrigerator/${ingredientId}`);
-};
-// --- 매핑 사전 (내부용) ---
+// --- 매핑 사전 (내부 방어용) ---
 const STORAGE_MAP: Record<string, StorageType> = {
   냉장: "FRIDGE",
   냉동: "FREEZER",
@@ -121,142 +45,114 @@ const UNIT_MAP: Record<string, UnitType> = {
   MILLILITER: "MILLILITER",
 };
 
-// --- [조회] 검색 결과 관련 인터페이스 ---
-export interface SearchIngredientItem {
+// --- 인터페이스 정의 ---
+
+/** 마스터 식재료 (리스트용) */
+export interface MasterIngredient {
   ingredientId: number;
+  type: IngredientType;
   name: string;
   imageUrl: string;
+  category: CategoryType;
+  unit: UnitType;
+  expirationDays: number;
+  storage: StorageType;
+}
+
+export interface IngredientCategory {
+  category: string;
+  displayName: string;
+  ingredients: MasterIngredient[];
+}
+
+export interface MasterIngredientListResponse {
+  categories: IngredientCategory[];
+}
+
+/** 냉장고 홈 관련 */
+export interface HomeIngredient {
+  type: IngredientType;
+  referenceId: number;
+  name: string;
+  leftDays: number;
+  imageUrl: string;
+}
+
+export interface RefrigeratorHomeResponse {
+  fridge: HomeIngredient[];
+  freezer: HomeIngredient[];
+  pantry: HomeIngredient[];
+}
+
+/** 식재료 등록 (Bulk) */
+export interface AddIngredientRequest {
+  ingredients: {
+    type: IngredientType;
+    referenceId: number;
+    quantity: number;
+    unit: UnitType | string;
+    storage: StorageType | string;
+    expirationDate: string;
+    memo: string;
+  }[];
+}
+
+/** 식재료 상세 정보 */
+export interface IngredientDetailResponse {
+  ingredientId: number;
+  name: string;
+  storage: StorageType;
   expirationDate: string;
+  quantity: number;
+  unit: UnitType;
+  leftDays: number;
+  memo: string;
+  aiTip: string;
+  imageUrl: string;
 }
 
-export interface IngredientSearchResponse {
-  content: SearchIngredientItem[];
-  page: number;
-  size: number;
-  hasNext: boolean;
+/** 프리뷰 관련 */
+export interface PreviewRequestItem {
+  type: IngredientType;
+  referenceId: number;
 }
 
-// --- [삭제] 관련 인터페이스 ---
-export interface DeleteIngredientsRequest {
-  userIngredientIds: number[];
+export interface PreviewResponseItem {
+  type: IngredientType;
+  referenceId: number;
+  name: string;
+  imageUrl: string;
+  defaultQuantity: number;
+  defaultUnit: UnitType;
+  defaultStorage: StorageType;
+  defaultExpirationDate: string;
 }
 
-export interface DeleteIngredientsResponse {
-  success: boolean;
-  message: string;
-  deletedCount: number;
-}
-// --- [섭취 완료] 관련 인터페이스 ---
-export interface ConsumeRewardResponse {
-  reward: {
-    granted: boolean;
-    points: number;
-    grantedTypes: (
-      | "BASIC_DAILY_FIRST_CONSUME"
-      | "BONUS_URGENT_INGREDIENT_USE"
-    )[];
-  };
+export interface CustomIngredientRequest {
+  name: string;
+  expirationDays: number;
+  storage: StorageType;
+  category: CategoryType;
 }
 
-/** [POST] 식재료 섭취 완료 (리워드 지급 및 삭제) */
-export const consumeIngredients = (userIngredientIds: number[]) => {
-  return api.post<{ status: string; data: ConsumeRewardResponse }>(
-    "/api/users/me/ingredients/consume",
-    { userIngredientIds },
-  );
-};
-/** [DELETE] 내 식재료 삭제 (벌크) */
-export const deleteIngredients = (userIngredientIds: number[]) => {
-  return api.delete<DeleteIngredientsResponse>("/api/users/me/ingredients", {
-    data: { userIngredientIds },
-  });
-};
-
-/** [GET] 내 냉장고 식재료 검색 */
-export const searchIngredients = (term: string, page: number = 0) => {
-  return api.get<{ status: string; data: IngredientSearchResponse }>(
-    `/api/users/me/ingredients/search`,
-    {
-      params: {
-        name: term,
-        page: page,
-        size: 20,
-      },
-    },
-  );
-};
 // --- API 함수 ---
 
-/** [PATCH] 식재료 보관 장소 변경 */
-export const updateIngredientStorage = (
-  ingredientId: number,
-  storage: StorageType,
-) => {
-  return api.patch<{ status: string; data: IngredientDetailResponse }>(
-    `/api/users/me/ingredients/${ingredientId}/storage`,
-    { storage },
-  );
-};
-/** [PATCH] 식재료 유통기한 변경 */
-export const updateIngredientDate = (
-  ingredientId: number,
-  expirationDate: string,
-) => {
-  const formattedDate = expirationDate.replace(/\./g, "-");
-  return api.patch<{ status: string; data: IngredientDetailResponse }>(
-    `/api/users/me/ingredients/${ingredientId}/date`,
-    { expirationDate: formattedDate },
-  );
-};
-
-/** [PATCH] 식재료 수량 변경 */
-export const updateIngredientQuantity = (
-  ingredientId: number,
-  quantity: number,
-) => {
-  return api.patch<{ status: string; data: IngredientDetailResponse }>(
-    `/api/users/me/ingredients/${ingredientId}/quantity`,
-    { quantity },
-  );
-};
-/** [PATCH] 식재료 메모 변경 */
-export const updateIngredientMemo = (ingredientId: number, memo: string) => {
-  return api.patch<{ status: string; data: IngredientDetailResponse }>(
-    `/api/users/me/ingredients/${ingredientId}/memo`,
-    { memo },
-  );
-};
-
-/** [GET] 마스터 식재료 목록 조회 (AddItem 페이지용) */
+/** [GET] 마스터 식재료 목록 조회 */
 export const getMasterIngredientList = () => {
-  return api.get<{
+  return api.get<{ status: string; data: MasterIngredientListResponse }>(
+    "/api/users/me/ingredients/list",
+  );
+};
+
+/** [POST] 식재료 프리뷰 조회 (디폴트값 받아오기) */
+export const getIngredientPreview = (ingredients: PreviewRequestItem[]) => {
+  return api.post<{
     status: string;
-    timestamp: string;
-    data: MasterIngredientListResponse;
-  }>("/api/users/me/ingredients/list");
+    data: { ingredients: PreviewResponseItem[]; count: number };
+  }>("/api/users/me/ingredients/preview", { ingredients });
 };
 
-/** [POST] 식재료 냉장고 최종 추가 */
-export const addIngredientToFridge = (data: AddIngredientRequest) => {
-  // referenceId가 없는 경우를 대비한 방어 로직
-  if (!data.referenceId) {
-    console.error("에러: referenceId가 없습니다!", data);
-  }
-
-  const sanitizedData = {
-    ...data,
-    // referenceId가 문자열인 경우 숫자로 변환
-    referenceId: Number(data.referenceId),
-    storage: (STORAGE_MAP[data.storage] ||
-      data.storage ||
-      "FRIDGE") as StorageType,
-    unit: (UNIT_MAP[data.unit] || data.unit || "PIECE") as UnitType,
-    expirationDate: data.expirationDate.replace(/\./g, "-"),
-  };
-
-  return api.post("/api/users/me/ingredients", sanitizedData);
-};
-
+/** [POST] 커스텀 식재료 등록 */
 export const registerCustomIngredient = (data: CustomIngredientRequest) => {
   return api.post<{
     status: string;
@@ -269,9 +165,124 @@ export const registerCustomIngredient = (data: CustomIngredientRequest) => {
   }>("/api/users/me/ingredients/custom", data);
 };
 
-/** [GET] 냉장고 홈 데이터 조회 (보관 장소별 리스트) */
+/** [POST] 식재료 냉장고 최종 추가 (Bulk) */
+export const addIngredients = (data: AddIngredientRequest) => {
+  // 데이터 정제 (한글 -> 영문 매핑 및 날짜 포맷팅)
+  const sanitizedIngredients = data.ingredients.map((ing) => ({
+    ...ing,
+    referenceId: Number(ing.referenceId),
+    storage: (STORAGE_MAP[ing.storage] ||
+      ing.storage ||
+      "FRIDGE") as StorageType,
+    unit: (UNIT_MAP[ing.unit] || ing.unit || "PIECE") as UnitType,
+    expirationDate: ing.expirationDate.replace(/\./g, "-"),
+  }));
+
+  return api.post("/api/users/me/ingredients", {
+    ingredients: sanitizedIngredients,
+  });
+};
+
+/** [GET] 냉장고 홈 데이터 조회 */
 export const getRefrigeratorHome = () => {
   return api.get<{ status: string; data: RefrigeratorHomeResponse }>(
     "/api/users/me/refrigerator/home",
   );
 };
+
+/** [GET] 식재료 상세 정보 조회 */
+export const getIngredientDetail = (ingredientId: number) => {
+  return api.get<{ status: string; data: IngredientDetailResponse }>(
+    `/api/users/me/refrigerator/${ingredientId}`,
+  );
+};
+
+/** [PATCH] 식재료 정보 수정 (개별) */
+export const updateIngredientDetail = (
+  ingredientId: number,
+  field: "storage" | "date" | "quantity" | "memo",
+  value: any,
+) => {
+  const fieldPathMap = {
+    storage: "storage",
+    date: "date",
+    quantity: "quantity",
+    memo: "memo",
+  };
+
+  const payloadKey = field === "date" ? "expirationDate" : field;
+  let finalValue = value;
+
+  if (field === "date") finalValue = String(value).replace(/\./g, "-");
+  if (field === "storage") finalValue = STORAGE_MAP[value] || value;
+
+  return api.patch<{ status: string; data: IngredientDetailResponse }>(
+    `/api/users/me/ingredients/${ingredientId}/${fieldPathMap[field]}`,
+    { [payloadKey]: finalValue },
+  );
+};
+
+/** [POST] 식재료 섭취 완료 (리워드 지급) */
+export const consumeIngredients = (userIngredientIds: number[]) => {
+  return api.post<{ status: string; data: any }>(
+    "/api/users/me/ingredients/consume",
+    { userIngredientIds },
+  );
+};
+
+/** [DELETE] 내 식재료 삭제 (Bulk) */
+export const deleteIngredients = (userIngredientIds: number[]) => {
+  return api.delete("/api/users/me/ingredients", {
+    data: { userIngredientIds },
+  });
+};
+
+/** [GET] 내 냉장고 식재료 검색 */
+export const searchIngredients = (term: string, page: number = 0) => {
+  return api.get<{ status: string; data: any }>(
+    `/api/users/me/ingredients/search`,
+    {
+      params: { name: term, page, size: 20 },
+    },
+  );
+};
+
+// --- 기존 코드들과의 호환성을 위해 추가하는 코드 ---
+
+/** [PATCH] 식재료 메모 변경 (기존 이름 호환) */
+export const updateIngredientMemo = (ingredientId: number, memo: string) =>
+  updateIngredientDetail(ingredientId, "memo", memo);
+
+/** [PATCH] 식재료 수량 변경 (기존 이름 호환) */
+export const updateIngredientQuantity = (
+  ingredientId: number,
+  quantity: number,
+) => updateIngredientDetail(ingredientId, "quantity", quantity);
+
+/** [PATCH] 식재료 유통기한 변경 (기존 이름 호환) */
+export const updateIngredientDate = (
+  ingredientId: number,
+  expirationDate: string,
+) => updateIngredientDetail(ingredientId, "date", expirationDate);
+
+/** [PATCH] 식재료 보관 장소 변경 (기존 이름 호환) */
+export const updateIngredientStorage = (
+  ingredientId: number,
+  storage: StorageType,
+) => updateIngredientDetail(ingredientId, "storage", storage);
+
+/** [POST] 식재료 냉장고 최종 추가 (이전 단일 등록 함수 호환용) */
+export const addIngredientToFridge = (data: any) => {
+  // 만약 단일 객체가 들어오면 배열로 감싸서 벌크 함수로 전달
+  const payload = data.ingredients ? data : { ingredients: [data] };
+  return addIngredients(payload);
+};
+
+// 섭취 완료 응답 타입이 필요한 경우를 위해 추가
+export interface ConsumeRewardResponse {
+  reward: {
+    granted: boolean;
+    points: number;
+    grantedTypes: string[];
+  };
+}

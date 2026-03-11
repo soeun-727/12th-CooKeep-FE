@@ -3,15 +3,63 @@ import Button from "../../ui/Button";
 import RecentlyAdded from "./components/RecentlyAdded";
 import Selected from "./components/Selected";
 import { useAddIngredientStore } from "../../../stores/useAddIngredientStore";
+import { getIngredientPreview } from "../../../api/ingredient";
+import { useState } from "react";
 
 export default function AddItemFooter() {
   const navigate = useNavigate();
-  const { selectedItems, resetSelected } = useAddIngredientStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const { selectedItems, resetSelected, setDetailedItemsFromPreview } =
+    useAddIngredientStore();
 
-  const handleSubmit = () => {
-    if (selectedItems.length === 0) return;
-    navigate("/fridge/add-detail");
+  const handleSubmit = async () => {
+    if (selectedItems.length === 0 || isLoading) return;
+
+    try {
+      setIsLoading(true);
+
+      const ingredientsPayload = selectedItems.map((item) => ({
+        type: item.type,
+        referenceId: Number(item.id),
+      }));
+
+      const response = await getIngredientPreview(ingredientsPayload);
+
+      if (response.data && response.data.data) {
+        const previewIngredients = response.data.data.ingredients;
+
+        const detailedItems = previewIngredients.map((ing) => {
+          // 🚀 중요: 기존에 선택했던 목록에서 categoryId를 찾아옵니다.
+          const originalItem = selectedItems.find(
+            (s) => Number(s.id) === ing.referenceId,
+          );
+
+          return {
+            id: ing.referenceId,
+            referenceId: ing.referenceId,
+            name: ing.name,
+            image: ing.imageUrl,
+            type: ing.type,
+            quantity: ing.defaultQuantity,
+            unit: ing.defaultUnit,
+            storageType: ing.defaultStorage,
+            expiration: ing.defaultExpirationDate,
+            memo: "",
+            // 🚀 에러 해결: categoryId를 추가합니다. (없으면 기본값 13 등)
+            categoryId: originalItem?.categoryId ?? 13,
+          };
+        });
+
+        setDetailedItemsFromPreview(detailedItems);
+        navigate("/fridge/add-detail");
+      }
+    } catch (error) {
+      console.error("재료 프리뷰 로드 실패:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   return (
     <div className="fixed bottom-[calc(71px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
       <div className="-mb-1">
@@ -27,6 +75,7 @@ export default function AddItemFooter() {
             variant="black"
             onClick={resetSelected}
             className="!w-full"
+            disabled={isLoading}
           >
             선택 초기화
           </Button>
@@ -36,7 +85,7 @@ export default function AddItemFooter() {
             size="S"
             variant="green"
             onClick={handleSubmit}
-            disabled={selectedItems.length === 0}
+            disabled={selectedItems.length === 0 || isLoading}
             className="!w-full"
           >
             재료 추가하기

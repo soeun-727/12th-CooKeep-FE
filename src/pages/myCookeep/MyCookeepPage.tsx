@@ -10,6 +10,7 @@ import { hasTodayRecord } from "../../utils/record";
 import RecordCard from "../../components/myCookeep/record/RecordCard";
 import { getDailyRecipesByDate } from "../../api/myRecipe";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
+import { useCookeepsStore } from "../../stores/useCookeepsStore";
 
 type TabType = "record" | "calendar" | "statistics";
 
@@ -24,6 +25,12 @@ export default function MyCookeepPage() {
   const [enteredByBottomTab, setEnteredByBottomTab] = useState(
     location.state?.fromTab === true,
   );
+  // 쿠키 개수 표시
+  const fetchCookies = useCookeepsStore((s) => s.fetchCookies); // 추가
+
+  useEffect(() => {
+    fetchCookies(); // 추가
+  }, [fetchCookies]);
 
   const getKstToday = () => {
     return new Date(new Date().getTime() + 9 * 60 * 60 * 1000)
@@ -63,11 +70,16 @@ export default function MyCookeepPage() {
   //   }
   // }, [activeTab]); // 여기서 fetchDailyData 의존성 에러가 나면 useCallback으로 감싸거나 일단 이대로 진행하세요.
 
+  // useEffect(() => {
+  //   if (activeTab === "record" && records.length === 0) {
+  //     fetchDailyData(getKstToday());
+  //   }
+  // }, [activeTab, records.length, fetchDailyData]);
   useEffect(() => {
-    if (activeTab === "record" && records.length === 0) {
+    if (activeTab === "record") {
       fetchDailyData(getKstToday());
     }
-  }, [activeTab, records.length, fetchDailyData]);
+  }, [activeTab, fetchDailyData]);
 
   const handleDateClick = (dateStr: string) => {
     const requestDate = dateStr.replaceAll(".", "-");
