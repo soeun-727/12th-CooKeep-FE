@@ -11,6 +11,9 @@ import {
 import Custom from "./components/Custom";
 import {
   getMasterIngredientList,
+  IngredientType,
+  StorageType,
+  UnitType,
   type MasterIngredientListResponse,
 } from "../../../api/ingredient";
 import { DEFAULT_EXPIRY_DAYS } from "../../../constants/expiry";
@@ -32,8 +35,9 @@ export default function AddItem() {
 
   const [masterItems, setMasterItems] = useState<MasterItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const parseMasterData = (data: MasterIngredientListResponse) => {
+  const parseMasterData = (
+    data: MasterIngredientListResponse,
+  ): MasterItem[] => {
     return data.categories.flatMap((cat) => {
       const categoryInfo =
         INGREDIENT_CATEGORIES.find((tc) => tc.serverKey === cat.category) ||
@@ -43,15 +47,19 @@ export default function AddItem() {
         const days =
           ing.expirationDays || DEFAULT_EXPIRY_DAYS[cat.category] || 7;
         return {
-          id: ing.id,
+          id: ing.ingredientId,
+          referenceId: ing.ingredientId,
           name: ing.name,
           image: ing.imageUrl,
           categoryId: categoryInfo.id,
-          type: ing.type || "DEFAULT",
-          unit: ing.unit, // 서버에서 받은 단위
-          storage: ing.storage, // 서버에서 받은 보관장소
-          expirationDays: days, // 계산된 일수 전달
-        } as any;
+          type: (ing.type || "DEFAULT") as IngredientType,
+          storageType: (ing.storage || "FRIDGE") as StorageType,
+          expiration: calculateExpiryDate(days),
+          quantity: 1,
+          unit: (ing.unit || "PIECE") as UnitType,
+
+          memo: "",
+        };
       });
     });
   };

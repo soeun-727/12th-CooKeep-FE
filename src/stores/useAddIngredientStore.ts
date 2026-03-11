@@ -16,7 +16,7 @@ export interface MasterItem {
 }
 
 type EditorType = "storage" | "expiry" | "quantity" | "unit" | "memo";
-// 추가 (MasterItem 위나 아래 아무 데나)
+
 export interface AddSourceItem {
   id: number | string;
   name: string;
@@ -27,6 +27,7 @@ export interface AddSourceItem {
   storage?: StorageType;
   expirationDays?: number;
 }
+
 interface AddIngredientState {
   searchTerm: string;
   selectedCategoryId: number;
@@ -40,6 +41,7 @@ interface AddIngredientState {
   resetSelected: () => void;
   setHistoryItems: (items: MasterItem[]) => void;
   updateItemDetail: (id: string | number, type: EditorType, value: any) => void;
+  setDetailedItemsFromPreview: (items: MasterItem[]) => void;
 }
 
 const REVERSE_STORAGE_MAP: Record<string, StorageType> = {
@@ -80,9 +82,7 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   setSearchTerm: (term) => set({ searchTerm: term }),
   setCategoryId: (id) => set({ selectedCategoryId: id, searchTerm: "" }),
 
-  toggleItem: (
-    item: AddSourceItem, // item 안에 storage, unit, expirationDays가 들어있어야 함
-  ) =>
+  toggleItem: (item) =>
     set((state) => {
       const isExist = state.selectedItems.find((i) => i.id === item.id);
       if (isExist) {
@@ -90,7 +90,6 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
           selectedItems: state.selectedItems.filter((i) => i.id !== item.id),
         };
       }
-
       const today = new Date();
       const daysToAdd = item.expirationDays || 7;
       today.setDate(today.getDate() + daysToAdd);
@@ -115,6 +114,7 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
 
   resetSelected: () => set({ selectedItems: [] }),
   setHistoryItems: (items) => set({ historyItems: items }),
+  setDetailedItemsFromPreview: (items) => set({ selectedItems: items }),
 
   updateItemDetail: (id, type, value) =>
     set((state) => {
