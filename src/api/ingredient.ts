@@ -49,7 +49,7 @@ const UNIT_MAP: Record<string, UnitType> = {
 
 /** 마스터 식재료 (리스트용) */
 export interface MasterIngredient {
-  id: number;
+  ingredientId: number;
   type: IngredientType;
   name: string;
   imageUrl: string;
@@ -244,3 +244,43 @@ export const searchIngredients = (term: string, page: number = 0) => {
     },
   );
 };
+
+// --- 기존 코드들과의 호환성을 위해 추가하는 코드 ---
+
+/** [PATCH] 식재료 메모 변경 (기존 이름 호환) */
+export const updateIngredientMemo = (ingredientId: number, memo: string) =>
+  updateIngredientDetail(ingredientId, "memo", memo);
+
+/** [PATCH] 식재료 수량 변경 (기존 이름 호환) */
+export const updateIngredientQuantity = (
+  ingredientId: number,
+  quantity: number,
+) => updateIngredientDetail(ingredientId, "quantity", quantity);
+
+/** [PATCH] 식재료 유통기한 변경 (기존 이름 호환) */
+export const updateIngredientDate = (
+  ingredientId: number,
+  expirationDate: string,
+) => updateIngredientDetail(ingredientId, "date", expirationDate);
+
+/** [PATCH] 식재료 보관 장소 변경 (기존 이름 호환) */
+export const updateIngredientStorage = (
+  ingredientId: number,
+  storage: StorageType,
+) => updateIngredientDetail(ingredientId, "storage", storage);
+
+/** [POST] 식재료 냉장고 최종 추가 (이전 단일 등록 함수 호환용) */
+export const addIngredientToFridge = (data: any) => {
+  // 만약 단일 객체가 들어오면 배열로 감싸서 벌크 함수로 전달
+  const payload = data.ingredients ? data : { ingredients: [data] };
+  return addIngredients(payload);
+};
+
+// 섭취 완료 응답 타입이 필요한 경우를 위해 추가
+export interface ConsumeRewardResponse {
+  reward: {
+    granted: boolean;
+    points: number;
+    grantedTypes: string[];
+  };
+}

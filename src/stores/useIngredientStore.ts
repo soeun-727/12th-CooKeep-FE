@@ -162,10 +162,6 @@ export const useIngredientStore = create<IngredientState>()(
         };
 
         const serverStorage = mapping[newStorage];
-
-        // 🚀 디버깅 로그 확인
-        console.log("변환 상세:", { input: newStorage, output: serverStorage });
-
         if (!serverStorage) {
           console.error("매핑 실패: 유효하지 않은 보관 장소 타입입니다.");
           return;
