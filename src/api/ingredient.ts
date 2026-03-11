@@ -128,6 +128,13 @@ export interface PreviewResponseItem {
   defaultExpirationDate: string;
 }
 
+export interface CustomIngredientRequest {
+  name: string;
+  expirationDays: number;
+  storage: StorageType;
+  category: CategoryType;
+}
+
 // --- API 함수 ---
 
 /** [GET] 마스터 식재료 목록 조회 */
@@ -146,12 +153,7 @@ export const getIngredientPreview = (ingredients: PreviewRequestItem[]) => {
 };
 
 /** [POST] 커스텀 식재료 등록 */
-export const registerCustomIngredient = (data: {
-  name: string;
-  expirationDays: number;
-  storage: StorageType;
-  category: CategoryType;
-}) => {
+export const registerCustomIngredient = (data: CustomIngredientRequest) => {
   return api.post<{
     status: string;
     data: {
