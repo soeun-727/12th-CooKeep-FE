@@ -16,6 +16,8 @@ import {
 } from "../../api/myRecipe";
 import Button from "../../components/ui/Button";
 import DoublecheckModal from "../../components/ui/DoublecheckModal";
+import { uploadImage } from "../../api/image";
+import imageCompression from "browser-image-compression";
 
 export default function RecordDetailPage() {
   const navigate = useNavigate();
@@ -29,6 +31,12 @@ export default function RecordDetailPage() {
   const [tempTitle, setTempTitle] = useState("");
   const [tempDescription, setTempDescription] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>(
+    undefined,
+  );
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  // 임시 공개여부 state 추가
+  const [tempIsPublic, setTempIsPublic] = useState<boolean>(false);
 
   useEffect(() => {
     if (!recordId) return;
@@ -39,6 +47,8 @@ export default function RecordDetailPage() {
           setRecord(response.data);
           setTempTitle(response.data.title);
           setTempDescription(response.data.description || "");
+          setCurrentImageUrl(response.data.recipeImageUrl || undefined); // ← 추가
+          setTempIsPublic(response.data.isPublic); // ← 추가
         }
       } catch (error) {
         console.error("레시피 상세 조회 실패:", error);
@@ -47,23 +57,23 @@ export default function RecordDetailPage() {
     fetchDetail();
   }, [recordId]);
 
-  const handleVisibilityChange = async (newPublicStatus: boolean) => {
-    if (!record || !recordId || isSubmitting) return;
-    setIsSubmitting(true);
-    try {
-      const response = await updateRecipeVisibility(
-        Number(recordId),
-        newPublicStatus,
-      );
-      if (response.status === "OK") {
-        setRecord({ ...record, isPublic: newPublicStatus });
-      }
-    } catch (error) {
-      alert("공개 범위 변경에 실패했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // const handleVisibilityChange = async (newPublicStatus: boolean) => {
+  //   if (!record || !recordId || isSubmitting) return;
+  //   setIsSubmitting(true);
+  //   try {
+  //     const response = await updateRecipeVisibility(
+  //       Number(recordId),
+  //       newPublicStatus,
+  //     );
+  //     if (response.status === "OK") {
+  //       setRecord({ ...record, isPublic: newPublicStatus });
+  //     }
+  //   } catch {
+  //     alert("공개 범위 변경에 실패했습니다.");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -73,7 +83,7 @@ export default function RecordDetailPage() {
   // 1. 드롭다운 메뉴에서 삭제 버튼 클릭 시
   const handleDeleteClick = () => {
     setIsMenuOpen(false);
-    setIsDeleteModalOpen(true); // 🚀 삭제 확인 모달 열기
+    setIsDeleteModalOpen(true); // 삭제 확인 모달 열기
   };
 
   // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 삭제 로직
@@ -96,10 +106,15 @@ export default function RecordDetailPage() {
 
   // 1. [수정 완료] 버튼 클릭 시 모달만 먼저 띄움
   const handleUpdateClick = () => {
+    const imageChanged =
+      currentImageUrl !== (record?.recipeImageUrl || undefined);
+    const visibilityChanged = tempIsPublic !== record?.isPublic; // ← 추가
     // 변경사항이 아예 없으면 모달 안 띄우고 바로 종료 처리 가능
     if (
       tempTitle === record?.title &&
-      tempDescription === (record?.description || "")
+      tempDescription === (record?.description || "") &&
+      !imageChanged &&
+      !visibilityChanged // ← 추가
     ) {
       setIsEditing(false);
       return;
@@ -110,21 +125,62 @@ export default function RecordDetailPage() {
   // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 수정 API 로직
   const handleConfirmUpdate = async () => {
     if (!record || !recordId) return;
-
     try {
+      const wasImageDeleted = !currentImageUrl && !!record.recipeImageUrl;
+      const isImageChanged =
+        currentImageUrl && currentImageUrl !== record.recipeImageUrl;
+
       const response = await updateDailyRecipe(Number(recordId), {
         title: tempTitle,
         description: tempDescription,
+        ...(isImageChanged && { recipeImageUrl: currentImageUrl }),
+        ...(wasImageDeleted && { deleteRecipeImage: true }),
       });
+      // 공개여부가 바뀐 경우에만 추가 API 호출
+      if (tempIsPublic !== record.isPublic) {
+        await updateRecipeVisibility(Number(recordId), tempIsPublic);
+      }
 
       if (response.status === "OK") {
-        setRecord(response.data);
+        setRecord({ ...response.data, isPublic: tempIsPublic });
+        setCurrentImageUrl(response.data.recipeImageUrl || undefined);
         setIsEditing(false);
       }
-    } catch (error: any) {
-      console.error("수정 실패:", error);
-      alert(error.response?.data?.message || "수정에 실패했습니다.");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      alert(err?.response?.data?.message || "수정에 실패했습니다.");
     }
+  };
+
+  const compressionOptions = {
+    maxSizeMB: 0.7,
+    maxWidthOrHeight: 720,
+    useWebWorker: true,
+    initialQuality: 0.7,
+  };
+
+  const handleImageFileSelect = async (file: File) => {
+    if (file.size > 15 * 1024 * 1024) {
+      alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
+      return;
+    }
+    setIsImageUploading(true);
+    try {
+      const compressedBlob = await imageCompression(file, compressionOptions);
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: compressedBlob.type,
+      });
+      const response = await uploadImage(compressedFile);
+      setCurrentImageUrl(response.data.imageUrl);
+    } catch {
+      alert("이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setIsImageUploading(false);
+    }
+  };
+
+  const handleImageDelete = () => {
+    setCurrentImageUrl(undefined); // UI에서만 제거, 실제 삭제는 수정 완료 시 서버가 처리
   };
 
   if (!record) return null;
@@ -175,9 +231,12 @@ export default function RecordDetailPage() {
         <div className="pt-[51px] flex flex-col gap-[10px]">
           <RecordViewImageCard
             title={tempTitle}
-            imageSrc={record.recipeImageUrl}
+            imageSrc={currentImageUrl} // ← record.recipeImageUrl 대신
             isEditing={isEditing}
+            isImageUploading={isImageUploading} // ← 추가
             onChangeTitle={(newTitle) => setTempTitle(newTitle)}
+            onImageFileSelect={handleImageFileSelect} // ← 추가
+            onImageDelete={handleImageDelete} // ← 추가
           />
 
           {/* 레시피 내용 */}
@@ -224,10 +283,10 @@ export default function RecordDetailPage() {
         <div className="mt-[32px] flex justify-center gap-[9px] pb-9">
           {/* 나만 보기 버튼 */}
           <button
-            disabled={isSubmitting}
-            onClick={() => handleVisibilityChange(false)}
+            disabled={!isEditing}
+            onClick={() => setTempIsPublic(false)} // ← 즉시 API 말고 임시저장
             className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 transition-colors
-              ${record.isPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
+              ${tempIsPublic === false ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
           >
             <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white">
               <img src={privateIcon} className="w-[24px]" alt="private" />
@@ -237,10 +296,10 @@ export default function RecordDetailPage() {
 
           {/* 쿠킵스 공개 버튼 */}
           <button
-            disabled={isSubmitting}
-            onClick={() => handleVisibilityChange(true)}
+            disabled={!isEditing}
+            onClick={() => setTempIsPublic(true)} // ← 즉시 API 말고 임시저장
             className={`flex h-[44px] w-[161px] items-center gap-[10px] rounded-full p-1 transition-colors
-              ${record.isPublic === true ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
+              ${tempIsPublic === true ? "bg-[#96E8BE]" : "bg-[#EBEBEB]"}`}
           >
             <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full bg-white">
               <img src={publicIcon} className="w-[36px]" alt="public" />

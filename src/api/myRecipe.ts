@@ -72,6 +72,8 @@ export interface MyRecipeDetailResponse {
 export interface UpdateDailyRecipeRequest {
   title?: string;
   description?: string;
+  recipeImageUrl?: string; // 추가
+  deleteRecipeImage?: boolean; // 추가
 }
 
 // api/myRecipe.ts
