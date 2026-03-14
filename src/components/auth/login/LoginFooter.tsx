@@ -19,7 +19,7 @@ export default function LoginFooter() {
       </div>
 
       {/* 최하단 */}
-      <div className="mt-8 flex flex-col items-center justify-center">
+      {/* <div className="mt-8 flex flex-col items-center justify-center">
         <div className="flex justify-center gap-4">
           <span className="typo-caption">전화번호를 변경했어요</span>
           <button
@@ -29,7 +29,7 @@ export default function LoginFooter() {
             고객센터
           </button>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
