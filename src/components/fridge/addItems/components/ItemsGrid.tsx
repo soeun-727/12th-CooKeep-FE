@@ -24,10 +24,14 @@ export default function ItemsGrid({ items }: ItemsGridProps) {
               key={item.id}
               name={item.name}
               image={item.image}
+              isCustom={item.type === "CUSTOM"}
               isSelected={selectedItems.some(
                 (i) => String(i.id) === String(item.id),
               )}
               onSelect={() => toggleItem(item)}
+              onDelete={(e) => {
+                console.log(item.name, "삭제 클릭");
+              }}
             />
           ))}
         </div>
