@@ -1,13 +1,36 @@
 import { mainLogo, confetti } from "../../assets";
 import chars from "../../assets/onboarding/Frame 781.svg";
-import Button from "../ui/Button";
 import { useNavigate } from "react-router-dom";
+import Line from "../../assets/login/Horizontal-Line.png";
+import Kakao from "../../assets/login/Kakao.svg";
+// import Google from "../../../assets/login/Google.svg";
 
 const CHAR = [chars];
 const INFINITE_CHAR = [...CHAR, ...CHAR];
 
 export default function Initial() {
   const navigate = useNavigate();
+  const handleKakaoLogin = () => {
+    const CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&prompt=consent`;
+    window.location.href = KAKAO_AUTH_URL;
+  };
+  // const handleGoogleLogin = () => {
+  //   const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  //   const REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+
+  //   const GOOGLE_AUTH_URL =
+  //     `https://accounts.google.com/o/oauth2/v2/auth` +
+  //     `?client_id=${CLIENT_ID}` +
+  //     `&redirect_uri=${REDIRECT_URI}` +
+  //     `&response_type=code` +
+  //     `&scope=openid email profile` +
+  //     `&access_type=offline` +
+  //     `&prompt=consent`;
+
+  //   window.location.href = GOOGLE_AUTH_URL;
+  // };
   return (
     <div className="flex flex-col items-center bg-[#FAFAFA] h-full">
       <div className="absolute top-[3px] left-0 right-0 flex justify-center pointer-events-none z-0">
@@ -30,8 +53,8 @@ export default function Initial() {
       </div>
 
       {/* 애니메이션 */}
-      <div className="relative mt-27 w-full overflow-hidden">
-        <div className="flex h-50 items-end animate-roll-left w-max flex-nowrap mb-26">
+      <div className="relative w-full overflow-hidden flex-1 flex items-center min-h-[200px] my-10">
+        <div className="flex h-50 items-end animate-roll-left w-max flex-nowrap">
           {INFINITE_CHAR.map((char, index) => (
             <img
               key={index}
@@ -42,25 +65,38 @@ export default function Initial() {
           ))}
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center gap-3">
-        {/* 버튼 영역 */}
-        <div className="">
-          <Button variant="green" size="L" onClick={() => navigate("/login")}>
-            시작하기
-          </Button>
-        </div>
-        {/* 로그인 영역 */}
-        <div className="flex gap-4 mb-[34px]">
-          <span className="typo-caption text-zinc-500">
-            아직 계정이 없으신가요?
-          </span>
-          <button
-            onClick={() => navigate("/signup")}
-            className="typo-caption text-zinc-500"
-          >
-            회원가입
+      <div className="flex flex-col items-center justify-center">
+        {/* SNS 로그인 */}
+        <span className="typo-caption text-zinc-500">
+          SNS 계정으로 로그인하기
+        </span>
+
+        <div className="flex items-center justify-center gap-3 mt-4">
+          {/* 간편 로그인 미구현  */}
+          {/* <button onClick={handleGoogleLogin}>
+          <img src={Google} alt="구글 로고" className="" />
+        </button> */}
+
+          <button onClick={handleKakaoLogin}>
+            <img src={Kakao} alt="카카오 로고" className="" />
           </button>
         </div>
+        <div className="flex justify-center items-center gap-[22px] py-[18px]">
+          <img src={Line} alt="구분선" />
+          <span className="typo-caption text-zinc-500">또는</span>
+          <img src={Line} alt="구분선" />
+        </div>
+        <button onClick={() => navigate("/login")}>
+          <span className="typo-caption text-zinc-500">
+            이메일로 로그인하기
+          </span>
+        </button>
+        <button
+          onClick={() => navigate("/guest")}
+          className="mt-5 typo-body !font-bold text-[var(--color-green-deep)] mb-[50px]"
+        >
+          쿠킵이 처음인가요? 둘러보기
+        </button>
       </div>
     </div>
   );

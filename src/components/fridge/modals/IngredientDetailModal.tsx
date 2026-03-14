@@ -233,9 +233,8 @@ export default function IngredientDetailModal({
                   <div className="flex justify-end items-end gap-1">
                     <span className="text-[10px] font-semibold text-[#C3C3C3] leading-4">
                       등록일자{" "}
-                      {displayData.createdAt &&
-                      !isNaN(new Date(displayData.createdAt).getTime())
-                        ? new Date(displayData.createdAt).toLocaleDateString()
+                      {displayData.createdAt
+                        ? displayData.createdAt.replace(/-/g, ".")
                         : "정보 없음"}
                     </span>
                   </div>
