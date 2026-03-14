@@ -286,3 +286,11 @@ export interface ConsumeRewardResponse {
     grantedTypes: string[];
   };
 }
+
+/** 커스텀 식재료 삭제 API */
+export const deleteCustomIngredient = async (customIngredientId: number) => {
+  // 실제 프로젝트의 axios 인스턴스 이름에 맞춰 수정하세요 (예: api, request 등)
+  return await api.delete(
+    `/api/users/me/ingredients/custom/${customIngredientId}`,
+  );
+};

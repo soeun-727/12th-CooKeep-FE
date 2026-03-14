@@ -35,6 +35,11 @@ export default function AddItem() {
 
   const [masterItems, setMasterItems] = useState<MasterItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleDeleteLocal = (id: number | string) => {
+    setMasterItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const parseMasterData = (
     data: MasterIngredientListResponse,
   ): MasterItem[] => {
@@ -124,7 +129,7 @@ export default function AddItem() {
           </div>
         </div>
         <div className="w-full flex-1 min-h-0 overflow-y-auto no-scrollbar scroll-smooth">
-          <ItemsGrid items={filteredItems} />
+          <ItemsGrid items={filteredItems} onDeleteLocal={handleDeleteLocal} />
         </div>
         <div className="shrink-0 w-full pt-35">
           <AddItemFooter />
@@ -135,27 +140,42 @@ export default function AddItem() {
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           categories={INGREDIENT_CATEGORIES}
-          onConfirm={(serverData) => {
-            const newId = serverData.customIngredientId;
+          // AddItem.tsx 하단 Custom 모달 부분
+
+          onConfirm={(serverData: any) => {
+            const newId =
+              serverData?.customIngredientId ||
+              serverData?.data?.customIngredientId;
+            const finalName =
+              serverData?.name || serverData?.data?.name || searchTerm;
+            const finalImage =
+              serverData?.imageUrl || serverData?.data?.imageUrl || defaultChar;
+
+            if (!newId) {
+              alert("식재료 등록 중 오류가 발생했습니다.");
+              return;
+            }
 
             const selectedCat = INGREDIENT_CATEGORIES.find(
               (c) => c.id === selectedCategoryId,
             );
             const serverKey = selectedCat?.serverKey || "ETC";
             const defaultDays = DEFAULT_EXPIRY_DAYS[serverKey] || 7;
-
-            toggleItem({
+            const newCustomItem: MasterItem = {
               id: newId,
               referenceId: newId,
-              name: serverData.name || searchTerm,
-              image: serverData.imageUrl || defaultChar,
+              name: finalName,
+              image: finalImage,
               categoryId: selectedCategoryId || 13,
               type: "CUSTOM" as const,
               storageType: "FRIDGE" as const,
               unit: "PIECE" as const,
               expiration: calculateExpiryDate(defaultDays),
               quantity: 1,
-            } as MasterItem);
+              memo: "",
+            };
+            toggleItem(newCustomItem);
+            setMasterItems((prev) => [newCustomItem, ...prev]);
             setModalOpen(false);
           }}
         />
