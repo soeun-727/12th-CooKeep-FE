@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import WaterModal from "../modals/WaterModal";
+import CookieIcon from "../../../assets/cookeeps/main/water_cookie_cookeeps.svg";
 
 interface WaterButtonProps {
   onSuccess?: () => void; // prop 추가
@@ -35,13 +36,16 @@ export default function WaterButton({ onSuccess }: WaterButtonProps) {
         onClick={() => setModalOpen(true)}
         className={`w-full max-w-[280px] min-w-[211px] h-[40px]
         rounded-full font-bold text-[16px]
+        flex items-center justify-center gap-1
         ${
           disabled
             ? "bg-gray-300 text-gray-400"
             : "bg-[#202020] text-[#32E389] shadow active:scale-95"
         }`}
       >
-        물 주기 (쿠키 10개 사용)
+        물 주기( -{/* 2. 이모지 대신 img 태그 삽입 */}
+        <img src={CookieIcon} alt="cookie" className="w-4 h-4 object-contain" />
+        10)
       </button>
 
       <WaterModal

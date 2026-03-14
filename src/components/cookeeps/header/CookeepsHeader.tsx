@@ -52,7 +52,7 @@ export default function CookeepsHeader() {
         {/* 쿠키 */}
         <button className="flex h-[28px] items-center gap-1 rounded-full bg-[#202020] px-3 py-[2px] text-white shadow">
           <img src={cookieIcon} alt="cookie" className="h-4 w-4" />
-          <span className="text-[12px] font-medium leading-4">{cookie} 개</span>
+          <span className="text-[12px] font-medium leading-4">{cookie} </span>
         </button>
 
         {/* 내 식물 + 툴팁 */}
