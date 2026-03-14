@@ -15,7 +15,7 @@ export default function GuestPage() {
 
   const handleNext = () => {
     if (currentSlide.isLast) {
-      navigate("/login");
+      navigate("/");
     } else {
       setIndex((prev) => prev + 1);
     }
@@ -39,7 +39,7 @@ export default function GuestPage() {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          navigate("/login");
+          navigate("/");
         }}
         className="absolute top-5 right-4 z-20
                inline-flex px-[22px] py-[8px]

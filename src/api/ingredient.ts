@@ -109,6 +109,7 @@ export interface IngredientDetailResponse {
   memo: string;
   aiTip: string;
   imageUrl: string;
+  createdAt: string;
 }
 
 /** 프리뷰 관련 */
