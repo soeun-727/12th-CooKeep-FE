@@ -42,42 +42,44 @@ function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
         </h2>
       </div>
 
-      {isRankingEmpty ? (
-        <div className="flex w-full max-w-[343px] h-[143px] px-[20px] py-[18px] justify-center items-center gap-[24px] rounded-[6px] bg-[#E6FBEBCC]">
-          <img
-            src={thinkingChar}
-            alt="thinking"
-            className="w-[83px] h-[79px] flex-shrink-0"
-          />
+      <div className="relative flex gap-[10px]">
+        {order.map((idx) => {
+          const user = filledUsers[idx];
 
-          <div className="text-[16px] font-semibold leading-[24px] text-[#202020] text-center">
-            쿠킵이들의 식물 살펴보는 중..
-            <br />
-            순위가 곧 공개돼요
-          </div>
-        </div>
-      ) : (
-        <div className="flex gap-[10px]">
-          {order.map((idx) => {
-            const user = filledUsers[idx];
+          // 데이터가 3개 미만일 경우를 대비한 가드
+          // if (!user) return <div key={`empty-${idx}`} className="w-[80px]" />;
+          const isFirst = user.rank === 1;
 
-            // 데이터가 3개 미만일 경우를 대비한 가드
-            // if (!user) return <div key={`empty-${idx}`} className="w-[80px]" />;
-            const isFirst = user.rank === 1;
+          return (
+            <RankingCard
+              key={`${user.rank}-${idx}`}
+              rank={user.rank}
+              name={user.nickname || "쿠킵이"}
+              plantImage={user.profileImageUrl}
+              isFirst={isFirst}
+              score={user.wateringCount}
+            />
+          );
+        })}
 
-            return (
-              <RankingCard
-                key={`${user.rank}-${idx}`}
-                rank={user.rank}
-                name={user.nickname || "쿠킵이"}
-                plantImage={user.profileImageUrl}
-                isFirst={isFirst}
-                score={user.wateringCount}
+        {isRankingEmpty && (
+          <div className="absolute inset-0 flex justify-center items-center rounded-[6px] bg-[#E6FBEBCC]">
+            <div className="flex w-full max-w-[343px] h-[143px] px-[20px] py-[18px] justify-center items-center gap-[24px]">
+              <img
+                src={thinkingChar}
+                alt="thinking"
+                className="w-[83px] h-[79px] flex-shrink-0"
               />
-            );
-          })}
-        </div>
-      )}
+
+              <div className="text-[16px] font-semibold leading-[24px] text-[#202020] text-center">
+                쿠킵이들의 식물 살펴보는 중..
+                <br />
+                순위가 곧 공개돼요
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
