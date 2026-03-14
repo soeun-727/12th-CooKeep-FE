@@ -65,7 +65,7 @@ export default function Initial() {
           ))}
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex flex-col items-center justify-center">
         {/* SNS 로그인 */}
         <span className="typo-caption text-zinc-500">
           SNS 계정으로 로그인하기
