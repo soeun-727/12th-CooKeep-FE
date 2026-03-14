@@ -60,7 +60,7 @@ export default function LoginMain() {
 
   return (
     <>
-      <div className="pt-[133px] w-[352px] mx-auto">
+      <div className="pt-[159px] w-[352px] mx-auto">
         <div className="typo-h1">로그인</div>
 
         {/* 입력 영역 */}
@@ -104,7 +104,7 @@ export default function LoginMain() {
       </div>
 
       {/* 버튼 */}
-      <div className="mt-12 flex justify-center">
+      <div className="mt-[31px] flex justify-center">
         <Button
           size="L"
           disabled={!canLogin || isSubmitting}

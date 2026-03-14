@@ -34,6 +34,7 @@ interface AddIngredientState {
   selectedItems: MasterItem[];
   historyItems: MasterItem[];
   isModalOpen: boolean;
+  deleteMasterItem: (id: string | number) => void;
   setModalOpen: (open: boolean) => void;
   setSearchTerm: (term: string) => void;
   setCategoryId: (id: number) => void;
@@ -78,6 +79,11 @@ export const useAddIngredientStore = create<AddIngredientState>((set) => ({
   selectedItems: [],
   historyItems: [],
   isModalOpen: false,
+  deleteMasterItem: (id) =>
+    set((state) => ({
+      selectedItems: state.selectedItems.filter((i) => i.id !== id),
+      historyItems: state.historyItems.filter((i) => i.id !== id),
+    })),
   setModalOpen: (open) => set({ isModalOpen: open }),
   setSearchTerm: (term) => set({ searchTerm: term }),
   setCategoryId: (id) => set({ selectedCategoryId: id, searchTerm: "" }),
