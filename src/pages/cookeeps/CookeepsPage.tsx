@@ -47,7 +47,9 @@ export default function CookeepsPage() {
 
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
 
-  const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
+  // const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
+  const setFreeWaterMode = useCookeepsStore((s) => s.setFreeWaterMode);
+  const isFreeWaterMode = useCookeepsStore((s) => s.isFreeWaterMode);
   const isPlantLoading = useCookeepsStore((s) => s.isPlantLoading);
 
   /* =========================
@@ -259,8 +261,8 @@ export default function CookeepsPage() {
       {/* 무료 물주기 모달 */}
       <FreeWaterModal
         isOpen={derivedModal === "free"}
-        onConfirm={async () => {
-          await freeWaterPlant(); // 쿠키 소모 없이 물주기 API 호출
+        onConfirm={() => {
+          setFreeWaterMode(true); // 무료 물주기 모드 ON
           setActiveModal(null);
         }}
         onClose={() => {
@@ -338,7 +340,11 @@ export default function CookeepsPage() {
           }
         />
       </div>
-
+      {isFreeWaterMode && (
+        <div className="absolute inset-0 z-60 pointer-events-none">
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+      )}
       {/* ===== 스크롤 영역 ===== */}
 
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-12">
