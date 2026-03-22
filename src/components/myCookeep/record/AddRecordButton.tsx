@@ -18,9 +18,6 @@ export default function AddRecordButton() {
       //   onTouchStart={() => setPressed(true)}
       //   onTouchEnd={() => setPressed(false)}
       className="
-        fixed 
-        bottom-[calc(84px+env(safe-area-inset-bottom))] 
-        right-[31px]
         z-40
         w-12 h-12 bg-black
         rounded-full flex items-center justify-center

@@ -125,7 +125,7 @@ export default function MyCookeepPage() {
   };
 
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="relative flex flex-col h-full min-h-0">
       <div className="shrink-0">
         <Profile />
 

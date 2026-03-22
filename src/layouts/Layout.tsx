@@ -17,7 +17,6 @@ export default function Layout() {
   const showHeader = !isRecipe && !isCookeeps && !isMyCookeep;
   const isFridgeAdd = location.pathname.startsWith("/fridge/add");
   const hideTabBar =
-    isMyCookeep ||
     isFridgeAdd ||
     (isRecipe &&
       (location.pathname.startsWith("/recipe/select") ||
