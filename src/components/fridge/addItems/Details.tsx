@@ -70,7 +70,7 @@ export default function Details() {
 
       {selectedItems.length > 0 && (
         <div className="shrink-0 flex flex-col items-center w-full pt-2 pb-[57px] z-50 px-4">
-          <div className="w-full max-w-[345px] shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+          <div className="w-full max-w-[345px] shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-[11px]">
             <Button
               size="L"
               variant="black"
@@ -78,10 +78,9 @@ export default function Details() {
               disabled={isLoading}
               className="!w-full"
             >
-              {isLoading ? "등록 중..." : "등록 완료"}
+              등록 완료
             </Button>
           </div>
-          <div className="h-[env(safe-area-inset-bottom)]" />
         </div>
       )}
     </div>

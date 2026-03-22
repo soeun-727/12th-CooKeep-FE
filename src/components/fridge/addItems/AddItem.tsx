@@ -52,8 +52,8 @@ export default function AddItem() {
         const days =
           ing.expirationDays || DEFAULT_EXPIRY_DAYS[cat.category] || 7;
         return {
-          id: ing.ingredientId,
-          referenceId: ing.ingredientId,
+          id: ing.id,
+          referenceId: ing.id,
           name: ing.name,
           image: ing.imageUrl,
           categoryId: categoryInfo.id,
