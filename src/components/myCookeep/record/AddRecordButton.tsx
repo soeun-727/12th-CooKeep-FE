@@ -20,8 +20,7 @@ export default function AddRecordButton() {
       className="
         fixed 
         bottom-[calc(84px+env(safe-area-inset-bottom))] 
-        left-1/2 
-        translate-x-[150px] 
+        right-[31px]
         z-40
         w-12 h-12 bg-black
         rounded-full flex items-center justify-center
