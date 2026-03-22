@@ -3,6 +3,7 @@ import { logoBlack, logoChar, logoWhite } from "../assets";
 
 export default function SplashPage() {
   const [step, setStep] = useState(0);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
     const timers = [
@@ -12,13 +13,20 @@ export default function SplashPage() {
       setTimeout(() => setStep(4), 2000), // 캐릭터 숨김 + 로고 중앙
       setTimeout(() => setStep(5), 2700), // 슬로건 등장
       setTimeout(() => setStep(6), 5000), // 유지
+      setTimeout(() => setIsFadingOut(true), 4500),
     ];
 
     return () => timers.forEach(clearTimeout);
   }, []);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-hidden bg-#FAFAFA">
+    <div
+      className={`
+        fixed inset-0 flex items-center justify-center overflow-hidden bg-[#FAFAFA] z-[9999]
+        transition-opacity duration-500 ease-in-out
+        ${isFadingOut ? "opacity-0 pointer-events-none" : "opacity-100"}
+      `}
+    >
       {/* 원형 배경 */}
       <div
         className={`
