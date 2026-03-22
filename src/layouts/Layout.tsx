@@ -15,14 +15,16 @@ export default function Layout() {
   const isCookeeps = location.pathname.startsWith("/cookeeps");
   const isMyCookeep = location.pathname.startsWith("/mycookeep");
   const showHeader = !isRecipe && !isCookeeps && !isMyCookeep;
+  const isFridgeAdd = location.pathname.startsWith("/fridge/add");
+  const hideTabBar =
+    isMyCookeep ||
+    isFridgeAdd ||
+    (isRecipe &&
+      (location.pathname.startsWith("/recipe/select") ||
+        location.pathname.startsWith("/recipe/confirm") ||
+        location.pathname.startsWith("/recipe/loading")));
 
-  const hideTabBarInRecipe =
-    isRecipe &&
-    (location.pathname.startsWith("/recipe/select") ||
-      location.pathname.startsWith("/recipe/confirm") ||
-      location.pathname.startsWith("/recipe/loading") ||
-      isMyCookeep);
-  const showTabBar = !hideTabBarInRecipe;
+  const showTabBar = !hideTabBar;
   const isAllViewMode = location.pathname.includes("fridge") && !!viewCategory;
   useEffect(() => {
     if (!location.pathname.startsWith("/recipe")) {

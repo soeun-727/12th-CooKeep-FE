@@ -45,7 +45,6 @@ export default function AddItemFooter() {
             storageType: ing.defaultStorage,
             expiration: ing.defaultExpirationDate,
             memo: "",
-            // 🚀 에러 해결: categoryId를 추가합니다. (없으면 기본값 13 등)
             categoryId: originalItem?.categoryId ?? 13,
           };
         });
@@ -61,7 +60,7 @@ export default function AddItemFooter() {
   };
 
   return (
-    <div className="fixed bottom-[calc(71px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
+    <div className="fixed bottom-[34px] left-1/2 -translate-x-1/2 z-50 flex flex-col items-center">
       <div className="-mb-1">
         <RecentlyAdded />
       </div>
