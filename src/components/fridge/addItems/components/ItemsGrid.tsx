@@ -53,7 +53,7 @@ export default function ItemsGrid({ items, onDeleteLocal }: ItemsGridProps) {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center pt-4 pb-25">
+    <div className="w-full flex flex-col items-center justify-center pt-[10px] pb-25">
       <div className="flex flex-col w-[294px]">
         <div className="grid grid-cols-3 gap-3 justify-items-center">
           {items.map((item) => (

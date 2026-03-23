@@ -7,6 +7,7 @@ import { useSignupStore } from "./useSignupStore";
 import { usePhoneUpdateStore } from "./usePhoneUpdateStore";
 import { useFindPasswordStore } from "./useFindPasswordStore";
 import { useEditPasswordAuthStore } from "./useEditPasswordAuthStore";
+
 interface SocialLoginPayload {
   userId: number;
   accessToken: string;
@@ -32,6 +33,7 @@ interface AuthState {
   userStatus: string | null;
   nextStep: string | null;
   initialized: boolean;
+  lastLoginAt: number | null;
   initializeAuth: () => void;
   checkAuth: () => void;
   setPhoneNumber: (phone: string) => void;
@@ -55,20 +57,36 @@ export const useAuthStore = create<AuthState>()(
       userStatus: null,
       nextStep: null,
       initialized: false,
+      lastLoginAt: null,
 
-      // 단순히 현재 상태 확인 (필요시 호출)
       checkAuth: () => {
         const token = localStorage.getItem("accessToken");
         set({ isLoggedIn: !!token });
       },
 
-      // 앱 기동 시 실행 (Splash 제어의 핵심)
       initializeAuth: () => {
+        const { lastLoginAt, logout } = get();
         const token = localStorage.getItem("accessToken");
-        set({
-          isLoggedIn: !!token,
-          initialized: true,
-        });
+
+        const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+
+        if (lastLoginAt && now - lastLoginAt > FOURTEEN_DAYS_MS) {
+          clearTokens();
+          logout();
+          set({ initialized: true });
+          return;
+        }
+
+        if (token) {
+          set({
+            isLoggedIn: true,
+            initialized: true,
+            lastLoginAt: now,
+          });
+        } else {
+          set({ initialized: true });
+        }
       },
 
       setPhoneNumber: (phoneNumber) => {
@@ -112,6 +130,7 @@ export const useAuthStore = create<AuthState>()(
             userStatus: data.userStatus,
             isSubmitting: false,
             initialized: true,
+            lastLoginAt: Date.now(),
           });
 
           return {
@@ -150,6 +169,7 @@ export const useAuthStore = create<AuthState>()(
           userStatus: data.userStatus,
           nextStep: data.nextStep,
           initialized: true,
+          lastLoginAt: Date.now(),
         });
       },
 
@@ -169,6 +189,7 @@ export const useAuthStore = create<AuthState>()(
             password: "",
             canLogin: false,
             initialized: true,
+            lastLoginAt: null,
           });
           useSignupStore.getState().resetSignup?.();
           usePhoneUpdateStore.getState().reset?.();
@@ -184,6 +205,7 @@ export const useAuthStore = create<AuthState>()(
         userId: state.userId,
         userStatus: state.userStatus,
         nextStep: state.nextStep,
+        lastLoginAt: state.lastLoginAt,
       }),
     },
   ),

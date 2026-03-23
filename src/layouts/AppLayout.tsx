@@ -19,15 +19,16 @@ export default function AppLayout({ children }: Props) {
   const themeColor = getThemeColorByPath(pathname);
   useThemeColor(themeColor);
   return (
-    <div className="min-h-[100dvh] bg-gray-100 flex justify-center">
+    <div className="min-h-[100dvh] flex justify-center">
       <div
+        style={{ backgroundColor: themeColor }}
         className="
           relative
           w-full
           max-w-[450px]
-          bg-[#FAFAFA]
           min-h-full
           flex flex-col
+          transition-colors duration-300
         "
       >
         {children}
