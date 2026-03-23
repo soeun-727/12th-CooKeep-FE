@@ -49,8 +49,12 @@ export default function AddItem() {
         INGREDIENT_CATEGORIES[12];
 
       return cat.ingredients.map((ing) => {
-        const days =
-          ing.expirationDays || DEFAULT_EXPIRY_DAYS[cat.category] || 7;
+        const days = DEFAULT_EXPIRY_DAYS[cat.category] || 7;
+        const defaultStorage: StorageType =
+          cat.category === "MEAT" || cat.category === "SEAFOOD"
+            ? "FREEZER"
+            : "FRIDGE";
+
         return {
           id: ing.id,
           referenceId: ing.id,
@@ -58,11 +62,12 @@ export default function AddItem() {
           image: ing.imageUrl,
           categoryId: categoryInfo.id,
           type: (ing.type || "DEFAULT") as IngredientType,
-          storageType: (ing.storage || "FRIDGE") as StorageType,
+
+          // 서버 응답에 없으므로 프론트 기본값 매핑
+          storageType: defaultStorage,
+          unit: "PIECE" as UnitType,
           expiration: calculateExpiryDate(days),
           quantity: 1,
-          unit: (ing.unit || "PIECE") as UnitType,
-
           memo: "",
         };
       });
