@@ -70,7 +70,7 @@ export default function App() {
     initializeAuth();
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 5000);
+    }, 5500);
 
     return () => clearTimeout(timer);
   }, [initializeAuth]);
