@@ -63,20 +63,26 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const { initializeAuth, isLoggedIn, initialized } = useAuthStore();
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    return !sessionStorage.getItem("splash_watched");
+  });
   const isCallback = location.pathname.includes("callback");
 
   useEffect(() => {
     initializeAuth();
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 5500);
 
-    return () => clearTimeout(timer);
-  }, [initializeAuth]);
+    if (showSplash) {
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        sessionStorage.setItem("splash_watched", "true");
+      }, 5500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [initializeAuth, showSplash]);
 
   useEffect(() => {
-    if (!initialized || isCallback) return;
+    if (!initialized || isCallback || showSplash) return;
 
     const path = location.pathname;
     const publicPaths = [
@@ -98,7 +104,7 @@ export default function App() {
     }
   }, [initialized, isLoggedIn, location.pathname, navigate, isCallback]);
 
-  if (showSplash && !isCallback && !isLoggedIn) {
+  if (showSplash && !isCallback) {
     return <SplashPage />;
   }
 
