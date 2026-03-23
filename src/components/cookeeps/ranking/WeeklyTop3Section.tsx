@@ -1,6 +1,8 @@
 import { memo } from "react";
 import { WateringRankItem } from "../../../api/cookeeps";
 import RankingCard from "./RankingCard";
+import plantBefore from "../../../assets/cookeeps/plant/plant_before.svg";
+import thinkingChar from "../../../assets/character/thinking_char.svg";
 
 interface WeeklyTop3SectionProps {
   users: WateringRankItem[];
@@ -8,7 +10,28 @@ interface WeeklyTop3SectionProps {
 
 function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
   const order = [1, 0, 2]; // 2-1-3 UI
+  const fallbackUser = {
+    rank: 0,
+    nickname: "식물을 키워보세요!",
+    profileImageUrl: plantBefore,
+    wateringCount: 0,
+  };
+
+  // 항상 3칸 채우기
+  const sortedUsers = [...users].sort((a, b) => a.rank - b.rank);
+
+  const filledUsers = Array.from({ length: 3 }, (_, i) => {
+    const user = sortedUsers[i];
+    return (
+      user ?? {
+        ...fallbackUser,
+        rank: i + 1,
+      }
+    );
+  });
+
   const currentMonth = new Date().getMonth() + 1;
+  const isRankingEmpty = users.length === 0;
 
   return (
     <div className="flex flex-col items-center gap-[26px] w-full min-h-[202px] py-5 rounded-[6px] bg-[#E6FBEB] shadow-md">
@@ -19,17 +42,17 @@ function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
         </h2>
       </div>
 
-      <div className="flex gap-[10px]">
+      <div className="relative flex gap-[10px]">
         {order.map((idx) => {
-          const user = users[idx];
+          const user = filledUsers[idx];
 
           // 데이터가 3개 미만일 경우를 대비한 가드
-          if (!user) return <div key={`empty-${idx}`} className="w-[80px]" />;
+          // if (!user) return <div key={`empty-${idx}`} className="w-[80px]" />;
           const isFirst = user.rank === 1;
 
           return (
             <RankingCard
-              key={user.nickname}
+              key={`${user.rank}-${idx}`}
               rank={user.rank}
               name={user.nickname || "쿠킵이"}
               plantImage={user.profileImageUrl}
@@ -38,6 +61,24 @@ function WeeklyTop3Section({ users }: WeeklyTop3SectionProps) {
             />
           );
         })}
+
+        {isRankingEmpty && (
+          <div className="absolute inset-0 flex justify-center items-center rounded-[6px] bg-[#E6FBEBCC]">
+            <div className="flex w-full max-w-[343px] h-[143px] px-[20px] py-[18px] justify-center items-center gap-[24px]">
+              <img
+                src={thinkingChar}
+                alt="thinking"
+                className="w-[83px] h-[79px] flex-shrink-0"
+              />
+
+              <div className="text-[16px] font-semibold leading-[24px] text-[#202020] text-center">
+                쿠킵이들의 식물 살펴보는 중..
+                <br />
+                순위가 곧 공개돼요
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ export default function RecipeRankCard({
   id,
 }: RecipeRankCardProps) {
   const navigate = useNavigate();
-
+  const isPlaceholder = id === "0";
   return (
     // <div
     //   onClick={() => navigate(`/cookeeps/${id}`)}
@@ -52,8 +52,11 @@ export default function RecipeRankCard({
     //   )}
     // </div>
     <div
-      onClick={() => navigate(`/cookeeps/${id}`)}
-      className="flex items-center w-full h-12 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={() => {
+        if (!isPlaceholder) navigate(`/cookeeps/${id}`);
+      }}
+      className={`flex items-center w-full h-12 px-2 py-2 rounded-lg transition-colors
+${isPlaceholder ? "" : "cursor-pointer hover:bg-gray-50"}`}
     >
       {/* 왼쪽: 순위 + 제목 */}
       <div className="flex items-center gap-3 flex-1 min-w-0">

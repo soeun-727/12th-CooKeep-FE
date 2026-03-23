@@ -49,7 +49,7 @@ const UNIT_MAP: Record<string, UnitType> = {
 
 /** 마스터 식재료 (리스트용) */
 export interface MasterIngredient {
-  ingredientId: number;
+  id: number;
   type: IngredientType;
   name: string;
   imageUrl: string;
