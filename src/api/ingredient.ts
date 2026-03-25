@@ -136,7 +136,28 @@ export interface CustomIngredientRequest {
   category: CategoryType;
 }
 
-// --- API 함수 ---
+// --- 인터페이스 정의 추가 ---
+
+/** 최근 추가한 식재료 아이템 */
+export interface RecentIngredient {
+  ingredientId: number;
+  type: IngredientType;
+  name: string;
+  imageUrl: string;
+}
+
+export interface RecentIngredientResponse {
+  ingredients: RecentIngredient[];
+}
+
+// --- API 함수 추가 ---
+
+/** [GET] 최근 추가한 식재료 목록 조회 */
+export const getRecentIngredients = () => {
+  return api.get<{ status: string; data: RecentIngredientResponse }>(
+    "/api/users/me/ingredients/recent",
+  );
+};
 
 /** [GET] 마스터 식재료 목록 조회 */
 export const getMasterIngredientList = () => {
