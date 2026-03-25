@@ -16,7 +16,7 @@ export default function RecordViewImageCard({
   title,
   imageSrc,
   isEditing,
-  isImageUploading,
+  // isImageUploading,
   onChangeTitle,
   onImageFileSelect,
   onImageDelete,
@@ -44,7 +44,7 @@ export default function RecordViewImageCard({
             className="w-full h-full object-cover"
           />
 
-          {/* 🔥 수정 모드 overlay */}
+          {/* 수정 모드 overlay */}
           {isEditing && (
             <div
               className="absolute inset-0 flex justify-center items-center"
@@ -52,7 +52,7 @@ export default function RecordViewImageCard({
                 background:
                   "linear-gradient(0deg, rgba(32,32,32,0.5), rgba(32,32,32,0.5))",
               }}
-              // onClick={() => setShowImageOptions(false)} // ✅ 추가
+              // onClick={() => setShowImageOptions(false)} // 추가
             >
               <div
                 className="flex flex-col items-center gap-4 w-[208px]"
@@ -103,11 +103,11 @@ export default function RecordViewImageCard({
           )}
 
           {/* 업로드 중 스피너 */}
-          {isImageUploading && (
+          {/* {isImageUploading && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
             </div>
-          )}
+          )} */}
 
           <input
             type="file"
@@ -159,7 +159,6 @@ export default function RecordViewImageCard({
           </div>
         </div>
       </div>
-      {/* ✅ 여기에 넣어야 함 */}
       {isDeleteModalOpen && (
         <div
           className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
