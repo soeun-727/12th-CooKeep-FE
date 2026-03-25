@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import searchIcon from "../../assets/recipe/search.svg";
 import liked from "../../assets/recipe/liked.svg";
 import unliked from "../../assets/recipe/unliked.svg";
-import deleteIcon from "../../assets/recipe/delete.svg";
 import BackHeader from "../../components/ui/BackHeader";
 import Button from "../../components/ui/Button";
 // import { useRecipeStore, type RecipeItem } from "../../stores/useRecipeStore";
@@ -73,17 +72,6 @@ export default function RecordSelectPage() {
             {recipe.title}
           </span>
         </div>
-
-        {/* 삭제 버튼 */}
-        <button
-          type="button"
-          className="w-[14px] h-[18px] flex items-center justify-center"
-          onClick={(e) => {
-            e.stopPropagation(); // 선택 방지
-          }}
-        >
-          <img src={deleteIcon} alt="삭제" />
-        </button>
       </div>
     );
   };
@@ -122,11 +110,11 @@ export default function RecordSelectPage() {
         </div>
       </div>
 
-      <div className="w-full px-4 mt-4">
+      <div className="w-full px-4 mt-7">
         <div className="mx-auto max-w-[361px] flex justify-center">
           <div className="h-[28px] px-2 rounded-[6px] bg-[#202020] flex items-center">
             <span className="typo-caption text-white">
-              쿠킵할 레시피를 선택하세요
+              내가 요리한 레시피들이에요
             </span>
           </div>
         </div>

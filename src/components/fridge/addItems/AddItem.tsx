@@ -11,6 +11,7 @@ import {
 import Custom from "./components/Custom";
 import {
   getMasterIngredientList,
+  getRecentIngredients,
   IngredientType,
   StorageType,
   UnitType,
@@ -49,8 +50,12 @@ export default function AddItem() {
         INGREDIENT_CATEGORIES[12];
 
       return cat.ingredients.map((ing) => {
-        const days =
-          ing.expirationDays || DEFAULT_EXPIRY_DAYS[cat.category] || 7;
+        const days = DEFAULT_EXPIRY_DAYS[cat.category] || 7;
+        const defaultStorage: StorageType =
+          cat.category === "MEAT" || cat.category === "SEAFOOD"
+            ? "FREEZER"
+            : "FRIDGE";
+
         return {
           id: ing.id,
           referenceId: ing.id,
@@ -58,11 +63,12 @@ export default function AddItem() {
           image: ing.imageUrl,
           categoryId: categoryInfo.id,
           type: (ing.type || "DEFAULT") as IngredientType,
-          storageType: (ing.storage || "FRIDGE") as StorageType,
+
+          // 서버 응답에 없으므로 프론트 기본값 매핑
+          storageType: defaultStorage,
+          unit: "PIECE" as UnitType,
           expiration: calculateExpiryDate(days),
           quantity: 1,
-          unit: (ing.unit || "PIECE") as UnitType,
-
           memo: "",
         };
       });
@@ -70,24 +76,53 @@ export default function AddItem() {
   };
 
   useEffect(() => {
-    const fetchMasterList = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await getMasterIngredientList();
+        const [masterRes, recentRes] = await Promise.all([
+          getMasterIngredientList(),
+          getRecentIngredients(),
+        ]);
 
-        if (response.data && response.data.data) {
-          const parsed = parseMasterData(response.data.data);
+        let allMasterItems: MasterItem[] = [];
+        if (masterRes.data && masterRes.data.data) {
+          const parsed = parseMasterData(masterRes.data.data);
           setMasterItems(parsed);
-          setHistoryItems(parsed.slice(0, 3));
+          allMasterItems = parsed;
+        }
+        if (recentRes.data && recentRes.data.data) {
+          const recentIngredients = recentRes.data.data.ingredients.map(
+            (ing) => {
+              const fullInfo = allMasterItems.find(
+                (m) => m.id === ing.ingredientId,
+              );
+
+              return {
+                id: ing.ingredientId,
+                referenceId: ing.ingredientId,
+                name: ing.name,
+                image: ing.imageUrl,
+                type: ing.type as IngredientType,
+                categoryId: fullInfo?.categoryId || 13,
+                storageType: fullInfo?.storageType || ("FRIDGE" as StorageType),
+                unit: fullInfo?.unit || ("PIECE" as UnitType),
+                expiration: fullInfo?.expiration || calculateExpiryDate(7),
+                quantity: 1,
+                memo: "",
+              };
+            },
+          );
+
+          setHistoryItems(recentIngredients);
         }
       } catch (error) {
-        console.error("마스터 목록 로드 실패:", error);
+        console.error("데이터 연동 실패:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchMasterList();
+    fetchData();
   }, [setHistoryItems]);
 
   const filteredItems = masterItems.filter((item) => {
@@ -140,8 +175,6 @@ export default function AddItem() {
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           categories={INGREDIENT_CATEGORIES}
-          // AddItem.tsx 하단 Custom 모달 부분
-
           onConfirm={(serverData: any) => {
             const newId =
               serverData?.customIngredientId ||

@@ -159,9 +159,6 @@ export default function CookeepsPage() {
 
     try {
       const res = await registerPlant(selectedPlantData.id);
-
-      // [디버깅] 콘솔에서 res 객체 전체를 다시 확인해보세요.
-      // 문자열이 어디에 들어있는지 찾는게 핵심입니다.
       console.log("전체 응답 확인:", res);
 
       const store = useCookeepsStore.getState();
@@ -183,8 +180,6 @@ export default function CookeepsPage() {
       });
 
       // 2. 조건문 수정 (가장 중요)
-      // res.data가 객체이므로, 그 안의 message 필드나 혹은 별도의 flag를 확인해야 합니다.
-      // 만약 서버가 응답 객체에 message라는 필드를 따로 준다면 아래처럼 수정하세요.
       const responseMsg = res.data.message;
 
       if (responseMsg === "첫 식물 등록이 완료되었습니다.") {
