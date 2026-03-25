@@ -121,18 +121,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       />
 
       {/* 2. 사이드바 본체 */}
-      <div
-        className={`fixed left-0 z-[130] top-[22px]
-          w-[342px] h-[calc(100%-78px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
-          transform transition-transform duration-300 ease-in-out
-          ${translateClasses}`}
-      >
-        <div className="flex flex-col h-full">
-          {/* 콘텐츠 영역 */}
-          <div className="flex-1 overflow-y-auto py-[35px] px-[26px] no-scrollbar">
-            <div className="w-[290px]">
-              <div
-                className={`
+      <div className="fixed inset-0 flex justify-center z-[130] pointer-events-none">
+        <div className="relative w-full max-w-[450px] h-full overflow-hidden">
+          <div
+            className={`absolute left-0 top-[22px] pointer-events-auto
+              w-[342px] h-[calc(100%-78px)] bg-[#FFFFFFE3] shadow-2xl rounded-tr-[10px] rounded-br-[10px]
+              transform transition-transform duration-300 ease-in-out
+              ${translateClasses}`}
+          >
+            <div className="flex flex-col h-full">
+              {/* 콘텐츠 영역 */}
+              <div className="flex-1 overflow-y-auto py-[35px] px-[26px] no-scrollbar">
+                <div className="w-[290px]">
+                  <div
+                    className={`
     rounded-[6px]
     bg-white
     shadow-[0_4px_16px_-10px_rgba(0,0,0,0.25)]
@@ -151,43 +153,45 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     
     [&_input::placeholder]:text-[#C3C3C3]
   `}
-              >
-                <TextField
-                  value={searchTerm}
-                  placeholder="레시피를 검색하세요"
-                  onChange={(value) => setSearchTerm(value)}
-                  rightIcon={<img src={searchIcon} className="" />}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col items-center w-full mt-2">
-              {isLoading && (
-                <div className="text-center py-4 text-sm text-gray-400">
-                  불러오는 중...
+                  >
+                    <TextField
+                      value={searchTerm}
+                      placeholder="레시피를 검색하세요"
+                      onChange={(value) => setSearchTerm(value)}
+                      rightIcon={<img src={searchIcon} className="" />}
+                    />
+                  </div>
                 </div>
-              )}
-
-              {error && (
-                <div className="text-center py-4 text-sm text-red-400">
-                  {error}
-                </div>
-              )}
-
-              {pinned.length + sessions.length > 0 ? (
-                <>
-                  {pinned.length > 0 && renderRecipeList(pinned, true)}
-
-                  {pinned.length > 0 && sessions.length > 0 && (
-                    <div className="h-6" />
+                <div className="flex flex-col items-center w-full mt-2">
+                  {isLoading && (
+                    <div className="text-center py-4 text-sm text-gray-400">
+                      불러오는 중...
+                    </div>
                   )}
 
-                  {sessions.length > 0 && renderRecipeList(sessions, false)}
-                </>
-              ) : (
-                <div className="text-center py-20 text-gray-400 text-sm">
-                  저장된 레시피가 없습니다.
+                  {error && (
+                    <div className="text-center py-4 text-sm text-red-400">
+                      {error}
+                    </div>
+                  )}
+
+                  {pinned.length + sessions.length > 0 ? (
+                    <>
+                      {pinned.length > 0 && renderRecipeList(pinned, true)}
+
+                      {pinned.length > 0 && sessions.length > 0 && (
+                        <div className="h-6" />
+                      )}
+
+                      {sessions.length > 0 && renderRecipeList(sessions, false)}
+                    </>
+                  ) : (
+                    <div className="text-center py-20 text-gray-400 text-sm">
+                      저장된 레시피가 없습니다.
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
