@@ -64,6 +64,11 @@ export default function CookeepsPage() {
 
   const justHarvestedPlant = useCookeepsStore((s) => s.justHarvestedPlant);
 
+  useEffect(() => {
+    if (justHarvestedPlant && !hasShownHarvestModal) {
+      setShowHarvestModal(true);
+    }
+  }, [justHarvestedPlant, hasShownHarvestModal]);
   // 수확 모달 닫을 때 로직 수정
   const handleHarvestModalClose = async () => {
     const store = useCookeepsStore.getState();
@@ -206,6 +211,13 @@ export default function CookeepsPage() {
 
     fetchAllData();
   }, []);
+
+  useEffect(() => {
+    if (currentPlant && !hasSeenOnboarding) {
+      localStorage.setItem("hasSeenOnboarding", "true");
+      setHasSeenOnboarding(true);
+    }
+  }, [currentPlant, hasSeenOnboarding]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 relative no-scrollbar">
