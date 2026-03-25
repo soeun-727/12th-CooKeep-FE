@@ -74,7 +74,7 @@ interface CookeepsState {
 
   freeWaterPlant: () => void; // 무료물주기
   isFreeWaterMode: boolean;
-setFreeWaterMode: (v: boolean) => void;
+  setFreeWaterMode: (v: boolean) => void;
 
   // addCookie: () => void;
 
@@ -349,7 +349,7 @@ export const useCookeepsStore = create<CookeepsState>((set, get) => ({
     }
   },
   isFreeWaterMode: false,
-setFreeWaterMode: (v) => set({ isFreeWaterMode: v }),
+  setFreeWaterMode: (v) => set({ isFreeWaterMode: v }),
 
   // 포기하기
   abandonPlant: async () => {

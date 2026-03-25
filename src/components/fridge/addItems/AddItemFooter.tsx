@@ -29,7 +29,6 @@ export default function AddItemFooter() {
         const previewIngredients = response.data.data.ingredients;
 
         const detailedItems = previewIngredients.map((ing) => {
-          // 🚀 중요: 기존에 선택했던 목록에서 categoryId를 찾아옵니다.
           const originalItem = selectedItems.find(
             (s) => Number(s.id) === ing.referenceId,
           );
