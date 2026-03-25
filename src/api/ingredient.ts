@@ -54,9 +54,6 @@ export interface MasterIngredient {
   name: string;
   imageUrl: string;
   category: CategoryType;
-  unit: UnitType;
-  expirationDays: number;
-  storage: StorageType;
 }
 
 export interface IngredientCategory {
@@ -189,16 +186,36 @@ export const registerCustomIngredient = (data: CustomIngredientRequest) => {
 
 /** [POST] 식재료 냉장고 최종 추가 (Bulk) */
 export const addIngredients = (data: AddIngredientRequest) => {
-  // 데이터 정제 (한글 -> 영문 매핑 및 날짜 포맷팅)
-  const sanitizedIngredients = data.ingredients.map((ing) => ({
-    ...ing,
-    referenceId: Number(ing.referenceId),
-    storage: (STORAGE_MAP[ing.storage] ||
-      ing.storage ||
-      "FRIDGE") as StorageType,
-    unit: (UNIT_MAP[ing.unit] || ing.unit || "PIECE") as UnitType,
-    expirationDate: ing.expirationDate.replace(/\./g, "-"),
-  }));
+  const sanitizedIngredients = data.ingredients.map((ing) => {
+    const item: any = {
+      type: ing.type.toUpperCase(),
+      referenceId: Number(ing.referenceId),
+    };
+    if (ing.quantity) item.quantity = Number(ing.quantity);
+
+    if (ing.unit) {
+      item.unit = UNIT_MAP[ing.unit] || ing.unit;
+    }
+
+    if (ing.storage) {
+      item.storage = STORAGE_MAP[ing.storage] || ing.storage;
+    }
+
+    if (ing.expirationDate) {
+      item.expirationDate = ing.expirationDate
+        .replace(/\s/g, "")
+        .replace(/\./g, "-");
+      if (item.expirationDate.endsWith("-")) {
+        item.expirationDate = item.expirationDate.slice(0, -1);
+      }
+    }
+
+    if (ing.memo && ing.memo.trim() !== "") {
+      item.memo = ing.memo.trim();
+    }
+
+    return item;
+  });
 
   return api.post("/api/users/me/ingredients", {
     ingredients: sanitizedIngredients,
