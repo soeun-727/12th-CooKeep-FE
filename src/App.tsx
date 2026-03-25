@@ -70,15 +70,17 @@ export default function App() {
 
   useEffect(() => {
     initializeAuth();
+    let splashTimer: ReturnType<typeof setTimeout>;
 
     if (showSplash) {
-      const timer = setTimeout(() => {
-        setShowSplash(false);
+      splashTimer = setTimeout(() => {
         sessionStorage.setItem("splash_watched", "true");
+        setShowSplash(false);
       }, 5500);
-
-      return () => clearTimeout(timer);
     }
+    return () => {
+      if (splashTimer) clearTimeout(splashTimer);
+    };
   }, [initializeAuth, showSplash]);
 
   useEffect(() => {
@@ -102,7 +104,14 @@ export default function App() {
     } else if (!isPublic) {
       navigate("/", { replace: true });
     }
-  }, [initialized, isLoggedIn, location.pathname, navigate, isCallback]);
+  }, [
+    initialized,
+    isLoggedIn,
+    location.pathname,
+    navigate,
+    isCallback,
+    showSplash,
+  ]);
 
   if (showSplash && !isCallback) {
     return <SplashPage />;
