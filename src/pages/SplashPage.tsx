@@ -20,16 +20,18 @@ export default function SplashPage() {
   }, []);
 
   return (
-    <div
-      className={`
-        fixed inset-0 flex items-center justify-center overflow-hidden bg-[#FAFAFA] z-[9999]
-        transition-opacity duration-500 ease-in-out
-        ${isFadingOut ? "opacity-0 pointer-events-none" : "opacity-100"}
-      `}
-    >
-      {/* 원형 배경 */}
+    <div className="fixed inset-0 flex justify-center bg-transparent z-[9999] pointer-events-none">
       <div
         className={`
+          relative w-full max-w-[450px] h-full overflow-hidden bg-[#FAFAFA]
+          transition-opacity duration-500 ease-in-out flex items-center justify-center
+          ${isFadingOut ? "opacity-0" : "opacity-100"}
+          ${isFadingOut ? "" : "pointer-events-auto"} // 페이드아웃 전에는 클릭 방지
+        `}
+      >
+        {/* 원형 배경 */}
+        <div
+          className={`
           absolute
           w-[300vmax] h-[300vmax]
           rounded-full
@@ -40,13 +42,13 @@ export default function SplashPage() {
           transition-all duration-700 ease-out
           ${step >= 2 ? "scale-100 -translate-x-1/2" : "scale-0 -translate-x-1/2"}
         `}
-      />
+        />
 
-      <div className="relative flex items-center justify-center">
-        {/* 캐릭터 */}
-        <img
-          src={logoChar}
-          className={`
+        <div className="relative flex items-center justify-center">
+          {/* 캐릭터 */}
+          <img
+            src={logoChar}
+            className={`
             absolute right-full
             z-30
             transition-all duration-500
@@ -58,11 +60,11 @@ export default function SplashPage() {
                   : "opacity-0"
             }
           `}
-        />
+          />
 
-        {/* 로고 컨테이너 */}
-        <div
-          className={`
+          {/* 로고 컨테이너 */}
+          <div
+            className={`
             relative z-30
             transition-all duration-500
             ${
@@ -73,31 +75,31 @@ export default function SplashPage() {
                   : "translate-x-0"
             }
           `}
-        >
-          {/* 검은 로고 */}
-          <img
-            src={logoBlack}
-            className={`
+          >
+            {/* 검은 로고 */}
+            <img
+              src={logoBlack}
+              className={`
               absolute inset-0
               transition-opacity duration-200
               ${step >= 3 ? "opacity-0" : "opacity-100"}
             `}
-          />
+            />
 
-          {/* 흰 로고 */}
-          <img
-            src={logoWhite}
-            className={`
+            {/* 흰 로고 */}
+            <img
+              src={logoWhite}
+              className={`
               transition-opacity duration-200
               ${step >= 3 ? "opacity-100" : "opacity-0"}
             `}
-          />
+            />
+          </div>
         </div>
-      </div>
 
-      {/* 슬로건 */}
-      <div
-        className={`
+        {/* 슬로건 */}
+        <div
+          className={`
           absolute bottom-0
           z-30
           w-full
@@ -107,8 +109,9 @@ export default function SplashPage() {
           transition-all duration-700 ease-out
           ${step >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}
         `}
-      >
-        맛있는 습관이 이어지는 곳, 쿠킵
+        >
+          맛있는 습관이 이어지는 곳, 쿠킵
+        </div>
       </div>
     </div>
   );

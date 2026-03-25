@@ -34,21 +34,11 @@ export default function PlantGrowthCard({
       PLANT_NAME_TO_TYPE[currentPlant.plantName],
       currentPlant.level,
     );
-    console.log("🌱 currentPlant changed", currentPlant);
   }, [currentPlant]);
 
   const plantName = currentPlant
     ? PLANT_NAME_KR[PLANT_NAME_TO_TYPE[currentPlant.plantName]]
     : "-";
-
-  //  분 단위 자동 새로고침 (정책서 충족)
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     refreshGrowth();
-  //   }, 60 * 1000); // 1분
-
-  //   return () => clearInterval(interval);
-  // }, []);
 
   const date = lastRefreshedAt ?? new Date();
 
