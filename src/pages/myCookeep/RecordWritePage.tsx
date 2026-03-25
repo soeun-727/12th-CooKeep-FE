@@ -24,6 +24,7 @@ export default function RecordWritePage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false); // 추가
 
   const {
     selectedRecipeId,
@@ -253,6 +254,7 @@ export default function RecordWritePage() {
       ) {
         setIsSuccess(true);
         setShowUploadModal(true);
+        setIsUploaded(true); // 추가
       } else {
         alert("업로드에 실패했습니다.");
       }
@@ -269,6 +271,17 @@ export default function RecordWritePage() {
       setIsUploading(false);
     }
   };
+
+  // 추가
+  useEffect(() => {
+    return () => {
+      if (!isUploaded && image?.url) {
+        deleteImage(image.url).catch(() => {
+          console.warn("페이지 이탈 시 이미지 삭제 실패");
+        });
+      }
+    };
+  }, [image?.url, isUploaded]);
 
   if (!recipeDetail) {
     return (
@@ -293,6 +306,16 @@ export default function RecordWritePage() {
               imageSrc={image?.url}
               onClickAddImage={() => fileInputRef.current?.click()}
               onChangeTitle={setTitle}
+              onDeleteImage={async () => {
+                if (image?.url) {
+                  try {
+                    await deleteImage(image.url);
+                  } catch (err) {
+                    console.warn("이미지 삭제 실패 (무시)", err);
+                  }
+                }
+                setImage(null);
+              }}
             />
             <input
               type="file"
