@@ -19,6 +19,12 @@
 /* =========================
    Global Base
 ========================= */
+html,
+body,
+#root {
+  background-color: #fafafa;
+}
+
 html {
   font-family: var(--font-sans);
   -webkit-text-size-adjust: 100%;
@@ -30,7 +36,7 @@ body,
   height: 100%;
   height: -webkit-fill-available;
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   font-synthesis: none;
