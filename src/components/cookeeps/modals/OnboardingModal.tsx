@@ -1,4 +1,4 @@
-import { useEffect, useState, type TouchEvent } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../ui/Button";
 import {
   cookingChar,
@@ -7,6 +7,10 @@ import {
   tree,
   seedling,
   seeds,
+  disabledLeft,
+  disabledRight,
+  abledLeft,
+  abledRight,
 } from "../../../assets";
 
 interface Props {
@@ -50,9 +54,8 @@ const ONBOARDING_DATA = [
 
 export default function OnboardingModal({ isOpen, onClose }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  // 모달 열릴 때마다 인덱스 초기화
+  // 모달이 열릴 때마다 첫 페이지로 초기화
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(0);
@@ -61,97 +64,108 @@ export default function OnboardingModal({ isOpen, onClose }: Props) {
 
   if (!isOpen) return null;
 
+  const isFirstStep = currentIndex === 0;
   const isLastStep = currentIndex === ONBOARDING_DATA.length - 1;
 
-  const handleClose = () => {
-    onClose();
+  const handlePrev = () => {
+    if (!isFirstStep) setCurrentIndex((prev) => prev - 1);
   };
 
-  const handleTouchStart = (e: TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: TouchEvent) => {
-    if (touchStart === null) return;
-
-    const touchEnd = e.changedTouches[0].clientX;
-    const diff = touchStart - touchEnd;
-
-    if (diff > 50 && currentIndex < ONBOARDING_DATA.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    } else if (diff < -50 && currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
-
-    setTouchStart(null);
+  const handleNext = () => {
+    if (!isLastStep) setCurrentIndex((prev) => prev + 1);
   };
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center">
-      {/* backdrop */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      {/* modal */}
+      {/* Modal Container */}
       <div
-        className="relative overflow-hidden w-[258px] h-[260px] rounded-[10px] bg-white flex flex-col items-center justify-center shadow-xl gap-4"
+        className="relative box-border w-[258px] min-w-[258px] max-w-[258px] min-h-[246px] max-h-[267px] px-7 py-[25px] gap-3 rounded-[10px] bg-white flex flex-col shadow-xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* slider content */}
-        <div
-          className="flex transition-transform duration-300 ease-in-out w-full"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          {ONBOARDING_DATA.map((item) => (
-            <div
-              key={item.id}
-              className="min-w-full flex flex-col items-center justify-center px-[25px] pt-[30px] gap-4"
-            >
-              <div className="h-[50px] flex items-center justify-center">
-                {typeof item.img === "string" ? (
-                  <img
-                    src={item.img}
-                    className="max-w-full max-h-full object-contain"
-                    alt="step"
-                  />
-                ) : (
-                  item.img
-                )}
-              </div>
-              <p className="typo-body2 text-center whitespace-pre-wrap leading-tight">
-                {item.text}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div className="flex flex-col items-center gap-4 pb-[25px] w-full">
-          {/* Dots */}
-          <div className="flex gap-2">
-            {ONBOARDING_DATA.map((_, index) => (
+        {/* 1. Slider Content (상하 중앙 정렬을 위해 flex-1 사용) */}
+        <div className="flex-1 w-full overflow-hidden flex items-center">
+          <div
+            className="flex transition-transform duration-300 ease-in-out w-full"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {ONBOARDING_DATA.map((item) => (
               <div
-                key={index}
-                className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  currentIndex === index ? "bg-zinc-500" : "bg-stone-300"
-                }`}
-              />
+                key={item.id}
+                className="min-w-full flex flex-col items-center justify-center shrink-0 gap-4"
+              >
+                <div className="h-15 flex items-center justify-center">
+                  {typeof item.img === "string" ? (
+                    <img
+                      src={item.img}
+                      className="max-w-full max-h-full object-contain"
+                      alt="step"
+                    />
+                  ) : (
+                    item.img
+                  )}
+                </div>
+                <p className="typo-body2 text-center whitespace-pre-wrap leading-5">
+                  {item.text}
+                </p>
+              </div>
             ))}
           </div>
+        </div>
 
-          {/* Button */}
-          {isLastStep && (
-            <div className="px-[25px]">
-              <Button
-                variant="green"
-                className="!w-[202px]"
-                onClick={handleClose}
-              >
+        {/* 2. Footer Area (Dots & Navigation) */}
+        <div className="w-full flex flex-col items-center gap-4 mt-auto">
+          {/* Arrows & Dots Row */}
+          <div className="flex items-center justify-between w-full px-1">
+            {/* 왼쪽 버튼 */}
+            <button
+              onClick={handlePrev}
+              disabled={isFirstStep}
+              className="flex items-center justify-center p-1 w-6 outline-none"
+            >
+              <img
+                src={isFirstStep ? disabledLeft : abledLeft}
+                alt="이전"
+                className="w-2 h-[10px] object-contain"
+              />
+            </button>
+
+            {/* Dots 중앙 정렬 */}
+            <div className="flex justify-center items-center gap-2">
+              {ONBOARDING_DATA.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    currentIndex === index ? "bg-zinc-500" : "bg-stone-300"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* 오른쪽 버튼 */}
+            <button
+              onClick={handleNext}
+              disabled={isLastStep}
+              className="flex items-center justify-center p-1 w-6 outline-none"
+            >
+              <img
+                src={isLastStep ? disabledRight : abledRight}
+                alt="다음"
+                className="w-2 h-[10px] object-contain"
+              />
+            </button>
+          </div>
+
+          {/* 3. 확인 버튼 영역 (높이 고정으로 레이아웃 흔들림 방지) */}
+          <div className="w-full flex items-center justify-center">
+            {isLastStep && (
+              <Button variant="green" className="!w-full" onClick={onClose}>
                 확인
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
