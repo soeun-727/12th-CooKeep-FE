@@ -1,5 +1,5 @@
 // CookeepsPage.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
@@ -15,6 +15,9 @@ import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 import HarvestModal from "../../components/cookeeps/modals/HarvestModal";
 import { getWeeklyRanking, RankingResponse } from "../../api/cookeeps";
+import { useLoadingStore } from "../../stores/useLoadingStore";
+// import { startLoading, stopLoading } from "../../utils/loading";
+import { preloadImage } from "../../utils/preloadImage";
 
 type ActiveModal =
   | "onboarding"
@@ -203,24 +206,71 @@ export default function CookeepsPage() {
   const fetchGrowingPlant = useCookeepsStore((s) => s.fetchGrowingPlant);
   const fetchCookies = useCookeepsStore((s) => s.fetchCookies);
   const fetchMyPlants = useCookeepsStore((s) => s.fetchMyPlants);
+  const setLoading = useLoadingStore((s) => s.setLoading);
+
+  // useEffect(() => {
+  //   const fetchAllData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       await fetchGrowingPlant();
+
+  //       await Promise.all([fetchCookies(), fetchMyPlants()]);
+
+  //       const rankingData = await getWeeklyRanking();
+  //       setRanking(rankingData);
+  //     } catch (e) {
+  //       console.error(e);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchAllData();
+  // }, [fetchGrowingPlant, fetchCookies, fetchMyPlants]);
+  const didFetch = useRef(false);
 
   useEffect(() => {
+    if (didFetch.current) return;
+    didFetch.current = true;
+
     const fetchAllData = async () => {
+      console.log("🔥 start");
+      setLoading(true);
+
       try {
+        console.log("1 fetchGrowingPlant 시작");
         await fetchGrowingPlant();
 
-        fetchCookies();
-        fetchMyPlants();
+        console.log("2 fetchCookies + fetchMyPlants 시작");
+        await Promise.all([fetchCookies(), fetchMyPlants()]);
 
+        console.log("3 ranking 시작");
         const rankingData = await getWeeklyRanking();
+
+        console.log("4 ranking 끝");
         setRanking(rankingData);
+
+        // 여기 핵심 추가
+        const store = useCookeepsStore.getState();
+        const plantName = store.currentPlant?.plantName;
+
+        if (plantName) {
+          const plantData = PLANT_DATA.find((p) => p.text === plantName);
+
+          if (plantData?.img) {
+            await preloadImage(plantData.img); // 이미지 로딩 기다림
+          }
+        }
       } catch (e) {
-        console.error(e);
+        console.error("❌ 에러:", e);
+      } finally {
+        console.log("🔥 end (로딩 끝)");
+        setLoading(false);
       }
     };
 
     fetchAllData();
-  }, [fetchGrowingPlant, fetchCookies, fetchMyPlants]);
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 relative no-scrollbar">
