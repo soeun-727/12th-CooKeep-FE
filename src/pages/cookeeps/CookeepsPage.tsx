@@ -1,5 +1,5 @@
 // CookeepsPage.tsx
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PlantBackground from "../../components/cookeeps/plant/PlantBackground";
 import CookeepsHeader from "../../components/cookeeps/header/CookeepsHeader";
 import PlantGrowthCard from "../../components/cookeeps/plant/PlantGrowthCard";
