@@ -9,7 +9,7 @@ export default function LoadingScreen() {
           <img
             src={loadingChar}
             alt="loading"
-            className="w-[110.375px] h-[91px] opacity-50"
+            className="w-[110.375px] h-[91px]"
           />
 
           <p className="text-[#7D7D7D] text-center text-[12px] leading-[16px] font-medium">
@@ -18,7 +18,7 @@ export default function LoadingScreen() {
         </div>
 
         {/* 점 애니메이션 */}
-        <div className="flex items-end gap-[6px] h-[36px]">
+        <div className="flex items-center gap-[6px] h-[36px]">
           <span className="dot dot1" />
           <span className="dot dot2" />
           <span className="dot dot3" />

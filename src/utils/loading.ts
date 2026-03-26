@@ -1,5 +1,5 @@
 let loadingTimer: ReturnType<typeof setTimeout> | null = null;
-let loadingCount = 0; // ✅ 핵심
+let loadingCount = 0;
 
 export const startLoading = (setLoading: (v: boolean) => void) => {
   loadingCount++;

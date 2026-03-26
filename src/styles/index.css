@@ -313,13 +313,13 @@ body,
 
 @keyframes bounce {
   0%,
-  80%,
+  70%,
   100% {
     transform: translateY(0);
     background-color: #ebebeb;
   }
-  40% {
-    transform: translateY(-8px);
+  35% {
+    transform: translateY(-38px);
     background-color: #7d7d7d;
   }
 }

@@ -4,6 +4,6 @@ export const preloadImage = (src: string) => {
     img.src = src;
 
     img.onload = () => resolve();
-    img.onerror = () => resolve(); // ❗ 실패해도 그냥 넘어가게
+    img.onerror = () => resolve(); //실패해도 그냥 넘어가게
   });
 };
