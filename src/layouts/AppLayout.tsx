@@ -22,7 +22,7 @@ export default function AppLayout({ children }: Props) {
   useThemeColor(themeColor);
   const isLoading = useLoadingStore((s) => s.isLoading);
   return (
-    <div className="min-h-[100dvh] flex justify-center">
+    <div className="min-h-[100dvh] flex justify-center bg-[#FAFAFA]">
       <div
         style={{ backgroundColor: themeColor }}
         className="
