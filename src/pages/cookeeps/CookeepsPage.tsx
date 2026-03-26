@@ -66,11 +66,9 @@ export default function CookeepsPage() {
 
   useEffect(() => {
     if (justHarvestedPlant && !hasShownHarvestModal) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowHarvestModal(true);
     }
   }, [justHarvestedPlant, hasShownHarvestModal]);
-
   // 수확 모달 닫을 때 로직 수정
   const handleHarvestModalClose = async () => {
     const store = useCookeepsStore.getState();
@@ -105,14 +103,6 @@ export default function CookeepsPage() {
 
     return null;
   })();
-
-  // 데이터 통합 페칭 useEffect 내부 또는 별도 추가
-  useEffect(() => {
-    if (currentPlant && !hasSeenOnboarding) {
-      localStorage.setItem("hasSeenOnboarding", "true");
-      setHasSeenOnboarding(true);
-    }
-  }, [currentPlant, hasSeenOnboarding]);
 
   // // 시간계산
   // useEffect(() => {
@@ -200,19 +190,19 @@ export default function CookeepsPage() {
     recipeRanking: [],
   });
 
-  const fetchGrowingPlant = useCookeepsStore((s) => s.fetchGrowingPlant);
-  const fetchCookies = useCookeepsStore((s) => s.fetchCookies);
-  const fetchMyPlants = useCookeepsStore((s) => s.fetchMyPlants);
-
   useEffect(() => {
+    const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
+      useCookeepsStore.getState();
+
     const fetchAllData = async () => {
       try {
-        await fetchGrowingPlant();
+        const [, , , rankingData] = await Promise.all([
+          fetchGrowingPlant(),
+          fetchCookies(),
+          fetchMyPlants(),
+          getWeeklyRanking(),
+        ]);
 
-        fetchCookies();
-        fetchMyPlants();
-
-        const rankingData = await getWeeklyRanking();
         setRanking(rankingData);
       } catch (e) {
         console.error(e);
@@ -220,7 +210,14 @@ export default function CookeepsPage() {
     };
 
     fetchAllData();
-  }, [fetchGrowingPlant, fetchCookies, fetchMyPlants]);
+  }, []);
+
+  useEffect(() => {
+    if (currentPlant && !hasSeenOnboarding) {
+      localStorage.setItem("hasSeenOnboarding", "true");
+      setHasSeenOnboarding(true);
+    }
+  }, [currentPlant, hasSeenOnboarding]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 relative no-scrollbar">
