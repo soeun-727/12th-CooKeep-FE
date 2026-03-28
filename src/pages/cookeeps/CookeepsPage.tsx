@@ -14,7 +14,12 @@ import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 import HarvestModal from "../../components/cookeeps/modals/HarvestModal";
-import { getWeeklyRanking, RankingResponse } from "../../api/cookeeps";
+import {
+  getOnboardingStatus,
+  getWeeklyRanking,
+  RankingResponse,
+  updateOnboardingStatus,
+} from "../../api/cookeeps";
 
 type ActiveModal =
   | "onboarding"
@@ -37,14 +42,43 @@ interface SelectedPlant {
 export default function CookeepsPage() {
   const [toastVisible, setToastVisible] = useState(false);
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(() => {
-    return localStorage.getItem("hasSeenOnboarding") === "true";
-  }); // 온보딩 모달 뜨게 하기 처음 접속 시 한번만 보이도록
+  const [isOnboarded, setIsOnboarded] = useState(true); // 기본값 true (방어적 설정)
+  const [isCheckLoading, setIsCheckLoading] = useState(true); // 서버 확인 전까지 로딩 상태
+
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const res = await getOnboardingStatus();
+        if (res.data && res.data.data) {
+          // 서버 응답이 false이면 모달을 띄우게 됨
+          setIsOnboarded(res.data.data.isCookeepsOnboarded);
+        }
+      } catch (error) {
+        console.error("온보딩 상태 로드 실패:", error);
+        setIsOnboarded(true); // 에러 시 사용자 방해 방지
+      } finally {
+        setIsCheckLoading(false);
+      }
+    };
+    checkOnboardingStatus();
+  }, []);
+
+  const handleOnboardingConfirm = async () => {
+    try {
+      await updateOnboardingStatus(); // PATCH 호출
+      localStorage.setItem("hasSeenOnboarding", "true"); // 로컬 백업
+      setIsOnboarded(true); // 상태 변경하여 모달 닫기
+      setActiveModal("select"); // 다음 단계로
+    } catch (error) {
+      console.error("온보딩 상태 업데이트 실패:", error);
+      setIsOnboarded(true);
+      setActiveModal("select");
+    }
+  };
 
   const status = useCookeepsStore((s) => s.status);
   const abandonPlant = useCookeepsStore((s) => s.abandonPlant);
   const recoverPlant = useCookeepsStore((s) => s.recoverPlant);
-
   const [hideWiltingModal, setHideWiltingModal] = useState(false); // 시드는중
 
   // const freeWaterPlant = useCookeepsStore((s) => s.freeWaterPlant);
@@ -83,36 +117,19 @@ export default function CookeepsPage() {
   };
 
   // 모달 순서 자동 계산
-  const derivedModal: ActiveModal = (() => {
-    // 수확 모달은 별도 관리
-    if (showHarvestModal) return null;
-    if (!hasSeenOnboarding && !currentPlant && !isPlantLoading)
-      return "onboarding";
-    // 3. 강제 지정된 모달(무료 물주기, 선택확인)을 우선적으로 체크
+  const derivedModal = ((): ActiveModal => {
+    if (showHarvestModal || isCheckLoading) return null;
+    if (!isOnboarded && !currentPlant && !isPlantLoading) return "onboarding";
     if (activeModal === "free") return "free";
     if (activeModal === "selected") return "selected";
-
-    // 4. 그 다음 식물이 없을 때 'select'
+    if (activeModal === "harvest") return "harvest"; // 명세에 있다면 추가
     if (isPlantLoading) return null;
-
     if (!currentPlant) return "select";
-
-    // 식물 상태에 따른 모달
     if (status === "wilting") return "wilting";
     if (status === "wilted") return "wilted";
 
     return null;
   })();
-
-  // // 시간계산
-  // useEffect(() => {
-  //   const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
-  //     useCookeepsStore.getState();
-
-  //   fetchGrowingPlant();
-  //   fetchCookies();
-  //   fetchMyPlants();
-  // }, []);
 
   /* =========================
      물 주기 성공
@@ -212,23 +229,12 @@ export default function CookeepsPage() {
     fetchAllData();
   }, []);
 
-  useEffect(() => {
-    if (currentPlant && !hasSeenOnboarding) {
-      localStorage.setItem("hasSeenOnboarding", "true");
-      setHasSeenOnboarding(true);
-    }
-  }, [currentPlant, hasSeenOnboarding]);
-
   return (
     <div className="flex-1 flex flex-col min-h-0 relative no-scrollbar">
       {/* 1. 온보딩 */}
       <OnboardingModal
         isOpen={derivedModal === "onboarding"}
-        onClose={() => {
-          localStorage.setItem("hasSeenOnboarding", "true"); // localStorage 저장
-          setHasSeenOnboarding(true); // 상태 변경
-          setActiveModal("select"); // 다음 모달로 이동
-        }}
+        onClose={handleOnboardingConfirm}
       />
 
       {/* 2. 식물 선택 */}
