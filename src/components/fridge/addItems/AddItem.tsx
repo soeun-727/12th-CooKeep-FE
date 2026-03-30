@@ -21,6 +21,7 @@ import { DEFAULT_EXPIRY_DAYS } from "../../../constants/expiry";
 import { calculateExpiryDate } from "../../../utils/expiryDate";
 import { INGREDIENT_CATEGORIES } from "../../../constants/category";
 import defaultChar from "../../../assets/character/default_char.svg";
+import { loadingChar } from "../../../assets";
 
 export default function AddItem() {
   const {
@@ -136,7 +137,12 @@ export default function AddItem() {
   });
 
   if (isLoading)
-    return <div className="mt-20 text-center">식재료를 불러오는 중...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center text-center mt-50">
+        <img className="opacity-70 w-30 p-5" src={loadingChar} />
+        <div className="typo-body2 text-zinc-500">식재료를 불러오는 중...</div>
+      </div>
+    );
 
   return (
     <>

@@ -55,3 +55,4 @@ export { default as disabledLeft } from "./cookeeps/disabled_left.svg";
 export { default as disabledRight } from "./cookeeps/disabled_right.svg";
 export { default as abledLeft } from "./cookeeps/abled_left.svg";
 export { default as abledRight } from "./cookeeps/abled_right.svg";
+export { default as loadingChar } from "./character/loading_char.svg";
