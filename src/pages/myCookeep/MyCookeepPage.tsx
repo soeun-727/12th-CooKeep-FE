@@ -11,6 +11,8 @@ import RecordCard from "../../components/myCookeep/record/RecordCard";
 import { getDailyRecipesByDate } from "../../api/myRecipe";
 import { useCookeepRecordStore } from "../../stores/useCookeepRecordStore";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
+import { useLoadingStore } from "../../stores/useLoadingStore";
+// import { startLoading, stopLoading } from "../../utils/loading";
 
 type TabType = "record" | "calendar" | "statistics";
 
@@ -49,8 +51,12 @@ export default function MyCookeepPage() {
   //     setRecords([]);
   //   }
   // };
+  const setLoading = useLoadingStore((s) => s.setLoading);
+
   const fetchDailyData = useCallback(
     async (dateStr: string) => {
+      setLoading(true);
+
       try {
         const response = await getDailyRecipesByDate(dateStr);
         if (response.status === "OK") {
@@ -59,6 +65,8 @@ export default function MyCookeepPage() {
       } catch (error) {
         console.error("레시피 조회 실패:", error);
         setRecords([]);
+      } finally {
+        setLoading(false);
       }
     },
     [setRecords],

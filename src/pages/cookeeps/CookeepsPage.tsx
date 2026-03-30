@@ -14,6 +14,9 @@ import WiltedModal from "../../components/cookeeps/modals/WiltedModal";
 import { useCookeepsStore } from "../../stores/useCookeepsStore";
 import FreeWaterModal from "../../components/cookeeps/modals/FreeWaterModal";
 import HarvestModal from "../../components/cookeeps/modals/HarvestModal";
+import { useLoadingStore } from "../../stores/useLoadingStore";
+// import { startLoading, stopLoading } from "../../utils/loading";
+import { preloadImage } from "../../utils/preloadImage";
 import {
   getOnboardingStatus,
   getWeeklyRanking,
@@ -206,12 +209,16 @@ export default function CookeepsPage() {
     wateringRanking: [],
     recipeRanking: [],
   });
+  const setLoading = useLoadingStore((s) => s.setLoading);
 
   useEffect(() => {
     const { fetchGrowingPlant, fetchCookies, fetchMyPlants } =
       useCookeepsStore.getState();
 
     const fetchAllData = async () => {
+      console.log("🔥 start");
+      setLoading(true);
+
       try {
         const [, , , rankingData] = await Promise.all([
           fetchGrowingPlant(),
@@ -221,8 +228,23 @@ export default function CookeepsPage() {
         ]);
 
         setRanking(rankingData);
+
+        // 여기 핵심 추가
+        const store = useCookeepsStore.getState();
+        const plantName = store.currentPlant?.plantName;
+
+        if (plantName) {
+          const plantData = PLANT_DATA.find((p) => p.text === plantName);
+
+          if (plantData?.img) {
+            await preloadImage(plantData.img); // 이미지 로딩 기다림
+          }
+        }
       } catch (e) {
-        console.error(e);
+        console.error("❌ 에러:", e);
+      } finally {
+        console.log("🔥 end (로딩 끝)");
+        setLoading(false);
       }
     };
 

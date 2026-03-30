@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useThemeColor } from "../hooks/useThemeColor";
+import { useLoadingStore } from "../stores/useLoadingStore";
+import LoadingScreen from "../components/ui/LoadingScreen";
 
 type Props = {
   children: React.ReactNode;
@@ -18,6 +20,7 @@ export default function AppLayout({ children }: Props) {
   const { pathname } = useLocation();
   const themeColor = getThemeColorByPath(pathname);
   useThemeColor(themeColor);
+  const isLoading = useLoadingStore((s) => s.isLoading);
   return (
     <div className="min-h-[100dvh] flex justify-center bg-[#FAFAFA]">
       <div
@@ -32,6 +35,13 @@ export default function AppLayout({ children }: Props) {
         "
       >
         {children}
+
+        {/* overlay 방식으로 변경 */}
+        {isLoading && (
+          <div className="absolute inset-0 z-50 bg-white">
+            <LoadingScreen />
+          </div>
+        )}
       </div>
     </div>
   );

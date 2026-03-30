@@ -291,3 +291,35 @@ body,
 .animate-dot-chase {
   animation: dot-chase 1.2s infinite ease-in-out;
 }
+
+/* 로딩화면 용 */
+.dot {
+  width: 9.6px;
+  height: 9.6px;
+  border-radius: 50%;
+  background-color: #ebebeb;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.dot1 {
+  animation-delay: 0s;
+}
+.dot2 {
+  animation-delay: 0.2s;
+}
+.dot3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+    background-color: #ebebeb;
+  }
+  35% {
+    transform: translateY(-38px);
+    background-color: #7d7d7d;
+  }
+}
