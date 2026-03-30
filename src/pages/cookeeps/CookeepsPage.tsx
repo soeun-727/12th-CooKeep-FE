@@ -206,6 +206,7 @@ export default function CookeepsPage() {
   };
 
   const [ranking, setRanking] = useState<RankingResponse>({
+    myWateringCount: 0,
     wateringRanking: [],
     recipeRanking: [],
   });
@@ -368,7 +369,10 @@ export default function CookeepsPage() {
       {/* ===== 스크롤 영역 ===== */}
 
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-12">
-        <WeeklyTop3Section users={ranking?.wateringRanking ?? []} />
+        <WeeklyTop3Section
+          users={ranking?.wateringRanking ?? []}
+          myCount={ranking?.myWateringCount ?? 0}
+        />
         <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />
       </div>
     </div>
