@@ -1,5 +1,5 @@
 // WaterButton.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCookeepsStore } from "../../../stores/useCookeepsStore";
 import WaterModal from "../modals/WaterModal";
 import CookieIcon from "../../../assets/cookeeps/main/water_cookie_cookeeps.svg";
@@ -39,12 +39,53 @@ export default function WaterButton({ onSuccess }: WaterButtonProps) {
   const isModalOpenControlled =
     !isFreeWaterMode && (wantsToWater || isModalOpen);
 
+  // 5초만 보이게 하기
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    if (!isFreeWaterMode) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setShowTooltip(true);
+
+    const timer = setTimeout(() => {
+      setShowTooltip(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [isFreeWaterMode]);
+
   return (
     <>
       <div className="relative flex flex-col items-center">
-        {isFreeWaterMode && (
-          <div className="absolute -top-8 text-[#FFF] text-[12px] font-semibold leading-[26px] whitespace-nowrap text-center font-['Pretendard']">
-            아래 버튼을 클릭하여 식물에게 물을 줘보세요!
+        {isFreeWaterMode && showTooltip && (
+          <div className="absolute -top-10 flex flex-col items-center">
+            {/* 말풍선 본문 */}
+            <div
+              className="
+        inline-flex items-center justify-center
+        px-[10px] py-[3px]
+        bg-white rounded-[3px]
+        text-[8px] font-medium text-[#7D7D7D]
+        leading-[10px] text-center
+        whitespace-nowrap
+        shadow-sm
+      "
+              style={{ width: "164px", height: "23px" }}
+            >
+              아래 버튼을 클릭하여 식물에게 물을 줘보세요!
+            </div>
+
+            {/* ▼ 삼각형 */}
+            <div
+              className="
+        w-0 h-0
+        border-l-[5px] border-l-transparent
+        border-r-[5px] border-r-transparent
+        border-t-[10px] border-t-white
+        -mt-[1px]
+      "
+            />
           </div>
         )}
         <button
