@@ -85,6 +85,7 @@ export const getWeeklyRecipesAll = async (
 };
 
 export interface RankingResponse {
+  myWateringCount: number;
   recipeRanking: RecipeRankItem[];
   wateringRanking: WateringRankItem[];
 }
