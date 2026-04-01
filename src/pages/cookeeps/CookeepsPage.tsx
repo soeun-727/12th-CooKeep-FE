@@ -348,7 +348,7 @@ export default function CookeepsPage() {
         <CookeepsHeader />
       </div>
 
-      <div className="px-4 shrink-0">
+      <div className="px-4 shrink-0 relative z-50">
         <PlantGrowthCard
           plant={currentPlant?.plantName}
           onWaterSuccess={handleWaterSuccess}
@@ -362,7 +362,7 @@ export default function CookeepsPage() {
         />
       </div>
       {isFreeWaterMode && (
-        <div className="absolute inset-0 z-60 pointer-events-none">
+        <div className="absolute inset-0 z-40 pointer-events-none">
           <div className="absolute inset-0 bg-black/40" />
         </div>
       )}
