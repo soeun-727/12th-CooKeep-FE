@@ -16,6 +16,7 @@ import imageCompression from "browser-image-compression";
 import { AxiosError } from "axios";
 import RecipeDetailYoutube from "../../components/cookeeps/recipedetail/RecipeDetailYoutubeCard";
 import PhotoRewardModal from "../../components/myCookeep/record/PhotoRewardModal";
+import WeeklyGoalModal from "../../components/ui/WeeklyGoalModal";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
@@ -153,12 +154,17 @@ export default function RecordWritePage() {
           String(response.status) === "200" ||
           response.status === "OK")
       ) {
-        const rewards = [];
+        const rewards: string[] = [];
 
-        // 레시피 기록 보상 (항상)
+        // 우선순위 A-3: 주간 목표 달성 (먼저 큐에 넣기)
+        if (response.data?.weeklyGoalAchieved) {
+          rewards.push("WEEKLY_GOAL");
+        }
+
+        // 우선순위 C-1: 레시피 기록 보상 (항상)
         rewards.push("RECIPE_RECORD");
 
-        // 사진 있으면 추가
+        // 우선순위 C-2: 사진 있으면 추가
         if (image?.url) {
           rewards.push("PHOTO_UPLOAD");
         }
@@ -166,7 +172,6 @@ export default function RecordWritePage() {
         setRewardQueue(rewards);
 
         setIsSuccess(true);
-        // setShowUploadModal(true);
         setIsUploaded(true);
       } else {
         alert("업로드에 실패했습니다.");
@@ -330,6 +335,23 @@ export default function RecordWritePage() {
           </div>
         </div>
       </div>
+
+      {/* 우선순위 A-3: 주간 목표 달성 모달 */}
+      {rewardQueue[0] === "WEEKLY_GOAL" && (
+        <WeeklyGoalModal
+          isOpen={true}
+          onClose={() => {
+            const nextQueue = [...rewardQueue];
+            nextQueue.shift();
+            if (nextQueue.length > 0) {
+              setRewardQueue(nextQueue);
+            } else {
+              navigate("/mycookeep");
+              setTimeout(() => resetRecord(), 100);
+            }
+          }}
+        />
+      )}
 
       {rewardQueue[0] === "RECIPE_RECORD" && (
         <UploadCompleteModal

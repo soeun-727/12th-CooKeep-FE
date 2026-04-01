@@ -2,6 +2,8 @@ import { useLocation } from "react-router-dom";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { useLoadingStore } from "../stores/useLoadingStore";
 import LoadingScreen from "../components/ui/LoadingScreen";
+import WeeklyGoalModal from "../components/ui/WeeklyGoalModal"; // 추가
+import { useWeeklyGoalStore } from "../stores/useWeeklyGoalStore"; // 추가
 
 type Props = {
   children: React.ReactNode;
@@ -21,6 +23,10 @@ export default function AppLayout({ children }: Props) {
   const themeColor = getThemeColorByPath(pathname);
   useThemeColor(themeColor);
   const isLoading = useLoadingStore((s) => s.isLoading);
+
+  // 추가
+  const { isModalOpen, hideWeeklyGoalModal } = useWeeklyGoalStore();
+
   return (
     <div className="min-h-[100dvh] flex justify-center bg-[#FAFAFA]">
       <div
@@ -42,6 +48,8 @@ export default function AppLayout({ children }: Props) {
             <LoadingScreen />
           </div>
         )}
+        {/* 추가 - z-index를 LoadingScreen(50)보다 높게 */}
+        <WeeklyGoalModal isOpen={isModalOpen} onClose={hideWeeklyGoalModal} />
       </div>
     </div>
   );

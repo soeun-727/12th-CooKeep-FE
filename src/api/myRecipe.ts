@@ -46,6 +46,7 @@ export interface CreateDailyRecipeResponse {
     title: string;
     message: string;
     createdAt: string;
+    weeklyGoalAchieved: boolean; // 추가
   };
 }
 
@@ -185,6 +186,7 @@ export const toggleRecipeLike = async (dailyRecipeId: number) => {
       dailyRecipeId: number;
       likeCount: number;
       liked: boolean;
+      weeklyGoalAchieved: boolean; // 추가
     };
   }>(`/api/daily-recipes/likes/${dailyRecipeId}/toggle`);
 

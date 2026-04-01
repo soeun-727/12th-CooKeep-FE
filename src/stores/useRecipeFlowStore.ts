@@ -8,6 +8,7 @@ import {
   retryAiRecipe,
 } from "../api/aiRecipe";
 import { getAiSessionDetail } from "../api/aiSession";
+import { useWeeklyGoalStore } from "./useWeeklyGoalStore";
 
 import axios from "axios";
 
@@ -179,8 +180,12 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
     try {
       set({ isLoading: true });
-      await completeAiRecipe(sessionId);
-      // 필요하다면 여기서 초기화를 하거나, 성공 메시지를 상태에 저장할 수 있습니다.
+      const response = await completeAiRecipe(sessionId);
+
+      // 추가
+      if (response?.weeklyGoalAchieved) {
+        useWeeklyGoalStore.getState().showWeeklyGoalModal();
+      }
       set({ isCompleted: true, isLoading: false });
     } catch (error) {
       console.error("레시피 채택 실패:", error);
