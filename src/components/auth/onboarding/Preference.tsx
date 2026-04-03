@@ -3,6 +3,7 @@ import { searchIcon } from "../../../assets";
 import searchOnIcon from "../../../assets/fridge/search_on.svg";
 import TextField from "../../ui/TextField";
 import xIcon from "../../../assets/onboarding/x.svg";
+import InputModal from "./InputModal";
 
 // 임시 데이터 (나중에 API로 대체)
 const DUMMY_INGREDIENTS = [
@@ -33,7 +34,7 @@ export default function Preference() {
             key={i}
             className={
               part.toLowerCase() === highlight.toLowerCase()
-                ? "text-(--color-green-deep)" // 원하는 초록색 계열로 설정
+                ? "text-(--color-green-deep)"
                 : ""
             }
           >
@@ -65,6 +66,14 @@ export default function Preference() {
     setSelectedIngredients((prev) =>
       prev.filter((item) => item !== ingredient),
     );
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddCustom = (newIngredient: string) => {
+    setSelectedIngredients((prev) => [...prev, newIngredient]);
+    // 필요한 경우 검색어도 초기화
+    setSearchTerm("");
   };
 
   return (
@@ -127,19 +136,33 @@ export default function Preference() {
         </div>
 
         {hasText && filteredIngredients.length > 0 && (
-          <ul className="absolute top-12 w-[361px] bg-white border border-[#DDDDDD] !border-t-0 rounded-b-[6px] z-50 max-h-[200px] overflow-y-auto">
+          <ul className="absolute top-12 w-[361px] bg-white border border-[#DDDDDD] !border-t-0 rounded-b-[6px] z-50 max-h-[200px] overflow-y-auto typo-body2">
             {filteredIngredients.map((item) => (
               <li
                 key={item}
                 onClick={() => handleSelect(item)}
-                className="h-12 p-3 hover:bg-gray-100 cursor-pointer typo-body2"
+                className="h-12 p-3 hover:bg-gray-100 cursor-pointer"
               >
                 {highlightText(item, searchTerm.trim())}
               </li>
             ))}
+            <li
+              onClick={() => {
+                setIsModalOpen(true);
+              }}
+              className={`h-12 p-3 hover:bg-gray-100 cursor-pointer flex items-center gap-2`}
+            >
+              직접 입력하기
+            </li>
           </ul>
         )}
       </div>
+      {isModalOpen && (
+        <InputModal
+          onClose={() => setIsModalOpen(false)}
+          onConfirm={handleAddCustom}
+        />
+      )}
     </>
   );
 }
