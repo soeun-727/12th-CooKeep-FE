@@ -39,9 +39,10 @@ export default function Onboarding() {
 
   // --- 유효성 검사 로직 ---
   const getIsValid = () => {
-    if (step === 0) return true; // TODO: 새로 추가될 질문의 유효성 검사
-    if (step === 1) return selectedGoal.id !== "";
-    if (step === 2) return goalCount !== "";
+    if (step === 0) return true;
+    if (step === 1) return true;
+    if (step === 2) return selectedGoal.id !== "";
+    if (step === 3) return goalCount !== "";
     return false;
   };
 
@@ -52,13 +53,11 @@ export default function Onboarding() {
   // 1. 건너뛰기 클릭 시 처리 로직
   const skipStep = () => {
     if (step === 2) {
-      // 🚀 Goal에서 건너뛰기를 누르면 Goal과 SpecificGoal 모두 null 처리
       setSelectedGoal({ id: "", title: "" });
       setGoalCount("");
       handleSaveOnboarding(true); // 즉시 저장 혹은 마지막 단계로 점프
       return;
     }
-
     nextStep();
   };
 
@@ -91,8 +90,11 @@ export default function Onboarding() {
 
   // 2. 호출부 수정
   const nextStep = () => {
-    if (step < 3) setStep(step + 1);
-    else handleSaveOnboarding(false); // 일반 '다음' 클릭 시 false 전송
+    if (step < 3) {
+      setStep(step + 1);
+    } else {
+      handleSaveOnboarding(false);
+    }
   };
 
   const prevStep = () => {
