@@ -19,13 +19,15 @@ export default function GuestPage() {
   const renderSlide = () => {
     switch (index) {
       case 0:
-        return <GuestFridge onNext={handleNext} />;
+        return <GuestFridge onNext={handleNext} mode="fridge" />;
       case 1:
         return <GuestAddItem onNext={handleNext} />;
       case 2:
         return <GuestDetails onNext={handleNext} />;
       case 3:
         return <GuestRecipeIntro onNext={handleNext} />;
+      case 4:
+        return <GuestFridge onNext={handleNext} mode="recipe" />;
       default:
         navigate("/");
         return null;
