@@ -36,7 +36,7 @@ export default function Storage({
   const pages = chunk(ingredients, 3);
 
   return (
-    <div className="relative w-full min-h-[173px] isolate">
+    <div className="relative w-full min-h-[173px] z-0">
       {/* 배경 레이어 */}
       <div className="absolute inset-0 -z-10 flex flex-col overflow-hidden pointer-events-none">
         <div className="w-full h-[115px] rounded-t-[36px] bg-[#E3EBE6]" />

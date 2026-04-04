@@ -47,7 +47,6 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
       image: strawberry,
       ...defaultProps,
     },
-
     {
       id: 3,
       name: "계란",
@@ -85,10 +84,10 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
         ]
       : ([] as Ingredient[])),
   ];
+
   const handleItemClick = (id: number) => {
     if (mode !== "recipe") return;
     if (!clickableIds.includes(id)) return;
-
     setSelectedIds((prev) =>
       prev.includes(id)
         ? prev.filter((itemId) => itemId !== id)
@@ -104,7 +103,7 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
         className:
           mode === "recipe" && isDimmed
             ? clickableIds.includes(i.id)
-              ? "relative !z-[100] bg-white rounded-[6px]"
+              ? "relative z-[110]"
               : "pointer-events-none"
             : "",
         isSelected: selectedIds.includes(i.id),
@@ -112,38 +111,50 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
   };
 
   return (
-    <div className="relative w-full h-[100dvh]">
+    <div className="relative w-full h-[100dvh] overflow-hidden">
       {isDimmed && (
-        <div className="fixed inset-0 z-90 bg-neutral-900/50 transition-opacity animate-fadeIn left-1/2 -translate-x-1/2 max-w-[450px] w-full" />
+        <div className="fixed inset-0 z-90 bg-neutral-900/50 left-1/2 -translate-x-1/2 max-w-[450px] w-full" />
       )}
-      <div
-        className="flex flex-col w-full gap-7"
-        onClick={() => setIsDimmed(true)}
-      >
-        <img src={header} />
-        <div className={`flex flex-col gap-[10px] w-full relative`}>
-          <Storage
-            category="냉장"
-            image={fridgeIcon}
-            ingredients={getProcessedIngredients("냉장")}
-            onItemClick={handleItemClick}
-          />
-          <Storage
-            category="냉동"
-            image={freezerIcon}
-            ingredients={getProcessedIngredients("냉동")}
-            onItemClick={handleItemClick}
-          />
-          <Storage
-            category="상온"
-            image={pantryIcon}
-            ingredients={getProcessedIngredients("상온")}
-            onItemClick={handleItemClick}
-          />
+
+      <div className="flex flex-col w-full h-full gap-7 relative">
+        <img src={header} className="w-full" />
+
+        <div className="relative w-full">
+          {/* 딤드 트리거: 딤드가 꺼져있을 때만 위에 나타나서 클릭을 가로챔 */}
+          {mode === "recipe" && !isDimmed && (
+            <div
+              className="absolute inset-0 z-[120] cursor-pointer"
+              onClick={() => setIsDimmed(true)}
+            />
+          )}
+
+          <div
+            className={`flex flex-col gap-[10px] w-full relative ${isDimmed ? "z-[100]" : "z-0"}`}
+          >
+            <Storage
+              category="냉장"
+              image={fridgeIcon}
+              ingredients={getProcessedIngredients("냉장")}
+              onItemClick={handleItemClick}
+            />
+            <Storage
+              category="냉동"
+              image={freezerIcon}
+              ingredients={getProcessedIngredients("냉동")}
+              onItemClick={handleItemClick}
+            />
+            <Storage
+              category="상온"
+              image={pantryIcon}
+              ingredients={getProcessedIngredients("상온")}
+              onItemClick={handleItemClick}
+            />
+          </div>
         </div>
       </div>
+
       {mode === "fridge" ? (
-        <div className="absolute flex flex-col items-end bottom-35 z-[110] right-[31px]">
+        <div className="absolute flex flex-col items-end bottom-35 z-[130] right-[31px]">
           {isDimmed && (
             <img src={notice} alt="click notice" className="w-[270px] -mr-2" />
           )}
@@ -158,7 +169,7 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
           </button>
         </div>
       ) : (
-        <div className="fixed bottom-[34px] left-1/2 -translate-x-1/2 z-[110]">
+        <div className="fixed bottom-[34px] left-1/2 -translate-x-1/2 z-[130]">
           <Button
             size="L"
             variant="black"
