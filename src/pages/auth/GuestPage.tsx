@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GuestFridge from "../../components/auth/guest/GuestFridge";
 import GuestAddItem from "../../components/auth/guest/GuestAddItem";
+import GuestDetails from "../../components/auth/guest/GuestDetails";
 
 export default function GuestPage() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function GuestPage() {
         return <GuestFridge onNext={handleNext} />;
       case 1:
         return <GuestAddItem onNext={handleNext} />;
+      case 2:
+        return <GuestDetails onNext={handleNext} />;
       default:
         navigate("/");
         return null;

@@ -20,7 +20,7 @@ export default function GuestAddItem({ onNext }: GuestAddItemProps) {
 
       {/* 헤더 영역 */}
       <div className="shrink-0 flex justify-center">
-        <img src={header} alt="header" />
+        <img src={header} alt="header" className="w-[361px]" />
       </div>
 
       {/* 그리드 영역 */}
