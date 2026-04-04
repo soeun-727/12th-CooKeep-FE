@@ -3,13 +3,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { guestSlides } from "../../components/auth/guest/guestSlides";
-import { useGuestPreload } from "../../components/auth/guest/useGuestPreload";
 
 export default function GuestPage() {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
-
-  useGuestPreload(index);
 
   const currentSlide = guestSlides[index];
 
@@ -22,18 +19,12 @@ export default function GuestPage() {
   };
 
   return (
-    <div className="relative w-full h-dvh bg-[#474747] overflow-hidden">
+    <div className="relative w-full h-dvh bg-[#FAFAFA] overflow-hidden">
       <div
-        className="absolute inset-0 flex items-center justify-center"
+        className="flex flex-col items-center w-full h-full cursor-pointer"
         onClick={handleNext}
       >
-        <img
-          src={currentSlide.image}
-          alt={`guest-${currentSlide.id}`}
-          className="w-full h-full object-contain"
-          loading="eager"
-          decoding="async"
-        />
+        <div className="w-full flex justify-center">{currentSlide.content}</div>
       </div>
 
       <button
@@ -42,7 +33,7 @@ export default function GuestPage() {
           navigate("/");
         }}
         className="absolute top-5 right-4 z-20
-               inline-flex px-[22px] py-[8px]
+               inline-flex
                items-center justify-center gap-[8px]
                rounded-full
                bg-[rgba(235,235,235,0.8)]
