@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import GuestFridge from "../../components/auth/guest/GuestFridge";
 import GuestAddItem from "../../components/auth/guest/GuestAddItem";
 import GuestDetails from "../../components/auth/guest/GuestDetails";
+import GuestRecipeIntro from "../../components/auth/guest/GuestRecipeIntro";
 
 export default function GuestPage() {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ export default function GuestPage() {
         return <GuestAddItem onNext={handleNext} />;
       case 2:
         return <GuestDetails onNext={handleNext} />;
+      case 3:
+        return <GuestRecipeIntro onNext={handleNext} />;
       default:
         navigate("/");
         return null;
