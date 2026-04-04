@@ -19,7 +19,7 @@ export default function GuestPage() {
       case 0:
         return <GuestFridge onNext={handleNext} />;
       case 1:
-        return <GuestAddItem />;
+        return <GuestAddItem onNext={handleNext} />;
       default:
         navigate("/");
         return null;
