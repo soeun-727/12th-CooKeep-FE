@@ -13,7 +13,11 @@ import FAB from "../../../assets/guest/fab.svg";
 import notice from "../../../assets/guest/fab_2.svg";
 import { useState } from "react";
 
-export default function GuestFridge() {
+interface Props {
+  onNext: () => void;
+}
+
+export default function GuestFridge({ onNext }: Props) {
   const defaultProps = {
     quantity: 1,
     unit: "개",
@@ -74,7 +78,7 @@ export default function GuestFridge() {
         />
       )}
       <div
-        className="flex flex-col w-full gap-7 mt-[62px]"
+        className="flex flex-col w-full gap-7"
         onClick={() => setIsDimmed(true)}
       >
         <img src={header} />
@@ -92,11 +96,17 @@ export default function GuestFridge() {
           />
         </div>
       </div>
-      <div className="absolute flex flex-col items-end bottom-20 z-20 right-[31px]">
+      <div className="absolute flex flex-col items-end bottom-35 z-20 right-[31px]">
         {isDimmed && (
           <img src={notice} alt="click notice" className="w-[270px] -mr-2" />
         )}
-        <button className="active:scale-95 transition-transform">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onNext();
+          }}
+          className="active:scale-95 transition-transform"
+        >
           <img src={FAB} alt="add button" />
         </button>
       </div>

@@ -1,27 +1,37 @@
 // src/pages/auth/GuestPage.tsx
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { guestSlides } from "../../components/auth/guest/guestSlides";
+import GuestFridge from "../../components/auth/guest/GuestFridge";
+import GuestAddItem from "../../components/auth/guest/GuestAddItem";
 
 export default function GuestPage() {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
 
-  const currentSlide = guestSlides[index];
-
+  // 다음 단계로 넘기는 공통 함수
   const handleNext = () => {
-    if (currentSlide.isLast) {
-      navigate("/");
-    } else {
-      setIndex((prev) => prev + 1);
+    setIndex((prev) => prev + 1);
+  };
+
+  // 0: 냉장고 가이드, 1: 재료 추가 가이드, 2: ... 순서대로 배치
+  const renderSlide = () => {
+    switch (index) {
+      case 0:
+        return <GuestFridge onNext={handleNext} />;
+      case 1:
+        return <GuestAddItem />;
+      default:
+        navigate("/");
+        return null;
     }
   };
 
   return (
     <div className="relative w-full h-dvh bg-[#FAFAFA] overflow-hidden">
       <div className="flex flex-col items-center w-full h-full">
-        <div className="w-full flex justify-center">{currentSlide.content}</div>
+        <div className="w-full flex justify-center mt-[62px]">
+          {renderSlide()}
+        </div>
       </div>
 
       <button
@@ -29,17 +39,11 @@ export default function GuestPage() {
           e.stopPropagation();
           navigate("/");
         }}
-        className="absolute top-5 right-4 z-20
-               inline-flex
-               items-center justify-center gap-[8px]
-               rounded-full
-               bg-[rgba(235,235,235,0.8)]
-               text-[#7D7D7D]
-               text-[14px]
-               font-medium
-               leading-[16px]
-               py-2 px-[22px]
-               "
+        className="absolute top-5 right-4 z-50
+                   inline-flex py-2 px-[22px]
+                   items-center justify-center gap-[8px]
+                   rounded-full bg-[rgba(235,235,235,0.8)]
+                   text-[#7D7D7D] text-[14px] font-medium"
       >
         메인으로 돌아가기
       </button>
