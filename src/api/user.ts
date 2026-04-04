@@ -8,8 +8,6 @@ export interface UpdateGoalRequest {
 }
 
 export interface OnboardingData {
-  favoriteFoodTypes: string[] | null;
-  cookingLevel: string | null;
   goalActionType: string | null;
   targetCount: number | null;
 }
