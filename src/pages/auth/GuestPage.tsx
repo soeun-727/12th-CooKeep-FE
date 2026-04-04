@@ -20,10 +20,7 @@ export default function GuestPage() {
 
   return (
     <div className="relative w-full h-dvh bg-[#FAFAFA] overflow-hidden">
-      <div
-        className="flex flex-col items-center w-full h-full cursor-pointer"
-        onClick={handleNext}
-      >
+      <div className="flex flex-col items-center w-full h-full">
         <div className="w-full flex justify-center">{currentSlide.content}</div>
       </div>
 
@@ -40,7 +37,9 @@ export default function GuestPage() {
                text-[#7D7D7D]
                text-[14px]
                font-medium
-               leading-[16px]"
+               leading-[16px]
+               py-2 px-[22px]
+               "
       >
         메인으로 돌아가기
       </button>
