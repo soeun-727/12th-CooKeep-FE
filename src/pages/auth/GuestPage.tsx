@@ -6,7 +6,6 @@ import GuestAddItem from "../../components/auth/guest/GuestAddItem";
 import GuestDetails from "../../components/auth/guest/GuestDetails";
 import GuestRecipeIntro from "../../components/auth/guest/GuestRecipeIntro";
 import GuestRecipeLevel from "../../components/auth/guest/GuestRecipeLevel";
-import RecipeLoadingPage from "../recipe/RecipeLoadingPage";
 import GuestRecipeLoading from "../../components/auth/guest/GuestRecipeLoading";
 import GuestRecipe from "../../components/auth/guest/GuestRecipe";
 
