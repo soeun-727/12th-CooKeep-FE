@@ -5,6 +5,10 @@ import GuestFridge from "../../components/auth/guest/GuestFridge";
 import GuestAddItem from "../../components/auth/guest/GuestAddItem";
 import GuestDetails from "../../components/auth/guest/GuestDetails";
 import GuestRecipeIntro from "../../components/auth/guest/GuestRecipeIntro";
+import GuestRecipeLevel from "../../components/auth/guest/GuestRecipeLevel";
+import RecipeLoadingPage from "../recipe/RecipeLoadingPage";
+import GuestRecipeLoading from "../../components/auth/guest/GuestRecipeLoading";
+import GuestRecipe from "../../components/auth/guest/GuestRecipe";
 
 export default function GuestPage() {
   const navigate = useNavigate();
@@ -28,8 +32,12 @@ export default function GuestPage() {
         return <GuestRecipeIntro onNext={handleNext} />;
       case 4:
         return <GuestFridge onNext={handleNext} mode="recipe" />;
-      // case 5:
-      //   return 0
+      case 5:
+        return <GuestRecipeLevel onNext={handleNext} />;
+      case 6:
+        return <GuestRecipeLoading onNext={handleNext} />;
+      case 7:
+        return <GuestRecipe onNext={handleNext} />;
       default:
         navigate("/");
         return null;

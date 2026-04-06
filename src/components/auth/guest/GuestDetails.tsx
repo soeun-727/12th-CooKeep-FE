@@ -1,7 +1,6 @@
 import header from "../../../assets/guest/back_header.svg";
 import DetailedItem from "../../fridge/addItems/DetailedItem";
 import milk from "../../../assets/guest/milk.svg";
-import { useState } from "react";
 import Button from "../../ui/Button";
 
 interface Props {
@@ -9,8 +8,6 @@ interface Props {
 }
 
 export default function GuestDetails({ onNext }: Props) {
-  const [isDimmed, setIsDimmed] = useState(false);
-
   const guestItem = {
     id: 1,
     name: "우유",
@@ -32,14 +29,7 @@ export default function GuestDetails({ onNext }: Props) {
 
   return (
     <div className="relative flex flex-col items-center w-full h-dvh bg-[#FAFAFA] overflow-hidden">
-      {isDimmed && (
-        <div className="fixed inset-0 z-10 bg-neutral-900/50 transition-opacity animate-fadeIn left-1/2 -translate-x-1/2 max-w-[450px] w-full" />
-      )}
-
-      <div
-        className="w-full h-full flex flex-col items-center"
-        onClick={() => setIsDimmed(true)}
-      >
+      <div className="w-full h-full flex flex-col items-center">
         <div className="flex justify-center shrink-0">
           <img src={header} alt="header" className="w-[361px]" />
         </div>

@@ -108,15 +108,12 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
 
       <div className="flex flex-col w-full h-full gap-7 relative">
         <img src={header} className="w-full" />
-
-        {mode === "recipe" && (
-          <div className="absolute top-[62px]">
-            <FloatingNotice text="요리할 재료를 선택해 주세요" />
-          </div>
-        )}
-
         <div className="relative w-full">
-          {/* 딤드 트리거: 딤드가 꺼져있을 때 냉장고 영역 클릭 시 활성화 (모든 모드 공통) */}
+          {mode === "recipe" && (
+            <div className="absolute -top-[120px] left-1/2 -translate-x-1/2 z-[130] w-full flex justify-center">
+              <FloatingNotice text="요리할 재료를 선택해 주세요" />
+            </div>
+          )}
           {!isDimmed && (
             <div
               className="absolute inset-0 z-[120] cursor-pointer"
