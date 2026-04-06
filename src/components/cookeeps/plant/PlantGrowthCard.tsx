@@ -34,21 +34,11 @@ export default function PlantGrowthCard({
       PLANT_NAME_TO_TYPE[currentPlant.plantName],
       currentPlant.level,
     );
-    console.log("🌱 currentPlant changed", currentPlant);
   }, [currentPlant]);
 
   const plantName = currentPlant
     ? PLANT_NAME_KR[PLANT_NAME_TO_TYPE[currentPlant.plantName]]
     : "-";
-
-  //  분 단위 자동 새로고침 (정책서 충족)
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     refreshGrowth();
-  //   }, 60 * 1000); // 1분
-
-  //   return () => clearInterval(interval);
-  // }, []);
 
   const date = lastRefreshedAt ?? new Date();
 
@@ -63,7 +53,7 @@ export default function PlantGrowthCard({
       {/* 카드 기준 */}
       <div className="relative w-full max-w-[450px] shadow-[0px_1px_8px_-2px_rgba(17,17,17,0.25)] z-50">
         {/* 플로팅 WaterButton */}
-        <div className="absolute -top-[20px] left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute -top-[20px] left-1/2 -translate-x-1/2 z-50">
           <WaterButton
             onSuccess={() => {
               onWaterSuccess?.(); // 부모용

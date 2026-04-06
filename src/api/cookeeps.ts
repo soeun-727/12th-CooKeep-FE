@@ -85,6 +85,7 @@ export const getWeeklyRecipesAll = async (
 };
 
 export interface RankingResponse {
+  myWateringCount: number;
   recipeRanking: RecipeRankItem[];
   wateringRanking: WateringRankItem[];
 }
@@ -93,4 +94,20 @@ export interface RankingResponse {
 export const getWeeklyRanking = async () => {
   const res = await api.get<{ data: RankingResponse }>("/api/cookeeps/ranking");
   return res.data.data;
+};
+
+// api/cookeeps.ts
+
+/** [GET] 온보딩 완료 여부 조회 */
+export const getOnboardingStatus = () => {
+  return api.get<{ status: string; data: { isCookeepsOnboarded: boolean } }>(
+    "/api/cookeeps/onboarding",
+  );
+};
+
+/** [PATCH] 온보딩 완료 상태 업데이트 */
+export const updateOnboardingStatus = () => {
+  return api.patch<{ status: string; message: string }>(
+    "/api/cookeeps/onboarding",
+  );
 };
