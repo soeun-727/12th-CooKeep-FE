@@ -28,6 +28,8 @@ export default function GuestPage() {
         return <GuestRecipeIntro onNext={handleNext} />;
       case 4:
         return <GuestFridge onNext={handleNext} mode="recipe" />;
+      // case 5:
+      //   return 0
       default:
         navigate("/");
         return null;

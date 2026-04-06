@@ -11,6 +11,7 @@ interface ItemProps {
   onSelect?: () => void;
   onDetail?: () => void;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const Item: React.FC<ItemProps> = ({
@@ -21,6 +22,7 @@ const Item: React.FC<ItemProps> = ({
   onSelect,
   onDetail,
   className = "",
+  style,
 }) => {
   return (
     <div
@@ -33,6 +35,7 @@ const Item: React.FC<ItemProps> = ({
             ? "border-emerald-400 bg-[var(--color-green-light)]"
             : "border-[#D1D1D1] bg-white"
         } ${className}`}
+      style={style}
     >
       <div className="flex flex-col items-start">
         <span className="w-[85px] pt-[10px] text-left truncate typo-caption font-bold block leading-none">

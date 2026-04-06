@@ -14,6 +14,8 @@ import FAB from "../../../assets/guest/fab.svg";
 import notice from "../../../assets/guest/fab_2.svg";
 import { useState } from "react";
 import Button from "../../ui/Button";
+import FloatingNotice from "../../recipe/main/FloatingNotice";
+import Item from "../../fridge/items/Item";
 
 interface Props {
   onNext: () => void;
@@ -21,15 +23,18 @@ interface Props {
 }
 
 export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isDimmed, setIsDimmed] = useState(false);
-  const clickableIds = [1, 2, 4, 6];
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const REQUIRED_IDS = [1, 2, 4, 6];
+
   const defaultProps = {
     quantity: 1,
     unit: "개",
     expiryDate: "2026-12-31",
     createdAt: Date.now(),
   };
+
   const guestIngredients: Ingredient[] = [
     {
       id: 1,
@@ -82,33 +87,18 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
             ...defaultProps,
           },
         ]
-      : ([] as Ingredient[])),
+      : []),
   ];
 
-  const handleItemClick = (id: number) => {
-    if (mode !== "recipe") return;
-    if (!clickableIds.includes(id)) return;
+  const handleSelect = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((itemId) => itemId !== id)
-        : [...prev, id],
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
-  const getProcessedIngredients = (category: "냉장" | "냉동" | "상온") => {
-    return guestIngredients
-      .filter((i) => i.category === category)
-      .map((i) => ({
-        ...i,
-        className:
-          mode === "recipe" && isDimmed
-            ? clickableIds.includes(i.id)
-              ? "relative z-[110]"
-              : "pointer-events-none"
-            : "",
-        isSelected: selectedIds.includes(i.id),
-      }));
-  };
+  const isAllRequiredSelected = REQUIRED_IDS.every((id) =>
+    selectedIds.includes(id),
+  );
 
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden">
@@ -119,37 +109,85 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
       <div className="flex flex-col w-full h-full gap-7 relative">
         <img src={header} className="w-full" />
 
+        {mode === "recipe" && (
+          <div className="absolute top-[62px]">
+            <FloatingNotice text="요리할 재료를 선택해 주세요" />
+          </div>
+        )}
+
         <div className="relative w-full">
-          {/* 딤드 트리거: 딤드가 꺼져있을 때만 위에 나타나서 클릭을 가로챔 */}
-          {mode === "recipe" && !isDimmed && (
+          {/* 딤드 트리거: 딤드가 꺼져있을 때 냉장고 영역 클릭 시 활성화 (모든 모드 공통) */}
+          {!isDimmed && (
             <div
               className="absolute inset-0 z-[120] cursor-pointer"
               onClick={() => setIsDimmed(true)}
             />
           )}
 
-          <div
-            className={`flex flex-col gap-[10px] w-full relative ${isDimmed ? "z-[100]" : "z-0"}`}
-          >
+          <div className="flex flex-col gap-[10px] w-full relative z-0">
             <Storage
               category="냉장"
               image={fridgeIcon}
-              ingredients={getProcessedIngredients("냉장")}
-              onItemClick={handleItemClick}
+              ingredients={guestIngredients.filter(
+                (i) => i.category === "냉장",
+              )}
             />
             <Storage
               category="냉동"
               image={freezerIcon}
-              ingredients={getProcessedIngredients("냉동")}
-              onItemClick={handleItemClick}
+              ingredients={guestIngredients.filter(
+                (i) => i.category === "냉동",
+              )}
             />
             <Storage
               category="상온"
               image={pantryIcon}
-              ingredients={getProcessedIngredients("상온")}
-              onItemClick={handleItemClick}
+              ingredients={guestIngredients.filter(
+                (i) => i.category === "상온",
+              )}
             />
           </div>
+
+          {mode === "recipe" && isDimmed && (
+            <div className="absolute inset-0 z-[100] pointer-events-none w-[354px] left-1/2 -translate-x-1/2">
+              <Item
+                image={guestIngredients[0].image}
+                name={guestIngredients[0].name}
+                leftDays={guestIngredients[0].dDay}
+                isSelected={selectedIds.includes(1)}
+                onSelect={() => handleSelect(1)}
+                className="absolute !z-[110] pointer-events-auto"
+                style={{ top: "55px", left: "0px" }}
+              />
+              <Item
+                image={guestIngredients[1].image}
+                name={guestIngredients[1].name}
+                leftDays={guestIngredients[1].dDay}
+                isSelected={selectedIds.includes(2)}
+                onSelect={() => handleSelect(2)}
+                className="absolute !z-[110] pointer-events-auto"
+                style={{ top: "55px", left: "120px" }}
+              />
+              <Item
+                image={guestIngredients[5].image}
+                name={guestIngredients[5].name}
+                leftDays={guestIngredients[5].dDay}
+                isSelected={selectedIds.includes(6)}
+                onSelect={() => handleSelect(6)}
+                className="absolute !z-[110] pointer-events-auto"
+                style={{ top: "238px", left: "0px" }}
+              />
+              <Item
+                image={guestIngredients[3].image}
+                name={guestIngredients[3].name}
+                leftDays={guestIngredients[3].dDay}
+                isSelected={selectedIds.includes(4)}
+                onSelect={() => handleSelect(4)}
+                className="absolute !z-[110] pointer-events-auto"
+                style={{ top: "421px", left: "0px" }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -173,8 +211,8 @@ export default function GuestFridge({ onNext, mode = "fridge" }: Props) {
           <Button
             size="L"
             variant="black"
-            disabled={selectedIds.length === 0}
             onClick={onNext}
+            disabled={!isAllRequiredSelected}
           >
             선택 완료
           </Button>
