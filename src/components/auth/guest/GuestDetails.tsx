@@ -1,6 +1,6 @@
 import header from "../../../assets/guest/back_header.svg";
 import DetailedItem from "../../fridge/addItems/DetailedItem";
-import milk from "../../../assets/guest/milk.svg";
+import milk from "../../../assets/guest/bagel.svg";
 import Button from "../../ui/Button";
 
 interface Props {
@@ -10,17 +10,17 @@ interface Props {
 export default function GuestDetails({ onNext }: Props) {
   const guestItem = {
     id: 1,
-    name: "우유",
+    name: "베이글",
     image: milk,
-    category: "냉장",
+    category: "냉동",
     quantity: 1,
     unit: "개",
     expiryDate: "2026-12-31",
     dDay: 1,
     createdAt: Date.now(),
     categoryId: 1,
-    type: "냉장" as any,
-    storageType: "냉장",
+    type: "냉동" as any,
+    storageType: "냉동",
     expiration: "2026-12-31",
     onIncrease: () => {},
     onDecrease: () => {},
