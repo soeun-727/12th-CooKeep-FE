@@ -83,7 +83,7 @@ api.interceptors.response.use(
           !window.location.pathname.includes("/login") &&
           !window.location.pathname.includes("/auth")
         ) {
-          window.location.href = "/login";
+          window.location.href = "/";
         }
 
         return Promise.reject(refreshError);

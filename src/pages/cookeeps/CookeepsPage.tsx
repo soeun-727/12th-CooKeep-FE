@@ -206,6 +206,7 @@ export default function CookeepsPage() {
   };
 
   const [ranking, setRanking] = useState<RankingResponse>({
+    myWateringCount: 0,
     wateringRanking: [],
     recipeRanking: [],
   });
@@ -347,7 +348,7 @@ export default function CookeepsPage() {
         <CookeepsHeader />
       </div>
 
-      <div className="px-4 shrink-0">
+      <div className="px-4 shrink-0 relative z-50">
         <PlantGrowthCard
           plant={currentPlant?.plantName}
           onWaterSuccess={handleWaterSuccess}
@@ -361,14 +362,17 @@ export default function CookeepsPage() {
         />
       </div>
       {isFreeWaterMode && (
-        <div className="absolute inset-0 z-60 pointer-events-none">
+        <div className="absolute inset-0 z-40 pointer-events-none">
           <div className="absolute inset-0 bg-black/40" />
         </div>
       )}
       {/* ===== 스크롤 영역 ===== */}
 
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 space-y-6 pt-5 pb-12">
-        <WeeklyTop3Section users={ranking?.wateringRanking ?? []} />
+        <WeeklyTop3Section
+          users={ranking?.wateringRanking ?? []}
+          myCount={ranking?.myWateringCount ?? 0}
+        />
         <WeeklyRecipeSection topRecipes={ranking?.recipeRanking ?? []} />
       </div>
     </div>
