@@ -12,14 +12,18 @@ export default function KakaoLoginCallback() {
     const handleLogin = async () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get("code");
-      const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI || "";
+
+      // 환경 변수 로드
+      const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 
       if (!code || hasCalledAPI.current) return;
       hasCalledAPI.current = true;
 
       try {
+        // 주소를 직접 넣지 않고 환경 변수를 조합하여 호출
         const res = await fetch(
-          `https://api.cookeep.store/api/auth/login/kakao?code=${code}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`,
+          `${BASE_URL}/api/auth/login/kakao?code=${code}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`,
         );
 
         if (!res.ok) {
@@ -33,7 +37,6 @@ export default function KakaoLoginCallback() {
         if (response.status === "OK" || response.status === 200) {
           const { data } = response;
 
-          // 1. 모든 유저 정보(상태 포함)를 스토어에 먼저 저장
           loginSocial({
             userId: data.userId,
             accessToken: data.accessToken || "",
@@ -42,16 +45,12 @@ export default function KakaoLoginCallback() {
             userStatus: data.userStatus,
           });
 
-          // 2. [추가] userStatus에 따른 예외 처리 분기
-          // 백엔드에서 정의한 값(예: BLOCKED, DELETED 등)에 따라 처리하세요.
           if (data.userStatus === "BLOCKED") {
             alert("서비스 이용이 제한된 계정입니다.");
             navigate("/login");
             return;
           }
 
-          // 3. 정상 상태일 경우 nextStep에 따른 페이지 이동
-          // KakaoLoginCallback.tsx 내부 navigate 부분 수정
           if (data.nextStep === "TERMS") {
             navigate("/simplelogin", { replace: true });
           } else if (data.nextStep === "ONBOARDING") {
@@ -62,7 +61,6 @@ export default function KakaoLoginCallback() {
         }
       } catch (err) {
         console.error("로그인 에러:", err);
-        // StrictMode 등으로 인한 중복 에러 메시지 방지를 위해 체크
         if (hasCalledAPI.current) {
           alert("로그인 처리 중 오류가 발생했습니다.");
         }
@@ -74,7 +72,7 @@ export default function KakaoLoginCallback() {
 
   return (
     <div className="flex flex-col items-center justify-center text-center mt-50">
-      <img className="opacity-70 w-30 p-5" src={loadingChar} />
+      <img className="opacity-70 w-30 p-5" src={loadingChar} alt="loading" />
       <div className="typo-body2 text-zinc-500">로그인 중...</div>
     </div>
   );
