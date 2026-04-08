@@ -21,7 +21,6 @@ interface OnboardingStore {
 }
 
 export const useOnboardingStore = create<OnboardingStore>((set) => ({
-  // 🌟 초기값을 설정하여 'Goal' 단계 진입 시 버튼이 바로 활성화되도록 합니다.
   selectedGoal: { id: "cook", title: "주 n회 요리하기" },
   goalCount: "3", // 기본 목표 횟수도 미리 설정 (Step 3 대응)
 
