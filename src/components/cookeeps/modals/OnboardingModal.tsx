@@ -138,7 +138,7 @@ export default function OnboardingModal({ isOpen, onClose }: Props) {
                 <div
                   key={index}
                   className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    currentIndex === index ? "bg-zinc-500" : "bg-stone-300"
+                    currentIndex === index ? "bg-zinc-500" : "bg-stone-100"
                   }`}
                 />
               ))}
