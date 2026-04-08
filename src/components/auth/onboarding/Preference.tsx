@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { searchIcon } from "../../../assets";
+import { loadingChar, searchIcon } from "../../../assets";
 import searchOnIcon from "../../../assets/fridge/search_on.svg";
 import TextField from "../../ui/TextField";
 import xIcon from "../../../assets/onboarding/x.svg";
@@ -69,7 +69,6 @@ export default function Preference() {
   };
 
   const handleAddCustom = (newName: string) => {
-    // 직접 입력은 ID가 없으므로 임시 마이너스 ID나 고유 값을 부여합니다.
     const customItem: OnboardingIngredient = {
       defaultIngredientId: -Date.now(),
       ingredient: newName,
@@ -99,6 +98,14 @@ export default function Preference() {
       </span>
     );
   };
+
+  if (isLoading)
+    return (
+      <div className="flex flex-col items-center justify-center text-center mt-50">
+        <img className="opacity-70 w-30 p-5" src={loadingChar} />
+        <div className="typo-body2 text-zinc-500">로딩 중...</div>
+      </div>
+    );
 
   return (
     <>

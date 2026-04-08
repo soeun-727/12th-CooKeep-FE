@@ -1,4 +1,4 @@
-import { useState, TouchEvent } from "react"; // 1. React에서 제공하는 TouchEvent 타입 임포트
+import { useState, TouchEvent } from "react";
 import image1 from "../../../assets/onboarding/guide_1.svg";
 import image2 from "../../../assets/onboarding/guide_2.svg";
 import image3 from "../../../assets/onboarding/guide_3.svg";
@@ -60,11 +60,12 @@ export default function Guide({ onNext }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const { title, text, img } = ONBOARDING_DATA[currentIndex];
+
+  // 🚀 수정: 미사용 변수 img 삭제
+  const { title, text } = ONBOARDING_DATA[currentIndex];
 
   const minSwipeDistance = 50;
 
-  // 2. TouchEvent<HTMLDivElement> 타입으로 구체화하여 핸들러 작성
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -145,20 +146,19 @@ export default function Guide({ onNext }: Props) {
           ))}
         </div>
 
-        {/* 그라데이션 오버레이 & 버튼 (트랙 밖에 고정) */}
+        {/* 그라데이션 오버레이 */}
         <div className="absolute bottom-0 w-full h-56 bg-gradient-to-b from-white/0 to-white pointer-events-none" />
 
-        {/* 4. 버튼 애니메이션 처리 (마지막에만 등장) */}
+        {/* 버튼 영역 */}
         <div
-          className={`absolute bottom-10 w-full px-6 z-10 transition-opacity duration-300 ${currentIndex === 3 ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+          className={`absolute bottom-10 w-full px-6 z-10 transition-opacity duration-300 ${
+            currentIndex === 3 ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         >
           <Button
-            onClick={
-              ((e: any) => {
-                e.stopPropagation();
-                onNext();
-              }) as any
-            }
+            onClick={() => {
+              onNext();
+            }}
             variant="black"
             size="L"
             className="w-full"
