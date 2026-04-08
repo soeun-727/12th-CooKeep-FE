@@ -93,7 +93,7 @@ export const getPushEligibility = async () => {
   const res = await api.get<{
     status: string;
     data: { eligible: boolean };
-  }>("/api/users/me/push/eligibility");
+  }>("/api/users/me/alerts");
 
   return res.data.data; // { eligible: true / false }
 };
