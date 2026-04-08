@@ -14,7 +14,6 @@ import ExpiryAlertModal from "../modals/ExpiryAlertModal";
 import IngredientDetailModal from "../modals/IngredientDetailModal";
 import { getRefrigeratorHome } from "../../../api/ingredient";
 import { getPushEligibility } from "../../../api/user";
-import PhoneAuthModal from "../../auth/signup/PhoneAuthModal";
 
 export default function FridgeTab() {
   const { ingredients, setIngredients, searchTerm, viewCategory } =
