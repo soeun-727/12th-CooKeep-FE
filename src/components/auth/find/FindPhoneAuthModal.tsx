@@ -24,13 +24,17 @@ const FindPhoneAuthModal = ({
   const isVerify = type === "verify";
   const isNotRegistered = type === "notRegistered";
   const isHelp = type === "help";
+  const KAKAO_CHANNEL_URL = "https://pf.kakao.com/_xfSKxhX";
 
+  const handleOpenKakao = () => {
+    window.open(KAKAO_CHANNEL_URL, "_blank", "noopener,noreferrer");
+  };
   return (
     <>
       {/* 배경 오버레이 */}
       <div
         className="fixed inset-0 z-[100] bg-[rgba(17,17,17,0.5)]"
-        // onClick={onConfirm} // 배경 클릭 시 닫히게 하고 싶으면 유지
+        onClick={onConfirm} // 배경 클릭 시 닫히게 하고 싶으면 유지
       />
       <div
         className="fixed z-[110] left-1/2 -translate-x-1/2 bg-white rounded-[10px]"
@@ -38,7 +42,7 @@ const FindPhoneAuthModal = ({
           top: isHelp ? 308 : isSend ? 359 : 343,
           width: isHelp ? 256 : 240,
           minHeight: isHelp ? 236 : isSend ? 134 : 166,
-          paddingTop: 35,
+          paddingTop: isHelp ? 25 : 35,
           paddingRight: 28,
           paddingBottom: 25,
           paddingLeft: 28,
@@ -69,9 +73,14 @@ const FindPhoneAuthModal = ({
 
           {isHelp && (
             <>
-              통신 환경에 따라 발송이 지연되거나 <br />
-              차단될 수 있어요. 문제가 지속되면 <br />
-              아래 고객센터로 문의해 주세요.
+              통신 환경에 따라
+              <br />
+              발송이 지연되거나 차단될 수 있어요.
+              <br />
+              <br />
+              스팸 메일함을 확인하시거나,
+              <br />
+              잠시 후 다시 시도해주세요.
             </>
           )}
         </p>
@@ -84,18 +93,24 @@ const FindPhoneAuthModal = ({
 
         {isHelp && (
           <p className="text-[12px] text-[#7D7D7D] text-center">
-            cookeep2026@gmail.com
+            문제가 지속되나요?
           </p>
         )}
 
         <Button
           size="S"
-          onClick={isNotRegistered ? onSignup : onConfirm}
+          onClick={
+            isNotRegistered ? onSignup : isHelp ? handleOpenKakao : onConfirm
+          }
           className={`!h-[38px] ${
             isHelp ? "!w-[200px] !bg-[#202020]" : "!w-[184px] !bg-[#32E389]"
           }`}
         >
-          {isHelp ? "닫기" : isNotRegistered ? "회원가입하기" : "확인"}
+          {isHelp
+            ? "채널 문의 바로가기"
+            : isNotRegistered
+              ? "회원가입하기"
+              : "확인"}
         </Button>
       </div>
     </>
