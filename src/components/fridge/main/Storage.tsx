@@ -6,11 +6,14 @@ import {
   useIngredientStore,
   type Ingredient,
 } from "../../../stores/useIngredientStore";
-
+interface StorageIngredient extends Ingredient {
+  className?: string; // 기존 Ingredient에 className이 있을 수도 있다고 알려줌
+}
 interface StorageProps {
   category: string;
   image: string;
-  ingredients: Ingredient[];
+  ingredients: StorageIngredient[];
+  onItemClick?: (id: number) => void;
 }
 function chunk<T>(arr: T[], size: number): T[][] {
   const result: T[][] = [];
@@ -24,6 +27,7 @@ export default function Storage({
   category,
   image,
   ingredients,
+  onItemClick,
 }: StorageProps) {
   const { selectedIds, toggleSelect, setViewCategory, openDetail } =
     useIngredientStore();
@@ -115,8 +119,17 @@ export default function Storage({
                     leftDays={item.dDay}
                     image={item.image}
                     isSelected={selectedIds.includes(item.id)}
-                    onSelect={() => toggleSelect(item.id)}
-                    onDetail={() => openDetail(item.id)}
+                    onSelect={() => {
+                      if (onItemClick) {
+                        onItemClick(item.id);
+                      } else {
+                        toggleSelect(item.id);
+                      }
+                    }}
+                    onDetail={() => {
+                      if (!onItemClick) openDetail(item.id);
+                    }}
+                    className={item.className}
                   />
                 ))}
               </div>
