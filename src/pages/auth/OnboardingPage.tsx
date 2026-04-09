@@ -112,14 +112,18 @@ export default function Onboarding() {
   // --- 기본 온보딩 UI ---
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-[#FAFAFA]">
+    <div className="flex flex-col h-[100dvh] items-center bg-[#FAFAFA]">
       <AuthHeader />
-      <div className="w-full max-w-[361px] mx-auto px-1">
-        <Progress currentStep={step} />
-      </div>
-      <div className="flex-1 flex flex-col items-center">
-        <div className="w-full max-w-[361px] px-1">
-          {step === 0 && <Guide />}
+      {step !== 0 && (
+        <div className="w-full max-w-[361px] mx-auto">
+          <Progress currentStep={step} />
+        </div>
+      )}
+      <div
+        className={`flex-1 flex flex-col items-center ${step === 0 ? "" : "px-1"}`}
+      >
+        <div className={`w-full h-full ${step === 0 ? "" : "px-1"}`}>
+          {step === 0 && <Guide onNext={nextStep} />}
           {step === 1 && <Preference />}
           {step === 2 && (
             <Goal selectedGoal={selectedGoal} onSelect={setSelectedGoal} />
@@ -133,17 +137,19 @@ export default function Onboarding() {
           )}
         </div>
       </div>
-      <div className="shrink-0">
-        <Footer
-          onNext={nextStep}
-          onPrev={prevStep}
-          onSkip={skipStep}
-          isFirstStep={step === 0}
-          isLastStep={step === 3}
-          isValid={getIsValid()}
-          isLoading={isLoading}
-        />
-      </div>
+      {step !== 0 && (
+        <div className="shrink-0">
+          <Footer
+            onNext={nextStep}
+            onPrev={prevStep}
+            onSkip={skipStep}
+            isFirstStep={step === 1} // 이제 실제 로직상의 첫 단계는 step 1이 됩니다
+            isLastStep={step === 3}
+            isValid={getIsValid()}
+            isLoading={isLoading}
+          />
+        </div>
+      )}
     </div>
   );
 }
