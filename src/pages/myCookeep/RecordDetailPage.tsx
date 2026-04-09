@@ -110,9 +110,9 @@ export default function RecordDetailPage() {
   // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 수정 API 로직
   const handleConfirmUpdate = async () => {
     if (!record || !recordId) return;
-    const wasNoImage = !record.recipeImageUrl;
-    const nowHasImage = !!currentImageUrl;
-    const shouldGivePhotoReward = wasNoImage && nowHasImage;
+    // const wasNoImage = !record.recipeImageUrl;
+    // const nowHasImage = !!currentImageUrl;
+    // const shouldGivePhotoReward = wasNoImage && nowHasImage;
     try {
       const wasImageDeleted = !currentImageUrl && !!record.recipeImageUrl;
       const isImageChanged =
@@ -134,9 +134,13 @@ export default function RecordDetailPage() {
         setCurrentImageUrl(response.data.recipeImageUrl || undefined);
         setIsEditing(false);
 
-        if (shouldGivePhotoReward) {
+        if (response.data.photoCookieAwarded === true) {
           setShowPhotoRewardModal(true);
         }
+
+        // if (shouldGivePhotoReward) {
+        //   setShowPhotoRewardModal(true);
+        // }
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };

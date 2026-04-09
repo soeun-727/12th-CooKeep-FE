@@ -57,6 +57,7 @@ export interface MyRecipeDetail {
   recipeImageUrl: string;
   isPublic: boolean;
   createdAt: string;
+  photoCookieAwarded?: boolean;
   content: {
     ingredients: IngredientsJson;
     steps: string[];
