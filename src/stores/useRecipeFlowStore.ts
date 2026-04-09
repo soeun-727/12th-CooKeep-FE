@@ -8,7 +8,7 @@ import {
   retryAiRecipe,
 } from "../api/aiRecipe";
 import { getAiSessionDetail } from "../api/aiSession";
-import { useWeeklyGoalStore } from "./useWeeklyGoalStore";
+import { useRewardStore } from "./useRewardStore";
 
 import axios from "axios";
 
@@ -56,6 +56,8 @@ type RecipeFlowState = {
   fetchSessionDetail: (sessionId: number) => Promise<void>;
   completeSession: () => Promise<void>; // 타입 정의 추가
 
+  hasExpiringIngredient: boolean;
+
   // 작동안해서 넣어놓음
   // clearSelection: () => void;
 };
@@ -72,6 +74,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
   isLoading: false,
   error: null,
   isCompleted: false,
+  hasExpiringIngredient: false,
 
   setSelectedIngredients: (items) => set({ selectedIngredients: items }),
 
@@ -79,6 +82,12 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
   generateRecipe: async () => {
     const { selectedIngredients, difficulty, sessionId, recipeHistory } = get();
+
+    const hasDdayIngredient = selectedIngredients.some((i) => i.dDay === 0);
+
+    set({
+      hasExpiringIngredient: hasDdayIngredient,
+    });
 
     if (!difficulty) return;
 
@@ -172,7 +181,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
   },
 
   completeSession: async () => {
-    const { sessionId } = get();
+    const { sessionId, hasExpiringIngredient } = get();
     if (!sessionId) {
       console.error("세션 ID가 없습니다.");
       return;
@@ -182,10 +191,15 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
       set({ isLoading: true });
       const response = await completeAiRecipe(sessionId);
 
-      // 추가
+      // 주간 목표
       if (response?.weeklyGoalAchieved) {
-        useWeeklyGoalStore.getState().showWeeklyGoalModal();
+        useRewardStore.getState().enqueue("WEEKLY");
       }
+      // 유통기한 임박 보너스
+      if (hasExpiringIngredient) {
+        useRewardStore.getState().enqueue("EXPIRING");
+      }
+
       set({ isCompleted: true, isLoading: false });
     } catch (error) {
       console.error("레시피 채택 실패:", error);
