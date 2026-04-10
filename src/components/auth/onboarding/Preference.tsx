@@ -1,28 +1,82 @@
-import { useMemo, useState } from "react";
-import { searchIcon } from "../../../assets";
+import { useEffect, useMemo, useState } from "react";
+import { loadingChar, searchIcon } from "../../../assets";
 import searchOnIcon from "../../../assets/fridge/search_on.svg";
 import TextField from "../../ui/TextField";
 import xIcon from "../../../assets/onboarding/x.svg";
 import InputModal from "./InputModal";
-
-// 임시 데이터 (나중에 API로 대체)
-const DUMMY_INGREDIENTS = [
-  "고구마",
-  "감자",
-  "당근",
-  "양파",
-  "오이",
-  "우유",
-  "초코우유",
-  "딸기우유",
-  "땅콩",
-  "복숭아",
-];
+import {
+  getOnboardingIngredients,
+  OnboardingIngredient,
+} from "../../../api/onboarding";
 
 export default function Preference() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
+  const [allIngredients, setAllIngredients] = useState<OnboardingIngredient[]>(
+    [],
+  );
+  const [selectedIngredients, setSelectedIngredients] = useState<
+    OnboardingIngredient[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const hasText = searchTerm.length > 0;
+
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      try {
+        setIsLoading(true);
+        const res = await getOnboardingIngredients();
+        const ingredientsList = res.data?.data?.ingredients;
+        if (ingredientsList && Array.isArray(ingredientsList)) {
+          setAllIngredients(ingredientsList);
+        }
+      } catch (error) {
+        console.error("재료 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchIngredients();
+  }, []);
+
+  const filteredIngredients = useMemo(() => {
+    if (!searchTerm.trim()) return [];
+    const trimmed = searchTerm.trim().toLowerCase();
+
+    return allIngredients.filter((item) => {
+      if (!item.ingredient) return false;
+
+      const matchesSearch = item.ingredient.toLowerCase().includes(trimmed);
+      const isNotSelected = !selectedIngredients.some(
+        (s) => s.defaultIngredientId === item.defaultIngredientId,
+      );
+
+      return matchesSearch && isNotSelected;
+    });
+  }, [searchTerm, allIngredients, selectedIngredients]);
+  const isDropdownOpen = hasText && filteredIngredients.length > 0;
+
+  const handleSelect = (item: OnboardingIngredient) => {
+    setSelectedIngredients((prev) => [...prev, item]);
+    setSearchTerm("");
+  };
+
+  const handleRemove = (id: number) => {
+    setSelectedIngredients((prev) =>
+      prev.filter((item) => item.defaultIngredientId !== id),
+    );
+  };
+
+  const handleAddCustom = (newName: string) => {
+    const customItem: OnboardingIngredient = {
+      defaultIngredientId: -Date.now(),
+      ingredient: newName,
+    };
+    setSelectedIngredients((prev) => [...prev, customItem]);
+    setSearchTerm("");
+    setIsModalOpen(false);
+  };
 
   const highlightText = (text: string, highlight: string) => {
     if (!highlight.trim()) return <span>{text}</span>;
@@ -45,36 +99,13 @@ export default function Preference() {
     );
   };
 
-  // 1. 검색 로직: 입력값에 따라 리스트 필터링
-  const filteredIngredients = useMemo(() => {
-    if (!hasText) return [];
-    return DUMMY_INGREDIENTS.filter(
-      (item) =>
-        item.includes(searchTerm.trim()) && !selectedIngredients.includes(item),
+  if (isLoading)
+    return (
+      <div className="flex flex-col items-center justify-center text-center mt-50">
+        <img className="opacity-70 w-30 p-5" src={loadingChar} />
+        <div className="typo-body2 text-zinc-500">로딩 중...</div>
+      </div>
     );
-  }, [searchTerm, selectedIngredients]);
-
-  const isDropdownOpen = hasText && filteredIngredients.length > 0;
-
-  // 2. 재료 선택/삭제 핸들러
-  const handleSelect = (ingredient: string) => {
-    setSelectedIngredients((prev) => [...prev, ingredient]);
-    setSearchTerm(""); // 선택 후 검색창 초기화
-  };
-
-  const handleRemove = (ingredient: string) => {
-    setSelectedIngredients((prev) =>
-      prev.filter((item) => item !== ingredient),
-    );
-  };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleAddCustom = (newIngredient: string) => {
-    setSelectedIngredients((prev) => [...prev, newIngredient]);
-    // 필요한 경우 검색어도 초기화
-    setSearchTerm("");
-  };
 
   return (
     <>
@@ -123,13 +154,13 @@ export default function Preference() {
         <div className="flex flex-wrap mt-[18px] w-[361px] gap-[6px]">
           {selectedIngredients.map((ingredient) => (
             <div
-              key={ingredient}
-              onClick={() => handleRemove(ingredient)}
+              key={ingredient.defaultIngredientId}
+              onClick={() => handleRemove(ingredient.defaultIngredientId)}
               className="bg-gray-200 px-3 px-1 h-7 flex gap-1 rounded-[100px] items-center"
             >
               <img src={xIcon} className="w-3 h-3" />
               <span className="typo-caption !font-medium text-zinc-500">
-                {ingredient}
+                {ingredient.ingredient}
               </span>
             </div>
           ))}
@@ -139,11 +170,11 @@ export default function Preference() {
           <ul className="absolute top-12 w-[361px] bg-white border border-[#DDDDDD] !border-t-0 rounded-b-[6px] z-50 max-h-[200px] overflow-y-auto typo-body2">
             {filteredIngredients.map((item) => (
               <li
-                key={item}
+                key={item.defaultIngredientId}
                 onClick={() => handleSelect(item)}
                 className="h-12 p-3 hover:bg-gray-100 cursor-pointer"
               >
-                {highlightText(item, searchTerm.trim())}
+                {highlightText(item.ingredient, searchTerm.trim())}
               </li>
             ))}
             <li

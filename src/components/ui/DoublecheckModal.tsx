@@ -55,7 +55,7 @@ const DoublecheckModal: React.FC<DoublecheckModalProps> = ({
           {title}
         </h2>
         {description && (
-          <p className="mb-4 typo-body2 w-[198px] text-center font-medium text-neutral-900">
+          <p className="mb-4 typo-body2 w-[198px] text-center font-medium text-neutral-900 whitespace-pre-wrap">
             {description}
           </p>
         )}
