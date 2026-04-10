@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type RewardType =
+export type RewardType =
   | "ONBOARDING_INGREDIENT"
   | "ONBOARDING_RECIPE"
   | "WEEKLY"
@@ -19,27 +19,23 @@ export const useRewardStore = create<RewardState>((set, get) => ({
   current: null,
 
   enqueue: (type) => {
-    const today = new Date().toISOString().slice(0, 10);
-
-    // D-0 하루 1회 제한
-    if (type === "EXPIRING") {
-      const key = "expiring_reward_date";
-      const saved = localStorage.getItem(key);
-
-      if (saved === today) return; // 이미 받음 → 무시
-      localStorage.setItem(key, today);
-    }
-
     const { queue, current } = get();
 
-    // 중복 방지 추가 (핵심)
+    // 중복 방지
     if (queue.includes(type) || current === type) return;
 
-    const newQueue = [...queue, type];
+    let newQueue;
+
+    // 핵심: 온보딩은 무조건 맨 앞
+    if (type === "ONBOARDING_INGREDIENT" || type === "ONBOARDING_RECIPE") {
+      newQueue = [type, ...queue];
+    } else {
+      newQueue = [...queue, type];
+    }
 
     set({
       queue: newQueue,
-      current: current ?? newQueue[0], // 현재 없으면 첫번째 실행
+      current: current ?? newQueue[0],
     });
   },
 

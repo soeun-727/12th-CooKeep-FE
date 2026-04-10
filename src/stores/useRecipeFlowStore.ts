@@ -9,6 +9,7 @@ import {
 } from "../api/aiRecipe";
 import { getAiSessionDetail } from "../api/aiSession";
 import { useRewardStore } from "./useRewardStore";
+import type { RewardType } from "./useRewardStore";
 
 import axios from "axios";
 
@@ -33,6 +34,14 @@ const parseAiError = (error: unknown): string => {
   }
 
   return "레시피 생성 중 문제가 발생했어요.";
+};
+
+const PRIORITY: Record<RewardType, number> = {
+  ONBOARDING_INGREDIENT: 0,
+  ONBOARDING_RECIPE: 0,
+
+  WEEKLY: 1, // A
+  EXPIRING: 2, // B
 };
 
 type RecipeFlowState = {
@@ -181,7 +190,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
   },
 
   completeSession: async () => {
-    const { sessionId, hasExpiringIngredient } = get();
+    const { sessionId } = get();
     if (!sessionId) {
       console.error("세션 ID가 없습니다.");
       return;
@@ -191,14 +200,30 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
       set({ isLoading: true });
       const response = await completeAiRecipe(sessionId);
 
-      // 주간 목표
+      const rewards: RewardType[] = [];
+
+      // 1. 온보딩 (최우선)
+      if (response?.recipeRewardGranted) {
+        rewards.push("ONBOARDING_RECIPE");
+      }
+
+      // 2. 주간 목표
       if (response?.weeklyGoalAchieved) {
-        useRewardStore.getState().enqueue("WEEKLY");
+        rewards.push("WEEKLY");
       }
-      // 유통기한 임박 보너스
-      if (hasExpiringIngredient) {
-        useRewardStore.getState().enqueue("EXPIRING");
+
+      // 3. 유통기한 임박
+      if (response?.urgentIngredientRewardGranted) {
+        rewards.push("EXPIRING");
       }
+
+      // 우선순위 정렬
+      rewards.sort((a, b) => PRIORITY[a] - PRIORITY[b]);
+
+      // 순서대로 enqueue
+      rewards.forEach((r) => {
+        useRewardStore.getState().enqueue(r);
+      });
 
       set({ isCompleted: true, isLoading: false });
     } catch (error) {

@@ -5,7 +5,7 @@ import LoadingScreen from "../components/ui/LoadingScreen";
 import WeeklyGoalModal from "../components/ui/WeeklyGoalModal"; // 추가
 import ExpiringRewardModal from "../components/recipe/ExpiringRewardModal";
 import { useRewardStore } from "../stores/useRewardStore";
-import OnboardingIngredientModal from "../components/fridge/modals/OnboardingIngredientModal";
+import OnboardingRewardModal from "../components/ui/OnboardingRewardModal";
 
 type Props = {
   children: React.ReactNode;
@@ -26,10 +26,6 @@ export default function AppLayout({ children }: Props) {
   useThemeColor(themeColor);
   const isLoading = useLoadingStore((s) => s.isLoading);
 
-  // 추가
-  // const { isModalOpen, hideWeeklyGoalModal } = useWeeklyGoalStore();
-
-  //  const { showExpiring, closeExpiring } = useRewardStore();
   const { current, dequeue } = useRewardStore();
 
   return (
@@ -58,7 +54,19 @@ export default function AppLayout({ children }: Props) {
           <WeeklyGoalModal isOpen={true} onClose={dequeue} />
         )}
         {current === "ONBOARDING_INGREDIENT" && (
-          <OnboardingIngredientModal isOpen={true} onClose={dequeue} />
+          <OnboardingRewardModal
+            type="INGREDIENT"
+            isOpen={true}
+            onClose={dequeue}
+          />
+        )}
+
+        {current === "ONBOARDING_RECIPE" && (
+          <OnboardingRewardModal
+            type="RECIPE"
+            isOpen={true}
+            onClose={dequeue}
+          />
         )}
 
         {current === "EXPIRING" && <ExpiringRewardModal onConfirm={dequeue} />}

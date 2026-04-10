@@ -6,13 +6,13 @@ import DoublecheckModal from "../../ui/DoublecheckModal";
 import AlertModal from "../../ui/AlertModal";
 import { useNavigate } from "react-router-dom";
 import { useRecipeFlowStore } from "../../../stores/useRecipeFlowStore";
-import { useWeeklyGoalStore } from "../../../stores/useWeeklyGoalStore"; // 추가
+import { useRewardStore } from "../../../stores/useRewardStore";
 
 export default function ItemOption() {
   const navigate = useNavigate();
   const { selectedIds, ingredients, deleteSelected } = useIngredientStore();
   const { setSelectedIngredients } = useRecipeFlowStore();
-  const showWeeklyGoalModal = useWeeklyGoalStore((s) => s.showWeeklyGoalModal); // 추가
+  const enqueue = useRewardStore((s) => s.enqueue);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [modalType, setModalType] = useState<"eaten" | "thrown">("eaten");
@@ -51,7 +51,7 @@ export default function ItemOption() {
     if (type === "eaten") {
       // 주간 목표 달성 체크 추가
       if (result?.weeklyGoalAchieved) {
-        showWeeklyGoalModal();
+        enqueue("WEEKLY"); // ← showWeeklyGoalModal() 대신 이걸 씀
       }
 
       if (result && result.reward.granted) {

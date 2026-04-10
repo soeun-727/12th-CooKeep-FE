@@ -1,15 +1,18 @@
 import React from "react";
 import icon from "../../assets/cookeeps/main/water_cookie_cookeeps.svg";
-import Button from "../../ui/Button";
+import Button from "./Button";
+
+type OnboardingType = "INGREDIENT" | "RECIPE";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  type: OnboardingType;
 }
 
-const OnboardingIngredientModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const OnboardingRewardModal: React.FC<Props> = ({ isOpen, onClose, type }) => {
   if (!isOpen) return null;
-
+  const title = type === "RECIPE" ? "첫 요리 완료!" : "첫 재료 등록 완료!";
   return (
     <div className="fixed inset-0 z-[170] flex items-center justify-center bg-[#11111180]">
       {/* 배경 클릭 */}
@@ -29,7 +32,7 @@ const OnboardingIngredientModal: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="text-center text-[14px] font-medium leading-[20px] text-[#202020]">
-                첫 재료 등록 완료!
+                {title}
                 <br />
                 쿠키 선물이 도착했어요
               </div>
@@ -51,4 +54,4 @@ const OnboardingIngredientModal: React.FC<Props> = ({ isOpen, onClose }) => {
   );
 };
 
-export default OnboardingIngredientModal;
+export default OnboardingRewardModal;

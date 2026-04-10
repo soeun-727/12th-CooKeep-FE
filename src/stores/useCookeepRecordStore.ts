@@ -5,7 +5,7 @@ import {
   toggleRecipeLike,
   toggleRecipeBookmark,
 } from "../api/myRecipe";
-import { useWeeklyGoalStore } from "./useWeeklyGoalStore";
+import { useRewardStore } from "./useRewardStore";
 
 export interface RecordImage {
   url: string;
@@ -131,7 +131,7 @@ export const useCookeepRecordStore = create<RecordState>((set, get) => ({
 
       // 4. 주간 목표 달성 체크
       if (res.data.weeklyGoalAchieved) {
-        useWeeklyGoalStore.getState().showWeeklyGoalModal();
+        useRewardStore.getState().enqueue("WEEKLY");
       }
 
       // 중요: 상세 페이지에서 이 결과값을 쓸 수 있도록 반환값을 전달해주면 좋습니다.
