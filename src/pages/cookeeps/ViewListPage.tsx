@@ -5,7 +5,7 @@ import DoublecheckModal from "../../components/ui/DoublecheckModal";
 import {
   getMyLikedRecipes,
   getMyBookmarkedRecipes,
-  MyLikedRecipeItem,
+  MyRecipeListItem,
   toggleRecipeBookmark,
   toggleRecipeLike,
 } from "../../api/myRecipe";
@@ -24,7 +24,7 @@ export default function ViewListPage({ type }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const [recipes, setRecipes] = useState<MyLikedRecipeItem[]>([]);
+  const [recipes, setRecipes] = useState<MyRecipeListItem[]>([]);
   const [, setPage] = useState(0);
   const [isLast, setIsLast] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +44,7 @@ export default function ViewListPage({ type }: Props) {
         data = await getMyBookmarkedRecipes(pageNum, 10);
       }
 
-      if (data) {
+      if (data && data.content) {
         setRecipes((prev) =>
           pageNum === 0 ? data.content : [...prev, ...data.content],
         );
