@@ -83,16 +83,15 @@ export interface MyLikedRecipeItem {
   title: string;
   likeCount: number;
   recipeImageUrl: string | null;
-  rank: number;
+  createdAt: string;
 }
 
 export interface MyLikedRecipesResponse {
   content: MyLikedRecipeItem[];
-  totalPages: number;
-  totalElements: number;
-  last: boolean; // ★ 무한 스크롤 중단 판별용
-  number: number; // 현재 페이지 번호
+  last: boolean;
+  number: number;
   size: number;
+  numberOfElements: number;
 }
 
 /** [GET] 내가 좋아요 누른 레시피 목록 조회 (무한 스크롤용) */
