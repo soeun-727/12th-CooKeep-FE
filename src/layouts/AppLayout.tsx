@@ -5,6 +5,7 @@ import LoadingScreen from "../components/ui/LoadingScreen";
 import WeeklyGoalModal from "../components/ui/WeeklyGoalModal"; // 추가
 import ExpiringRewardModal from "../components/recipe/ExpiringRewardModal";
 import { useRewardStore } from "../stores/useRewardStore";
+import OnboardingIngredientModal from "../components/fridge/modals/OnboardingIngredientModal";
 
 type Props = {
   children: React.ReactNode;
@@ -55,6 +56,9 @@ export default function AppLayout({ children }: Props) {
         {/* 추가 - z-index를 LoadingScreen(50)보다 높게 */}
         {current === "WEEKLY" && (
           <WeeklyGoalModal isOpen={true} onClose={dequeue} />
+        )}
+        {current === "ONBOARDING_INGREDIENT" && (
+          <OnboardingIngredientModal isOpen={true} onClose={dequeue} />
         )}
 
         {current === "EXPIRING" && <ExpiringRewardModal onConfirm={dequeue} />}

@@ -1,6 +1,10 @@
 import { create } from "zustand";
 
-type RewardType = "WEEKLY" | "EXPIRING";
+type RewardType =
+  | "ONBOARDING_INGREDIENT"
+  | "ONBOARDING_RECIPE"
+  | "WEEKLY"
+  | "EXPIRING";
 
 interface RewardState {
   queue: RewardType[];
@@ -27,6 +31,9 @@ export const useRewardStore = create<RewardState>((set, get) => ({
     }
 
     const { queue, current } = get();
+
+    // 중복 방지 추가 (핵심)
+    if (queue.includes(type) || current === type) return;
 
     const newQueue = [...queue, type];
 
