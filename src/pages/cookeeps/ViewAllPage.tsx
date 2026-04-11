@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AllRecipeItem, getAllRecipes } from "../../api/cookeeps";
 import tempImage from "../../assets/cookeeps/main/temp_recipe_cookeeps.svg";
 import SortAll from "../../components/cookeeps/lists/SortAll";
+import WeeklyTopRecipesTab from "../../components/cookeeps/lists/WeeklyTopRecipesTab";
 
 export default function ViewAllPage() {
   const navigate = useNavigate();
@@ -25,9 +26,9 @@ export default function ViewAllPage() {
 
   // 2. 정렬 매핑 함수
   const getApiFilter = (order: string) => {
-    if (order === "좋아요 많은 순") return "likes";
-    if (order === "등록 최신 순") return "latest";
-    if (order === "등록 오래된 순") return "oldest";
+    if (order === "좋아요 순") return "likes";
+    if (order === "최신 순") return "latest";
+    if (order === "오래된 순") return "oldest";
     return "likes";
   };
 
@@ -93,12 +94,7 @@ export default function ViewAllPage() {
   );
 
   if (activeTab === "weekly") {
-    return (
-      <div className="mt-10 text-center">
-        {/* 나중에 Weekly UI 넣으면 됨 */}
-        이번 주 인기 레시피 영역
-      </div>
-    );
+    return <WeeklyTopRecipesTab />;
   }
 
   return (
@@ -120,7 +116,7 @@ export default function ViewAllPage() {
                 isSelected={selectedId === item.dailyRecipeId}
                 onSelect={() => {
                   setSelectedId(item.dailyRecipeId);
-                  navigate(`/cookeeps/${item.dailyRecipeId}`);
+                  navigate(`/cookeeps/${item.dailyRecipeId}?tab=${activeTab}`);
                 }}
               />
             ))}

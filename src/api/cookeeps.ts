@@ -6,6 +6,7 @@ export interface RecipeRankItem {
   rank: number;
   recipeImageUrl: string | null;
   title: string;
+  nickname: string; // 추가
 }
 
 export interface WateringRankItem {

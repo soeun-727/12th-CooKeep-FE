@@ -8,14 +8,14 @@ interface SortProps {
 
 export default function SortAll({ currentOrder, onSortChange }: SortProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const options = ["좋아요 많은 순", "등록 최신 순", "등록 오래된 순"];
+  const options = ["좋아요 순", "최신 순", "오래된 순"];
   const menuRef = useRef<HTMLDivElement>(null);
 
   const getLabel = () => {
-    if (currentOrder === "좋아요 많은 순") return "좋아요 순";
-    if (currentOrder === "등록 최신 순") return "최신 순";
-    if (currentOrder === "등록 오래된 순") return "오래된 순";
-    return "최신 순";
+    if (currentOrder === "좋아요 순") return "좋아요 순";
+    if (currentOrder === "최신 순") return "최신 순";
+    if (currentOrder === "오래된 순") return "오래된 순";
+    return "좋아요 순";
   };
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function SortAll({ currentOrder, onSortChange }: SortProps) {
                     : "text-[#7D7D7D]"
                 }`}
               >
-                {option.replace("등록 ", "")}
+                {option}
               </button>
 
               {index < options.length - 1 && (
