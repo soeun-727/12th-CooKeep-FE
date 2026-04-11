@@ -1,5 +1,10 @@
 // src/layouts/ListLayout.tsx
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import {
+  Outlet,
+  useNavigate,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import BackHeader from "../components/ui/BackHeader";
 import ViewListHeader from "../components/cookeeps/lists/ViewListHeader";
@@ -11,9 +16,13 @@ export default function ListLayout() {
   const mainRef = useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState("좋아요 많은 순");
+  const [sortOrder, setSortOrder] = useState("좋아요 순");
 
-  // 🔑 라우트 판별
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeTab = (searchParams.get("tab") as "weekly" | "all") || "weekly";
+
+  // 라우트 판별
   const isViewAll = location.pathname.endsWith("/all");
   const isLiked = location.pathname.endsWith("/liked");
   const isBookmarked = location.pathname.endsWith("/bookmarked");
@@ -25,7 +34,7 @@ export default function ListLayout() {
     ? "좋아요가 많은 순서대로 노출됩니다"
     : "저장한 레시피를 한 번에 확인할 수 있어요";
 
-  // ✅ 라우트 변경 시 스크롤 초기화
+  // 라우트 변경 시 스크롤 초기화
   useEffect(() => {
     mainRef.current?.scrollTo({ top: 0 });
   }, [location.pathname]);
@@ -40,8 +49,10 @@ export default function ListLayout() {
         <ViewAllHeader
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
+          activeTab={activeTab}
+          onTabChange={(tab) => {
+            setSearchParams({ tab });
+          }}
         />
       )}
 
@@ -58,7 +69,7 @@ export default function ListLayout() {
         ref={mainRef}
         className="flex-1 overflow-y-auto no-scrollbar flex justify-center"
       >
-        <Outlet context={{ searchTerm, sortOrder }} />
+        <Outlet context={{ searchTerm, sortOrder, setSortOrder, activeTab }} />
       </main>
     </div>
   );
