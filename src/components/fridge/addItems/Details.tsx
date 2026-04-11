@@ -4,6 +4,7 @@ import DetailedItem from "./DetailedItem";
 import Button from "../../ui/Button";
 import { addIngredients } from "../../../api/ingredient";
 import { useState } from "react";
+import { useRewardStore } from "../../../stores/useRewardStore";
 
 export default function Details() {
   const navigate = useNavigate();
@@ -31,7 +32,13 @@ export default function Details() {
 
       // 2. 단일 POST 요청으로 일괄 등록
       // (인터페이스에 따라 addIngredients({ ingredients: payload }) 또는 addIngredients(payload)로 호출)
-      await addIngredients(payload);
+      // 1. response 받기
+      const response = await addIngredients(payload);
+
+      // 2. 여기 추가
+      if (response.data?.data?.ingredientRewardGranted) {
+        useRewardStore.getState().enqueue("ONBOARDING_INGREDIENT");
+      }
 
       // 3. 성공 시 처리
       resetSelected();

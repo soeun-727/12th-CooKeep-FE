@@ -18,6 +18,7 @@ import Button from "../../components/ui/Button";
 import DoublecheckModal from "../../components/ui/DoublecheckModal";
 import { uploadImage } from "../../api/image";
 import imageCompression from "browser-image-compression";
+import PhotoRewardModal from "../../components/myCookeep/record/PhotoRewardModal";
 
 export default function RecordDetailPage() {
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ export default function RecordDetailPage() {
   const [isImageUploading, setIsImageUploading] = useState(false);
   // 임시 공개여부 state 추가
   const [tempIsPublic, setTempIsPublic] = useState<boolean>(false);
+  // 사진모달
+  const [showPhotoRewardModal, setShowPhotoRewardModal] = useState(false);
 
   useEffect(() => {
     if (!recordId) return;
@@ -56,24 +59,6 @@ export default function RecordDetailPage() {
     };
     fetchDetail();
   }, [recordId]);
-
-  // const handleVisibilityChange = async (newPublicStatus: boolean) => {
-  //   if (!record || !recordId || isSubmitting) return;
-  //   setIsSubmitting(true);
-  //   try {
-  //     const response = await updateRecipeVisibility(
-  //       Number(recordId),
-  //       newPublicStatus,
-  //     );
-  //     if (response.status === "OK") {
-  //       setRecord({ ...record, isPublic: newPublicStatus });
-  //     }
-  //   } catch {
-  //     alert("공개 범위 변경에 실패했습니다.");
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -125,6 +110,9 @@ export default function RecordDetailPage() {
   // 2. 모달에서 '네'를 눌렀을 때 실행될 실제 수정 API 로직
   const handleConfirmUpdate = async () => {
     if (!record || !recordId) return;
+    // const wasNoImage = !record.recipeImageUrl;
+    // const nowHasImage = !!currentImageUrl;
+    // const shouldGivePhotoReward = wasNoImage && nowHasImage;
     try {
       const wasImageDeleted = !currentImageUrl && !!record.recipeImageUrl;
       const isImageChanged =
@@ -145,6 +133,14 @@ export default function RecordDetailPage() {
         setRecord({ ...response.data, isPublic: tempIsPublic });
         setCurrentImageUrl(response.data.recipeImageUrl || undefined);
         setIsEditing(false);
+
+        if (response.data.photoCookieAwarded === true) {
+          setShowPhotoRewardModal(true);
+        }
+
+        // if (shouldGivePhotoReward) {
+        //   setShowPhotoRewardModal(true);
+        // }
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -318,6 +314,13 @@ export default function RecordDetailPage() {
               수정 완료
             </Button>
           </div>
+        )}
+        {showPhotoRewardModal && (
+          <PhotoRewardModal
+            onConfirm={() => {
+              setShowPhotoRewardModal(false);
+            }}
+          />
         )}
         <DoublecheckModal
           isOpen={isUpdateModalOpen}
