@@ -7,11 +7,6 @@ export interface UpdateGoalRequest {
   targetCount: number;
 }
 
-export interface OnboardingData {
-  goalActionType: string | null;
-  targetCount: number | null;
-}
-
 export interface ProfileData {
   daysSinceJoined: number;
   growingPlantName: string;
@@ -42,7 +37,6 @@ export interface MyProfileResponse {
     Nickname: string;
     phoneNumber: string;
     email: string;
-    // authProvider: "LOCAL" | "KAKAO" | "GOOGLE" | string;
     authProvider: "LOCAL" | "KAKAO" | "GOOGLE";
     marketingPush: boolean;
   };
@@ -62,30 +56,12 @@ export const getProfileInfo = async (): Promise<ProfileResponse> => {
   return res.data;
 };
 
-// 3. 온보딩 정보 저장 API
-export const saveOnboardingInfo = (data: OnboardingData) => {
-  return api.post("/api/users/me/onboarding", data);
-};
-
-// 4. [POST] 약관 동의 여부 저장 (소셜 로그인 회원 대상)
-export const updateAgreements = (marketingConsent: boolean) => {
-  return api.patch<{ status: string; timestamp: string }>(
-    `/api/users/me/agreements`,
-    { marketingConsent },
-  );
-};
-
-// 5. 닉네임 수정 API
+// 3. 닉네임 수정 API
 export const updateNickname = async (nickname: string) => {
   const res = await api.patch("/api/users/me/nickname", {
     nickname,
   });
   return res.data;
-};
-
-// 6. (참고) 푸시 알림 동의 수정 API (기존 기능 유지 시)
-export const updatePushConsent = (marketingConsent: boolean) => {
-  return api.patch("/api/users/me/onboarding/push", { marketingConsent });
 };
 
 /** [GET] 유통기한 임박 식재료 존재 여부 확인 (팝업 노출 자격) */
@@ -95,15 +71,16 @@ export const getPushEligibility = async () => {
     data: { eligible: boolean };
   }>("/api/users/me/alerts");
 
-  return res.data.data; // { eligible: true / false }
+  return res.data.data;
 };
-// 7. 회원 정보 조회 API
+
+// 4. 회원 정보 조회 API
 export const getMyProfile = async (): Promise<MyProfileResponse> => {
   const res = await api.get<MyProfileResponse>("/api/users/me/profile");
   return res.data;
 };
 
-// 8. 마케팅 푸시 동의 변경 API
+// 5. 마케팅 푸시 동의 변경 API
 export const updateMarketingPush = async (marketingPush: boolean) => {
   const res = await api.patch<{
     status: string;
@@ -116,7 +93,7 @@ export const updateMarketingPush = async (marketingPush: boolean) => {
   return res.data;
 };
 
-// 9. 이메일 변경 API
+// 6. 이메일 변경 API
 export const updateEmail = async (email: string) => {
   const res = await api.patch<{
     status: string;
@@ -129,13 +106,12 @@ export const updateEmail = async (email: string) => {
   return res.data;
 };
 
-/** 전화번호 변경을 위한 인증번호 발송 API */
+/** 전화번호 변경 인증 관련 */
 export const sendUpdatePhoneCode = async (phoneNumber: string) => {
   const res = await api.post("/api/users/me/phone/send-code", { phoneNumber });
   return res.data;
 };
 
-/** 전화번호 변경을 위한 인증번호 확인 API */
 export const verifyUpdatePhoneCode = async (
   phoneNumber: string,
   code: string,
@@ -147,7 +123,7 @@ export const verifyUpdatePhoneCode = async (
   return res.data;
 };
 
-// 기존 비밀번호 확인 API
+/** 비밀번호 관련 */
 export const verifyCurrentPassword = async (password: string) => {
   const res = await api.post<{
     status: string;
@@ -159,7 +135,6 @@ export const verifyCurrentPassword = async (password: string) => {
   return res.data;
 };
 
-// 비밀번호 변경 API (기존 비밀번호 없이)
 export const changePassword = async (
   password: string,
   passwordConfirm: string,
@@ -175,7 +150,6 @@ export const changePassword = async (
   return res.data;
 };
 
-// 비밀번호 변경용 전화번호 인증 발송
 export const sendPasswordChangeCode = async (phoneNumber: string) => {
   const res = await api.post<{
     status: string;
@@ -187,7 +161,6 @@ export const sendPasswordChangeCode = async (phoneNumber: string) => {
   return res.data;
 };
 
-// 비밀번호 변경용 전화번호 인증 확인
 export const verifyPasswordChangeCode = async (
   phoneNumber: string,
   code: string,

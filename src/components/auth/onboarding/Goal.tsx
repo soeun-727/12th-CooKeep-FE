@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 const goals = [
-  { id: "cook", title: "주 n회 요리하기" },
-  { id: "photo", title: "요리 사진 n번 기록하기" },
-  { id: "expired", title: "유통기한 임박 재료 n개 사용하기" },
-  { id: "like", title: "다른 사람들 레시피 구경하고 좋아요 n회 남기기" },
+  { id: "COOKING", title: "주 n회 요리하기" },
+  { id: "PHOTO_RECORD", title: "요리 사진 n번 기록하기" },
+  { id: "USE_EXPIRING_INGREDIENT", title: "유통기한 임박 재료 n개 사용하기" },
+  { id: "RECIPE_LIKE", title: "레시피에 좋아요 n회 남기기" },
 ];
 
 interface GoalProps {
@@ -17,7 +17,7 @@ export default function Goal({ selectedGoal, onSelect }: GoalProps) {
   const currentGoal = selectedGoal.id ? selectedGoal : goals[0];
 
   return (
-    <>
+    <div className="flex flex-col items-center w-full">
       <div className="w-[361px] mt-[46px]">
         <h1 className="typo-h1 !text-[22px]">
           이번 주 달성하고 싶은 목표를 세워보세요!
@@ -77,6 +77,6 @@ export default function Goal({ selectedGoal, onSelect }: GoalProps) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

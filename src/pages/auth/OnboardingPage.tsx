@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// UI Components
 import InstallGuide from "../../components/auth/onboarding/InstallGuide";
 import AuthHeader from "../../components/auth/AuthHeader";
 import Progress from "../../components/auth/onboarding/Progress";
@@ -10,13 +9,11 @@ import SpecificGoal from "../../components/auth/onboarding/SpecificGoal";
 import Footer from "../../components/auth/onboarding/Footer";
 import Notification from "../../components/auth/onboarding/Notification";
 import Last from "../../components/auth/onboarding/Last";
-
-// API & Store & Utils
-import { saveOnboardingInfo } from "../../api/user";
-import { useOnboardingStore } from "../../stores/useOnboardingStore";
-import { GOAL_TYPE_MAP } from "../../utils/mapping";
 import Guide from "../../components/auth/onboarding/Guide";
 import Preference from "../../components/auth/onboarding/Preference";
+
+import { saveOnboardingData } from "../../api/onboarding";
+import { useOnboardingStore } from "../../stores/useOnboardingStore";
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -25,6 +22,7 @@ export default function Onboarding() {
     setSelectedGoal,
     goalCount,
     setGoalCount,
+    selectedIngredients,
     step,
     setStep,
     isFinished,
@@ -40,7 +38,7 @@ export default function Onboarding() {
   // --- 유효성 검사 로직 ---
   const getIsValid = () => {
     if (step === 0) return true;
-    if (step === 1) return true;
+    if (step === 1) return true; // 기피 재료는 선택 사항
     if (step === 2) return selectedGoal.id !== "";
     if (step === 3) return goalCount !== "";
     return false;
@@ -48,47 +46,42 @@ export default function Onboarding() {
 
   // --- 비즈니스 로직 ---
 
-  // Onboarding.tsx
-
   // 1. 건너뛰기 클릭 시 처리 로직
   const skipStep = () => {
-    if (step === 2) {
-      setSelectedGoal({ id: "", title: "" });
-      setGoalCount("");
-      handleSaveOnboarding(true); // 즉시 저장 혹은 마지막 단계로 점프
+    if (step === 2 || step === 3) {
+      // 목표 설정을 건너뛸 경우 초기화 후 바로 저장
+      setSelectedGoal({ id: "COOKING", title: "주 n회 요리하기" }); // 기본값 혹은 서버 스펙에 따른 처리
+      setGoalCount("0");
+      handleSaveOnboarding(true);
       return;
     }
     nextStep();
   };
 
-  // 2. 데이터 가공 로직 (가장 중요)
   const handleSaveOnboarding = async (isForcedSkip: boolean = false) => {
     setIsLoading(true);
     try {
       const requestBody = {
-        goalActionType:
-          isForcedSkip || (!selectedGoal.id && step < 2)
-            ? null
-            : (GOAL_TYPE_MAP as any)[selectedGoal.id || "cook"]?.value,
-
-        targetCount:
-          isForcedSkip || (!goalCount && step < 3)
-            ? null
-            : parseInt(goalCount || "3", 10),
+        dislikedIngredients: selectedIngredients.map((item) => item.ingredient),
+        goalActionType: isForcedSkip
+          ? "COOKING"
+          : selectedGoal.id.toUpperCase(),
+        targetCount: isForcedSkip ? 0 : parseInt(goalCount || "0", 10),
       };
 
-      const response = await saveOnboardingInfo(requestBody);
+      const response = await saveOnboardingData(requestBody);
+
       if (response.status === 200 || response.data?.status === "OK") {
         setIsFinished(true);
       }
     } catch (error) {
-      console.error("저장 실패:", error);
+      console.error("온보딩 저장 실패:", error);
+      alert("데이터 저장 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 2. 호출부 수정
   const nextStep = () => {
     if (step < 3) {
       setStep(step + 1);
@@ -101,15 +94,12 @@ export default function Onboarding() {
     if (step > 0) setStep(step - 1);
   };
 
-  // --- 조건부 렌더링 (순서 중요!) ---
-
+  // --- 조건부 렌더링 ---
   if (showInstallGuide)
     return <InstallGuide onFinish={() => navigate("/fridge")} />;
   if (showNotification)
     return <Notification onNext={() => setShowInstallGuide(true)} />;
   if (isFinished) return <Last onStart={() => setShowNotification(true)} />;
-
-  // --- 기본 온보딩 UI ---
 
   return (
     <div className="flex flex-col h-[100dvh] items-center bg-[#FAFAFA]">
@@ -120,9 +110,9 @@ export default function Onboarding() {
         </div>
       )}
       <div
-        className={`flex-1 flex flex-col items-center ${step === 0 ? "" : "px-1"}`}
+        className={`flex-1 flex flex-col items-center w-full ${step === 0 ? "" : "px-1"}`}
       >
-        <div className={`w-full h-full ${step === 0 ? "" : "px-1"}`}>
+        <div className="w-full h-full">
           {step === 0 && <Guide onNext={nextStep} />}
           {step === 1 && <Preference />}
           {step === 2 && (
@@ -143,7 +133,7 @@ export default function Onboarding() {
             onNext={nextStep}
             onPrev={prevStep}
             onSkip={skipStep}
-            isFirstStep={step === 1} // 이제 실제 로직상의 첫 단계는 step 1이 됩니다
+            isFirstStep={step === 1}
             isLastStep={step === 3}
             isValid={getIsValid()}
             isLoading={isLoading}

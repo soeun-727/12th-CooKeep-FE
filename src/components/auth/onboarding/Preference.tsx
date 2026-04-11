@@ -8,17 +8,17 @@ import {
   getOnboardingIngredients,
   OnboardingIngredient,
 } from "../../../api/onboarding";
+import { useOnboardingStore } from "../../../stores/useOnboardingStore";
 
 export default function Preference() {
   const [searchTerm, setSearchTerm] = useState("");
   const [allIngredients, setAllIngredients] = useState<OnboardingIngredient[]>(
     [],
   );
-  const [selectedIngredients, setSelectedIngredients] = useState<
-    OnboardingIngredient[]
-  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { selectedIngredients, setSelectedIngredients } = useOnboardingStore();
 
   const hasText = searchTerm.length > 0;
 
@@ -55,16 +55,17 @@ export default function Preference() {
       return matchesSearch && isNotSelected;
     });
   }, [searchTerm, allIngredients, selectedIngredients]);
+
   const isDropdownOpen = hasText && filteredIngredients.length > 0;
 
   const handleSelect = (item: OnboardingIngredient) => {
-    setSelectedIngredients((prev) => [...prev, item]);
+    setSelectedIngredients([...selectedIngredients, item]);
     setSearchTerm("");
   };
 
   const handleRemove = (id: number) => {
-    setSelectedIngredients((prev) =>
-      prev.filter((item) => item.defaultIngredientId !== id),
+    setSelectedIngredients(
+      selectedIngredients.filter((item) => item.defaultIngredientId !== id),
     );
   };
 
@@ -73,7 +74,7 @@ export default function Preference() {
       defaultIngredientId: -Date.now(),
       ingredient: newName,
     };
-    setSelectedIngredients((prev) => [...prev, customItem]);
+    setSelectedIngredients([...selectedIngredients, customItem]);
     setSearchTerm("");
     setIsModalOpen(false);
   };
@@ -108,7 +109,7 @@ export default function Preference() {
     );
 
   return (
-    <>
+    <div className="flex flex-col items-center w-full">
       <div className="w-[361px] mt-[46px]">
         <h1 className="typo-h1 !text-[22px]">먹지 못하는 식재료가 있나요?</h1>
         <h3 className="typo-h3 text-gray-500">
@@ -194,6 +195,6 @@ export default function Preference() {
           onConfirm={handleAddCustom}
         />
       )}
-    </>
+    </div>
   );
 }
