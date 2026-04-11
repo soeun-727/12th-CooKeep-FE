@@ -12,6 +12,7 @@ export default function ListLayout() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("좋아요 많은 순");
+  const [activeTab, setActiveTab] = useState<"weekly" | "all">("weekly");
 
   // 🔑 라우트 판별
   const isViewAll = location.pathname.endsWith("/all");
@@ -40,8 +41,8 @@ export default function ListLayout() {
         <ViewAllHeader
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          sortOrder={sortOrder}
-          onSortChange={setSortOrder}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
       )}
 
@@ -58,7 +59,7 @@ export default function ListLayout() {
         ref={mainRef}
         className="flex-1 overflow-y-auto no-scrollbar flex justify-center"
       >
-        <Outlet context={{ searchTerm, sortOrder }} />
+        <Outlet context={{ searchTerm, sortOrder, setSortOrder, activeTab }} />
       </main>
     </div>
   );

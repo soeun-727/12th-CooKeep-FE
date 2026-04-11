@@ -11,7 +11,13 @@ export default function SortAll({ currentOrder, onSortChange }: SortProps) {
   const options = ["좋아요 많은 순", "등록 최신 순", "등록 오래된 순"];
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // 메뉴 외부 클릭 시 닫기 로직
+  const getLabel = () => {
+    if (currentOrder === "좋아요 많은 순") return "좋아요 순";
+    if (currentOrder === "등록 최신 순") return "최신 순";
+    if (currentOrder === "등록 오래된 순") return "오래된 순";
+    return "최신 순";
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -25,10 +31,10 @@ export default function SortAll({ currentOrder, onSortChange }: SortProps) {
   }, [isMenuOpen]);
 
   return (
-    <div className="relative flex items-center" ref={menuRef}>
-      {/* 정렬 메뉴 모달 */}
+    <div className="relative" ref={menuRef}>
+      {/* 메뉴 */}
       {isMenuOpen && (
-        <div className="absolute right-[34px] bottom-0 flex flex-col items-center justify-center bg-white rounded-[10px] w-[123px] shadow-[0_4px_12px_rgba(0,0,0,0.15)] z-50 overflow-hidden animate-fadeIn">
+        <div className="absolute bottom-[48px] right-0 flex flex-col bg-white rounded-[10px] w-[123px] shadow-[0_4px_12px_rgba(0,0,0,0.15)] overflow-hidden z-50">
           {options.map((option, index) => (
             <div key={option} className="flex flex-col items-center w-full">
               <button
@@ -36,14 +42,15 @@ export default function SortAll({ currentOrder, onSortChange }: SortProps) {
                   onSortChange(option);
                   setIsMenuOpen(false);
                 }}
-                className={`whitespace-nowrap w-full h-[36px] typo-caption !text-[10px] transition-colors hover:bg-zinc-50 ${
+                className={`w-full h-[36px] text-[12px] ${
                   currentOrder === option
-                    ? "font-bold text-black"
-                    : "text-zinc-500"
+                    ? "font-semibold text-black"
+                    : "text-[#7D7D7D]"
                 }`}
               >
-                {option}
+                {option.replace("등록 ", "")}
               </button>
+
               {index < options.length - 1 && (
                 <div className="w-[105px] h-[0.5px] bg-[#D1D1D1]" />
               )}
@@ -52,12 +59,15 @@ export default function SortAll({ currentOrder, onSortChange }: SortProps) {
         </div>
       )}
 
-      {/* 정렬 아이콘 버튼 */}
+      {/* 피그마 버튼 */}
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className={`relative z-10 transition-transform active:scale-95 ${isMenuOpen ? "rotate-180" : ""}`}
+        className="inline-flex items-center gap-[2px] px-[20px] py-[8px] rounded-full bg-white shadow-[0_-36px_30.6px_rgba(0,0,0,0.05)]"
       >
-        <img src={sortIcon} className="w-[30px]" alt="sort" />
+        <span className="text-[12px] text-[#7D7D7D] font-medium leading-[16px]">
+          {getLabel()}
+        </span>
+        <img src={sortIcon} className="w-[16px] h-[16px]" />
       </button>
     </div>
   );

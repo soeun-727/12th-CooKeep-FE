@@ -1,18 +1,21 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
 import AllItem from "../../components/cookeeps/lists/AllItem";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getWeeklyRecipesAll, RecipeRankItem } from "../../api/cookeeps";
+import { AllRecipeItem, getAllRecipes } from "../../api/cookeeps";
 import tempImage from "../../assets/cookeeps/main/temp_recipe_cookeeps.svg";
+import SortAll from "../../components/cookeeps/lists/SortAll";
 
 export default function ViewAllPage() {
   const navigate = useNavigate();
 
-  const { searchTerm, sortOrder } = useOutletContext<{
+  const { searchTerm, sortOrder, setSortOrder, activeTab } = useOutletContext<{
     searchTerm: string;
     sortOrder: string;
+    setSortOrder: (order: string) => void;
+    activeTab: "weekly" | "all";
   }>();
 
-  const [recipes, setRecipes] = useState<RecipeRankItem[]>([]);
+  const [recipes, setRecipes] = useState<AllRecipeItem[]>([]);
   const [page, setPage] = useState(0);
   const [isLast, setIsLast] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +40,7 @@ export default function ViewAllPage() {
       setIsLoading(true);
       try {
         const apiFilter = getApiFilter(sortOrder);
-        const data = await getWeeklyRecipesAll(apiFilter, currentPage);
+        const data = await getAllRecipes(apiFilter, currentPage);
 
         setRecipes((prev) =>
           isNewFilter ? data.content : [...prev, ...data.content],
@@ -56,6 +59,7 @@ export default function ViewAllPage() {
   useEffect(() => {
     setPage(0);
     setIsLast(false);
+    setRecipes([]); //추가
     fetchRecipes(0, true);
   }, [sortOrder]); // fetchRecipes를 넣으면 무한 루프 위험이 있어 정렬 조건만 감시
 
@@ -88,15 +92,28 @@ export default function ViewAllPage() {
     item.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  if (activeTab === "weekly") {
+    return (
+      <div className="mt-10 text-center">
+        {/* 나중에 Weekly UI 넣으면 됨 */}
+        이번 주 인기 레시피 영역
+      </div>
+    );
+  }
+
   return (
     <div className="mt-[18px] pb-10 flex justify-center">
       <div className="w-[361px]">
+        <div className="fixed bottom-[74px] left-1/2 -translate-x-1/2 w-[361px] flex justify-center z-50">
+          <SortAll currentOrder={sortOrder} onSortChange={setSortOrder} />
+        </div>
+
         {filteredData.length > 0 ? (
           <div className="flex flex-col gap-3 items-center">
-            {filteredData.map((item) => (
+            {filteredData.map((item, index) => (
               <AllItem
-                key={`${item.dailyRecipeId}-${item.rank}`}
-                rank={item.rank}
+                key={item.dailyRecipeId}
+                rank={index + 1}
                 img={item.recipeImageUrl || tempImage}
                 title={item.title}
                 likes={item.likeCount}
