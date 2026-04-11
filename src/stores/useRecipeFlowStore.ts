@@ -8,6 +8,8 @@ import {
   retryAiRecipe,
 } from "../api/aiRecipe";
 import { getAiSessionDetail } from "../api/aiSession";
+import { useRewardStore } from "./useRewardStore";
+import type { RewardType } from "./useRewardStore";
 
 import axios from "axios";
 
@@ -34,6 +36,14 @@ const parseAiError = (error: unknown): string => {
   return "레시피 생성 중 문제가 발생했어요.";
 };
 
+const PRIORITY: Record<RewardType, number> = {
+  ONBOARDING_INGREDIENT: 0,
+  ONBOARDING_RECIPE: 0,
+
+  WEEKLY: 1, // A
+  EXPIRING: 2, // B
+};
+
 type RecipeFlowState = {
   selectedIngredients: Ingredient[];
   difficulty: Difficulty | null;
@@ -55,6 +65,8 @@ type RecipeFlowState = {
   fetchSessionDetail: (sessionId: number) => Promise<void>;
   completeSession: () => Promise<void>; // 타입 정의 추가
 
+  hasExpiringIngredient: boolean;
+
   // 작동안해서 넣어놓음
   // clearSelection: () => void;
 };
@@ -71,6 +83,7 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
   isLoading: false,
   error: null,
   isCompleted: false,
+  hasExpiringIngredient: false,
 
   setSelectedIngredients: (items) => set({ selectedIngredients: items }),
 
@@ -78,6 +91,12 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
   generateRecipe: async () => {
     const { selectedIngredients, difficulty, sessionId, recipeHistory } = get();
+
+    const hasDdayIngredient = selectedIngredients.some((i) => i.dDay === 0);
+
+    set({
+      hasExpiringIngredient: hasDdayIngredient,
+    });
 
     if (!difficulty) return;
 
@@ -179,8 +198,33 @@ export const useRecipeFlowStore = create<RecipeFlowState>((set, get) => ({
 
     try {
       set({ isLoading: true });
-      await completeAiRecipe(sessionId);
-      // 필요하다면 여기서 초기화를 하거나, 성공 메시지를 상태에 저장할 수 있습니다.
+      const response = await completeAiRecipe(sessionId);
+
+      const rewards: RewardType[] = [];
+
+      // 1. 온보딩 (최우선)
+      if (response?.recipeRewardGranted) {
+        rewards.push("ONBOARDING_RECIPE");
+      }
+
+      // 2. 주간 목표
+      if (response?.weeklyGoalAchieved) {
+        rewards.push("WEEKLY");
+      }
+
+      // 3. 유통기한 임박
+      if (response?.urgentIngredientRewardGranted) {
+        rewards.push("EXPIRING");
+      }
+
+      // 우선순위 정렬
+      rewards.sort((a, b) => PRIORITY[a] - PRIORITY[b]);
+
+      // 순서대로 enqueue
+      rewards.forEach((r) => {
+        useRewardStore.getState().enqueue(r);
+      });
+
       set({ isCompleted: true, isLoading: false });
     } catch (error) {
       console.error("레시피 채택 실패:", error);

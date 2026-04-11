@@ -2,25 +2,20 @@
 
 import { searchIcon } from "../../../assets";
 import TextField from "../../ui/TextField";
-import SortAll from "./SortAll";
 
 interface Props {
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  sortOrder: string;
-  onSortChange: (value: string) => void;
+  activeTab: "weekly" | "all";
+  onTabChange: (tab: "weekly" | "all") => void;
 }
 
 export default function ViewAllHeader({
   searchTerm,
   onSearchChange,
-  sortOrder,
-  onSortChange,
+  activeTab,
+  onTabChange,
 }: Props) {
-  const today = new Date();
-  const weekNumber = Math.ceil(today.getDate() / 7);
-  const dateText = `${today.getMonth() + 1}월 ${weekNumber}주차`;
-
   return (
     <div className="flex flex-col items-center flex-shrink-0">
       {/* 검색창 */}
@@ -42,16 +37,35 @@ export default function ViewAllHeader({
         />
       </div>
 
-      {/* 날짜 + 정렬 */}
-      <div className="w-[361px] relative flex items-center justify-center mt-[29px]">
-        <div className="h-8 rounded-[6px] py-[2px] px-2 flex gap-1 bg-black items-center justify-center">
-          <span className="typo-caption text-(--color-green)">{dateText}</span>
-          <span className="typo-caption text-white">쿠킵이 레시피</span>
-        </div>
+      {/* 탭 영역 */}
+      <div className="w-[361px] flex items-center mt-[27px]">
+        {/* 왼쪽 탭 */}
+        <button
+          onClick={() => onTabChange("weekly")}
+          className={`flex-1 flex justify-center items-center py-2 gap-2 border-b-2 rounded-t-[6px] ${
+            activeTab === "weekly"
+              ? "border-[#1FC16F] text-[#1FC16F]"
+              : "border-transparent text-[#7D7D7D]"
+          }`}
+        >
+          <span className="text-[14px] font-semibold leading-[20px] truncate">
+            이번 주 인기
+          </span>
+        </button>
 
-        <div className="absolute right-0 flex items-center">
-          <SortAll currentOrder={sortOrder} onSortChange={onSortChange} />
-        </div>
+        {/* 오른쪽 탭 */}
+        <button
+          onClick={() => onTabChange("all")}
+          className={`flex-1 flex justify-center items-center py-2 gap-2 border-b-2 rounded-t-[6px] ${
+            activeTab === "all"
+              ? "border-[#1FC16F] text-[#1FC16F]"
+              : "border-transparent text-[#7D7D7D]"
+          }`}
+        >
+          <span className="text-[14px] font-semibold leading-[20px] truncate">
+            모든 레시피 둘러보기
+          </span>
+        </button>
       </div>
     </div>
   );
