@@ -100,7 +100,7 @@ export default function ViewAllPage() {
   return (
     <div className="mt-[18px] pb-10 flex justify-center">
       <div className="w-[361px]">
-        <div className="fixed bottom-[74px] left-1/2 -translate-x-1/2 w-[361px] flex justify-center z-50">
+        <div className="fixed bottom-[calc(74px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[361px] flex justify-center z-50">
           <SortAll currentOrder={sortOrder} onSortChange={setSortOrder} />
         </div>
 

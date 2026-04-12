@@ -324,6 +324,7 @@ export interface ConsumeRewardResponse {
     points: number;
     grantedTypes: string[];
   };
+  weeklyGoalAchieved: boolean; // 추가
 }
 
 /** 커스텀 식재료 삭제 API */

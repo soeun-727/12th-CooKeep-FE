@@ -2,6 +2,10 @@ import { useLocation } from "react-router-dom";
 import { useThemeColor } from "../hooks/useThemeColor";
 import { useLoadingStore } from "../stores/useLoadingStore";
 import LoadingScreen from "../components/ui/LoadingScreen";
+import WeeklyGoalModal from "../components/ui/WeeklyGoalModal"; // 추가
+import ExpiringRewardModal from "../components/recipe/ExpiringRewardModal";
+import { useRewardStore } from "../stores/useRewardStore";
+import OnboardingRewardModal from "../components/ui/OnboardingRewardModal";
 
 type Props = {
   children: React.ReactNode;
@@ -21,6 +25,9 @@ export default function AppLayout({ children }: Props) {
   const themeColor = getThemeColorByPath(pathname);
   useThemeColor(themeColor);
   const isLoading = useLoadingStore((s) => s.isLoading);
+
+  const { current, dequeue } = useRewardStore();
+
   return (
     <div className="min-h-[100dvh] flex justify-center bg-[#FAFAFA]">
       <div
@@ -42,6 +49,27 @@ export default function AppLayout({ children }: Props) {
             <LoadingScreen />
           </div>
         )}
+        {/* 추가 - z-index를 LoadingScreen(50)보다 높게 */}
+        {current === "WEEKLY" && (
+          <WeeklyGoalModal isOpen={true} onClose={dequeue} />
+        )}
+        {current === "ONBOARDING_INGREDIENT" && (
+          <OnboardingRewardModal
+            type="INGREDIENT"
+            isOpen={true}
+            onClose={dequeue}
+          />
+        )}
+
+        {current === "ONBOARDING_RECIPE" && (
+          <OnboardingRewardModal
+            type="RECIPE"
+            isOpen={true}
+            onClose={dequeue}
+          />
+        )}
+
+        {current === "EXPIRING" && <ExpiringRewardModal onConfirm={dequeue} />}
       </div>
     </div>
   );

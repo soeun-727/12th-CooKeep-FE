@@ -15,16 +15,19 @@ import { AiRecipeDetail, getAiRecipeDetail } from "../../api/dailyAiRecipe";
 import imageCompression from "browser-image-compression";
 import { AxiosError } from "axios";
 import RecipeDetailYoutube from "../../components/cookeeps/recipedetail/RecipeDetailYoutubeCard";
+import PhotoRewardModal from "../../components/myCookeep/record/PhotoRewardModal";
+import WeeklyGoalModal from "../../components/ui/WeeklyGoalModal";
 
 export default function RecordWritePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [recipeDetail, setRecipeDetail] = useState<AiRecipeDetail | null>(null);
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  // const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false); // 추가
+  const [rewardQueue, setRewardQueue] = useState<string[]>([]);
 
   const {
     selectedRecipeId,
@@ -61,11 +64,11 @@ export default function RecordWritePage() {
   }, [selectedRecipeId, setTitle, title]);
 
   useEffect(() => {
-    if (showUploadModal || isSuccess) return;
+    if (isSuccess) return;
     if (!selectedRecipeId && !editingRecordId) {
       navigate("/mycookeep/record/select", { replace: true });
     }
-  }, [selectedRecipeId, editingRecordId, showUploadModal, navigate, isSuccess]);
+  }, [selectedRecipeId, editingRecordId, navigate, isSuccess]);
 
   const handleMemoInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const el = e.currentTarget;
@@ -73,11 +76,6 @@ export default function RecordWritePage() {
     el.style.height = `${el.scrollHeight}px`;
   };
 
-  // const compressionOptions = {
-  //   maxSizeMB: 1, // 최대 1MB로 압축
-  //   maxWidthOrHeight: 1080, // 해상도 리사이즈
-  //   useWebWorker: true, // 성능 최적화
-  // };
   const compressionOptions = {
     maxSizeMB: 0.7,
     maxWidthOrHeight: 720,
@@ -85,102 +83,6 @@ export default function RecordWritePage() {
     initialQuality: 0.7,
     alwaysKeepResolution: false,
   };
-
-  // const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = e.target.files;
-  //   if (!files || files.length === 0 || isUploading) return;
-
-  //   setIsUploading(true);
-
-  //   try {
-  //     // const fileList = Array.from(files);
-
-  //     // 1. 이미지 압축
-  //     // const compressedFiles = await Promise.all(
-  //     //   fileList.map(async (file) => {
-  //     //     const compressedBlob = await imageCompression(
-  //     //       file,
-  //     //       compressionOptions,
-  //     //     );
-
-  //     //     // Blob → File로 변환
-  //     //     const compressedFile = new File(
-  //     //       [compressedBlob],
-  //     //       file.name, // 원본 파일명 유지
-  //     //       {
-  //     //         type: compressedBlob.type,
-  //     //       },
-  //     //     );
-
-  //     //     return compressedFile;
-  //     //   }),
-  //     // );
-
-  //     // 2. 서버 업로드
-  //     // const uploadPromises = compressedFiles.map((file) => uploadImage(file));
-
-  //     // const responses = await Promise.all(uploadPromises);
-
-  //     // const newImages = responses.map((res) => ({
-  //     //   url: res.data.imageUrl,
-  //     // }));
-
-  //   } catch (error) {
-  //     console.error("이미지 업로드 에러:", error);
-  //     alert("이미지 업로드 중 오류가 발생했습니다.");
-  //   } finally {
-  //     setIsUploading(false);
-  //     if (e.target) e.target.value = "";
-  //   }
-  // };
-
-  // 버전2
-  // const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = e.target.files;
-  //   if (!files || files.length === 0 || isUploading) return;
-
-  //   const file = files[0];
-
-  //   // 초고용량 방어
-  // if (file.size > 15 * 1024 * 1024) {
-  //   alert("이미지가 너무 큽니다. 해상도를 낮춰서 다시 시도해주세요.");
-  //   return;
-  // }
-
-  //   setIsUploading(true);
-
-  //   try {
-  //     // 1. 기존 이미지가 있다면 서버에서 삭제
-  //     if (image?.url) {
-  //       try {
-  //         await deleteImage(image.url);
-  //       } catch (err) {
-  //         console.warn("기존 이미지 삭제 실패 (무시하고 진행)", err);
-  //       }
-  //     }
-
-  //     // 2. 이미지 압축
-  //     const compressedBlob = await imageCompression(file, compressionOptions);
-
-  //     const compressedFile = new File([compressedBlob], file.name, {
-  //       type: compressedBlob.type,
-  //     });
-
-  //     // 3. 서버 업로드
-  //     const response = await uploadImage(compressedFile);
-
-  //     // 4. 스토어에 새 이미지 저장
-  //     setImage({
-  //       url: response.data.imageUrl,
-  //     });
-  //   } catch (error) {
-  //     console.error("이미지 업로드 에러:", error);
-  //     alert("이미지 업로드 중 오류가 발생했습니다.");
-  //   } finally {
-  //     setIsUploading(false);
-  //     if (e.target) e.target.value = "";
-  //   }
-  // };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -252,9 +154,25 @@ export default function RecordWritePage() {
           String(response.status) === "200" ||
           response.status === "OK")
       ) {
+        const rewards: string[] = [];
+
+        // 우선순위 A-3: 주간 목표 달성 (먼저 큐에 넣기)
+        if (response.data?.weeklyGoalAchieved) {
+          rewards.push("WEEKLY_GOAL");
+        }
+
+        // 우선순위 C-1: 레시피 기록 보상 (항상)
+        rewards.push("RECIPE_RECORD");
+
+        // 우선순위 C-2: 사진 있으면 추가
+        if (image?.url) {
+          rewards.push("PHOTO_UPLOAD");
+        }
+
+        setRewardQueue(rewards);
+
         setIsSuccess(true);
-        setShowUploadModal(true);
-        setIsUploaded(true); // 추가
+        setIsUploaded(true);
       } else {
         alert("업로드에 실패했습니다.");
       }
@@ -418,21 +336,60 @@ export default function RecordWritePage() {
         </div>
       </div>
 
-      {showUploadModal && (
+      {/* 우선순위 A-3: 주간 목표 달성 모달 */}
+      {rewardQueue[0] === "WEEKLY_GOAL" && (
+        <WeeklyGoalModal
+          isOpen={true}
+          onClose={() => {
+            const nextQueue = [...rewardQueue];
+            nextQueue.shift();
+            if (nextQueue.length > 0) {
+              setRewardQueue(nextQueue);
+            } else {
+              navigate("/mycookeep");
+              setTimeout(() => resetRecord(), 100);
+            }
+          }}
+        />
+      )}
+
+      {rewardQueue[0] === "RECIPE_RECORD" && (
         <UploadCompleteModal
-          isOpen={showUploadModal}
+          isOpen={true}
           onConfirm={async () => {
             await useCookeepsStore.getState().fetchCookies();
-            navigate("/mycookeep");
-            setTimeout(() => {
-              resetRecord();
-            }, 100);
+
+            const nextQueue = [...rewardQueue];
+            nextQueue.shift();
+
+            if (nextQueue.length > 0) {
+              setRewardQueue(nextQueue);
+            } else {
+              navigate("/mycookeep");
+              setTimeout(() => {
+                resetRecord();
+              }, 100);
+            }
           }}
-          onCancel={() => {
-            setIsSuccess(false);
-            setShowUploadModal(false);
+          onCancel={() => {}}
+        />
+      )}
+
+      {rewardQueue[0] === "PHOTO_UPLOAD" && (
+        <PhotoRewardModal
+          onConfirm={() => {
+            const nextQueue = [...rewardQueue];
+            nextQueue.shift();
+
+            if (nextQueue.length > 0) {
+              setRewardQueue(nextQueue);
+            } else {
+              navigate("/mycookeep");
+              setTimeout(() => {
+                resetRecord();
+              }, 100);
+            }
           }}
-          closeOnOverlayClick={false}
         />
       )}
     </>

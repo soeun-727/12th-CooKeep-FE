@@ -59,6 +59,7 @@ export interface CreateDailyRecipeResponse {
     title: string;
     message: string;
     createdAt: string;
+    weeklyGoalAchieved: boolean; // 추가
   };
 }
 
@@ -69,6 +70,7 @@ export interface MyRecipeDetail {
   recipeImageUrl: string;
   isPublic: boolean;
   createdAt: string;
+  photoCookieAwarded?: boolean;
   content: {
     ingredients: IngredientsJson;
     steps: string[];
@@ -187,7 +189,12 @@ export const toggleRecipeLike = async (dailyRecipeId: number) => {
   if (!dailyRecipeId) throw new Error("레시피 ID가 유효하지 않습니다.");
   const res = await api.post<{
     status: string;
-    data: { dailyRecipeId: number; likeCount: number; liked: boolean };
+    data: {
+      dailyRecipeId: number;
+      likeCount: number;
+      liked: boolean;
+      weeklyGoalAchieved: boolean; // 추가
+    };
   }>(`/api/daily-recipes/likes/${dailyRecipeId}/toggle`);
   return res.data;
 };
