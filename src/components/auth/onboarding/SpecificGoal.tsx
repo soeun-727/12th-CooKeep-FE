@@ -25,7 +25,7 @@ export default function SpecificGoal({
   };
 
   return (
-    <>
+    <div className="flex flex-col items-center w-full">
       <div className="w-[361px] mt-[46px]">
         <h1 className="typo-h1 !text-[22px]">
           이번 주 달성하고 싶은 목표를 세워보세요!
@@ -64,6 +64,6 @@ export default function SpecificGoal({
           </p>
         )}
       </div>
-    </>
+    </div>
   );
 }
